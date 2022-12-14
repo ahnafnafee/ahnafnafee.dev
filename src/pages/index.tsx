@@ -21,9 +21,9 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
   const meta = getMetaPage({
     title: 'Ahnaf An Nafee',
     template: 'Software Engineer',
-    description: `Personal Website, Online Portfolio And Blog, Built On Top Of NEXT.js, An Online Space For Rizki To Share His Knowledge And Experience.`,
+    description: `Personal Website, Online Portfolio And Blog of Ahnaf An Nafee`,
     keywords: ['Ahnaf An Nafee', 'Ahnaf An Nafee', 'ahnafnafee', 'Ahnaf An Nafee', 'ahnafnafee.dev'],
-    og_image: `https://ik.imagekit.io/8ieg70pvks/tr:w-${712},h-${712},tr:bl-10,f-auto/profile?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`,
+    og_image: `https://ik.imagekit.io/8ieg70pvks/profile?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`,
     og_image_alt: 'Ahnaf An Nafee',
     slug: '/',
     type: 'website'
@@ -62,19 +62,19 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
                 Welcome to my personal website, where you can find my portfolio, blog and more.
               </p>
 
-              <p>
-                As a <strong>skilled software developer</strong>, I have expertise in frontend and backend technologies
-                such as React Native, TypeScript, Spring Boot, and Node.js. I have implemented DevOps pipelines and
-                automated build and deployment processes, as well as managed AWS cloud environments.
-              </p>
+              {/*<p>*/}
+              {/*  As a <strong>skilled software developer</strong>, I have expertise in frontend and backend technologies*/}
+              {/*  such as React Native, TypeScript, Spring Boot, and Node.js. I have implemented DevOps pipelines and*/}
+              {/*  automated build and deployment processes, as well as managed AWS cloud environments.*/}
+              {/*</p>*/}
 
-              <p>
-                I am dedicated to creating <strong>user-friendly and scalable applications</strong> and have developed
-                responsive,
-                <strong>reusable</strong> components and integrated third-party services and APIs. Additionally, I have
-                experience in game programming and development, including{' '}
-                <strong>creating custom shaders and game managers</strong>.
-              </p>
+              {/*<p>*/}
+              {/*  I am dedicated to creating <strong>user-friendly and scalable applications</strong> and have developed*/}
+              {/*  responsive,*/}
+              {/*  <strong>reusable</strong> components and integrated third-party services and APIs. Additionally, I have*/}
+              {/*  experience in game programming and development, including{' '}*/}
+              {/*  <strong>creating custom shaders and game managers</strong>.*/}
+              {/*</p>*/}
 
               <p>
                 I&apos;m very interested with <strong>Software Engineering</strong>, <strong>Cloud Engineering</strong>,{' '}

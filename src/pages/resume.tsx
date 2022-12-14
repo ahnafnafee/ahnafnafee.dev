@@ -16,9 +16,8 @@ import { HiInformationCircle } from 'react-icons/hi'
 
 const meta = getMetaPage({
   title: 'Resume',
-  description:
-    "Personal resume that I build on the web, as a Frontend Dev, I use my creativity to build my personal resume on the web instead on a regular 'paper'.",
-  keywords: ['Ahnaf An Nafee', 'resume', 'curriculum vitae', 'Ahnaf An Nafee cv', 'Ahnaf An Nafee resume'],
+  description: 'Professional Resume of Ahnaf An Nafee',
+  keywords: ['Ahnaf An Nafee', 'resume', 'curriculum vitae', 'Ahnaf An Nafee cv', 'Ahnaf An Nafee resume', 'cv'],
   og_image: generateOgImage({ title: 'Resume - ahnafnafee.dev', subTitle: 'Take a look at my resume' }),
   og_image_alt: 'Resume — ahnafnafee.dev',
   slug: '/resume',
