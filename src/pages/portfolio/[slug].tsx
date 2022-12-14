@@ -43,7 +43,7 @@ const ProjectDetailPage: NextPage<ProjectDetailPageProps> = ({ header, mdxSource
         <HeadingPortfolio {...header} />
 
         <section className={twclsx('flex flex-col gap-4', 'md:flex-row md:items-center md:justify-between')}>
-          <div className={twclsx('flex items-center gap-3', 'w-full')}>
+          <div className={twclsx('flex items-center gap-3 flex-wrap flex-shrink', 'w-full')}>
             {header.stack.map((s) => (
               <span className={twclsx('text-2xl')} key={s}>
                 <IconStack type={s} />
