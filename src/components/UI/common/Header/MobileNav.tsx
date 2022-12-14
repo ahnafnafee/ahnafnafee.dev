@@ -5,6 +5,7 @@ import APP_ROUTE from '@/libs/constants/route'
 
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
+import { CgFileDocument } from 'react-icons/cg'
 import { HiMenuAlt4 } from 'react-icons/hi'
 import type { IconType } from 'react-icons/lib'
 import { RiContactsBookLine, RiHome6Line, RiPenNibLine, RiReactjsLine } from 'react-icons/ri'
@@ -15,10 +16,11 @@ const icon = {
   home: RiHome6Line,
   portfolio: RiReactjsLine,
   blog: RiPenNibLine,
-  guestbook: RiContactsBookLine
+  guestbook: RiContactsBookLine,
+  resume: CgFileDocument
 } as Record<string, IconType>
 
-const route: RouteType[] = APP_ROUTE.map((r) => ({ ...r, icon: icon[r.name.toLowerCase()] }))
+const route: RouteType[] = APP_ROUTE.map((r) => ({ ...r, icon: icon[r.name.toLowerCase()] ?? RiReactjsLine }))
 
 export const MobileNav: React.FunctionComponent = () => {
   return (
