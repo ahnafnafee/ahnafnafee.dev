@@ -2,22 +2,37 @@ import { twclsx } from '@/libs/twclsx'
 
 import {
   SiAdobeillustrator,
-  SiAdobephotoshop, SiAutodesk,
-  SiCodesandbox, SiCsharp,
-  SiCss3, SiFigma,
+  SiAdobephotoshop,
+  SiAdobexd,
+  SiAndroidstudio,
+  SiAutodesk,
+  SiChakraui,
+  SiCodesandbox,
+  SiCsharp,
+  SiCss3,
+  SiFigma,
   SiFirebase,
   SiFramer,
+  SiGnubash,
   SiGo,
+  SiJava,
   SiJavascript,
+  SiJira,
+  SiKotlin,
   SiMarkdown,
   SiNextdotjs,
-  SiNodedotjs, SiPerforce,
+  SiNodedotjs,
+  SiPerforce,
+  SiPostgresql,
   SiReact,
   SiRedux,
   SiSass,
   SiSupabase,
   SiTailwindcss,
-  SiTypescript, SiUnity,
+  SiTrello,
+  SiTypescript,
+  SiUnity,
+  SiVisualstudiocode,
   SiVite
 } from 'react-icons/si'
 
@@ -96,11 +111,41 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
     case 'illustrator':
       return <SiAdobeillustrator className={twclsx('text-orange-600', className)} />
 
+    case 'adobe-xd':
+      return <SiAdobexd className={twclsx('text-pink-200', className)} />
+
     case 'maya':
       return <SiAutodesk className={twclsx('text-teal-600', className)} />
 
     case 'perforce':
       return <SiPerforce className={twclsx('text-pink-50', className)} />
+
+    case 'vscode':
+      return <SiVisualstudiocode className={twclsx('text-blue-500', className)} />
+
+    case 'bash':
+      return <SiGnubash className={twclsx('text-orange-500', className)} />
+
+    case 'chakraui':
+      return <SiChakraui className={twclsx('text-teal-100', className)} />
+
+    case 'postgresql':
+      return <SiPostgresql className={twclsx('text-indigo-500', className)} />
+
+    case 'java':
+      return <SiJava className={twclsx('text-orange-500', className)} />
+
+    case 'android-studio':
+      return <SiAndroidstudio className={twclsx('text-green-400', className)} />
+
+    case 'kotlin':
+      return <SiKotlin className={twclsx('text-purple-900', className)} />
+
+    case 'trello':
+      return <SiTrello className={twclsx('text-blue-500', className)} />
+
+    case 'jira':
+      return <SiJira className={twclsx('text-blue-500', className)} />
 
     default:
       return <SiCodesandbox className={twclsx('text-slate-900 dark:text-slate-800', className)} />
