@@ -106,24 +106,6 @@ const Resume: NextPage = () => {
         </section>
 
         <section>
-          <h3 className='mb-4 pb-2.5 border-b-2 border-b-theme-700'>Key Skills</h3>
-
-          <ul className={listStyle}>
-            {KEY_SKILLS.map((skill, idx) => {
-              return (
-                <li key={idx}>
-                  {htmr(skill, {
-                    transform: {
-                      a: (props) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>
-                    }
-                  })}
-                </li>
-              )
-            })}
-          </ul>
-        </section>
-
-        <section>
           <div className='flex items-center justify-between pb-2.5 border-b-2 border-b-theme-700'>
             <h3>Experience</h3>
           </div>
@@ -132,7 +114,13 @@ const Resume: NextPage = () => {
             <div key={i} className='mt-4'>
               <div className='flex items-start justify-between mb-2.5'>
                 <div>
-                  <h4>{exp.companyName}</h4>
+                  <h4>
+                    {htmr(exp.companyName, {
+                      transform: {
+                        a: (props) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>
+                      }
+                    })}
+                  </h4>
                   <h5>{exp.role}</h5>
                 </div>
 

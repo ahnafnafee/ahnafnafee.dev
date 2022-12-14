@@ -1,21 +1,23 @@
 import { twclsx } from '@/libs/twclsx'
 
 import {
-  SiCodesandbox,
-  SiCss3,
+  SiAdobeillustrator,
+  SiAdobephotoshop, SiAutodesk,
+  SiCodesandbox, SiCsharp,
+  SiCss3, SiFigma,
   SiFirebase,
   SiFramer,
   SiGo,
   SiJavascript,
   SiMarkdown,
   SiNextdotjs,
-  SiNodedotjs,
+  SiNodedotjs, SiPerforce,
   SiReact,
   SiRedux,
   SiSass,
   SiSupabase,
   SiTailwindcss,
-  SiTypescript,
+  SiTypescript, SiUnity,
   SiVite
 } from 'react-icons/si'
 
@@ -77,6 +79,28 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
 
     case 'go':
       return <SiGo className={twclsx('text-emerald-600 dark:text-emerald-500', className)} />
+
+    case 'Unity':
+    case 'unity':
+      return <SiUnity className={twclsx('text-black-600 dark:text-white-500', className)} />
+
+    case 'csharp':
+      return <SiCsharp className={twclsx('text-emerald-600 dark:text-emerald-500', className)} />
+
+    case 'figma':
+      return <SiFigma className={twclsx('text-pink-600', className)} />
+
+    case 'photoshop':
+      return <SiAdobephotoshop className={twclsx('text-blue-600', className)} />
+
+    case 'illustrator':
+      return <SiAdobeillustrator className={twclsx('text-orange-600', className)} />
+
+    case 'maya':
+      return <SiAutodesk className={twclsx('text-teal-600', className)} />
+
+    case 'perforce':
+      return <SiPerforce className={twclsx('text-pink-50', className)} />
 
     default:
       return <SiCodesandbox className={twclsx('text-slate-900 dark:text-slate-800', className)} />

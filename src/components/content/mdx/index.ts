@@ -1,9 +1,8 @@
-import { UnderlineLink } from '@/UI/links'
-
 import { Blockquote } from './Blockquote'
 import { Code } from './Code'
 import { ContentImage } from './ContentImage'
 import { HeadingFour, HeadingThree, HeadingTwo } from './Headings'
+import { MDXLink } from './MDXLink'
 import { Pre } from './Pre'
 
 import { MDXRemoteProps } from 'next-mdx-remote'
@@ -13,7 +12,7 @@ const MDXComponents = {
   img: ContentImage,
   code: Code,
   blockquote: Blockquote,
-  a: UnderlineLink,
+  a: MDXLink,
   ContentImage,
   h2: HeadingTwo,
   h3: HeadingThree,

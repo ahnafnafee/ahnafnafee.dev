@@ -4,33 +4,33 @@ const APP_ROUTE = [
     name: 'Home'
   },
   {
-    path: '/blog',
-    name: 'Blog'
-  },
-  {
     path: '/portfolio',
     name: 'Portfolio'
-  }
-]
-
-export const ADDT_ROUTE = [
-  {
-    path: '/tags',
-    name: 'Tags'
-  },
-  {
-    path: '/snippet',
-    name: 'Snippet'
   },
   {
     path: '/resume',
     name: 'Resume'
   },
+]
 
-  {
-    path: '/certificate',
-    name: 'Certificate'
-  }
+export const ADDT_ROUTE = [
+  // {
+  //   path: '/tags',
+  //   name: 'Tags'
+  // },
+  // {
+  //   path: '/snippet',
+  //   name: 'Snippet'
+  // },
+  // {
+  //   path: '/resume',
+  //   name: 'Resume'
+  // },
+
+  // {
+  //   path: '/certificate',
+  //   name: 'Certificate'
+  // }
 ]
 
 export default APP_ROUTE

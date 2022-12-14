@@ -27,7 +27,7 @@ export default async function handler(req: NextRequest) {
                 style={{
                   objectFit: 'cover'
                 }}
-                src='https://ik.imagekit.io/mlnzyx/attachment/rizkimcitra.webp'
+                src='https://ik.imagekit.io/8ieg70pvks/profile'
                 alt='Ahnaf An Nafee'
               />
               <p tw='ml-2.5 font-bold text-4xl'>Ahnaf An Nafee</p>

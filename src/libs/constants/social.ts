@@ -1,19 +1,15 @@
 const SOCIAL = [
   {
     title: 'Email',
-    href: 'mailto: rmaulana.citra@gmail.com?subject='
+    href: 'mailto: ahnafnafee@gmail.com?subject='
   },
   {
     title: 'LinkedIn',
-    href: 'https://linkedin.com/in/rizkimcitra'
+    href: 'https://linkedin.com/in/ahnafnafee'
   },
   {
     title: 'GitHub',
-    href: 'https://github.com/rizkimcitra'
-  },
-  {
-    title: 'Telegram',
-    href: 'https://t.me/rizkimcitra'
+    href: 'https://github.com/ahnafnafee'
   }
 ]
 

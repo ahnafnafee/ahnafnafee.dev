@@ -21,10 +21,10 @@ interface HomePageProps {
 const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
   const meta = getMetaPage({
     title: 'Ahnaf An Nafee',
-    template: 'Student And Frontend Developer',
+    template: 'Software Engineer',
     description: `Personal Website, Online Portfolio And Blog, Built On Top Of NEXT.js, An Online Space For Rizki To Share His Knowledge And Experience.`,
     keywords: ['Ahnaf An Nafee', 'Ahnaf An Nafee', 'ahnafnafee', 'Ahnaf An Nafee', 'ahnafnafee.dev'],
-    og_image: `https://ik.imagekit.io/mlnzyx/tr:w-${712},h-${712},tr:bl-10,f-auto/attachment/profile.webp?updatedAt=1657210611675`,
+    og_image: `https://ik.imagekit.io/8ieg70pvks/tr:w-${712},h-${712},tr:bl-10,f-auto/profile?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`,
     og_image_alt: 'Ahnaf An Nafee',
     slug: '/',
     type: 'website'
@@ -39,12 +39,12 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
         <section className='flex flex-col'>
           <div className='relative flex h-14 md:h-16'>
             <ContentImage
-              src='https://ik.imagekit.io/mlnzyx/attachment/tr:w-720,h-720,f-auto/rizkimcitra.webp'
+              src='https://ik.imagekit.io/8ieg70pvks/tr:w-720,h-720,f-auto/profile'
               alt='Ahnaf An Nafee'
               width={128}
               height={128}
               className='rounded-full absolute -left-1 bottom-1 border-4 cursor-pointer border-theme-100 dark:border-theme-800'
-              title="Ahnaf An Nafee's Face"
+              title="Ahnaf An Nafee's Profile Picture"
               quality={100}
               priority
             />
@@ -54,61 +54,45 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
           <div className='mt-3 md:mt-6'>
             <h1>Ahnaf An Nafee</h1>
             <h2 className='max-w-max mt-1.5 md:mt-2.5 mb-6 md:mb-8 text-transparent font-bold text-xl md:text-2xl bg-clip-text bg-gradient-to-r  from-primary-500 to-ternary-500 dark:text-transparent'>
-              Student &amp; Frontend Developer
+              Software Engineer
             </h2>
 
             <div className='[&>p:not(:last-child)]:mb-3 [&>p]:max-w-prose md:pb-6'>
               <p>
-                Hello👋, I&apos;m Ahnaf An Nafee, a guy who loves to code, music and coffee. Welcome to my personal
-                website, where you can find my portfolio, blog and more.
+                Hello👋, I&apos;m Ahnaf An Nafee, a guy who loves to code and is passionate about game development.
+                Welcome to my personal website, where you can find my portfolio, blog and more.
               </p>
 
               <p>
-                As a <strong>self-taught developer</strong>, I started learning web development when I was in 12th grade
-                and have been gradually improving my skills over time.
+                As a <strong>skilled software developer</strong>, I have expertise in frontend and backend
+                technologies such as React Native, TypeScript, Spring Boot, and Node.js. I have implemented
+                DevOps pipelines and automated build and deployment processes, as well as managed
+                AWS cloud environments.
               </p>
 
               <p>
-                I am passionate about <strong>Frontend Development</strong> and enjoy working on the Web. I love
-                combining my technical knowledge and creativity to build engaging and user-friendly websites and
-                applications.
+                I am dedicated to creating <strong>user-friendly and scalable applications</strong> and have developed responsive,
+                <strong>reusable</strong> components and integrated third-party services and APIs. Additionally, I have experience
+                in game programming and development, including <strong>creating custom shaders and game managers</strong>.
               </p>
 
               <p>
-                I&apos;m very interested with <strong>Frontend Architecture</strong>,{' '}
-                <strong>Frontend Accessibility</strong>, and <strong>User Experience</strong>, and also interested in
-                mobile development with{' '}
-                <UnderlineLink href='https://kotlinlang.org' title='Kotlin Programming language'>
-                  Kotlin
-                </UnderlineLink>{' '}
-                .
-              </p>
-
-              <p>
-                <strong>As a person</strong>, <strong>I am constantly striving to improve myself</strong> and{' '}
-                <strong>become a better person</strong>. I believe that <em>growth and personal development</em> are
-                important aspects of a <strong>fulfilling life</strong>.
-              </p>
-
-              <p>
-                On this website, I like to share my <strong>various thoughts</strong> about web development related
-                topics, general daily life and a place for <strong>showcasing my portfolio</strong>.
+                I&apos;m very interested with <strong>Software Engineering</strong>,{' '}
+                <strong>Cloud Engineering</strong>,{' '}<strong>AI/ML Engineering</strong>,{' '}
+                <strong>Game Programming</strong>,{' '}<strong>Graphical Shader Programming</strong>
+                and <strong>User Experience</strong>, and also interested in
+                mobile development with{' '}<strong>React Native</strong>.
               </p>
             </div>
           </div>
         </section>
-
-        <BlogList
-          description="If you're looking for some interesting reads, check out my featured blog post. sorted from latest to least, feel free to explore it."
-          posts={blogs}
-          title='Featured Post'
-        />
 
         <PortfolioList
           description='Check out my featured portfolio, feel free to explore it.'
           title='Featured Portfolio'
           portfolios={portfolios}
         />
+
       </main>
 
       <Footer />

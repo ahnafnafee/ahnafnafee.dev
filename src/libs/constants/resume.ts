@@ -13,70 +13,115 @@ export const LINKS: typeof SOCIAL = [
     title: 'Website'
   },
   {
-    href: 'https://ahnafnafee.dev/blog',
-    title: 'Blog'
+    href: 'https://mega.nz/file/CzQ0FSpa#uxOnLguTlP1y8N9rIukzkFXe7HncMHhSMnMr__L9-64',
+    title: 'PDF'
   }
 ]
 
 export const SKILLS = [
   {
-    name: 'Technologies',
+    name: 'Programming',
     list: [
-      'React.js',
-      'Next.js',
-      'Vite.js',
-      'React Query',
-      'Redux',
-      'Jotai',
-      'Zustand',
-      'Tailwind CSS',
-      'Vue.js',
-      'Angular',
-      'Supabase',
-      'Firebase',
-      'Vercel',
-      'Node.js'
+      'Python',
+      'TypeScript',
+      'JavaScript',
+      'Kotlin',
+      'Java',
+      'Jest',
+      'Detox',
+      'TypeScript',
+      'JUnit',
+      'Selenium',
+      'PostgreSQL',
+      'MySQL',
+      'WebGL',
+      'C#',
+      'C',
+      'C++',
+      'Haskell',
+      'GLSL',
+      'HLSL',
+      'SQLite'
     ]
   },
-  { name: 'Programming Languages', list: ['HTML', 'CSS/SCSS', 'JavaScript', 'TypeScript'] }
+  {
+    name: 'Tools & Frameworks',
+    list: [
+      'React Native',
+      'SpringBoot',
+      'Node.js',
+      'React',
+      'JIRA',
+      'Android Studio',
+      'Xcode',
+      'GitHub',
+      'Postman',
+      'Unity',
+      'Unreal Engine',
+      'Maya',
+      'FMOD',
+      'Wwise',
+      'Blender',
+      '3D Modeling',
+      'Game Testing',
+      '3D Animation',
+      'Prototyping',
+      'Adobe CS',
+      'Figma',
+      'Perforce',
+      'Plastic SCM',
+      'AI',
+      'ML',
+      'AWS (ECS, EC2, SNS, SES, Route 53, RDS, Lambda, Cloud Formation Stack)',
+      'Docker',
+      'WebSocket Integration',
+      'ERM',
+      'Microservice API',
+      'OAuth'
+    ]
+  }
 ]
 
 export const KEY_SKILLS = [
-  'Continuous Integration & Continuous Deployment',
-  'Design Thinking Process',
-  'Critical Thinking & Problem Solving',
-  'Accessible Frontend Application',
-  'Adaptability',
-  'Team Player',
-  'Creativity'
+  // 'Continuous Integration & Continuous Deployment',
+  // 'Design Thinking Process',
+  // 'Critical Thinking & Problem Solving',
+  // 'Accessible Frontend Application',
+  // 'Adaptability',
+  // 'Team Player',
+  // 'Creativity'
 ]
 
 export const EXPERIENCE: Experience[] = [
   {
-    companyName: 'Skyshi Digital Indonesia',
-    role: 'Frontend Developer',
+    companyName: `<a href=\'https://dynasty11.com\'>Dynasty 11 Studios</a>`,
+    role: 'Software Developer',
     period: {
-      start: 'April, 2022',
+      start: 'September, 2021',
       end: 'Present'
     },
     lists: [
-      `Responsible to build internal and external application, mostly external client from local to international with modern web app technology with React and Next.js`,
-      `Responsible to deliver fast and optimized application, write browser backward compatibility with babel, deliver responsive-friendly and cross browser application with autoprefixer and postcss.`,
-      `Develop and maintain features from low to high impact, make sure to deliver high user experience frontend application that passed web accessibility standard.`,
-      `Write clean and maintainable code with TypeScript.`
+      `Create and Implement 6 new DevOps pipelines to deliver fast OTA application updates, backend build status, and Infrastructure as Code`,
+      `Spearhead backend migration to Amazon Elastic Beanstalk for auto-scaling server instances, reducing application load and costs by 80%`,
+      `Automate the build and deployment process with GitHub Actions and Maven and use Serverless Lambda functions for monitoring, eliminating 85% of manual work`,
+      `Develop a custom API layer to handle all CRUD transactions, and JWT token management and implemented interceptors to embed custom headers`,
+      'Engineer Java service integration for STOMP WebSockets for in-app chat functionality',
+      'Chart and Integrate Third-Party services and OAuth services with 20+ REST endpoints to create a scalable, user-facing application and increase user engagement'
     ]
   },
   {
-    companyName: 'Skyshi Digital Indonesia',
-    role: 'Frontend Developer Intern',
+    companyName: `<a href=\'https://phlcollective.com\'>PHL Collective</a>`,
+    role: 'Technical Programmer Co-op',
     period: {
-      start: 'January, 2021',
-      end: 'March, 2022'
+      start: 'March, 2021',
+      end: 'September, 2022'
     },
     lists: [
-      `Responsible to develop specific features on internal project using React.js, Vue.js and Chakra UI.`,
-      `Deliver responsive-friendly and cross browser application with autoprefixer and postcss.`,
-      `Slicing design from figma to React component for CV template on <a href='https://gethired.id/cv-online'>gethired.id</a>.`
+      `Integrated and Scripted versatile <strong>game managers</strong> to simplify future design processes`,
+      `Developed shaders with multiple variants for general <strong>stylized</strong> usage`,
+      `Collaborated with the Art team to improve workflows and create simpler and customizable <strong>shaders</strong>`,
+      `Performed <strong>integration and stress testing</strong> on WIP games, while reporting any issues in a developer-friendly format in Mantis`,
+      `Coordinated closely with the design team to identify problematic areas and created relevant <strong>test cases</strong>`
     ]
   }
 ]
@@ -93,37 +138,32 @@ type Education = Array<{
 
 export const EDUCATION: Education = [
   {
-    school: 'Computer and Informatics Management Academy of Serang',
+    school: 'Drexel University',
     period: {
-      start: 'September, 2021',
-      end: 'Present'
+      start: 'September, 2018',
+      end: 'June, 2022'
     },
-    paragraphs: ['Semester 3 of Informatics Management Student.', 'Current GPA: 3.50.']
-  },
-  {
-    school: 'Vocational High School of 8 Pandeglang',
-    period: {
-      start: 'July, 2018',
-      end: 'May, 2021'
-    },
-    paragraphs: ['Choosing Software Engineering as my main major.', 'Graduated in May, 2021.']
+    paragraphs: [
+      'BS in Computer Science',
+      'Concentration in Artificial Intelligence, Game Programming and Development',
+      'GPA: 3.77 (manga cum laude)'
+    ]
   }
 ]
 
 export const SUMMARY = [
-  `Frontend Developer <em>(especially on modern web technology)</em>.`,
-  'Adept at leveraging <strong>Sprint</strong> and <strong>Agile</strong> methodologies to drive process efficiencies.',
-  `Focused to frontend environment with strong Frontend core skills, but also has familiarity with other languages and tools.`,
+  `Software Engineer`,
+  'Passion for <strong>Game Programming</strong> and <strong>Development</strong>',
   'Deploy optimized apps with scalable user interface, user experience, and user accessibility based on design thinking process.'
 ]
 
 export const LANGUAGES = [
   {
-    title: 'Indonesia',
-    level: 'Native, Fluent'
+    title: 'English',
+    level: 'Native & Fluent'
   },
   {
-    title: 'English',
-    level: 'Limited working proficiency'
+    title: 'Bangla',
+    level: 'Native & Fluent'
   }
 ]
