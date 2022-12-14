@@ -38,7 +38,9 @@ import {
   SiRedux,
   SiSass,
   SiServerless,
+  SiSpringboot,
   SiSupabase,
+  SiSwift,
   SiTailwindcss,
   SiTrello,
   SiTypescript,
@@ -47,7 +49,7 @@ import {
   SiVite,
   SiXcode
 } from 'react-icons/si'
-import { TbWebhook } from 'react-icons/tb'
+import { TbBrandReactNative, TbWebhook } from 'react-icons/tb'
 
 type IconStackProps = {
   type: string
@@ -203,6 +205,16 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
     case 'jQuery':
     case 'jquery':
       return <SiJquery className={twclsx('text-orange-700', className)} />
+
+    case 'react-native':
+      return <TbBrandReactNative className={twclsx('text-blue-500', className)} />
+
+    case 'swift':
+      return <SiSwift className={twclsx('text-orange-400', className)} />
+
+    case 'SpringBoot':
+    case 'spring-boot':
+      return <SiSpringboot className={twclsx('text-green-400', className)} />
 
     default:
       return <SiCodesandbox className={twclsx('text-slate-900 dark:text-slate-800', className)} />
