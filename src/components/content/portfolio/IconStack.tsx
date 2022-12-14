@@ -4,22 +4,32 @@ import {
   SiAdobeillustrator,
   SiAdobephotoshop,
   SiAdobexd,
+  SiAmazonaws,
+  SiAndroid,
   SiAndroidstudio,
   SiAutodesk,
   SiChakraui,
   SiCodesandbox,
   SiCsharp,
   SiCss3,
+  SiDiscord,
+  SiExpo,
   SiFigma,
   SiFirebase,
   SiFramer,
+  SiGithubactions,
   SiGnubash,
   SiGo,
+  SiGooglecloud,
+  SiHtml5,
+  SiIos,
   SiJava,
   SiJavascript,
   SiJira,
+  SiJquery,
   SiKotlin,
   SiMarkdown,
+  SiMysql,
   SiNextdotjs,
   SiNodedotjs,
   SiPerforce,
@@ -27,14 +37,17 @@ import {
   SiReact,
   SiRedux,
   SiSass,
+  SiServerless,
   SiSupabase,
   SiTailwindcss,
   SiTrello,
   SiTypescript,
   SiUnity,
   SiVisualstudiocode,
-  SiVite
+  SiVite,
+  SiXcode
 } from 'react-icons/si'
+import { TbWebhook } from 'react-icons/tb'
 
 type IconStackProps = {
   type: string
@@ -76,6 +89,12 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
     case 'css':
     case 'CSS':
       return <SiCss3 className={twclsx('text-blue-600 dark:text-blue-500', className)} />
+
+    case 'html':
+    case 'html5':
+    case 'HTML5':
+    case 'HTML':
+      return <SiHtml5 className={twclsx('text-orange-500', className)} />
 
     case 'framer motion':
       return <SiFramer className={twclsx('text-theme-800 dark:text-theme-200', className)} />
@@ -135,8 +154,17 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
     case 'java':
       return <SiJava className={twclsx('text-orange-500', className)} />
 
+    case 'android':
+      return <SiAndroid className={twclsx('text-green-400', className)} />
+
     case 'android-studio':
       return <SiAndroidstudio className={twclsx('text-green-400', className)} />
+
+    case 'ios':
+      return <SiIos className={twclsx('text-grey-400', className)} />
+
+    case 'xcode':
+      return <SiXcode className={twclsx('text-blue-600', className)} />
 
     case 'kotlin':
       return <SiKotlin className={twclsx('text-purple-900', className)} />
@@ -146,6 +174,35 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
 
     case 'jira':
       return <SiJira className={twclsx('text-blue-500', className)} />
+
+    case 'cloud':
+      return <SiGooglecloud className={twclsx('text-blue-500', className)} />
+
+    case 'aws':
+      return <SiAmazonaws className={twclsx('text-yellow-400', className)} />
+
+    case 'github-action':
+      return <SiGithubactions className={twclsx('text-grey-400', className)} />
+
+    case 'serverless':
+      return <SiServerless className={twclsx('text-orange-500', className)} />
+
+    case 'discord':
+      return <SiDiscord className={twclsx('text-indigo-600', className)} />
+
+    case 'expo':
+      return <SiExpo className={twclsx('text-b-600', className)} />
+
+    case 'webhook':
+      return <TbWebhook className={twclsx('text-purple-600', className)} />
+
+    case 'MySQL':
+    case 'mysql':
+      return <SiMysql className={twclsx('text-orange-300', className)} />
+
+    case 'jQuery':
+    case 'jquery':
+      return <SiJquery className={twclsx('text-orange-700', className)} />
 
     default:
       return <SiCodesandbox className={twclsx('text-slate-900 dark:text-slate-800', className)} />

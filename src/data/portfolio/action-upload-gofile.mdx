@@ -1,0 +1,30 @@
+---
+title: 'Action Upload GoFile'
+date: '10/01/2022'
+featured: false
+summary: '📦 GitHub Action for uploading Files to Gofile.io '
+image: 'https://ik.imagekit.io/8ieg70pvks/portfolio/gh-gofile_og.png?ik-sdk-version=javascript-1.4.3&updatedAt=1670981729993'
+stack: ['android', 'ios', 'cloud', 'github-action', 'aws']
+link: { github: 'https://github.com/ahnafnafee/action-upload-gofile' }
+---
+
+## Overview
+
+`Action Upload GoFile` is a GitHub action that can upload any file to GoFile.io using the
+[GoFile.io API](https://gofile.io/api).
+
+## Usage
+
+```yaml
+steps:
+    - name: Upload File
+      id: gofile
+      uses: ahnafnafee/action-upload-gofile@v2.1.0
+      with:
+          token: ${{ secrets.GOFILE_TOKEN }}
+          file: ./example.webp
+    - name: View URL and QR Code
+      run: |
+          echo "Gofile URL = ${{ steps.gofile.outputs.url }}"
+          echo "Gofile QR Code = ${{ steps.gofile.outputs.qrcode }}"
+```
