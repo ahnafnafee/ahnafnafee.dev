@@ -24,7 +24,7 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, softwarePortfolios, gamePort
     template: 'Software Engineer',
     description: `Personal Website, Online Portfolio And Blog of Ahnaf An Nafee`,
     keywords: ['Ahnaf An Nafee', 'Ahnaf An Nafee', 'ahnafnafee', 'Ahnaf An Nafee', 'ahnafnafee.dev'],
-    og_image: `https://ik.imagekit.io/8ieg70pvks/profile?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`,
+    og_image: `https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`,
     og_image_alt: 'Ahnaf An Nafee',
     slug: '/',
     type: 'website'
