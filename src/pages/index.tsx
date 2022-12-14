@@ -14,10 +14,11 @@ import readingTime from 'reading-time'
 
 interface HomePageProps {
   blogs: Array<Blog>
-  portfolios: Array<Portfolio>
+  softwarePortfolios: Array<Portfolio>
+  gamePortfolios: Array<Portfolio>
 }
 
-const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
+const HomePage: NextPage<HomePageProps> = ({ blogs, softwarePortfolios, gamePortfolios }) => {
   const meta = getMetaPage({
     title: 'Ahnaf An Nafee',
     template: 'Software Engineer',
@@ -47,7 +48,7 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
               quality={100}
               priority
             />
-            <SocialHome className='ml-auto max-w-max' />
+            <SocialHome className='ml-auto max-x-auto flex-shrink flex-wrap self-end justify-end' />
           </div>
 
           <div className='mt-3 md:mt-6'>
@@ -88,9 +89,15 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
         </section>
 
         <PortfolioList
-          description='Check out my featured portfolio, feel free to explore it.'
-          title='Featured Portfolio'
-          portfolios={portfolios}
+          description='Check out my featured software portfolio, feel free to explore it.'
+          title='Featured Software Portfolio'
+          portfolios={softwarePortfolios}
+        />
+
+        <PortfolioList
+          description='Check out my featured game portfolio, feel free to explore it.'
+          title='Featured Game Portfolio'
+          portfolios={gamePortfolios}
         />
       </main>
 
@@ -125,15 +132,26 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     .map((r) => ({ est_read: readingTime(r.content).text, ...r.header }))
     .sort(getNewestBlog)
 
-  const portfolios = portfoliosData
+  // const portfolios = portfoliosData
+  //   .map((p) => p.header)
+  //   .filter((f) => f.featured)
+  //   .sort(getNewestPortfolio)
+
+  const softwarePortfolios = portfoliosData
     .map((p) => p.header)
-    .filter((f) => f.featured)
+    .filter((f) => f.featured && f.category === 'software')
+    .sort(getNewestPortfolio)
+
+  const gamePortfolios = portfoliosData
+    .map((p) => p.header)
+    .filter((f) => f.featured && f.category === 'game')
     .sort(getNewestPortfolio)
 
   return {
     props: {
       blogs,
-      portfolios
+      softwarePortfolios,
+      gamePortfolios
     }
   }
 }

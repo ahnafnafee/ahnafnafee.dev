@@ -28,6 +28,7 @@ declare module 'me' {
       github: string
       live: string
     }
+    category?: 'software' | 'game'
   }
   /** Type used for snippet or meta data for snippet */
   export type Snippet = {

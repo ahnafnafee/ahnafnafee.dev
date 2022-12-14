@@ -17,7 +17,9 @@ import type { Portfolio } from 'me'
 import type { GetStaticProps, NextPage } from 'next'
 
 type PortfoliopageProps = {
-  portfolio: Array<Portfolio>
+  portfolios: Array<Portfolio>
+  softwarePortfolios: Array<Portfolio>
+  gamePortfolios: Array<Portfolio>
 }
 
 const meta = getMetaPage({
@@ -30,8 +32,8 @@ const meta = getMetaPage({
   type: 'website'
 })
 
-const ProjectPage: NextPage<PortfoliopageProps> = ({ portfolio }) => {
-  const search = useSearchPortfolio(portfolio)
+const ProjectPage: NextPage<PortfoliopageProps> = ({ portfolios, softwarePortfolios, gamePortfolios }) => {
+  const search = useSearchPortfolio(portfolios)
 
   return (
     <LayoutPage {...(meta as LayoutPageProps)}>
@@ -39,11 +41,19 @@ const ProjectPage: NextPage<PortfoliopageProps> = ({ portfolio }) => {
       <Searchbar onChange={search.handleChange} value={search.query} />
 
       <div className={twclsx('flex flex-col gap-8')}>
-        {search.query === '' && portfolio.length > 0 && (
+        {search.query === '' && portfolios.length > 0 && (
           <PortfolioList
-            description="I've put together a portfolio of my personal work, mostly from my junior years. You're welcome to take a look and explore. Some of the portfolios even have website demos that you can try out if you'd like."
-            portfolios={portfolio}
-            title='Personal Portfolio'
+            description="I've put together a portfolio of my personal work. You're welcome to take a look and explore. Some of the portfolios even have website demos that you can try out if you'd like."
+            portfolios={softwarePortfolios}
+            title='Software Portfolio'
+          />
+        )}
+
+        {search.query === '' && portfolios.length > 0 && (
+          <PortfolioList
+            description="I've put together a portfolio of game projects over the years. Some of the portfolios even have website demos that you can try out if you'd like."
+            portfolios={gamePortfolios}
+            title='Game Portfolio'
           />
         )}
 
@@ -64,11 +74,23 @@ const ProjectPage: NextPage<PortfoliopageProps> = ({ portfolio }) => {
 export const getStaticProps: GetStaticProps<PortfoliopageProps> = async () => {
   const response = await getContents<Portfolio>('/portfolio')
 
-  const portfolio = response.map((d) => d.header).sort(getNewestPortfolio)
+  const portfolios = response.map((d) => d.header).sort(getNewestPortfolio)
+
+  const softwarePortfolios = response
+    .map((p) => p.header)
+    .filter((f) => f.category === 'software')
+    .sort(getNewestPortfolio)
+
+  const gamePortfolios = response
+    .map((p) => p.header)
+    .filter((f) => f.category !== 'software')
+    .sort(getNewestPortfolio)
 
   return {
     props: {
-      portfolio: portfolio
+      portfolios,
+      softwarePortfolios,
+      gamePortfolios
     }
   }
 }

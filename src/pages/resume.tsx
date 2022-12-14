@@ -26,7 +26,8 @@ const meta = getMetaPage({
 
 const Resume: NextPage = () => {
   const listStyle = useMemo(() => 'list-disc list-inside [&>li]:my-2', [])
-  const isMatch = useMediaQuery('(min-width: 768px)')
+  // const isMatch = useMediaQuery('(min-width: 768px)')
+  const isMatch = true
   const [modal, setModal] = useState({ alert: false, popup: false })
 
   const closePopup = useCallback(() => setModal((prev) => ({ ...prev, popup: false })), [])
@@ -74,7 +75,7 @@ const Resume: NextPage = () => {
             <h3>Summary</h3>
 
             <UnstyledButton onClick={openPopup} className='print:hidden'>
-              <HiInformationCircle className='text-red-500 animate-pulse text-lg' />
+              <HiInformationCircle className='text-yellow-600 animate-pulse text-lg' />
               <span className='sr-only'>How to print?</span>
             </UnstyledButton>
           </div>
@@ -152,13 +153,20 @@ const Resume: NextPage = () => {
             <div key={ed.school} className='mt-4'>
               <div className='flex items-start justify-between mb-2.5'>
                 <h4 className='max-w-md'>{ed.school}</h4>
-                <p className='text-sm font-semibold'>
+                <p className='text-sm font-semibold self-end text-right'>
                   {ed.period.start} - {ed.period.end}
                 </p>
               </div>
 
               {ed.paragraphs.map((p) => (
-                <p key={p}>{p}</p>
+                <p key={p}>
+                  {htmr(p, {
+                    transform: {
+                      a: (props) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>,
+                      i: (props) => <i>{props.children}</i>
+                    }
+                  })}
+                </p>
               ))}
 
               {ed.list && (

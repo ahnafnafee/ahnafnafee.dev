@@ -24,10 +24,10 @@
 - **Giscus**
 - **Umami**
 - **Next.js Plugins**:
-    - `next-pwa`
-    - `next-themes`
-    - `next-seo`
-    - `next-mdx-remote`
+  - `next-pwa`
+  - `next-themes`
+  - `next-seo`
+  - `next-mdx-remote`
 
 ## 🛠 Development
 

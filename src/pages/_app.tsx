@@ -8,6 +8,7 @@ import variants, { withExit } from '@/libs/animation/variants'
 import { useTheme } from '@/hooks'
 import '@/styles/globals.css'
 
+import { Analytics } from '@vercel/analytics/react'
 import { AnimatePresence, LazyMotion, domAnimation, m } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import { ThemeProvider } from 'next-themes'
@@ -60,6 +61,7 @@ const App = ({ Component, pageProps, router }: AppProps) => {
           }}
         />
       )}
+      <Analytics />
     </ThemeProvider>
   )
 }

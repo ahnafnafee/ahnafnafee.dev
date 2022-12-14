@@ -97,7 +97,7 @@ export const EXPERIENCE: Experience[] = [
     companyName: `<a href=\'https://dynasty11.com\'>Dynasty 11 Studios</a>`,
     role: 'Software Developer',
     period: {
-      start: 'September, 2021',
+      start: 'Sept 2021',
       end: 'Present'
     },
     lists: [
@@ -113,8 +113,8 @@ export const EXPERIENCE: Experience[] = [
     companyName: `<a href=\'https://phlcollective.com\'>PHL Collective</a>`,
     role: 'Technical Programmer Co-op',
     period: {
-      start: 'March, 2021',
-      end: 'September, 2022'
+      start: 'Mar 2021',
+      end: 'Sept 2022'
     },
     lists: [
       `Integrated and Scripted versatile <strong>game managers</strong> to simplify future design processes`,
@@ -140,13 +140,13 @@ export const EDUCATION: Education = [
   {
     school: 'Drexel University',
     period: {
-      start: 'September, 2018',
-      end: 'June, 2022'
+      start: 'Sept 2018',
+      end: 'June 2022'
     },
     paragraphs: [
       'BS in Computer Science',
       'Concentration in Artificial Intelligence, Game Programming and Development',
-      'GPA: 3.77 (manga cum laude)'
+      `GPA: 3.77 (<i>manga cum laude</i>)`
     ]
   }
 ]
