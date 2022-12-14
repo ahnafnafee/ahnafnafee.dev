@@ -12,7 +12,7 @@ import { getNewestSnippet } from '@/libs/sorters'
 import { useSearchSnippet } from '@/hooks'
 
 import type { GetStaticProps, NextPage } from 'next'
-import type { Snippet } from 'rizkicitra'
+import type { Snippet } from 'me'
 
 type SnippetProps = {
   snippets: Array<Snippet>
@@ -23,11 +23,11 @@ const meta = getMetaPage({
   description: `A collection of helpful snippets to help you, including myself to spin up the development. Remember, Do Not Repeat Yourself.`,
   keywords: [],
   og_image: generateOgImage({
-    title: 'Snippet - rizkicitra.dev',
+    title: 'Snippet - ahnafnafee.dev',
     subTitle:
       'A collection of helpful snippets to help you, including myself to spin up the development. Remember, Do Not Repeat Yourself.'
   }),
-  og_image_alt: 'Snippet — rizkicitra.dev',
+  og_image_alt: 'Snippet — ahnafnafee.dev',
   slug: '/snippet',
   type: 'website'
 })

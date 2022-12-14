@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState, useTransition } from 'react'
-import type { Blog, Portfolio, Snippet } from 'rizkicitra'
+import type { Blog, Portfolio, Snippet } from 'me'
 
 type Data = Array<Blog> | Array<Portfolio> | Array<Snippet>
 

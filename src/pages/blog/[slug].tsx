@@ -21,7 +21,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { HiArrowUp } from 'react-icons/hi'
 import readingTime from 'reading-time'
 import rehypeSlug from 'rehype-slug'
-import type { Blog, PageViewResponse } from 'rizkicitra'
+import type { Blog, PageViewResponse } from 'me'
 
 interface BlogPostProps {
   mdxSource: MDXRemoteSerializeResult
@@ -46,7 +46,7 @@ const BlogPost: NextPage<BlogPostProps> = ({ header, mdxSource }) => {
       if (isDev) return
       ;(async () => {
         try {
-          const baseURL = isDev ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rizkicitra.dev'
+          const baseURL = isDev ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev'
           const res = await axios.get<PageViewResponse>(baseURL + '/api/pageviews?slug=' + header.slug)
           const view = res.data.view ?? 0
           setPostViews(view)

@@ -1,6 +1,6 @@
 import { PortfolioItem } from './PortfolioItem'
 
-import { Portfolio } from 'rizkicitra'
+import { Portfolio } from 'me'
 
 type PortfolioListProps = {
   title: string

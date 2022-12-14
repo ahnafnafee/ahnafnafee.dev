@@ -2,7 +2,7 @@ import { UnstyledLink } from '@/components/UI/links'
 
 import { IconStack } from '../portfolio'
 
-import { Snippet } from 'rizkicitra'
+import { Snippet } from 'me'
 
 export const SnippetItem: React.FunctionComponent<Snippet> = (props) => {
   const slugURL = '/snippet/' + props.slug

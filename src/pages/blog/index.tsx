@@ -18,7 +18,7 @@ import axios from 'axios'
 import { GetStaticProps, NextPage } from 'next'
 import { useEffect, useMemo } from 'react'
 import readingTime from 'reading-time'
-import type { Blog, PageViewResponse } from 'rizkicitra'
+import type { Blog, PageViewResponse } from 'me'
 
 type BlogPageProps = {
   allBlogs: Array<Blog>
@@ -27,12 +27,12 @@ type BlogPageProps = {
 const meta = getMetaPage({
   title: 'Blog',
   description: `You'll find a collection of my thoughts and musings on a variety of topics. I write about everything from current events to personal experiences, and I always strive to share my honest opinions. Keep in mind that my views are my own and do not necessarily reflect those of any other person or organization.`,
-  keywords: ['Rizki Maulana Citra', 'Rizki M Citra', 'Rizkicitra', 'Rizki Citra', 'rizkicitra.dev'],
+  keywords: ['Ahnaf An Nafee', 'Ahnaf An Nafee', 'ahnafnafee', 'Ahnaf An Nafee', 'ahnafnafee.dev'],
   og_image: generateOgImage({
-    title: 'Blog - rizkicitra.dev',
+    title: 'Blog - ahnafnafee.dev',
     subTitle: 'Any thought I think interesting to share on my personal site'
   }),
-  og_image_alt: 'Blog — rizkicitra.dev',
+  og_image_alt: 'Blog — ahnafnafee.dev',
   slug: '/blog',
   type: 'website'
 })
@@ -45,7 +45,7 @@ const BlogPage: NextPage<BlogPageProps> = ({ allBlogs }) => {
     if (typeof window === 'undefined' || !isProd) return
     ;(async () => {
       try {
-        await axios.get(`https://rizkicitra.dev/api/revalidate?slug=/blog&secret=${SECRET_KEY}`)
+        await axios.get(`https://ahnafnafee.dev/api/revalidate?slug=/blog&secret=${SECRET_KEY}`)
       } catch (err) {
         console.info('Could not revalidate')
       }
@@ -103,7 +103,7 @@ export const getStaticProps: GetStaticProps<BlogPageProps> = async () => {
       }
     }
 
-  const baseURL = isDev ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rizkicitra.dev'
+  const baseURL = isDev ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev'
 
   const blogs: Blog[] = []
 

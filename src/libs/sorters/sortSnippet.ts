@@ -1,4 +1,4 @@
-import type { Snippet } from 'rizkicitra'
+import type { Snippet } from 'me'
 
 /**
  * A function to sort snippets by latest created.

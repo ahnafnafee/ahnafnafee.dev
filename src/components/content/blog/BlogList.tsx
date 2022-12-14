@@ -1,6 +1,6 @@
 import { BlogItem } from './BlogItem'
 
-import type { Blog } from 'rizkicitra'
+import type { Blog } from 'me'
 
 type BlogListProps = {
   posts: Blog[]

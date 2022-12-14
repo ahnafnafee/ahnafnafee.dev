@@ -25,7 +25,7 @@ export default class CustomDocument extends Document {
               // please change to your data website id
               data-website-id='6daf05f5-92d2-430f-9cdd-1801014260da'
               // change to your hosted umami app
-              src='https://umami.rizkicitra.dev/umami.js'
+              src='https://umami.ahnafnafee.dev/umami.js'
             />
           )}
         </Head>

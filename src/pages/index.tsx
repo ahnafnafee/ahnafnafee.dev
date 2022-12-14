@@ -11,7 +11,7 @@ import { getNewestBlog, getNewestPortfolio } from '@/libs/sorters'
 
 import type { GetStaticProps, NextPage } from 'next'
 import readingTime from 'reading-time'
-import type { Blog, Portfolio } from 'rizkicitra'
+import type { Blog, Portfolio } from 'me'
 
 interface HomePageProps {
   blogs: Array<Blog>
@@ -20,12 +20,12 @@ interface HomePageProps {
 
 const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
   const meta = getMetaPage({
-    title: 'Rizki Maulana Citra',
+    title: 'Ahnaf An Nafee',
     template: 'Student And Frontend Developer',
     description: `Personal Website, Online Portfolio And Blog, Built On Top Of NEXT.js, An Online Space For Rizki To Share His Knowledge And Experience.`,
-    keywords: ['Rizki Maulana Citra', 'Rizki M Citra', 'Rizkicitra', 'Rizki Citra', 'rizkicitra.dev'],
+    keywords: ['Ahnaf An Nafee', 'Ahnaf An Nafee', 'ahnafnafee', 'Ahnaf An Nafee', 'ahnafnafee.dev'],
     og_image: `https://ik.imagekit.io/mlnzyx/tr:w-${712},h-${712},tr:bl-10,f-auto/attachment/profile.webp?updatedAt=1657210611675`,
-    og_image_alt: 'Rizki Maulana Citra',
+    og_image_alt: 'Ahnaf An Nafee',
     slug: '/',
     type: 'website'
   })
@@ -40,11 +40,11 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
           <div className='relative flex h-14 md:h-16'>
             <ContentImage
               src='https://ik.imagekit.io/mlnzyx/attachment/tr:w-720,h-720,f-auto/rizkimcitra.webp'
-              alt='Rizki Maulana Citra'
+              alt='Ahnaf An Nafee'
               width={128}
               height={128}
               className='rounded-full absolute -left-1 bottom-1 border-4 cursor-pointer border-theme-100 dark:border-theme-800'
-              title="Rizki Citra's Face"
+              title="Ahnaf An Nafee's Face"
               quality={100}
               priority
             />
@@ -52,14 +52,14 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
           </div>
 
           <div className='mt-3 md:mt-6'>
-            <h1>Rizki Maulana Citra</h1>
+            <h1>Ahnaf An Nafee</h1>
             <h2 className='max-w-max mt-1.5 md:mt-2.5 mb-6 md:mb-8 text-transparent font-bold text-xl md:text-2xl bg-clip-text bg-gradient-to-r  from-primary-500 to-ternary-500 dark:text-transparent'>
               Student &amp; Frontend Developer
             </h2>
 
             <div className='[&>p:not(:last-child)]:mb-3 [&>p]:max-w-prose md:pb-6'>
               <p>
-                Hello👋, I&apos;m Rizki Maulana Citra, a guy who loves to code, music and coffee. Welcome to my personal
+                Hello👋, I&apos;m Ahnaf An Nafee, a guy who loves to code, music and coffee. Welcome to my personal
                 website, where you can find my portfolio, blog and more.
               </p>
 

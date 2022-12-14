@@ -15,7 +15,7 @@ import { useTags } from '@/hooks'
 
 import type { GetStaticProps, NextPage } from 'next'
 import readingTime from 'reading-time'
-import type { Blog } from 'rizkicitra'
+import type { Blog } from 'me'
 
 type TagsProps = {
   tags: string[]
@@ -25,9 +25,9 @@ type TagsProps = {
 const meta = getMetaPage({
   title: 'Tags',
   description: 'Look for a specific blog post based on tag.',
-  keywords: ['Tags', 'tag', 'tags', 'rizkicitra.dev'],
+  keywords: ['Tags', 'tag', 'tags', 'ahnafnafee.dev'],
   og_image: generateOgImage({ title: 'Tags', subTitle: 'Look for a specific blog post based on tag.', theme: 'dark' }),
-  og_image_alt: 'Certificate — rizkicitra.dev',
+  og_image_alt: 'Certificate — ahnafnafee.dev',
   slug: '/tags',
   type: 'website'
 })

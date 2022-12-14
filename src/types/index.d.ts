@@ -1,5 +1,5 @@
-declare module 'rizkicitra' {
-  /** Type used for blog post or meta data for blog */
+declare module 'me' {
+  /** Type used for blog post or metadata for blog */
   export type Blog = {
     title: string
     slug: string

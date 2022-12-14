@@ -1,7 +1,7 @@
 import { toLowerCase } from '@/libs/string'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Snippet } from 'rizkicitra'
+import { Snippet } from 'me'
 
 export const useSearchSnippet = (snippets: Snippet[]) => {
   const [query, setQ] = useState('')
