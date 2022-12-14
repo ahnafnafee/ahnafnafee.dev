@@ -11,6 +11,7 @@ import { dateFormat, dateStringToISO } from '@/libs/intl'
 import { getMetaPage } from '@/libs/metapage'
 import { twclsx } from '@/libs/twclsx'
 
+import type { Portfolio } from 'me'
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import { MDXRemote } from 'next-mdx-remote'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
@@ -18,7 +19,6 @@ import { serialize } from 'next-mdx-remote/serialize'
 import type { ParsedUrlQuery } from 'querystring'
 import { HiOutlineCalendar } from 'react-icons/hi'
 import rehypeSlug from 'rehype-slug'
-import type { Portfolio } from 'me'
 
 type ProjectDetailPageProps = {
   header: Portfolio

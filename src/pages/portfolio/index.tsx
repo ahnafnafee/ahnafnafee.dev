@@ -13,8 +13,8 @@ import { twclsx } from '@/libs/twclsx'
 
 import { useSearchPortfolio } from '@/hooks'
 
-import type { GetStaticProps, NextPage } from 'next'
 import type { Portfolio } from 'me'
+import type { GetStaticProps, NextPage } from 'next'
 
 type PortfoliopageProps = {
   portfolio: Array<Portfolio>
@@ -23,11 +23,7 @@ type PortfoliopageProps = {
 const meta = getMetaPage({
   title: 'Portfolio',
   description: `A selection of my personal works. I've included samples to showcase my skills and experience. Take a look around and let me know what you think. I'm always open to feedback and opportunities to collaborate.`,
-  keywords: [
-    'ahnafnafee porfolio',
-    'Ahnaf An Nafee portfolio',
-    'ahnafnafee.dev'
-  ],
+  keywords: ['ahnafnafee porfolio', 'Ahnaf An Nafee portfolio', 'ahnafnafee.dev'],
   og_image: generateOgImage({ title: 'Portfolio - ahnafnafee.dev', subTitle: 'Take a look at my personal portfolio' }),
   og_image_alt: 'Portfolio — ahnafnafee.dev',
   slug: '/portfolio',

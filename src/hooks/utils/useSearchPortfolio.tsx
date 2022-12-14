@@ -1,7 +1,7 @@
 import { toLowerCase } from '@/libs/string'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
 import { Portfolio } from 'me'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const useSearchPortfolio = (portfolios: Portfolio[]) => {
   const [query, setQ] = useState('')

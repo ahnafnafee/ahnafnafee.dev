@@ -10,7 +10,7 @@ const APP_ROUTE = [
   {
     path: '/resume',
     name: 'Resume'
-  },
+  }
 ]
 
 export const ADDT_ROUTE = [
@@ -26,7 +26,6 @@ export const ADDT_ROUTE = [
   //   path: '/resume',
   //   name: 'Resume'
   // },
-
   // {
   //   path: '/certificate',
   //   name: 'Certificate'

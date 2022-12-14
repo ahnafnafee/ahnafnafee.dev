@@ -13,9 +13,9 @@ import { getNewestBlog } from '@/libs/sorters'
 
 import { useTags } from '@/hooks'
 
+import type { Blog } from 'me'
 import type { GetStaticProps, NextPage } from 'next'
 import readingTime from 'reading-time'
-import type { Blog } from 'me'
 
 type TagsProps = {
   tags: string[]

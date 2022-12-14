@@ -13,6 +13,7 @@ import { getMetaPageBlog } from '@/libs/metapage'
 import { twclsx } from '@/libs/twclsx'
 
 import axios from 'axios'
+import type { Blog, PageViewResponse } from 'me'
 import { GetStaticPaths, GetStaticPathsResult, GetStaticProps, NextPage } from 'next'
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { serialize } from 'next-mdx-remote/serialize'
@@ -21,7 +22,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { HiArrowUp } from 'react-icons/hi'
 import readingTime from 'reading-time'
 import rehypeSlug from 'rehype-slug'
-import type { Blog, PageViewResponse } from 'me'
 
 interface BlogPostProps {
   mdxSource: MDXRemoteSerializeResult

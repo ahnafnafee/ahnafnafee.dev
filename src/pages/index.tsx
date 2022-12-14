@@ -9,9 +9,9 @@ import { GetContents, getContents } from '@/services'
 import { getMetaPage } from '@/libs/metapage'
 import { getNewestBlog, getNewestPortfolio } from '@/libs/sorters'
 
+import type { Blog, Portfolio } from 'me'
 import type { GetStaticProps, NextPage } from 'next'
 import readingTime from 'reading-time'
-import type { Blog, Portfolio } from 'me'
 
 interface HomePageProps {
   blogs: Array<Blog>
@@ -64,24 +64,25 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
               </p>
 
               <p>
-                As a <strong>skilled software developer</strong>, I have expertise in frontend and backend
-                technologies such as React Native, TypeScript, Spring Boot, and Node.js. I have implemented
-                DevOps pipelines and automated build and deployment processes, as well as managed
-                AWS cloud environments.
+                As a <strong>skilled software developer</strong>, I have expertise in frontend and backend technologies
+                such as React Native, TypeScript, Spring Boot, and Node.js. I have implemented DevOps pipelines and
+                automated build and deployment processes, as well as managed AWS cloud environments.
               </p>
 
               <p>
-                I am dedicated to creating <strong>user-friendly and scalable applications</strong> and have developed responsive,
-                <strong>reusable</strong> components and integrated third-party services and APIs. Additionally, I have experience
-                in game programming and development, including <strong>creating custom shaders and game managers</strong>.
+                I am dedicated to creating <strong>user-friendly and scalable applications</strong> and have developed
+                responsive,
+                <strong>reusable</strong> components and integrated third-party services and APIs. Additionally, I have
+                experience in game programming and development, including{' '}
+                <strong>creating custom shaders and game managers</strong>.
               </p>
 
               <p>
-                I&apos;m very interested with <strong>Software Engineering</strong>,{' '}
-                <strong>Cloud Engineering</strong>,{' '}<strong>AI/ML Engineering</strong>,{' '}
-                <strong>Game Programming</strong>,{' '}<strong>Graphical Shader Programming</strong>
-                and <strong>User Experience</strong>, and also interested in
-                mobile development with{' '}<strong>React Native</strong>.
+                I&apos;m very interested with <strong>Software Engineering</strong>, <strong>Cloud Engineering</strong>,{' '}
+                <strong>AI/ML Engineering</strong>, <strong>Game Programming</strong>,{' '}
+                <strong>Graphical Shader Programming</strong>
+                and <strong>User Experience</strong>, and also interested in mobile development with{' '}
+                <strong>React Native</strong>.
               </p>
             </div>
           </div>
@@ -92,7 +93,6 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
           title='Featured Portfolio'
           portfolios={portfolios}
         />
-
       </main>
 
       <Footer />

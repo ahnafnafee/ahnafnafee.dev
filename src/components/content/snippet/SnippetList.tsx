@@ -1,7 +1,7 @@
 import { SnippetItem } from './SnippetItem'
 
-import { useId } from 'react'
 import { Snippet } from 'me'
+import { useId } from 'react'
 
 type Props = {
   snippets: Snippet[]

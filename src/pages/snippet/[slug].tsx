@@ -9,6 +9,7 @@ import { getContentBySlug, getContents } from '@/services'
 import { twclsx } from '@/libs'
 import { generateOgImage, getMetaPage } from '@/libs/metapage'
 
+import type { Snippet } from 'me'
 import type { GetStaticPaths, GetStaticPathsResult, GetStaticProps, NextPage } from 'next'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { MDXRemote } from 'next-mdx-remote'
@@ -17,7 +18,6 @@ import type { ParsedUrlQuery } from 'querystring'
 import { useMemo } from 'react'
 import readingTime from 'reading-time'
 import rehypeSlug from 'rehype-slug'
-import type { Snippet } from 'me'
 
 type SnippetPostProps = {
   header: Snippet

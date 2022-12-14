@@ -11,8 +11,8 @@ import { getNewestSnippet } from '@/libs/sorters'
 
 import { useSearchSnippet } from '@/hooks'
 
-import type { GetStaticProps, NextPage } from 'next'
 import type { Snippet } from 'me'
+import type { GetStaticProps, NextPage } from 'next'
 
 type SnippetProps = {
   snippets: Array<Snippet>
