@@ -1,8 +1,8 @@
 {
-  "name": "rizkicitra",
+  "name": "ahnafnafee",
   "version": "1.0.0",
   "private": true,
-  "description": "My Personal Website, build with React, Next.js, MDX and Tailwind CSS",
+  "description": "Portfolio, built with React, Next.js, MDX and Tailwind CSS",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -68,14 +68,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rizkimcitra/rizkicitra.git"
+    "url": "git+https://github.com/ahnafnafee/ahnafnafee.dev.git"
   },
-  "author": "Rizki Maulana Citra",
+  "author": "Ahnaf An Nafee",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rizkimcitra/rizkicitra/issues"
+    "url": "https://github.com/ahnafnafee/ahnafnafee.dev/issues"
   },
-  "homepage": "https://github.com/rizkimcitra/rizkicitra#readme",
+  "homepage": "https://github.com/ahnafnafee/ahnafnafee.dev#readme",
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
