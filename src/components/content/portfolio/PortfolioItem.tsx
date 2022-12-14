@@ -30,7 +30,7 @@ export const PortfolioItem: React.FunctionComponent<Portfolio> = (props) => {
             {props.title}
           </UnstyledLink>
         </h3>
-        {props.stack.length > 0 && (
+        {(props.stack.length ?? 0) > 0 && (
           <div className='flex items-center space-x-2.5 mt-1.5 mb-3'>
             {props.stack.map((stack) => (
               <IconStack type={stack} key={stack} />

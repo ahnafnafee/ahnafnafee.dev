@@ -1,7 +1,6 @@
 import { CustomSeo } from '@/components'
 import { Footer, SocialHome } from '@/components/UI/common'
-import { UnderlineLink } from '@/components/UI/links'
-import { BlogList, ContentImage } from '@/components/content'
+import { ContentImage } from '@/components/content'
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 
 import { GetContents, getContents } from '@/services'

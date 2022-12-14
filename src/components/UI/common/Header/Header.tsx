@@ -14,7 +14,12 @@ import { useRouter } from 'next/router'
 export const Header: React.FunctionComponent = () => {
   const y = useWindowScrollY()
   const router = useRouter()
-  const exceptedPage = ['/404', '/resume', '/_error', '/_offline']
+  const exceptedPage = [
+    '/404',
+    '/_error',
+    // '/resume',
+    '/_offline'
+  ]
 
   if (exceptedPage.includes(router.pathname)) return null
 

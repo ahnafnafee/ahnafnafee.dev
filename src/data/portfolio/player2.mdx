@@ -1,0 +1,187 @@
+---
+title: 'Player 2'
+date: '12/01/2022'
+featured: true
+summary: "🔴🔵 Player 2 - The Gamer's Companion"
+image: 'https://ik.imagekit.io/8ieg70pvks/portfolio/player2_og.png?ik-sdk-version=javascript-1.4.3&updatedAt=1670987674672'
+stack: ['react-native', 'react', 'expo', 'next.js', 'kotlin', 'swift', 'typescript', 'aws', 'java', 'spring-boot', 'postgresql', 'github-action', 'android', 'ios']
+link: { github: 'https://github.com/ahnafnafee/Player2-Assets', live: 'https://player2app.com' }
+---
+
+## Overview
+
+Player 2 is designed to be the foremost gamer networking app and website for players across PC, console, and
+mobile platforms. Whether a gamer needs teammates to complete an immediate activity, wants to make new friends
+to game with, or would like to join or start a gaming community, the app is designed to help gamers find the
+community where they play best, no matter who they are. Player 2 offers a comprehensive solution for a gamer’s
+social networking and team-building needs with our proprietary compatibility matchmaking algorithm. Our platform
+also includes features to make new friends to play games with and join or start a gaming community.
+
+## Responsibilities
+
+- **Create and Implement** 6 new DevOps pipelines to deliver fast OTA application updates, backend build status,
+and Infrastructure as Code
+- **Spearhead** backend migration to Amazon Elastic Beanstalk for auto-scaling server instances, reducing application
+load and costs by 80%
+- **Automate** the build and deployment process with GitHub Actions and Maven and use Serverless Lambda functions for
+monitoring, eliminating 85% of manual work
+- **Manage** 100% of existing AWS Cloud environments, automation, monitoring metrics, disaster recovery/backups, and
+capacity planning
+- **Develop** a custom API layer to handle all CRUD transactions, and JWT token management and implemented interceptors
+to embed custom headers
+- **Translate** designs & wireframes into high-quality code and developed responsive, reusable, universal components
+following React workflows
+- **Engineer** Java service integration for STOMP WebSockets for in-app chat functionality
+- **Chart and Integrate** Third-Party services and OAuth services with 20+ RESTful endpoints to create a scalable,
+user-facing application and increase user engagement
+- **Reduced** performance bottlenecks in the custom chat service using Redux state management by 80%, making the
+user experience lag-free
+- **Designed and integrated** APIs that processed match data to power matchmaking recommendations for thousands of users
+- **Collaborated** in weekly meetings with stakeholders and the project team to ensure streamlined communication
+
+## Blog Links
+
+- [Dynasty 11 Studios Announces Foray into Social Networking with the Player 2 Platform for Gamers](https://markets.businessinsider.com/news/stocks/dynasty-11-studios-announces-foray-into-social-networking-with-the-player-2-platform-for-gamers-1031485933)
+
+## Code Snippets
+
+- [AuthContext](https://gist.github.com/ahnafnafee/0e0e29180e565c6f9a3bbd41fdbe9b28)
+
+> Auth Provider that auto refreshes auth tokens when they expire
+
+```typescript
+const dispatch = useAppDispatch();
+const { authState } = useAppSelector((state) => state.auth);
+
+// States
+const [loaded, setLoaded] = useState(false);
+
+// for multiple requests
+let isRefreshing = false;
+let failedQueue: any[] = [];
+const refreshTokenFunc: any = null;
+
+const processQueue = async (error: any, token = null) => {
+console.log("processQueue");
+failedQueue.forEach((prom) => {
+  if (error) {
+    prom.reject(error);
+  } else {
+    prom.resolve(token);
+  }
+});
+
+failedQueue = [];
+};
+
+const logout = async () => {
+console.log("Logout called!");
+
+dispatch(authActions.resetAuthState());
+
+dispatch(authThunks.signOut({}));
+dispatch(authActions.resetState());
+dispatch({ type: "LOGOUT", payload: undefined });
+};
+
+const loadJWT = useCallback(async () => {
+const jwt = await getJWTTokens();
+jwt && dispatch(authActions.setAuthState(jwt));
+setLoaded(true);
+}, []);
+
+useEffect(() => {
+if (!loaded) {
+  loadJWT();
+}
+}, [loaded]);
+
+axios.interceptors.request.use(
+async (config) => {
+  if (authState.authorizationToken && !config.headers!.Authorization) {
+    /*
+     * Does not add Bearer Token to auth URLs
+     */
+    if (!whitelistedPaths.some((path) => config.url?.includes(path))) {
+      config.headers!.Authorization =
+        "Bearer " + authState.authorizationToken;
+    }
+  }
+
+  return config;
+},
+async (error) => {
+  return Promise.reject(error);
+}
+);
+
+axios.interceptors.response.use(
+async (response) => {
+  return response;
+},
+async (error) => {
+  const originalRequest = error.config;
+
+  if (error.response.status === 401 && !originalRequest._retry) {
+    console.log("Failed Request", originalRequest);
+
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        if (
+          typeof originalRequest.url === "string" &&
+          originalRequest.url.includes("players/refresh")
+        ) {
+          console.log("players/refresh fail");
+          logout();
+        }
+        failedQueue.push({ resolve, reject });
+      })
+        .then((token) => {
+          originalRequest.headers["Authorization"] = "Bearer " + token;
+          return axios(originalRequest);
+        })
+        .catch((err) => {
+          return Promise.reject(err);
+        });
+    }
+
+    originalRequest._retry = true;
+    isRefreshing = true;
+
+    const jwt = await getJWTTokens();
+    if (jwt !== null) {
+      return new Promise((resolve, reject) => {
+        axios
+          .post<UserTokens>(`${config.api.baseUrl}/players/refresh`, {
+            tokens: { refreshToken: jwt?.refreshToken },
+          })
+          .then(async ({ data }) => {
+            dispatch(authActions.setAuthState(data));
+
+            originalRequest.headers["Authorization"] =
+              "Bearer " + data.authorizationToken;
+            processQueue(null, data.authorizationToken as any);
+            resolve(axios(originalRequest));
+          })
+          .catch((err) => {
+            logout();
+            processQueue(err, null);
+            reject(err);
+          })
+          .finally(() => {
+            isRefreshing = false;
+          });
+      });
+    }
+    return Promise.reject(new Error("No token found"));
+  }
+
+  return Promise.reject(error);
+}
+);
+```
+
+## Screenshots
+
+![Screenshot 1](https://ik.imagekit.io/8ieg70pvks/portfolio/player2_ss_01.png?ik-sdk-version=javascript-1.4.3)
+![Screenshot 2](https://ik.imagekit.io/8ieg70pvks/portfolio/player2_ss_02.png?ik-sdk-version=javascript-1.4.3)

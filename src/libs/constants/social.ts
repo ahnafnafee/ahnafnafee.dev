@@ -10,6 +10,18 @@ const SOCIAL = [
   {
     title: 'GitHub',
     href: 'https://github.com/ahnafnafee'
+  },
+  {
+    title: 'Itch.io',
+    href: 'https://ahnafnafee.itch.io/'
+  },
+  {
+    title: 'ArtStation',
+    href: 'https://www.artstation.com/ahnafnafee'
+  },
+  {
+    title: 'Behance',
+    href: 'https://www.behance.net/ahnafannafee'
   }
 ]
 
