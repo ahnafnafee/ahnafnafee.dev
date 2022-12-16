@@ -5,5 +5,6 @@ module.exports = {
   robotsTxtOptions: {
     policies: [{ userAgent: '*', allow: '/' }]
   },
-  sitemapSize: 6000
+  generateIndexSitemap: false,
+  sitemapSize: 10000
 }
