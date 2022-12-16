@@ -45,6 +45,5 @@ temp
 **/public/fallback-*.js
 
 **/public/*.xml
-**/public/robots.txt
 
 .idea/**

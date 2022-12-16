@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://www.ahnafnafee.dev
+
+# Sitemaps
+Sitemap: https://www.ahnafnafee.dev/sitemap.xml
