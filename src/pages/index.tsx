@@ -8,8 +8,6 @@ import { GetContents, getContents } from '@/services'
 import { getMetaPage } from '@/libs/metapage'
 import { getNewestBlog, getNewestPortfolio } from '@/libs/sorters'
 
-import { useMediaQuery } from '@/hooks'
-
 import type { Blog, Portfolio } from 'me'
 import type { GetStaticProps, NextPage } from 'next'
 import readingTime from 'reading-time'
@@ -20,8 +18,6 @@ interface HomePageProps {
 }
 
 const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
-  const mdscreen = useMediaQuery('(min-width: 768px)')
-
   const meta = getMetaPage({
     title: 'Ahnaf An Nafee',
     template: 'Software Engineer',
@@ -36,8 +32,6 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
   return (
     <>
       <CustomSeo {...meta} />
-
-      {/*<div className='w-full h-40 md:layout pattern' />*/}
 
       <main className='layout'>
         <section className='flex flex-col'>
