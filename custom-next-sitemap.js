@@ -1,9 +1,9 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://ahnafnafee.dev',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev',
   generateRobotsTxt: true,
   robotsTxtOptions: {
     policies: [{ userAgent: '*', allow: '/' }]
   },
-  sitemapSize: 10000
+  sitemapSize: 6000
 }

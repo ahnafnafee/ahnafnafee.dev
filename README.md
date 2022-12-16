@@ -14,7 +14,7 @@
   </p>
 </a>
 
-### 💻 Technology Stack
+### ✨ Technology Stack
 
 - **React**
 - **Next.js**
@@ -29,12 +29,27 @@
   - `next-seo`
   - `next-mdx-remote`
 
-## 🛠 Development
+## ⚡ Development
 
 Clone the repository
 
 ```zsh
 git clone https://github.com/ahnafnafee/ahnafnafee.dev.git
+```
+
+Create a `.env.development.local` file the in root directory.
+Check out `.env.example` for the format.
+
+```zsh
+NEXT_PUBLIC_TWITTER_USERNAME=@ahnaf_nafee
+NEXT_PUBLIC_SITE_NAME="Ahnaf An Nafee"
+NEXT_PUBLIC_SITE_URL="https://localhost:3000"
+```
+
+Install the following packages
+
+```zsh
+npm install -g rimraf env-cmd
 ```
 
 Install dependencies
