@@ -15,6 +15,9 @@ declare module 'me' {
     est_read?: string
     displayViews?: boolean
   }
+
+  type CategoryTypes = 'software' | 'game'
+
   /** Type used for portfolio or meta data for portfolio */
   export type Portfolio = {
     title: string
@@ -28,7 +31,7 @@ declare module 'me' {
       github: string
       live: string
     }
-    category?: 'software' | 'game'
+    category?: CategoryTypes
   }
   /** Type used for snippet or meta data for snippet */
   export type Snippet = {
@@ -100,5 +103,10 @@ declare module 'me' {
   export type PageViewResponse = {
     message: string
     view: number | null
+  }
+
+  export type Category = {
+    label?: CategoryTypes
+    className?: string | undefined
   }
 }

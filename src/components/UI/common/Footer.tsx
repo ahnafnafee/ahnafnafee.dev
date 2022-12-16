@@ -1,9 +1,8 @@
+import { FooterSocialHome } from '@/UI/common/FooterSocialHome'
 import { UnstyledLink } from '@/UI/links'
 
-import APP_ROUTE, { ADDT_ROUTE } from '@/libs/constants/route'
+import APP_ROUTE from '@/libs/constants/route'
 import { twclsx } from '@/libs/twclsx'
-
-import { SocialHome } from './SocialHome'
 
 import { useRouter } from 'next/router'
 
@@ -16,36 +15,29 @@ export const Footer: React.FunctionComponent = () => {
   }
 
   return (
-    <footer className={twclsx('layout', 'py-4 mt-5', 'border-t', 'border-theme-300 dark:border-theme-700')}>
-      <div className='w-full flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 md:justify-between'>
-        <div className='flex flex-col md:flex-row space-y-3 md:space-x-3 md:space-y-0 w-full md:max-w-max'>
+    <footer className={twclsx('layout', 'py-4 mt-5')}>
+      <hr className='w-full border-1 border-gray-200 dark:border-gray-800 mb-8' />
+      <div className='w-full max-w-2xl grid grid-cols-3 gap-4 pb-16'>
+        <div className='flex flex-col space-y-4'>
+          <p className={'font-bold text-sm'}>ME</p>
           {APP_ROUTE.map((route) => (
             <UnstyledLink
               href={route.path}
               key={`footer-${route.path}`}
-              className='text-sm font-medium md:max-w-max border-b border-dashed border-transparent hover:border-b-theme-500 text-theme-500 dark:text-theme-400'
+              className='text-sm font-medium max-w-max border-b border-dashed border-transparent hover:border-b-theme-500 text-gray-400 hover:text-gray-600'
             >
               {route.name}
             </UnstyledLink>
           ))}
         </div>
-
-        <div className='flex flex-col md:flex-row space-y-3 md:space-x-3 md:space-y-0 w-full md:max-w-max'>
-          {/*{ADDT_ROUTE.map((route) => (*/}
-          {/*  <UnstyledLink*/}
-          {/*    href={route.path}*/}
-          {/*    key={`footer-${route.path}`}*/}
-          {/*    className='text-sm font-medium md:max-w-max border-b border-dashed border-transparent hover:border-b-theme-500 text-theme-500 dark:text-theme-400'*/}
-          {/*  >*/}
-          {/*    {route.name}*/}
-          {/*  </UnstyledLink>*/}
-          {/*))}*/}
-        </div>
+        {/*Empty Column*/}
+        <div></div>
+        <FooterSocialHome />
       </div>
-
-      <div className='mt-4 max-w-max'>
-        <SocialHome />
-      </div>
+      <hr className='w-full border-1 border-gray-200 dark:border-gray-800 mb-4' />
+      <p className={'my-8 text-sm dark:text-gray-500 text-gray-600 text-center'}>
+        {` © ${new Date().getFullYear()} - All Rights Reserved`}
+      </p>
     </footer>
   )
 }

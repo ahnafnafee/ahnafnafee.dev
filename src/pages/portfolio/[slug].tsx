@@ -7,7 +7,6 @@ import type { LayoutPageProps } from '@/UI/templates'
 
 import { getContentBySlug, getContents } from '@/services'
 
-import { dateFormat, dateStringToISO } from '@/libs/intl'
 import { getMetaPage } from '@/libs/metapage'
 import { twclsx } from '@/libs/twclsx'
 
@@ -17,7 +16,6 @@ import { MDXRemote } from 'next-mdx-remote'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import { serialize } from 'next-mdx-remote/serialize'
 import type { ParsedUrlQuery } from 'querystring'
-import { HiOutlineCalendar } from 'react-icons/hi'
 import rehypeSlug from 'rehype-slug'
 
 type ProjectDetailPageProps = {
@@ -43,28 +41,26 @@ const ProjectDetailPage: NextPage<ProjectDetailPageProps> = ({ header, mdxSource
         <HeadingPortfolio {...header} />
 
         <section className={twclsx('flex flex-col gap-4', 'md:flex-row md:items-center md:justify-between')}>
-          <div className={twclsx('flex items-center gap-3 flex-wrap flex-shrink', 'w-full')}>
+          <div className={twclsx('flex items-center gap-4 flex-wrap flex-shrink', 'w-full')}>
             {header.stack.map((s) => (
-              <span className={twclsx('text-2xl')} key={s}>
+              <span className={'flex flex-row items-center gap-2 cursor-pointer'} key={s}>
                 <IconStack type={s} />
+                <p className={'uppercase text-xs font-medium'}>{s}</p>
               </span>
             ))}
           </div>
-
-          <div className={twclsx('flex items-center justify-start', 'w-full gap-2', 'md:text-right md:justify-end')}>
-            <HiOutlineCalendar className={twclsx('text-lg')} />
-            <time className={twclsx('text-sm md:text-base')} dateTime={dateStringToISO(header.date)}>
-              {dateFormat(header.date, undefined, { dateStyle: 'medium' })}
-            </time>
-          </div>
         </section>
+
+        <p className={'w-full mt-4 font-medium text-gray-600 dark:text-gray-400 italic text-center'}>
+          {header.summary}
+        </p>
 
         <WrappedImage
           title={header.title}
           alt={header.title}
           src={header.image}
           parentStyle='w-full h-56 sm:h-72 md:h-96 my-4'
-          className='object-cover rounded-md'
+          className='object-cover rounded-lg'
           priority
           fill
         />

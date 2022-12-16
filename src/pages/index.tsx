@@ -8,17 +8,20 @@ import { GetContents, getContents } from '@/services'
 import { getMetaPage } from '@/libs/metapage'
 import { getNewestBlog, getNewestPortfolio } from '@/libs/sorters'
 
+import { useMediaQuery } from '@/hooks'
+
 import type { Blog, Portfolio } from 'me'
 import type { GetStaticProps, NextPage } from 'next'
 import readingTime from 'reading-time'
 
 interface HomePageProps {
   blogs: Array<Blog>
-  softwarePortfolios: Array<Portfolio>
-  gamePortfolios: Array<Portfolio>
+  portfolios: Array<Portfolio>
 }
 
-const HomePage: NextPage<HomePageProps> = ({ blogs, softwarePortfolios, gamePortfolios }) => {
+const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
+  const mdscreen = useMediaQuery('(min-width: 768px)')
+
   const meta = getMetaPage({
     title: 'Ahnaf An Nafee',
     template: 'Software Engineer',
@@ -29,75 +32,48 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, softwarePortfolios, gamePort
     slug: '/',
     type: 'website'
   })
+
   return (
     <>
       <CustomSeo {...meta} />
 
-      <div className='w-full h-40 md:layout pattern' />
+      {/*<div className='w-full h-40 md:layout pattern' />*/}
 
       <main className='layout'>
         <section className='flex flex-col'>
-          <div className='relative flex h-14 md:h-16'>
-            <ContentImage
-              src='https://ik.imagekit.io/8ieg70pvks/tr:w-720,h-720,f-auto/profile'
-              alt='Ahnaf An Nafee'
-              width={128}
-              height={128}
-              className='rounded-full absolute -left-1 bottom-1 border-4 cursor-pointer border-theme-100 dark:border-theme-800'
-              title="Ahnaf An Nafee's Profile Picture"
-              quality={100}
-              priority
-            />
-            <SocialHome className='ml-auto max-x-auto flex-shrink flex-wrap self-end justify-end' />
-          </div>
-
-          <div className='mt-3 md:mt-6'>
-            <h1>Ahnaf An Nafee</h1>
-            <h2 className='max-w-max mt-1.5 md:mt-2.5 mb-6 md:mb-8 text-transparent font-bold text-xl md:text-2xl bg-clip-text bg-gradient-to-r  from-primary-500 to-ternary-500 dark:text-transparent'>
-              Software Engineer
-            </h2>
-
-            <div className='[&>p:not(:last-child)]:mb-3 [&>p]:max-w-prose md:pb-6'>
-              <p>
-                Hello👋, I&apos;m Ahnaf An Nafee, a guy who loves to code and is passionate about game development.
-                Welcome to my personal website, where you can find my portfolio, blog and more.
+          <div className='flex flex-col-reverse sm:flex-row items-start mt-3 md:mt-6'>
+            <div className='flex flex-col pr-8'>
+              <h1 className='font-bold text-3xl md:text-5xl tracking-tight mb-1 text-black dark:text-white'>
+                Ahnaf An Nafee
+              </h1>
+              <h2 className='text-base text-gray-700 dark:text-gray-200 mb-4'>
+                Software Engineer at <span className='font-semibold'>Dynasty 11 Studios</span>
+              </h2>
+              <p className='text-gray-600 dark:text-gray-400'>
+                Hello👋, I&apos;m Ahnaf An Nafee, a guy who loves to code and is passionate about game development!
               </p>
-
-              {/*<p>*/}
-              {/*  As a <strong>skilled software developer</strong>, I have expertise in frontend and backend technologies*/}
-              {/*  such as React Native, TypeScript, Spring Boot, and Node.js. I have implemented DevOps pipelines and*/}
-              {/*  automated build and deployment processes, as well as managed AWS cloud environments.*/}
-              {/*</p>*/}
-
-              {/*<p>*/}
-              {/*  I am dedicated to creating <strong>user-friendly and scalable applications</strong> and have developed*/}
-              {/*  responsive,*/}
-              {/*  <strong>reusable</strong> components and integrated third-party services and APIs. Additionally, I have*/}
-              {/*  experience in game programming and development, including{' '}*/}
-              {/*  <strong>creating custom shaders and game managers</strong>.*/}
-              {/*</p>*/}
-
-              <p>
-                I&apos;m very interested with <strong>Software Engineering</strong>, <strong>Cloud Engineering</strong>,{' '}
-                <strong>AI/ML Engineering</strong>, <strong>Game Programming</strong>,{' '}
-                <strong>Graphical Shader Programming</strong>
-                and <strong>User Experience</strong>, and also interested in mobile development with{' '}
-                <strong>React Native</strong>.
-              </p>
+              <SocialHome className='flex-shrink flex-wrap self-start gap-3 mt-4 mb-8' />
+            </div>
+            <div className='w-[100px] sm:w-[176px] relative mb-8 sm:mb-0 mr-auto'>
+              <ContentImage
+                src='https://ik.imagekit.io/8ieg70pvks/tr:w-720,h-720,f-auto/profile'
+                alt='Ahnaf An Nafee'
+                width={176}
+                height={176}
+                className='rounded-full bottom-1 border-4 cursor-pointer border-theme-100 dark:border-theme-800'
+                title="Ahnaf An Nafee's Profile Picture"
+                quality={100}
+                sizes='30vw'
+                priority
+              />
             </div>
           </div>
         </section>
 
         <PortfolioList
-          description='Check out my featured software portfolio, feel free to explore it.'
-          title='Featured Software Portfolio'
-          portfolios={softwarePortfolios}
-        />
-
-        <PortfolioList
-          description='Check out my featured game portfolio, feel free to explore it.'
-          title='Featured Game Portfolio'
-          portfolios={gamePortfolios}
+          description={`Check out my featured portfolio. View all my works <a href="/portfolio">here</a>!`}
+          title='Featured Portfolio'
+          portfolios={portfolios}
         />
       </main>
 
@@ -132,26 +108,15 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
     .map((r) => ({ est_read: readingTime(r.content).text, ...r.header }))
     .sort(getNewestBlog)
 
-  // const portfolios = portfoliosData
-  //   .map((p) => p.header)
-  //   .filter((f) => f.featured)
-  //   .sort(getNewestPortfolio)
-
-  const softwarePortfolios = portfoliosData
+  const portfolios = portfoliosData
     .map((p) => p.header)
-    .filter((f) => f.featured && f.category === 'software')
-    .sort(getNewestPortfolio)
-
-  const gamePortfolios = portfoliosData
-    .map((p) => p.header)
-    .filter((f) => f.featured && f.category === 'game')
+    .filter((f) => f.featured)
     .sort(getNewestPortfolio)
 
   return {
     props: {
       blogs,
-      softwarePortfolios,
-      gamePortfolios
+      portfolios
     }
   }
 }

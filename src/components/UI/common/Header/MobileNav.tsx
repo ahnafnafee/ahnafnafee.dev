@@ -51,7 +51,7 @@ export const MobileNav: React.FunctionComponent = () => {
           as='div'
           className={twclsx(
             'absolute top-11 md:top-14',
-            'w-40 right-0 p-1.5',
+            'w-40 left-0 p-1.5',
             'rounded origin-top-right shadow-lg',
             'ring-1 focus:outline-none',
             'ring-black/5 bg-white',

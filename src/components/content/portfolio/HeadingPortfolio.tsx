@@ -1,7 +1,11 @@
-import { UnderlineLink } from '@/components/UI/links'
+import { UnstyledLink } from '@/components/UI/links'
+import { CategoryLabel } from '@/components/content/portfolio/CategoryLabel'
 
 import { twclsx } from '@/libs'
 
+import { format } from 'date-fns'
+import { CategoryTypes } from 'me'
+import NextImage from 'next/image'
 import { HiGlobeAlt } from 'react-icons/hi'
 import { SiGithub } from 'react-icons/si'
 
@@ -9,36 +13,73 @@ type HeadingPortfolioProps = {
   title: string
   summary: string
   link: { github: string; live: string }
+  category?: CategoryTypes
+  date: string
 }
 
 export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = (props) => {
   return (
-    <section className={twclsx('pb-8')}>
-      <h1 className={twclsx('max-w-prose text-3xl md:text-5xl')}>
+    <section className={twclsx('pb-2')}>
+      <CategoryLabel label={props.category} className={'my-2'} />
+      <h1 className={twclsx('mb-4 text-3xl font-bold tracking-tight text-black md:text-5xl dark:text-white')}>
         {props.title.split('').map((c, i) => (
           <span key={i}>{c}</span>
         ))}
       </h1>
-      <p className={twclsx('w-full my-8')}>{props.summary}</p>
+      {/*<p className={twclsx('w-full my-8 font-medium text-gray-600 dark:text-gray-400 italic')}>{props.summary}</p>*/}
 
-      <div className={twclsx('flex items-center', 'gap-4')}>
-        <UnderlineLink
-          href={props.link.github}
-          className={twclsx('max-w-max', 'gap-2 py-1', 'text-theme-700 dark:text-theme-200')}
-        >
-          <SiGithub className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
-          <span className={twclsx('text-sm md:text-base')}>Repository</span>
-        </UnderlineLink>
+      <div className={twclsx('flex flex-col items-start justify-between w-full mt-2 md:flex-row md:items-center')}>
+        <div className='flex items-center'>
+          <NextImage
+            src='https://ik.imagekit.io/8ieg70pvks/tr:w-720,h-720,f-auto/profile'
+            alt='Ahnaf An Nafee'
+            height={24}
+            width={24}
+            sizes='20vw'
+            className='rounded-full'
+          />
+          <p className='ml-2 text-sm text-gray-700 dark:text-gray-300'>
+            {'Ahnaf An Nafee / '}
+            {format(new Date(props.date), 'MMMM dd, yyyy')}
+          </p>
+        </div>
 
-        {props.link.live && (
-          <UnderlineLink href={props.link.live} className='max-w-max gap-2 py-1 text-theme-700 dark:text-theme-200'>
-            <HiGlobeAlt className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
-            <span className={twclsx('text-sm md:text-base')}>Live Demo</span>
-          </UnderlineLink>
-        )}
+        <div className={'flex items-center justify-end gap-2 mt-4 md:mt-0'}>
+          {props.link.github && (
+            <UnstyledLink
+              href={props.link.github}
+              className={twclsx(
+                'flex items-center justify-start gap-1 max-w-max',
+                'gap-2 py-1',
+                'text-theme-700 dark:text-theme-200',
+                'relative inline-flex items-center',
+                'text-primary-700 dark:text-primary-400 font-semibold'
+              )}
+            >
+              <SiGithub className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
+              <span className={twclsx('text-sm md:text-base')}>Repository</span>
+            </UnstyledLink>
+          )}
+
+          {props.link.live && (
+            <UnstyledLink
+              href={props.link.live}
+              className={twclsx(
+                'flex items-center justify-start gap-1 max-w-max',
+                'gap-2 py-1',
+                'text-theme-700 dark:text-theme-200',
+                'relative inline-flex items-center',
+                'text-primary-700 dark:text-primary-400 font-semibold'
+              )}
+            >
+              <HiGlobeAlt className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
+              <span className={twclsx('text-sm md:text-base')}>Live Demo</span>
+            </UnstyledLink>
+          )}
+        </div>
       </div>
 
-      <hr className={twclsx('mt-8 border-theme-300 dark:border-theme-700')} />
+      <hr className='w-full border-1 border-gray-200 dark:border-gray-800 mb-2 mt-8' />
     </section>
   )
 }

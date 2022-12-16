@@ -6,19 +6,6 @@ import { useTheme } from '@/hooks'
 
 import { Spinner } from '../Spinner'
 
-import { Menu, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
-import { HiCheck, HiDesktopComputer, HiOutlineMoon as Moon, HiOutlineSun as Sun } from 'react-icons/hi'
-import type { IconType } from 'react-icons/lib'
-
-type ThemeMenu = { value: string; name: string; icon: IconType }
-
-const menu: ThemeMenu[] = [
-  { name: 'System', icon: HiDesktopComputer, value: 'system' },
-  { name: 'Dark', icon: Moon, value: 'dark' },
-  { name: 'Light', icon: Sun, value: 'light' }
-]
-
 export const ThemeMenu: React.FunctionComponent = () => {
   const { theme, systemTheme, changeTheme, mounted } = useTheme()
 
@@ -39,67 +26,41 @@ export const ThemeMenu: React.FunctionComponent = () => {
   }
 
   return (
-    <Menu as='div' className='relative z-40'>
-      <Menu.Button
-        title='Theme menu button'
-        className={twclsx(
-          'inline-flex items-center justify-center',
-          'w-9 h-9 md:w-10 md:h-10 rounded',
-          'bg-primary-100 dark:bg-theme-700'
-        )}
-      >
-        {(theme === 'dark' || (theme === 'system' && systemTheme === 'dark')) && (
-          <Moon className={twclsx('w-4 h-4 md:w-5 md:h-5', 'text-white')} />
-        )}
-        {(theme === 'light' || (theme === 'system' && systemTheme === 'light')) && (
-          <Sun className={twclsx('w-4 h-4 md:w-5 md:h-5', 'text-primary-700')} />
-        )}
-        <span className='sr-only'>Click to see option to switch theme</span>
-      </Menu.Button>
-
-      <Transition
-        as={Fragment}
-        enter='transition ease-out duration-100'
-        enterFrom='transform opacity-0 scale-95'
-        enterTo='transform opacity-100 scale-100'
-        leave='transition ease-in duration-75'
-        leaveFrom='transform opacity-100 scale-100'
-        leaveTo='transform opacity-0 scale-95'
-      >
-        <Menu.Items
-          as='div'
-          className={twclsx(
-            'absolute top-11 md:top-12',
-            'w-40 right-0 p-1.5',
-            'rounded-md origin-top-right shadow-lg',
-            'ring-1 focus:outline-none',
-            'ring-black/5 bg-white',
-            'dark:shadow-none dark:bg-theme-700'
-          )}
+    <button
+      aria-label='Toggle Dark Mode'
+      type='button'
+      className={twclsx(
+        'inline-flex items-center justify-center',
+        'w-9 h-9 md:w-10 md:h-10 rounded',
+        'bg-primary-100 dark:bg-theme-700'
+      )}
+      onClick={changeTheme(theme === 'dark' ? 'light' : 'dark')}
+    >
+      {mounted && (
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          viewBox='0 0 24 24'
+          fill='none'
+          stroke='currentColor'
+          className='w-5 h-5 text-gray-800 dark:text-gray-200'
         >
-          <ul className='flex flex-col w-full'>
-            {menu.map((item) => {
-              return (
-                <Menu.Item as='li' key={item.value} onClick={changeTheme(item.value)}>
-                  {({ active }) => (
-                    <UnstyledButton
-                      className={twclsx(
-                        'justify-start px-1.5 h-9 md:h-10 space-x-2.5 w-full',
-                        'rounded transition dark:text-white',
-                        active && 'bg-primary-500 text-white'
-                      )}
-                    >
-                      <item.icon className='w-4 h-4 md:w-5 md:h-5' />
-                      <span className='text-xs md:text-sm'>{item.name}</span>
-                      {theme === item.value && <HiCheck className='w-3 h-3' />}
-                    </UnstyledButton>
-                  )}
-                </Menu.Item>
-              )
-            })}
-          </ul>
-        </Menu.Items>
-      </Transition>
-    </Menu>
+          {theme === 'dark' || (theme === 'system' && systemTheme === 'dark') ? (
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z'
+            />
+          ) : (
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z'
+            />
+          )}
+        </svg>
+      )}
+    </button>
   )
 }

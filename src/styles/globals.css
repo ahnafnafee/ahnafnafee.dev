@@ -37,11 +37,19 @@
   }
 
   body {
-    @apply bg-theme-50 font-primary text-theme-700 antialiased dark:bg-theme-900 dark:text-theme-200;
+    @apply bg-theme-50 font-primary text-theme-700 antialiased dark:bg-gray-900 dark:text-theme-200;
+  }
+
+  li {
+    @apply text-base leading-7;
+  }
+
+  p {
+    @apply text-base leading-7 text-black dark:text-white;
   }
 
   html.dark {
-    @apply brightness-[0.98];
+    @apply brightness-[1.0];
   }
 
   :is(a, button) {
