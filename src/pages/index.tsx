@@ -6,18 +6,17 @@ import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 import { GetContents, getContents } from '@/services'
 
 import { getMetaPage } from '@/libs/metapage'
-import { getNewestBlog, getNewestPortfolio } from '@/libs/sorters'
+import { getNewestPortfolio } from '@/libs/sorters'
 
-import type { Blog, Portfolio } from 'me'
+import type { Portfolio } from 'me'
 import type { GetStaticProps, NextPage } from 'next'
-import readingTime from 'reading-time'
 
 interface HomePageProps {
-  blogs: Array<Blog>
+  // blogs: Array<Blog>
   portfolios: Array<Portfolio>
 }
 
-const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
+const HomePage: NextPage<HomePageProps> = ({ portfolios }) => {
   const meta = getMetaPage({
     title: 'Ahnaf An Nafee',
     template: 'Software Engineer',
@@ -50,7 +49,7 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
             </div>
             <div className='w-[100px] sm:w-[176px] relative mb-8 sm:mb-0 mr-auto'>
               <ContentImage
-                src='https://ik.imagekit.io/8ieg70pvks/tr:w-720,h-720,f-auto/profile'
+                src='https://ik.imagekit.io/8ieg70pvks/profile?tr=w-400,h-400'
                 alt='Ahnaf An Nafee'
                 width={176}
                 height={176}
@@ -59,6 +58,8 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
                 quality={100}
                 sizes='30vw'
                 priority
+                placeholder='blur'
+                blurDataURL='https://ik.imagekit.io/8ieg70pvks/profile?tr=bl-6'
               />
             </div>
           </div>
@@ -77,30 +78,15 @@ const HomePage: NextPage<HomePageProps> = ({ blogs, portfolios }) => {
 }
 
 export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
-  const [requestBlogs, requestPortfolios] = await Promise.allSettled([
-    getContents<Blog>('/blog'),
-    getContents<Portfolio>('/portfolio')
-  ])
+  const [requestPortfolios] = await Promise.allSettled([getContents<Portfolio>('/portfolio')])
 
-  const blogsData = [] as Array<GetContents<Blog>>
   const portfoliosData = [] as Array<GetContents<Portfolio>>
-  // const portfoliosData = [] as Array<Portfolio>
 
-  if (requestBlogs.status === 'fulfilled') {
-    requestBlogs.value.forEach((blog) => {
-      blogsData.push(blog)
-    })
-  }
   if (requestPortfolios.status === 'fulfilled') {
     requestPortfolios.value.forEach((portfolio) => {
       portfoliosData.push(portfolio)
     })
   }
-
-  const blogs = blogsData
-    .filter((r) => r.header.featured)
-    .map((r) => ({ est_read: readingTime(r.content).text, ...r.header }))
-    .sort(getNewestBlog)
 
   const portfolios = portfoliosData
     .map((p) => p.header)
@@ -109,7 +95,6 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
 
   return {
     props: {
-      blogs,
       portfolios
     }
   }

@@ -49,7 +49,7 @@ NEXT_PUBLIC_SITE_URL="https://localhost:3000"
 Install the following packages
 
 ```zsh
-npm install -g rimraf env-cmd
+npm install -g rimraf env-cmd cross-env
 ```
 
 Install dependencies

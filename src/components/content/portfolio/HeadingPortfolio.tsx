@@ -31,7 +31,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
       <div className={twclsx('flex flex-col items-start justify-between w-full mt-2 md:flex-row md:items-center')}>
         <div className='flex items-center'>
           <NextImage
-            src='https://ik.imagekit.io/8ieg70pvks/tr:w-720,h-720,f-auto/profile'
+            src='https://ik.imagekit.io/8ieg70pvks/profile?tr=w-400,h-400'
             alt='Ahnaf An Nafee'
             height={24}
             width={24}

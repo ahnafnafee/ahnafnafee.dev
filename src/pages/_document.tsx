@@ -1,5 +1,4 @@
 import Document, { DocumentContext, DocumentInitialProps, Head, Html, Main, NextScript } from 'next/document'
-import Script from 'next/script'
 
 export default class CustomDocument extends Document {
   static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
@@ -10,25 +9,17 @@ export default class CustomDocument extends Document {
     return (
       <Html lang='en-US'>
         <Head>
-          <meta name='robots' content='follow, index' />
-          <meta name='theme-color' content='#18181b' />
           <link rel='preload' href='/fonts/inter-var-latin.woff2' as='font' type='font/woff2' crossOrigin='true' />
-          <link rel='apple-touch-icon' sizes='180x180' href='/icon-192.png' />
-          <link rel='shortcut icon' href='/favicon.svg' type='svg/x-icon' />
-          <link rel='icon' href='/favicon.svg' type='svg/x-icon' />
+          <link href='/static/favicons/favicon.ico' rel='shortcut icon' />
+          <link href='/static/favicons/apple-touch-icon.png' rel='apple-touch-icon' sizes='180x180' />
+          <link href='/static/favicons/favicon-32x32.png' rel='icon' sizes='32x32' type='image/png' />
+          <link href='/static/favicons/favicon-16x16.png' rel='icon' sizes='16x16' type='image/png' />
+          <link color='#18181b' href='/static/favicons/safari-pinned-tab.svg' rel='mask-icon' />
+          <meta content='#18181b' name='theme-color' />
+          <meta content='#18181b' name='msapplication-TileColor' />
+          <meta content='/static/favicons/browserconfig.xml' name='msapplication-config' />
+          <meta content='follow, index, max-snippet:-1, max-image-preview:large, max-video-preview:-1' name='robots' />
           <link rel='manifest' href='/manifest.json' />
-          {/*{process.env.NODE_ENV === 'production' && (*/}
-          {/*  <Script*/}
-          {/*    async*/}
-          {/*    defer*/}
-          {/*    strategy='afterInteractive'*/}
-          {/*    data-do-not-track='true'*/}
-          {/*    // please change to your data website id*/}
-          {/*    data-website-id='6daf05f5-92d2-430f-9cdd-1801014260da'*/}
-          {/*    // change to your hosted umami app*/}
-          {/*    src='https://umami.ahnafnafee.dev/umami.js'*/}
-          {/*  />*/}
-          {/*)}*/}
         </Head>
         <body>
           <Main />

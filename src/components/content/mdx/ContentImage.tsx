@@ -36,7 +36,7 @@ export const ContentImage = ({ src, alt, ...props }: ContentImageProps) => {
     <>
       <WrappedImage
         onClick={() => setIsOpen(true)}
-        src={src}
+        src={src + '&tr=w-768,h-468'}
         alt={alt}
         width={768}
         height={468}

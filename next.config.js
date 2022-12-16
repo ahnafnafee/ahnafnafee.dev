@@ -3,6 +3,10 @@
 const runtimeCaching = require('next-pwa/cache')
 const isDev = process.env.NODE_ENV === 'development'
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true'
+})
+
 const withPWA = require('next-pwa')({
   dest: 'public',
   skipWaiting: true, // installs new SW when available without a prompt, we only need to send a reload request to user.
@@ -39,6 +43,6 @@ const config = {
   compress: true
 }
 
-module.exports = withPWA(config)
+module.exports = withBundleAnalyzer(withPWA(config))
 
 // module.exports = config

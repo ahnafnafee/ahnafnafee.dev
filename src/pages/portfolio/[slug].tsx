@@ -27,7 +27,7 @@ const ProjectDetailPage: NextPage<ProjectDetailPageProps> = ({ header, mdxSource
   const metaData = getMetaPage({
     title: header.title,
     description: header.summary,
-    og_image: header.image,
+    og_image: header.image + '&tr=w-400',
     og_image_alt: header.title,
     keywords: header.stack,
     slug: '/portfolio/' + header.slug
@@ -58,7 +58,7 @@ const ProjectDetailPage: NextPage<ProjectDetailPageProps> = ({ header, mdxSource
         <WrappedImage
           title={header.title}
           alt={header.title}
-          src={header.image}
+          src={header.image + '&tr=w-700'}
           parentStyle='w-full h-56 sm:h-72 md:h-96 my-4'
           className='object-cover rounded-lg'
           priority

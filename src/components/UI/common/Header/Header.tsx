@@ -1,6 +1,3 @@
-// import { useWindowScrollPos } from '@/hook/useWindowScrollPos'
-import { UnstyledLink } from '@/UI/links'
-
 import { twclsx } from '@/libs'
 import APP_ROUTE from '@/libs/constants/route'
 
@@ -16,7 +13,7 @@ export const Header: React.FunctionComponent = () => {
   const y = useWindowScrollY()
   const router = useRouter()
   const exceptedPage = [
-    '/404',
+    // '/404',
     '/_error',
     // '/resume',
     '/_offline'

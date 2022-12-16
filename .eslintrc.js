@@ -4,7 +4,7 @@ module.exports = {
   rules: {
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['warn', { vars: 'all', args: 'after-used', ignoreRestSiblings: false }],
-    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-explicit-any': 'off',
     'prefer-const': 'warn',
     'import/no-duplicates': 'error',
     '@typescript-eslint/no-extra-semi': 'off'

@@ -21,11 +21,10 @@ export const PortfolioItem: React.FunctionComponent<Portfolio> = (props) => {
         )}
       >
         <WrappedImage
-          src={props.image}
+          src={props.image + '&tr=w-400'}
           alt={props.title}
           className='w-full object-cover rounded-lg'
           parentStyle='w-full h-44 rounded-lg'
-          loading='lazy'
           placeholder='blur'
           blurDataURL='/blur.svg'
           fill

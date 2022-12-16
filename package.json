@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "env-cmd -f .env.development.local next dev",
     "build": "next build",
-    "start": "env-cmd -f .env.development.local next start -p 5000",
+    "start": "env-cmd -f .env.production.local next start -p 5000",
+    "analyze": "cross-env ANALYZE=true next build",
     "clean:build": "npx rimraf **/.next",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -19,6 +20,7 @@
   "dependencies": {
     "@giscus/react": "^2.2.4",
     "@headlessui/react": "^1.7.4",
+    "@next/bundle-analyzer": "^13.0.7",
     "@supabase/supabase-js": "^2.0.5",
     "@tailwindcss/typography": "^0.5.8",
     "@vercel/analytics": "^0.1.6",
@@ -42,6 +44,7 @@
     "react-hot-toast": "^2.4.0",
     "react-icons": "^4.6.0",
     "react-image-lightbox": "^5.1.4",
+    "sharp": "^0.31.2",
     "slugify": "^1.6.5",
     "tailwind-merge": "^1.2.1"
   },

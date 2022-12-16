@@ -21,7 +21,7 @@ type SnippetProps = {
 const meta = getMetaPage({
   title: 'Snippet',
   description: `A collection of helpful snippets to help you, including myself to spin up the development. Remember, Do Not Repeat Yourself.`,
-  keywords: [],
+  keywords: ['ahnafnafee snippets', 'Ahnaf An Nafee snippets', 'ahnafnafee.dev', 'snippets'],
   og_image: generateOgImage({
     title: 'Snippet - ahnafnafee.dev',
     subTitle:

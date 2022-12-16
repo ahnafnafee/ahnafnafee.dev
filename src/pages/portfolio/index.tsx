@@ -16,7 +16,7 @@ import { useSearchPortfolio } from '@/hooks'
 import type { Portfolio } from 'me'
 import type { GetStaticProps, NextPage } from 'next'
 
-type PortfoliopageProps = {
+type PortfolioPageProps = {
   portfolios: Array<Portfolio>
   softwarePortfolios: Array<Portfolio>
   gamePortfolios: Array<Portfolio>
@@ -26,13 +26,16 @@ const meta = getMetaPage({
   title: 'Portfolio',
   description: `Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!`,
   keywords: ['ahnafnafee portfolio', 'Ahnaf An Nafee portfolio', 'ahnafnafee.dev', 'resume'],
-  og_image: generateOgImage({ title: 'Portfolio - ahnafnafee.dev', subTitle: 'Take a look at my personal portfolio' }),
+  og_image: generateOgImage({
+    title: 'Portfolio - ahnafnafee.dev',
+    subTitle: `Here's a collection of my personal portfolio. Feel free to explore!`
+  }),
   og_image_alt: 'Portfolio — ahnafnafee.dev',
   slug: '/portfolio',
   type: 'website'
 })
 
-const ProjectPage: NextPage<PortfoliopageProps> = ({ portfolios, softwarePortfolios, gamePortfolios }) => {
+const ProjectPage: NextPage<PortfolioPageProps> = ({ portfolios, softwarePortfolios, gamePortfolios }) => {
   const search = useSearchPortfolio(portfolios)
 
   return (
@@ -71,7 +74,7 @@ const ProjectPage: NextPage<PortfoliopageProps> = ({ portfolios, softwarePortfol
   )
 }
 
-export const getStaticProps: GetStaticProps<PortfoliopageProps> = async () => {
+export const getStaticProps: GetStaticProps<PortfolioPageProps> = async () => {
   const response = await getContents<Portfolio>('/portfolio')
 
   const portfolios = response.map((d) => d.header).sort(getNewestPortfolio)
