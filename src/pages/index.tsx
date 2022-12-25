@@ -12,7 +12,6 @@ import type { Portfolio } from 'me'
 import type { GetStaticProps, NextPage } from 'next'
 
 interface HomePageProps {
-  // blogs: Array<Blog>
   portfolios: Array<Portfolio>
 }
 

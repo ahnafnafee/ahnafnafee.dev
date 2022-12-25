@@ -1,7 +1,58 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+const { withAxiom } = require('next-axiom')
 
 const runtimeCaching = require('next-pwa/cache')
 const isDev = process.env.NODE_ENV === 'development'
+
+// https://nextjs.org/docs/advanced-features/security-headers
+const ContentSecurityPolicy = `
+    default-src 'self';
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' *.youtube.com *.twitter.com;
+    child-src *.youtube.com *.google.com *.twitter.com;
+    style-src 'self' 'unsafe-inline' *.googleapis.com;
+    img-src * blob: data:;
+    media-src 'none';
+    connect-src *;
+    font-src 'self';
+`
+
+const securityHeaders = [
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
+  {
+    key: 'Content-Security-Policy',
+    value: ContentSecurityPolicy.replace(/\n/g, '')
+  },
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy
+  {
+    key: 'Referrer-Policy',
+    value: 'origin-when-cross-origin'
+  },
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+  {
+    key: 'X-Frame-Options',
+    value: 'DENY'
+  },
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff'
+  },
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-DNS-Prefetch-Control
+  {
+    key: 'X-DNS-Prefetch-Control',
+    value: 'on'
+  },
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=31536000; includeSubDomains; preload'
+  },
+  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Feature-Policy
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=()'
+  }
+]
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true'
@@ -29,6 +80,7 @@ const withPWA = require('next-pwa')({
 const config = {
   images: {
     domains: [
+      'cdn.sanity.io',
       'ik.imagekit.io',
       'og-image.vercel.app',
       'media3.giphy.com',
@@ -40,9 +92,71 @@ const config = {
   },
   compiler: { removeConsole: !isDev },
   swcMinify: true,
-  compress: true
+  compress: true,
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: securityHeaders
+      }
+    ]
+  },
+  async redirects() {
+    return [
+      {
+        source: '/portfolio',
+        destination: '/portfolio',
+        permanent: true // triggers 308
+      },
+      {
+        source: '/resume',
+        destination: '/resume',
+        permanent: true // triggers 308
+      },
+      {
+        source: '/resume.pdf',
+        destination: '/AhnafAnNafeeResume.pdf',
+        permanent: true
+      },
+      {
+        source: '/blog',
+        destination: '/portfolio',
+        permanent: true
+      },
+      {
+        source: '/projects',
+        destination: '/portfolio',
+        permanent: true
+      },
+      {
+        source: '/snippet',
+        destination: '/portfolio',
+        permanent: true
+      },
+      {
+        source: '/tags',
+        destination: '/',
+        permanent: true
+      },
+      {
+        source: '/cv',
+        destination: '/AhnafAnNafeeResume.pdf',
+        permanent: true
+      },
+      {
+        source: '/github',
+        destination: 'https://github.com/ahnafnafee',
+        permanent: true
+      },
+      {
+        source: '/linkedin',
+        destination: 'https://www.linkedin.com/in/ahnafnafee',
+        permanent: true
+      }
+    ]
+  }
 }
 
-module.exports = withBundleAnalyzer(withPWA(config))
+module.exports = withAxiom(withBundleAnalyzer(withPWA(config)))
 
 // module.exports = config

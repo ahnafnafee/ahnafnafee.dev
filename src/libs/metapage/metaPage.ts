@@ -20,7 +20,7 @@ export const getMetaPage = (data: MetaPage): CustomSeoProps => {
     },
     twitter: {
       cardType: 'summary_large_image',
-      // TODO: Change to your Tiwetter username
+      // TODO: Change to your Twitter username
       site: TWITER_USERNAME,
       handle: TWITER_USERNAME
     },

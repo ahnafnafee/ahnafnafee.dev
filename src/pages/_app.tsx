@@ -20,6 +20,8 @@ import { Toaster } from 'react-hot-toast'
 import 'react-image-lightbox/style.css'
 import colors from 'tailwindcss/colors'
 
+export { reportWebVitals } from 'next-axiom'
+
 const v: Variants = withExit(variants)
 
 const onExitComplete = () => window.scrollTo(0, 0)

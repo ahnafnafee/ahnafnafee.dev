@@ -7,7 +7,7 @@
 - 📫 How to reach me <a href='mailto: ahnafnafee@gmail.com?subject='>**ahnafnafee@gmail.com**</a>
 - 📄 Know about my experiences [Resume](https://mega.nz/file/CzQ0FSpa#uxOnLguTlP1y8N9rIukzkFXe7HncMHhSMnMr__L9-64)
 
-<a target="_blank" href="https://ahnafnafee.dev">
+<a target="_blank" href="https://www.ahnafnafee.dev">
   <p align="center">
       <img width="45%" alt='Website' src="https://ik.imagekit.io/8ieg70pvks/portfolio/site_ss_01.png?ik-sdk-version=javascript-1.4.3&updatedAt=1671006079707" />
       <img width="45%" alt='Website' src="https://ik.imagekit.io/8ieg70pvks/portfolio/site_ss_02.png?ik-sdk-version=javascript-1.4.3&updatedAt=1671006079707" />

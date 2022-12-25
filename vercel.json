@@ -1,0 +1,40 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "public": true,
+  "alias": "ahnafnafee.dev",
+  "redirects": [
+    {
+      "source": "/resume.pdf",
+      "destination": "/AhnafAnNafeeResume.pdf"
+    },
+    {
+      "source": "/blog",
+      "destination": "/portfolio"
+    },
+    {
+      "source": "/projects",
+      "destination": "/portfolio"
+    },
+    {
+      "source": "/snippet",
+      "destination": "/portfolio"
+    },
+    {
+      "source": "/tags",
+      "destination": "/"
+    },
+    {
+      "source": "/cv",
+      "destination": "/AhnafAnNafeeResume.pdf"
+    },
+    {
+      "source": "/github",
+      "destination": "https://github.com/ahnafnafee"
+    },
+    {
+      "source": "/linkedin",
+      "destination": "https://www.linkedin.com/in/ahnafnafee"
+    }
+  ]
+}

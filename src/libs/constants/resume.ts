@@ -13,7 +13,7 @@ export const LINKS: typeof SOCIAL = [
     title: 'Website'
   },
   {
-    href: 'https://mega.nz/file/CzQ0FSpa#uxOnLguTlP1y8N9rIukzkFXe7HncMHhSMnMr__L9-64',
+    href: '/AhnafAnNafeeResume.pdf',
     title: 'PDF'
   }
 ]
@@ -73,6 +73,7 @@ export const SKILLS = [
       'AI',
       'ML',
       'AWS (ECS, EC2, SNS, SES, Route 53, RDS, Lambda, Cloud Formation Stack)',
+      'Firebase',
       'Docker',
       'WebSocket Integration',
       'ERM',
@@ -101,12 +102,12 @@ export const EXPERIENCE: Experience[] = [
       end: 'Present'
     },
     lists: [
-      `Create and Implement 6 new DevOps pipelines to deliver fast OTA application updates, backend build status, and Infrastructure as Code`,
-      `Spearhead backend migration to Amazon Elastic Beanstalk for auto-scaling server instances, reducing application load and costs by 80%`,
-      `Automate the build and deployment process with GitHub Actions and Maven and use Serverless Lambda functions for monitoring, eliminating 85% of manual work`,
-      `Develop a custom API layer to handle all CRUD transactions, and JWT token management and implemented interceptors to embed custom headers`,
-      'Engineer Java service integration for STOMP WebSockets for in-app chat functionality',
-      'Chart and Integrate Third-Party services and OAuth services with 20+ REST endpoints to create a scalable, user-facing application and increase user engagement'
+      `Designed and implemented 6 new DevOps pipelines to deliver fast OTA application updates, resulting in improved customer satisfaction and retention`,
+      `Led the backend migration to Amazon Elastic Load Balancers and Auto Scale Groups, resulting in an 80% reduction in application load and costs`,
+      `Automated the build and deployment process with GitHub Actions and Maven, and implemented Serverless Lambda functions for monitoring, resulting in an 85% reduction in manual work`,
+      `Created a custom API interceptor to handle all CRUD transactions and JWT token management, improving security and scalability`,
+      'Engineered Java service integration for STOMP WebSockets to enable in-app chat functionality, enhancing user engagement and experience',
+      'Integrated third-party services and OAuth services with over 20+ RESTful endpoints, contributing to the development of a scalable, user-facing application and increasing user engagement'
     ]
   },
   {
@@ -117,11 +118,11 @@ export const EXPERIENCE: Experience[] = [
       end: 'Sept 2022'
     },
     lists: [
-      `Integrated and Scripted versatile <strong>game managers</strong> to simplify future design processes`,
-      `Developed shaders with multiple variants for general <strong>stylized</strong> usage`,
-      `Collaborated with the Art team to improve workflows and create simpler and customizable <strong>shaders</strong>`,
-      `Performed <strong>integration and stress testing</strong> on WIP games, while reporting any issues in a developer-friendly format in Mantis`,
-      `Coordinated closely with the design team to identify problematic areas and created relevant <strong>test cases</strong>`
+      `Integrated and scripted versatile game managers to streamline future design processes and improve efficiency, resulting in a more efficient and effective workflow for the development team`,
+      `Developed parameterized shaders with multiple variants for general stylized usage for DC's Justice League: Cosmic Chaos, enhancing visual aesthetics and appeal`,
+      `Worked closely with the Art team to improve workflows and create simpler, customizable shaders, improving collaboration and productivity`,
+      `Conducted integration and stress testing on WIP games, identifying and reporting any issues in a developer-friendly format using Mantis`,
+      `Coordinated closely with the design team to identify problematic areas and created relevant test cases, ensuring the quality and functionality of the final product`
     ]
   }
 ]
