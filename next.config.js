@@ -104,16 +104,6 @@ const config = {
   async redirects() {
     return [
       {
-        source: '/portfolio',
-        destination: '/portfolio',
-        permanent: true // triggers 308
-      },
-      {
-        source: '/resume',
-        destination: '/resume',
-        permanent: true // triggers 308
-      },
-      {
         source: '/resume.pdf',
         destination: '/AhnafAnNafeeResume.pdf',
         permanent: true
