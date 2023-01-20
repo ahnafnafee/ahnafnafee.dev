@@ -102,10 +102,10 @@ export const EXPERIENCE: Experience[] = [
       end: 'Present'
     },
     lists: [
-      `Designed and implemented 6 new DevOps pipelines to deliver fast OTA application updates, resulting in improved customer satisfaction and retention`,
-      `Led the backend migration to Amazon Elastic Load Balancers and Auto Scale Groups, resulting in an 80% reduction in application load and costs`,
-      `Automated the build and deployment process with GitHub Actions and Maven, and implemented Serverless Lambda functions for monitoring, resulting in an 85% reduction in manual work`,
-      `Created a custom API interceptor to handle all CRUD transactions and JWT token management, improving security and scalability`,
+      `Optimized existing React Native codebase to improve stability, reduce memory usage and enhance user experience, resulting in a 40% increase in mobile performance within 3 months`,
+      `Led the backend migration to AWS, and implemented ELB and Auto Scale Groups, resulting in an 80% reduction in application load and costs`,
+      `Streamlined build and deployment process by implementing automated CI/CD using GitHub Actions and Maven, resulting in an 85% reduction in manual work and improved reliability through Serverless Lambda monitoring functions`,
+      `Implemented a custom Axios API interceptor for seamless CRUD and JWT token management, improving security and scalability`,
       'Engineered Java service integration for STOMP WebSockets to enable in-app chat functionality, enhancing user engagement and experience',
       'Integrated third-party services and OAuth services with over 20+ RESTful endpoints, contributing to the development of a scalable, user-facing application and increasing user engagement'
     ]
@@ -147,7 +147,7 @@ export const EDUCATION: Education = [
     paragraphs: [
       'BS in Computer Science',
       'Concentration in Artificial Intelligence, Game Programming and Development',
-      `GPA: 3.77 (<i>manga cum laude</i>)`
+      `GPA: 3.8 (<i>manga cum laude</i>)`
     ]
   }
 ]
