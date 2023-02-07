@@ -39,7 +39,7 @@ const HomePage: NextPage<HomePageProps> = ({ portfolios }) => {
                 Ahnaf An Nafee
               </h1>
               <h2 className='text-base text-gray-700 dark:text-gray-200 mb-4'>
-                Software Engineer at <span className='font-semibold'>Dynasty 11 Studios</span>
+                Software Engineer at <span className='font-semibold'>Mindex</span>
               </h2>
               <p className='text-gray-600 dark:text-gray-400'>
                 Hello👋, I&apos;m Ahnaf An Nafee, a guy who loves to code and is passionate about game development!
