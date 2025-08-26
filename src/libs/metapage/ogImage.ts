@@ -5,7 +5,10 @@ export const generateOgImage = (payload: genOgImagePayload) => {
   const title = encodeURIComponent(payload?.title ?? 'Ahnaf An Nafee')
   const subtitle = payload?.subTitle ? encodeURIComponent(payload.subTitle) : ''
 
-  let url = `${baseUrl}/api/og?title=${title}`
+  // Version for cache busting - increment this when making changes
+  const version = '2.0'
+
+  let url = `${baseUrl}/api/og?title=${title}&v=${version}`
   if (subtitle) {
     url += `&subtitle=${subtitle}`
   }
