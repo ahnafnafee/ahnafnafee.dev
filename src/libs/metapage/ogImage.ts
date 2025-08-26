@@ -6,7 +6,7 @@ export const generateOgImage = (payload: genOgImagePayload) => {
   const subtitle = payload?.subTitle ? encodeURIComponent(payload.subTitle) : ''
 
   // Version for cache busting - increment this when making changes
-  const version = '3.2'
+  const version = '4.0'
 
   // Use URLSearchParams for proper encoding
   const params = new URLSearchParams({
@@ -16,6 +16,10 @@ export const generateOgImage = (payload: genOgImagePayload) => {
 
   if (payload?.subTitle) {
     params.set('subtitle', payload.subTitle)
+  }
+
+  if (payload?.theme) {
+    params.set('theme', payload.theme)
   }
 
   return `${baseUrl}/api/og?${params.toString()}`

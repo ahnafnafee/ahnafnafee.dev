@@ -13,6 +13,7 @@ export default async function handler(req: NextRequest) {
     const hasTitle = searchParams.has('title')
     const title = hasTitle ? searchParams.get('title')?.slice(0, 100) : 'Ahnaf An Nafee'
     const subtitle = searchParams.get('subtitle') || 'PhD Student in AI & 3D Graphics @ GMU | Building Immersive Worlds'
+    const theme = searchParams.get('theme') || 'default'
 
     return new ImageResponse(
       (

@@ -7,7 +7,7 @@ import type { LayoutPageProps } from '@/UI/templates'
 
 import { getContentBySlug, getContents } from '@/services'
 
-import { getMetaPage } from '@/libs/metapage'
+import { generateOgImage, getMetaPage } from '@/libs/metapage'
 import { twclsx } from '@/libs/twclsx'
 
 import type { Portfolio } from 'me'
@@ -27,8 +27,11 @@ const ProjectDetailPage: NextPage<ProjectDetailPageProps> = ({ header, mdxSource
   const metaData = getMetaPage({
     title: header.title,
     description: header.summary,
-    og_image: header.image + '&tr=w-400',
-    og_image_alt: header.title,
+    og_image: generateOgImage({
+      title: header.title,
+      subTitle: header.summary
+    }),
+    og_image_alt: `${header.title} - Ahnaf An Nafee Portfolio`,
     keywords: header.stack,
     slug: '/portfolio/' + header.slug
   })

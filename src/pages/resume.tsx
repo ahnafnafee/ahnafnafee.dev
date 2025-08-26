@@ -306,3 +306,14 @@ const Resume: NextPage = () => {
 }
 
 export default Resume
+
+export async function getStaticProps() {
+  /* Fetch data here */
+
+  return {
+    props: {
+      /* Add something to your props */
+    },
+    revalidate: 10 // Seconds
+  }
+}

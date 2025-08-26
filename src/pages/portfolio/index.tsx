@@ -140,7 +140,8 @@ export const getStaticProps: GetStaticProps<PortfolioPageProps> = async () => {
       portfolios,
       softwarePortfolios,
       gamePortfolios
-    }
+    },
+    revalidate: 10
   }
 }
 
