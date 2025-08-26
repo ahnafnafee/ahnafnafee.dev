@@ -177,7 +177,13 @@ export default async function handler(req: NextRequest) {
       ),
       {
         width: 1200,
-        height: 600
+        height: 600,
+        // Force fresh render and bypass CDN/browser caches so updates show immediately
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, s-maxage=0',
+          Pragma: 'no-cache',
+          Expires: '0'
+        }
       }
     )
   } catch (err) {
