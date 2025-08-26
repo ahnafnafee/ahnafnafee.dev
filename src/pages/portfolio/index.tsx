@@ -73,10 +73,10 @@ const meta = getMetaPage({
     'ahnafnafee GitHub'
   ],
   og_image: generateOgImage({
-    title: 'Portfolio - ahnafnafee.dev',
-    subTitle: `PhD Student in AI & 3D Graphics | DevOps Engineer | Ex-CTO - Explore my projects!`
+    title: 'Portfolio',
+    subTitle: 'AI & 3D Graphics Projects | Machine Learning & Computer Vision'
   }),
-  og_image_alt: 'Portfolio — Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DevOps Engineer',
+  og_image_alt: 'Portfolio - Ahnaf An Nafee - AI & 3D Graphics Projects',
   slug: '/portfolio',
   type: 'website'
 })

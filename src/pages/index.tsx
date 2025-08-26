@@ -5,7 +5,7 @@ import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 
 import { GetContents, getContents } from '@/services'
 
-import { getMetaPage } from '@/libs/metapage'
+import { generateOgImage, getMetaPage } from '@/libs/metapage'
 import { getNewestPortfolio } from '@/libs/sorters'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 
@@ -71,9 +71,12 @@ const HomePage: NextPage<HomePageProps> = ({ portfolios }) => {
       'Terraform',
       'Jenkins'
     ],
-    og_image: `https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`,
+    og_image: generateOgImage({
+      title: 'Ahnaf An Nafee',
+      subTitle: 'PhD Student in AI & 3D Graphics | Building Immersive Worlds'
+    }),
     og_image_alt:
-      'Ahnaf An Nafee - PhD Student in AI & 3D Graphics at George Mason University | Scaling Immersive Worlds with Cloud Infrastructure',
+      'Ahnaf An Nafee - PhD Student in AI & 3D Graphics at George Mason University | Building Immersive Worlds',
     slug: '/',
     type: 'website'
   })

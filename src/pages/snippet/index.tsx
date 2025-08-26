@@ -23,11 +23,10 @@ const meta = getMetaPage({
   description: `A collection of helpful snippets to help you, including myself to spin up the development. Remember, Do Not Repeat Yourself.`,
   keywords: ['ahnafnafee snippets', 'Ahnaf An Nafee snippets', 'ahnafnafee.dev', 'snippets'],
   og_image: generateOgImage({
-    title: 'Snippet - ahnafnafee.dev',
-    subTitle:
-      'A collection of helpful snippets to help you, including myself to spin up the development. Remember, Do Not Repeat Yourself.'
+    title: 'Code Snippets',
+    subTitle: 'Helpful Development Snippets & Tools'
   }),
-  og_image_alt: 'Snippet — ahnafnafee.dev',
+  og_image_alt: 'Code Snippets - Ahnaf An Nafee - Helpful Development Snippets & Tools',
   slug: '/snippet',
   type: 'website'
 })

@@ -29,10 +29,10 @@ const meta = getMetaPage({
   description: `You'll find a collection of my thoughts and musings on a variety of topics. I write about everything from current events to personal experiences, and I always strive to share my honest opinions. Keep in mind that my views are my own and do not necessarily reflect those of any other person or organization.`,
   keywords: ['Ahnaf An Nafee', 'Ahnaf An Nafee', 'ahnafnafee', 'Ahnaf An Nafee', 'ahnafnafee.dev'],
   og_image: generateOgImage({
-    title: 'Blog - ahnafnafee.dev',
-    subTitle: 'Any thought I think interesting to share on my personal site'
+    title: 'Blog',
+    subTitle: 'Thoughts on AI, 3D Graphics, and Technology'
   }),
-  og_image_alt: 'Blog — ahnafnafee.dev',
+  og_image_alt: 'Blog - Ahnaf An Nafee - Thoughts on AI, 3D Graphics, and Technology',
   slug: '/blog',
   type: 'website'
 })

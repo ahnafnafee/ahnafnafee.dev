@@ -82,11 +82,10 @@ const meta = getMetaPage({
     'ahnafnafee.dev resume'
   ],
   og_image: generateOgImage({
-    title: 'Resume - Ahnaf An Nafee',
-    subTitle: '🚀 PhD Student in AI & 3D Graphics @ GMU | Scaling Immersive Worlds'
+    title: 'Resume',
+    subTitle: 'PhD Student in AI & 3D Graphics | Ex-CTO'
   }),
-  og_image_alt:
-    'Resume — Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University | DevOps Engineer | Ex-CTO',
+  og_image_alt: 'Resume - Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO',
   slug: '/resume',
   type: 'website'
 })

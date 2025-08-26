@@ -1,21 +1,14 @@
 import type { genOgImagePayload } from 'me'
 
 export const generateOgImage = (payload: genOgImagePayload) => {
-  const hyperLogo = {
-    light: 'hyper-color-logo.svg',
-    dark: 'hyper-color-logo.svg'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ahnafnafee.dev'
+  const title = encodeURIComponent(payload?.title ?? 'Ahnaf An Nafee')
+  const subtitle = payload?.subTitle ? encodeURIComponent(payload.subTitle) : ''
+
+  let url = `${baseUrl}/api/og?title=${title}`
+  if (subtitle) {
+    url += `&subtitle=${subtitle}`
   }
 
-  return (
-    'https://og-image.vercel.app/' +
-    '**' +
-    (payload?.title ?? '') +
-    '**' +
-    '%3Cbr%2F%3E' +
-    (payload?.subTitle ?? '') +
-    '.png?theme=' +
-    (payload.theme ?? 'dark') +
-    '&md=1&fontSize=100px&images=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2F' +
-    hyperLogo[payload.theme ?? 'dark']
-  )
+  return url
 }
