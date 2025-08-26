@@ -15,7 +15,35 @@ export default async function handler(req: NextRequest) {
     const subtitle = searchParams.get('subtitle') || 'PhD Student in AI & 3D Graphics @ GMU | Building Immersive Worlds'
     const theme = searchParams.get('theme') || 'default'
 
-    return new ImageResponse(
+    // Theming palette: default (purple) vs emerald variant to match homepage vibe
+    const palette =
+      theme === 'emerald' || theme === 'home'
+        ? {
+            rootBgImage: 'linear-gradient(135deg, #041E1A 0%, #064e3b 50%, #041E1A 100%)',
+            rootBgColor: '#041E1A',
+            panelBg: '#052e2b',
+            panelBorder: '#0f766e',
+            headerBg: '#064e3b',
+            headerBorder: '#0f766e',
+            accent: '#10b981',
+            iconGrad1: 'linear-gradient(135deg, #10b981, #34d399)',
+            iconGrad2: 'linear-gradient(135deg, #34d399, #6ee7b7)',
+            iconGrad3: 'linear-gradient(135deg, #059669, #10b981)'
+          }
+        : {
+            rootBgImage: 'linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%)',
+            rootBgColor: '#0f172a',
+            panelBg: '#111827',
+            panelBorder: '#374151',
+            headerBg: '#1f2937',
+            headerBorder: '#374151',
+            accent: '#c084fc',
+            iconGrad1: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+            iconGrad2: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+            iconGrad3: 'linear-gradient(135deg, #ec4899, #ef4444)'
+          }
+
+    const image = new ImageResponse(
       (
         <div
           style={{
@@ -25,8 +53,8 @@ export default async function handler(req: NextRequest) {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#0f172a',
-            backgroundImage: 'linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%)',
+            backgroundColor: palette.rootBgColor,
+            backgroundImage: palette.rootBgImage,
             padding: '40px'
           }}
         >
@@ -37,9 +65,9 @@ export default async function handler(req: NextRequest) {
               flexDirection: 'column',
               width: '100%',
               height: '100%',
-              backgroundColor: '#111827',
+              backgroundColor: palette.panelBg,
               borderRadius: '12px',
-              border: '1px solid #374151',
+              border: `1px solid ${palette.panelBorder}`,
               overflow: 'hidden',
               boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
             }}
@@ -50,9 +78,9 @@ export default async function handler(req: NextRequest) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                backgroundColor: '#1f2937',
+                backgroundColor: palette.headerBg,
                 padding: '12px 16px',
-                borderBottom: '1px solid #374151'
+                borderBottom: `1px solid ${palette.headerBorder}`
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -89,7 +117,7 @@ export default async function handler(req: NextRequest) {
               {/* File Content */}
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
                 <div style={{ marginBottom: '24px' }}>
-                  <div style={{ color: '#c084fc', fontSize: '24px', marginBottom: '8px' }}># {title}</div>
+                  <div style={{ color: palette.accent, fontSize: '24px', marginBottom: '8px' }}># {title}</div>
                   <div style={{ color: '#d1d5db', fontSize: '18px', lineHeight: 1.6, marginBottom: '16px' }}>
                     {subtitle}
                   </div>
@@ -100,7 +128,7 @@ export default async function handler(req: NextRequest) {
                     <img
                       width='80'
                       height='80'
-                      style={{ borderRadius: '50%', border: '2px solid #c084fc', objectFit: 'cover' }}
+                      style={{ borderRadius: '50%', border: `2px solid ${palette.accent}`, objectFit: 'cover' }}
                       src='https://ik.imagekit.io/8ieg70pvks/profile?tr=w-160,h-160'
                       alt='Ahnaf An Nafee'
                     />
@@ -119,7 +147,7 @@ export default async function handler(req: NextRequest) {
                         style={{
                           width: '48px',
                           height: '48px',
-                          background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                          background: palette.iconGrad1,
                           borderRadius: '8px',
                           display: 'flex',
                           alignItems: 'center',
@@ -133,7 +161,7 @@ export default async function handler(req: NextRequest) {
                         style={{
                           width: '48px',
                           height: '48px',
-                          background: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+                          background: palette.iconGrad2,
                           borderRadius: '8px',
                           display: 'flex',
                           alignItems: 'center',
@@ -147,7 +175,7 @@ export default async function handler(req: NextRequest) {
                         style={{
                           width: '48px',
                           height: '48px',
-                          background: 'linear-gradient(135deg, #ec4899, #ef4444)',
+                          background: palette.iconGrad3,
                           borderRadius: '8px',
                           display: 'flex',
                           alignItems: 'center',
@@ -158,7 +186,7 @@ export default async function handler(req: NextRequest) {
                         ⚡
                       </div>
                     </div>
-                    <div style={{ color: '#c084fc', fontSize: '14px' }}>www.ahnafnafee.dev</div>
+                    <div style={{ color: palette.accent, fontSize: '14px' }}>www.ahnafnafee.dev</div>
                   </div>
                 </div>
               </div>
@@ -177,15 +205,18 @@ export default async function handler(req: NextRequest) {
       ),
       {
         width: 1200,
-        height: 600,
-        // Force fresh render and bypass CDN/browser caches so updates show immediately
-        headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, s-maxage=0',
-          Pragma: 'no-cache',
-          Expires: '0'
-        }
+        height: 600
       }
     )
+    // Strongly prevent CDN/browser caching so style changes reflect immediately
+    image.headers.set(
+      'Cache-Control',
+      'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0, s-maxage=0'
+    )
+    image.headers.set('Pragma', 'no-cache')
+    image.headers.set('Expires', '0')
+    image.headers.set('Content-Type', 'image/png')
+    return image
   } catch (err) {
     console.info(JSON.stringify(err))
     return new Response('Failed to generate the og image', {
