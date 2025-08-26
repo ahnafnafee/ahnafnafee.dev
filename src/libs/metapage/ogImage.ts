@@ -6,12 +6,17 @@ export const generateOgImage = (payload: genOgImagePayload) => {
   const subtitle = payload?.subTitle ? encodeURIComponent(payload.subTitle) : ''
 
   // Version for cache busting - increment this when making changes
-  const version = '3.0'
+  const version = '3.2'
 
-  let url = `${baseUrl}/api/og?title=${title}&v=${version}`
-  if (subtitle) {
-    url += `&subtitle=${subtitle}`
+  // Use URLSearchParams for proper encoding
+  const params = new URLSearchParams({
+    title: payload?.title ?? 'Ahnaf An Nafee',
+    v: version
+  })
+
+  if (payload?.subTitle) {
+    params.set('subtitle', payload.subTitle)
   }
 
-  return url
+  return `${baseUrl}/api/og?${params.toString()}`
 }
