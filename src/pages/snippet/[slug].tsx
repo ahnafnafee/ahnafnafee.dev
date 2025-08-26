@@ -89,8 +89,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps<SnippetPostProps> = async (ctx) => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const mdxPrism = require('mdx-prism')
+  const mdxPrism = await import('mdx-prism')
 
   const { slug } = ctx.params as { slug: string } & ParsedUrlQuery
 
@@ -98,7 +97,7 @@ export const getStaticProps: GetStaticProps<SnippetPostProps> = async (ctx) => {
   const est_read = readingTime(res.content).text
 
   const mdxSource = await serialize(res.content, {
-    mdxOptions: { rehypePlugins: [mdxPrism, rehypeSlug] }
+    mdxOptions: { rehypePlugins: [mdxPrism.default, rehypeSlug] }
   })
 
   return {

@@ -4,20 +4,89 @@ import { AlertResume, HowToPrintDialog } from '@/components/dialog'
 import { UnstyledButton } from '@/UI/buttons'
 import { UnderlineLink } from '@/UI/links'
 
-import { EDUCATION, EXPERIENCE, HEADLINE, LANGUAGES, LINKS, SKILLS, SUMMARY } from '@/libs/constants/resume'
+import {
+  CERTIFICATIONS,
+  EDUCATION,
+  EXPERIENCE,
+  HEADLINE,
+  HONORS_AWARDS,
+  LANGUAGES,
+  LINKS,
+  SKILLS,
+  SUMMARY
+} from '@/libs/constants/resume'
 import { generateOgImage, getMetaPage } from '@/libs/metapage'
 
-import htmr from 'htmr'
+import htmr from '@/libs/htmr-replacement'
 import type { NextPage } from 'next'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { HiInformationCircle } from 'react-icons/hi'
 
 const meta = getMetaPage({
-  title: 'Resume',
-  description: 'Professional Resume of Ahnaf An Nafee',
-  keywords: ['Ahnaf An Nafee', 'resume', 'curriculum vitae', 'Ahnaf An Nafee cv', 'Ahnaf An Nafee resume', 'cv'],
-  og_image: generateOgImage({ title: 'Resume - ahnafnafee.dev', subTitle: 'Take a look at my resume' }),
-  og_image_alt: 'Resume — ahnafnafee.dev',
+  title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher | DevOps Engineer',
+  description:
+    '🚀 Professional Resume of Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University. I operate at the intersection of AI 🧠, 3D Computer Graphics 🌐, and scalable Cloud Infrastructure ☁️. Ex-CTO with expertise in Kubernetes, OpenShift, AWS, and technical leadership. Download PDF resume.',
+  keywords: [
+    'Ahnaf An Nafee resume',
+    'ahnafnafee resume',
+    'curriculum vitae',
+    'cv download',
+    'PhD AI 3D Graphics resume',
+    'Computer Science PhD resume',
+    'AI researcher resume',
+    '3D Computer Graphics researcher',
+    'Machine Learning researcher',
+    'Computer Vision expert',
+    'Generative AI specialist',
+    'Rendering Pipeline expert',
+    'DevOps Engineer resume',
+    'Kubernetes expert resume',
+    'OpenShift engineer resume',
+    'Cloud Infrastructure specialist',
+    'AWS certified professional',
+    'Docker containerization expert',
+    'CI/CD pipeline specialist',
+    'Infrastructure automation expert',
+    'George Mason University PhD',
+    'GMU computer science PhD',
+    'Drexel University alumni',
+    'Game Development experience',
+    'Unity 3D developer resume',
+    'Unreal Engine developer',
+    '3D modeling expert',
+    'Software Engineer resume',
+    'Full stack developer',
+    'Python developer resume',
+    'Go programming expert',
+    'Java developer',
+    'Kotlin developer',
+    'React Native developer',
+    'Tech startup CTO resume',
+    'Technical leadership resume',
+    'Startup founder experience',
+    'Team building experience',
+    'Agile development expert',
+    'Product leadership',
+    'Research publications',
+    'Academic research experience',
+    'Human computer interaction',
+    'Immersive technology expert',
+    'Interactive technology',
+    'Digital worlds development',
+    'Computer graphics research',
+    'AI graphics intersection',
+    'Theory to practice bridge',
+    'Production ready systems',
+    'Scalable infrastructure',
+    'Modern DevOps principles',
+    'ahnafnafee.dev resume'
+  ],
+  og_image: generateOgImage({
+    title: 'Resume - Ahnaf An Nafee',
+    subTitle: '🚀 PhD Student in AI & 3D Graphics @ GMU | Scaling Immersive Worlds'
+  }),
+  og_image_alt:
+    'Resume — Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University | DevOps Engineer | Ex-CTO',
   slug: '/resume',
   type: 'website'
 })
@@ -46,7 +115,7 @@ const Resume: NextPage = () => {
 
     return () => clearTimeout(timer)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMatch])
+  }, [closeAlert, openAlert])
 
   return (
     <main className='py-4 dark:print:text-theme-800 dark:print:[&:is(h1)]:text-primary-700'>
@@ -79,15 +148,19 @@ const Resume: NextPage = () => {
           </div>
 
           <ul className={listStyle}>
+            <br />
             {SUMMARY.map((summ, idx) => {
               return (
-                <li key={idx}>
-                  {htmr(summ, {
-                    transform: {
-                      a: (props) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>
-                    }
-                  })}
-                </li>
+                <>
+                  <p>
+                    {htmr(summ, {
+                      transform: {
+                        a: (props: any) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>
+                      }
+                    })}
+                  </p>
+                  <br />
+                </>
               )
             })}
           </ul>
@@ -109,13 +182,14 @@ const Resume: NextPage = () => {
           </div>
 
           {EXPERIENCE.map((exp, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             <div key={i} className='mt-4'>
               <div className='flex items-start justify-between mb-2.5'>
                 <div>
                   <h4>
                     {htmr(exp.companyName, {
                       transform: {
-                        a: (props) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>
+                        a: (props: any) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>
                       }
                     })}
                   </h4>
@@ -130,10 +204,11 @@ const Resume: NextPage = () => {
               <ul className={listStyle}>
                 {exp.lists.map((list, idx) => {
                   return (
+                    // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                     <li key={idx}>
                       {htmr(list, {
                         transform: {
-                          a: (props) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>
+                          a: (props: any) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>
                         }
                       })}
                     </li>
@@ -160,8 +235,8 @@ const Resume: NextPage = () => {
                 <p key={p}>
                   {htmr(p, {
                     transform: {
-                      a: (props) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>,
-                      i: (props) => <i>{props.children}</i>
+                      a: (props: any) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>,
+                      i: (props: any) => <i>{props.children}</i>
                     }
                   })}
                 </p>
@@ -177,6 +252,42 @@ const Resume: NextPage = () => {
                   </ul>
                 </>
               )}
+            </div>
+          ))}
+        </section>
+
+        <section>
+          <h3 className='mb-4 pb-2.5 border-b-2 border-b-theme-700'>Certifications</h3>
+
+          {CERTIFICATIONS.map((cert) => (
+            <div className='[&:not(:first-of-type)]:mt-2.5' key={cert.title}>
+              <div className='flex items-start justify-between'>
+                <div>
+                  <p>
+                    <strong>{cert.title}</strong>
+                  </p>
+                  <p className='text-sm text-gray-600 dark:text-gray-400'>{cert.issuer}</p>
+                </div>
+                <p className='text-sm font-semibold'>{cert.date}</p>
+              </div>
+            </div>
+          ))}
+        </section>
+
+        <section>
+          <h3 className='mb-4 pb-2.5 border-b-2 border-b-theme-700'>Honors-Awards</h3>
+
+          {HONORS_AWARDS.map((award) => (
+            <div className='[&:not(:first-of-type)]:mt-2.5' key={award.title}>
+              <div className='flex items-start justify-between'>
+                <div>
+                  <p>
+                    <strong>{award.title}</strong>
+                  </p>
+                  <p className='text-sm text-gray-600 dark:text-gray-400'>{award.issuer}</p>
+                </div>
+                <p className='text-sm font-semibold'>{award.date}</p>
+              </div>
             </div>
           ))}
         </section>

@@ -46,7 +46,9 @@ const BlogPost: NextPage<BlogPostProps> = ({ header, mdxSource }) => {
       if (isDev) return
       ;(async () => {
         try {
-          const baseURL = isDev ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev'
+          const baseURL = isDev
+            ? 'http://localhost:3000'
+            : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev')
           const res = await axios.get<PageViewResponse>(baseURL + '/api/pageviews?slug=' + header.slug)
           const view = res.data.view ?? 0
           setPostViews(view)
@@ -58,7 +60,7 @@ const BlogPost: NextPage<BlogPostProps> = ({ header, mdxSource }) => {
   }, [header.slug])
 
   return (
-    <LayoutPage {...(metaData as LayoutPageProps)} className='pb-4'>
+    <LayoutPage {...metaData} className='pb-4'>
       <article className={twclsx('content-auto', 'flex flex-col', 'gap-8')}>
         <HeadingContent
           topics={header.topics}
@@ -107,8 +109,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps<BlogPostProps> = async (ctx) => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const mdxPrism = require('mdx-prism')
+  const mdxPrism = await import('mdx-prism')
 
   const { slug } = ctx.params as slug
 
@@ -116,7 +117,7 @@ export const getStaticProps: GetStaticProps<BlogPostProps> = async (ctx) => {
   const est_read = readingTime(res.content).text
 
   const mdxSource = await serialize(res.content, {
-    mdxOptions: { rehypePlugins: [mdxPrism, rehypeSlug] }
+    mdxOptions: { rehypePlugins: [mdxPrism.default, rehypeSlug] }
   })
 
   return {

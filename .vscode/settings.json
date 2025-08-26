@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["Bangla", "HLSL"]
+	"cSpell.words": ["Bangla", "HLSL"],
+	"editor.defaultFormatter": "biomejs.biome"
 }

@@ -5,14 +5,12 @@ import { Footer } from '@/UI/common'
 
 import { twclsx } from '@/libs/twclsx'
 
-import type { NextPage } from 'next'
-
 export type LayoutPageProps = {
   className?: string
   children: React.ReactNode
 } & CustomSeoProps
 
-export const LayoutPage: NextPage<LayoutPageProps> = ({ children, className, ...props }) => {
+export const LayoutPage: React.FC<LayoutPageProps> = ({ children, className, ...props }) => {
   return (
     <>
       <CustomSeo {...props} />

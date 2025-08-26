@@ -53,7 +53,7 @@ const BlogPage: NextPage<BlogPageProps> = ({ allBlogs }) => {
   }, [])
 
   return (
-    <LayoutPage {...(meta as LayoutPageProps)}>
+    <LayoutPage {...meta}>
       <Hero title={meta.title as string} description={meta.description as string} />
 
       <Searchbar onChange={search.handleChange} value={search.query} />
@@ -103,7 +103,7 @@ export const getStaticProps: GetStaticProps<BlogPageProps> = async () => {
       }
     }
 
-  const baseURL = isDev ? 'http://localhost:3000' : process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev'
+  const baseURL = isDev ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev')
 
   const blogs: Blog[] = []
 

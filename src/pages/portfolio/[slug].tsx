@@ -34,7 +34,7 @@ const ProjectDetailPage: NextPage<ProjectDetailPageProps> = ({ header, mdxSource
   })
 
   return (
-    <LayoutPage {...(metaData as LayoutPageProps)}>
+    <LayoutPage {...metaData}>
       <BackToTop />
 
       <article className={twclsx('flex flex-col', 'gap-8')}>
@@ -89,12 +89,12 @@ export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
 }
 
 export const getStaticProps: GetStaticProps<ProjectDetailPageProps> = async (ctx) => {
-  const mdxPrism = await require('mdx-prism')
+  const mdxPrism = await import('mdx-prism')
   const { slug } = ctx.params as ParsedUrlQuery & { slug: string }
 
   const res = await getContentBySlug<Portfolio>('/portfolio', slug)
 
-  const mdxSource = await serialize(res.content, { mdxOptions: { rehypePlugins: [mdxPrism, rehypeSlug] } })
+  const mdxSource = await serialize(res.content, { mdxOptions: { rehypePlugins: [mdxPrism.default, rehypeSlug] } })
 
   return {
     props: {

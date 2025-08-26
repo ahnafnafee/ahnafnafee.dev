@@ -1,26 +1,88 @@
 {
-  "theme_color": "#171717",
-  "background_color": "#b6d2ff",
-  "display": "standalone",
-  "scope": "/",
-  "start_url": "/",
-  "author": "Ahnaf An Nafee",
-  "name": "ahnafnafee.dev",
-  "app_name": "ahnafnafee.dev",
-  "short_name": "Ahnaf An Nafee",
-  "description": "Personal Website, Online Portfolio and Blog of Ahnaf An Nafee",
-  "icons": [
-    {
-      "src": "/static/favicons/android-chrome-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/static/favicons/android-chrome-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
+	"theme_color": "#171717",
+	"background_color": "#b6d2ff",
+	"display": "standalone",
+	"scope": "/",
+	"start_url": "/",
+	"orientation": "portrait-primary",
+	"author": "Ahnaf An Nafee",
+	"name": "Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ GMU | Scaling Immersive Worlds",
+	"app_name": "ahnafnafee.dev",
+	"short_name": "Ahnaf An Nafee",
+	"description": "🚀 PhD Student in AI & 3D Graphics @ George Mason University. I operate at the intersection of AI 🧠, 3D Computer Graphics 🌐, and scalable Cloud Infrastructure ☁️. Building the next generation of intuitive and immersive ways for humans to interact with digital worlds. Ex-CTO with expertise in DevOps, Kubernetes, and technical leadership.",
+	"categories": [
+		"education",
+		"technology",
+		"research",
+		"portfolio",
+		"professional"
+	],
+	"lang": "en-US",
+	"dir": "ltr",
+	"icons": [
+		{
+			"src": "/static/favicons/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "/static/favicons/android-chrome-512x512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "/static/favicons/apple-touch-icon.png",
+			"sizes": "180x180",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/static/favicons/favicon-32x32.png",
+			"sizes": "32x32",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/static/favicons/favicon-16x16.png",
+			"sizes": "16x16",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "/static/favicons/favicon.ico",
+			"sizes": "48x48",
+			"type": "image/x-icon",
+			"purpose": "any"
+		}
+	],
+	"shortcuts": [
+		{
+			"name": "Portfolio",
+			"short_name": "Portfolio",
+			"description": "View my AI research and DevOps engineering projects",
+			"url": "/portfolio",
+			"icons": [
+				{
+					"src": "/static/favicons/favicon-32x32.png",
+					"sizes": "32x32",
+					"type": "image/png"
+				}
+			]
+		},
+		{
+			"name": "Resume",
+			"short_name": "Resume",
+			"description": "Download my professional resume",
+			"url": "/resume",
+			"icons": [
+				{
+					"src": "/static/favicons/favicon-32x32.png",
+					"sizes": "32x32",
+					"type": "image/png"
+				}
+			]
+		}
+	]
 }

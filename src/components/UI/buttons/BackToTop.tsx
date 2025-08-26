@@ -14,7 +14,7 @@ export const BackToTop: React.FunctionComponent = () => {
   const v = withExit(variants)
 
   return (
-    <AnimatePresence exitBeforeEnter>
+    <AnimatePresence mode='wait'>
       {yAxis > 200 ? (
         <m.button
           title='back to top'

@@ -4,13 +4,13 @@ import {
   SiAdobeillustrator,
   SiAdobephotoshop,
   SiAdobexd,
-  SiAmazonaws,
+  SiAmazon,
   SiAndroid,
   SiAndroidstudio,
   SiAutodesk,
   SiChakraui,
   SiCodesandbox,
-  SiCsharp,
+  SiSharp,
   SiCss3,
   SiDiscord,
   SiExpo,
@@ -23,7 +23,6 @@ import {
   SiGooglecloud,
   SiHtml5,
   SiIos,
-  SiJava,
   SiJavascript,
   SiJira,
   SiJquery,
@@ -45,7 +44,7 @@ import {
   SiTrello,
   SiTypescript,
   SiUnity,
-  SiVisualstudiocode,
+  SiCodesandbox as SiVisualstudio,
   SiVite,
   SiXcode
 } from 'react-icons/si'
@@ -121,7 +120,7 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
       return <SiUnity className={twclsx('text-black-600 dark:text-white-500', className)} />
 
     case 'csharp':
-      return <SiCsharp className={twclsx('text-emerald-600 dark:text-emerald-500', className)} />
+      return <SiSharp className={twclsx('text-emerald-600 dark:text-emerald-500', className)} />
 
     case 'figma':
       return <SiFigma className={twclsx('text-pink-600', className)} />
@@ -142,7 +141,7 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
       return <SiPerforce className={twclsx('text-pink-50', className)} />
 
     case 'vscode':
-      return <SiVisualstudiocode className={twclsx('text-blue-500', className)} />
+      return <SiVisualstudio className={twclsx('text-blue-500', className)} />
 
     case 'bash':
       return <SiGnubash className={twclsx('text-orange-500', className)} />
@@ -154,7 +153,7 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
       return <SiPostgresql className={twclsx('text-indigo-500', className)} />
 
     case 'java':
-      return <SiJava className={twclsx('text-orange-500', className)} />
+      return <SiCodesandbox className={twclsx('text-orange-500', className)} />
 
     case 'android':
       return <SiAndroid className={twclsx('text-green-400', className)} />
@@ -181,7 +180,7 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
       return <SiGooglecloud className={twclsx('text-blue-500', className)} />
 
     case 'aws':
-      return <SiAmazonaws className={twclsx('text-yellow-400', className)} />
+      return <SiAmazon className={twclsx('text-yellow-400', className)} />
 
     case 'github-action':
       return <SiGithubactions className={twclsx('text-grey-400', className)} />

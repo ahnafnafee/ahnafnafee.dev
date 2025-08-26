@@ -23,14 +23,60 @@ type PortfolioPageProps = {
 }
 
 const meta = getMetaPage({
-  title: 'Portfolio',
+  title: 'Portfolio - Ahnaf An Nafee',
   description: `Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!`,
-  keywords: ['ahnafnafee portfolio', 'Ahnaf An Nafee portfolio', 'ahnafnafee.dev', 'resume'],
+  keywords: [
+    'Ahnaf An Nafee portfolio',
+    'ahnafnafee portfolio',
+    'PhD AI 3D Graphics portfolio',
+    'Computer Science PhD portfolio',
+    'AI research projects',
+    '3D Computer Graphics projects',
+    'Machine Learning portfolio',
+    'Computer Vision projects',
+    'Generative AI projects',
+    'Rendering Pipeline projects',
+    'DevOps engineering portfolio',
+    'Kubernetes projects',
+    'OpenShift projects',
+    'Cloud Infrastructure portfolio',
+    'AWS cloud solutions',
+    'Docker containerization',
+    'CI/CD pipeline projects',
+    'Infrastructure automation',
+    'Game development portfolio',
+    'Unity 3D projects',
+    'Unreal Engine projects',
+    '3D modeling projects',
+    'Game engine development',
+    'Interactive technology',
+    'Software engineering portfolio',
+    'Full stack development',
+    'React Native apps',
+    'Python projects',
+    'Go programming projects',
+    'Java applications',
+    'Kotlin development',
+    'Tech startup CTO experience',
+    'Technical leadership portfolio',
+    'George Mason University research',
+    'GMU PhD projects',
+    'Academic research portfolio',
+    'Computer graphics research',
+    'Human computer interaction',
+    'Immersive technology projects',
+    'Digital worlds development',
+    'Research publications',
+    'Open source contributions',
+    'GitHub projects',
+    'ahnafnafee.dev portfolio',
+    'ahnafnafee GitHub'
+  ],
   og_image: generateOgImage({
     title: 'Portfolio - ahnafnafee.dev',
-    subTitle: `Here's a collection of my personal portfolio. Feel free to explore!`
+    subTitle: `PhD Student in AI & 3D Graphics | DevOps Engineer | Ex-CTO - Explore my projects!`
   }),
-  og_image_alt: 'Portfolio — ahnafnafee.dev',
+  og_image_alt: 'Portfolio — Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DevOps Engineer',
   slug: '/portfolio',
   type: 'website'
 })
@@ -39,7 +85,7 @@ const ProjectPage: NextPage<PortfolioPageProps> = ({ portfolios, softwarePortfol
   const search = useSearchPortfolio(portfolios)
 
   return (
-    <LayoutPage {...(meta as LayoutPageProps)}>
+    <LayoutPage {...meta}>
       <Hero title={meta.title as string} description={meta.description as string} />
       <Searchbar onChange={search.handleChange} value={search.query} />
 
