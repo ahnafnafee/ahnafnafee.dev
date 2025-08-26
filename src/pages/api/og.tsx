@@ -16,82 +16,159 @@ export default async function handler(req: NextRequest) {
 
     return new ImageResponse(
       (
-        <div tw='flex h-[600px] bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8'>
+        <div
+          style={{
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#0f172a',
+            backgroundImage: 'linear-gradient(135deg, #0f172a 0%, #581c87 50%, #0f172a 100%)',
+            padding: '40px'
+          }}
+        >
           {/* Terminal Window */}
-          <div tw='flex flex-col w-full h-full bg-gray-900 rounded-lg border border-gray-700 shadow-2xl overflow-hidden'>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '100%',
+              height: '100%',
+              backgroundColor: '#111827',
+              borderRadius: '12px',
+              border: '1px solid #374151',
+              overflow: 'hidden',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+            }}
+          >
             {/* Terminal Header */}
-            <div tw='flex items-center justify-between bg-gray-800 px-4 py-3 border-b border-gray-700'>
-              <div tw='flex items-center space-x-2'>
-                <div tw='w-3 h-3 bg-red-500 rounded-full'></div>
-                <div tw='w-3 h-3 bg-yellow-500 rounded-full'></div>
-                <div tw='w-3 h-3 bg-green-500 rounded-full'></div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                backgroundColor: '#1f2937',
+                padding: '12px 16px',
+                borderBottom: '1px solid #374151'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '12px', height: '12px', backgroundColor: '#ef4444', borderRadius: '50%' }}></div>
+                <div style={{ width: '12px', height: '12px', backgroundColor: '#eab308', borderRadius: '50%' }}></div>
+                <div style={{ width: '12px', height: '12px', backgroundColor: '#22c55e', borderRadius: '50%' }}></div>
               </div>
-              <div tw='text-gray-400 text-sm font-mono'>
+              <div style={{ color: '#9ca3af', fontSize: '14px', fontFamily: 'monospace' }}>
                 ahnafnafee@dev: ~/{title?.toLowerCase().replace(/\s+/g, '-')}
               </div>
-              <div tw='w-16'></div>
+              <div style={{ width: '64px' }}></div>
             </div>
 
             {/* Terminal Content */}
-            <div tw='flex flex-col flex-1 p-6 font-mono text-white'>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1,
+                padding: '24px',
+                fontFamily: 'monospace',
+                color: 'white'
+              }}
+            >
               {/* Command Line */}
-              <div tw='flex items-center mb-4'>
-                <span tw='text-green-400 mr-2'>ahnafnafee@dev</span>
-                <span tw='text-white mr-2'>:</span>
-                <span tw='text-blue-400 mr-2'>~</span>
-                <span tw='text-white mr-2'>$</span>
-                <span tw='text-gray-300'>cat {title?.toLowerCase().replace(/\s+/g, '_')}.md</span>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                <span style={{ color: '#4ade80', marginRight: '8px' }}>ahnafnafee@dev</span>
+                <span style={{ color: 'white', marginRight: '8px' }}>:</span>
+                <span style={{ color: '#60a5fa', marginRight: '8px' }}>~</span>
+                <span style={{ color: 'white', marginRight: '8px' }}>$</span>
+                <span style={{ color: '#d1d5db' }}>cat {title?.toLowerCase().replace(/\s+/g, '_')}.md</span>
               </div>
 
               {/* File Content */}
-              <div tw='flex flex-col flex-1 justify-center'>
-                <div tw='mb-6'>
-                  <div tw='text-purple-400 text-lg mb-2'># {title}</div>
-                  <div tw='text-gray-300 text-base leading-relaxed mb-4'>{subtitle}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
+                <div style={{ marginBottom: '24px' }}>
+                  <div style={{ color: '#c084fc', fontSize: '24px', marginBottom: '8px' }}># {title}</div>
+                  <div style={{ color: '#d1d5db', fontSize: '18px', lineHeight: 1.6, marginBottom: '16px' }}>
+                    {subtitle}
+                  </div>
                 </div>
 
-                <div tw='flex items-center justify-between'>
-                  <div tw='flex items-center'>
-                    {/** biome-ignore lint/performance/noImgElement: <explanation> */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
                     <img
                       width='80'
                       height='80'
-                      tw='rounded-full border-2 border-purple-400'
-                      style={{ objectFit: 'cover' }}
+                      style={{ borderRadius: '50%', border: '2px solid #c084fc', objectFit: 'cover' }}
                       src='https://ik.imagekit.io/8ieg70pvks/profile?tr=w-160,h-160'
                       alt='Ahnaf An Nafee'
                     />
-                    <div tw='ml-4'>
-                      <div tw='text-white text-2xl font-bold mb-1'>Ahnaf An Nafee</div>
-                      <div tw='text-cyan-400 text-lg'>PhD Student • AI & 3D Graphics</div>
-                      <div tw='text-gray-400 text-base'>George Mason University</div>
+                    <div style={{ marginLeft: '16px' }}>
+                      <div style={{ color: 'white', fontSize: '28px', fontWeight: 'bold', marginBottom: '4px' }}>
+                        Ahnaf An Nafee
+                      </div>
+                      <div style={{ color: '#22d3ee', fontSize: '20px' }}>PhD Student • AI & 3D Graphics</div>
+                      <div style={{ color: '#9ca3af', fontSize: '16px' }}>George Mason University</div>
                     </div>
                   </div>
 
-                  <div tw='flex flex-col items-end'>
-                    <div tw='flex items-center space-x-3 mb-2'>
-                      <div tw='w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center'>
-                        <span tw='text-xl'>🧠</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                      <div
+                        style={{
+                          width: '48px',
+                          height: '48px',
+                          background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '20px'
+                        }}
+                      >
+                        🧠
                       </div>
-                      <div tw='w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center'>
-                        <span tw='text-xl'>🌐</span>
+                      <div
+                        style={{
+                          width: '48px',
+                          height: '48px',
+                          background: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '20px'
+                        }}
+                      >
+                        🌐
                       </div>
-                      <div tw='w-12 h-12 bg-gradient-to-br from-pink-500 to-red-600 rounded-lg flex items-center justify-center'>
-                        <span tw='text-xl'>⚡</span>
+                      <div
+                        style={{
+                          width: '48px',
+                          height: '48px',
+                          background: 'linear-gradient(135deg, #ec4899, #ef4444)',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '20px'
+                        }}
+                      >
+                        ⚡
                       </div>
                     </div>
-                    <div tw='text-purple-400 text-sm'>www.ahnafnafee.dev</div>
+                    <div style={{ color: '#c084fc', fontSize: '14px' }}>www.ahnafnafee.dev</div>
                   </div>
                 </div>
               </div>
 
               {/* Command Prompt */}
-              <div tw='flex items-center mt-4'>
-                <span tw='text-green-400 mr-2'>ahnafnafee@dev</span>
-                <span tw='text-white mr-2'>:</span>
-                <span tw='text-blue-400 mr-2'>~</span>
-                <span tw='text-white mr-2'>$</span>
-                <span tw='text-white bg-gray-700 px-1'>█</span>
+              <div style={{ display: 'flex', alignItems: 'center', marginTop: '16px' }}>
+                <span style={{ color: '#4ade80', marginRight: '8px' }}>ahnafnafee@dev</span>
+                <span style={{ color: 'white', marginRight: '8px' }}>:</span>
+                <span style={{ color: '#60a5fa', marginRight: '8px' }}>~</span>
+                <span style={{ color: 'white', marginRight: '8px' }}>$</span>
+                <span style={{ color: 'white', backgroundColor: '#374151', padding: '0 4px' }}>█</span>
               </div>
             </div>
           </div>

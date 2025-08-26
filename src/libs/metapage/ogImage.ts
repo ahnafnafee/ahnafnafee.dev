@@ -6,7 +6,7 @@ export const generateOgImage = (payload: genOgImagePayload) => {
   const subtitle = payload?.subTitle ? encodeURIComponent(payload.subTitle) : ''
 
   // Version for cache busting - increment this when making changes
-  const version = '2.0'
+  const version = '3.0'
 
   let url = `${baseUrl}/api/og?title=${title}&v=${version}`
   if (subtitle) {
