@@ -3,7 +3,6 @@ import { ContentImage } from '@/components/content'
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 
 import { getContents } from '@/services'
-import { generateOgImage } from '@/libs/metapage'
 import { getNewestPortfolio } from '@/libs/sorters'
 
 import type { Portfolio } from 'me'
@@ -190,12 +189,7 @@ export const metadata: Metadata = {
       '🚀 PhD Student in AI & 3D Graphics @ George Mason University. Building the next generation of intuitive and immersive ways for humans to interact with digital worlds.',
     site: '@ahnaf_nafee',
     creator: '@ahnaf_nafee',
-    images: [
-      generateOgImage({
-        title: 'Ahnaf An Nafee',
-        subTitle: 'PhD Student in AI & 3D Graphics @ GMU | Building Immersive Worlds'
-      })
-    ]
+    images: [`https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`]
   }
 }
 
