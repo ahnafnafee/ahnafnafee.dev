@@ -174,10 +174,7 @@ export const metadata: Metadata = {
     siteName: 'Ahnaf An Nafee',
     images: [
       {
-        url: generateOgImage({
-          title: 'Ahnaf An Nafee',
-          subTitle: 'PhD Student in AI & 3D Graphics @ GMU | Building Immersive Worlds'
-        }),
+        url: `https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`,
         width: 1200,
         height: 600,
         alt: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics at George Mason University | Building Immersive Worlds'
