@@ -1,0 +1,6 @@
+Contact: mailto:ahnafnafee@gmail.com
+Contact: https://www.linkedin.com/in/ahnafnafee
+Expires: 2025-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://www.ahnafnafee.dev/.well-known/security.txt
+Policy: https://www.ahnafnafee.dev/security-policy

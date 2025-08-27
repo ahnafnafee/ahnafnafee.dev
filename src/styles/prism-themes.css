@@ -1,0 +1,172 @@
+/* Light theme (default) */
+:root {
+  --prism-bg: #f5f2f0;
+  --prism-color: #24292e;
+  --prism-comment: #6a737d;
+  --prism-keyword: #d73a49;
+  --prism-string: #032f62;
+  --prism-function: #6f42c1;
+  --prism-number: #005cc5;
+  --prism-operator: #d73a49;
+  --prism-punctuation: #24292e;
+  --prism-variable: #e36209;
+  --prism-property: #005cc5;
+  --prism-boolean: #005cc5;
+  --prism-selector: #6f42c1;
+  --prism-attr-name: #005cc5;
+  --prism-attr-value: #032f62;
+  --prism-tag: #22863a;
+}
+
+/* Dark theme */
+.dark {
+  --prism-bg: #1e1e1e;
+  --prism-color: #d4d4d4;
+  --prism-comment: #6a9955;
+  --prism-keyword: #569cd6;
+  --prism-string: #ce9178;
+  --prism-function: #dcdcaa;
+  --prism-number: #b5cea8;
+  --prism-operator: #d4d4d4;
+  --prism-punctuation: #d4d4d4;
+  --prism-variable: #9cdcfe;
+  --prism-property: #9cdcfe;
+  --prism-boolean: #569cd6;
+  --prism-selector: #d7ba7d;
+  --prism-attr-name: #92c5f8;
+  --prism-attr-value: #ce9178;
+  --prism-tag: #569cd6;
+}
+
+/* Apply theme variables to Prism elements */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: var(--prism-color);
+  background: var(--prism-bg);
+  text-shadow: none;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 1em;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  tab-size: 4;
+  hyphens: none;
+}
+
+pre[class*="language-"] {
+  padding: 1em;
+  margin: 0.5em 0;
+  overflow: auto;
+  border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background: var(--prism-bg);
+}
+
+:not(pre) > code[class*="language-"] {
+  padding: 0.1em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+
+/* Token styles */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: var(--prism-comment);
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: var(--prism-punctuation);
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: var(--prism-tag);
+}
+
+.token.boolean,
+.token.number {
+  color: var(--prism-number);
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: var(--prism-string);
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+  color: var(--prism-variable);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+  color: var(--prism-function);
+}
+
+.token.keyword {
+  color: var(--prism-keyword);
+}
+
+.token.regex,
+.token.important {
+  color: var(--prism-variable);
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+/* Language specific */
+.token.namespace {
+  opacity: 0.7;
+}
+
+/* TypeScript specific */
+.language-typescript .token.keyword {
+  color: var(--prism-keyword);
+}
+
+.language-typescript .token.type-annotation,
+.language-typescript .token.type {
+  color: var(--prism-function);
+}
+
+/* JavaScript specific */
+.language-javascript .token.template-string .token.interpolation {
+  color: var(--prism-variable);
+}
+
+.language-javascript .token.template-string .token.string {
+  color: var(--prism-string);
+}

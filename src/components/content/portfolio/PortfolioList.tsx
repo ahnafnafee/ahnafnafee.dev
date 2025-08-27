@@ -2,7 +2,7 @@ import { UnderlineLink } from '@/UI/links'
 
 import { PortfolioItem } from './PortfolioItem'
 
-import htmr from 'htmr'
+import htmr from '@/libs/htmr-replacement'
 import { Portfolio } from 'me'
 
 type PortfolioListProps = {
@@ -18,9 +18,9 @@ export const PortfolioList: React.FunctionComponent<PortfolioListProps> = (props
       <p className='mb-6 md:mb-8 text-gray-600 dark:text-gray-400'>
         {htmr(props.description, {
           transform: {
-            a: (props) => (
-              <UnderlineLink className={'border-0'} href={props.href ?? ''}>
-                {props.children}
+            a: (linkProps: any) => (
+              <UnderlineLink className={'border-0'} href={linkProps.href ?? ''}>
+                {linkProps.children}
               </UnderlineLink>
             )
           }

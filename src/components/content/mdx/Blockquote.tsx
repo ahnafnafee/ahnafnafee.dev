@@ -1,3 +1,5 @@
+'use client'
+
 export const Blockquote = (props: { children: React.ReactNode }) => {
   return (
     <blockquote className='[&>p]:opacity-60'>

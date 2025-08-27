@@ -1,15 +1,17 @@
+'use client'
+
 import { UnstyledLink } from '@/UI/links'
 
 import APP_ROUTE from '@/libs/constants/route'
 import { twclsx } from '@/libs/twclsx'
 
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 
 /**
  * A Nav componet that renders a list of links to the routes defined in the `src/libs/constant.ts`
  */
 export const Nav: React.FunctionComponent = () => {
-  const { pathname } = useRouter()
+  const pathname = usePathname()
 
   return (
     <nav className={twclsx('flex items-center gap-1', '-ml-3 md:-ml-3.5')}>

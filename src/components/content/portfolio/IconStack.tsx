@@ -4,13 +4,13 @@ import {
   SiAdobeillustrator,
   SiAdobephotoshop,
   SiAdobexd,
-  SiAmazonaws,
+  SiAmazon,
   SiAndroid,
   SiAndroidstudio,
   SiAutodesk,
   SiChakraui,
   SiCodesandbox,
-  SiCsharp,
+  SiSharp,
   SiCss3,
   SiDiscord,
   SiExpo,
@@ -23,7 +23,6 @@ import {
   SiGooglecloud,
   SiHtml5,
   SiIos,
-  SiJava,
   SiJavascript,
   SiJira,
   SiJquery,
@@ -34,6 +33,9 @@ import {
   SiNodedotjs,
   SiPerforce,
   SiPostgresql,
+  SiPython,
+  SiDocker,
+  SiKubernetes,
   SiReact,
   SiRedux,
   SiSass,
@@ -45,11 +47,12 @@ import {
   SiTrello,
   SiTypescript,
   SiUnity,
-  SiVisualstudiocode,
   SiVite,
   SiXcode
 } from 'react-icons/si'
+import { FaJava } from 'react-icons/fa'
 import { TbBrandReactNative, TbWebhook } from 'react-icons/tb'
+import { VscVscode } from 'react-icons/vsc'
 
 type IconStackProps = {
   type: string
@@ -118,10 +121,11 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
 
     case 'Unity':
     case 'unity':
-      return <SiUnity className={twclsx('text-black-600 dark:text-white-500', className)} />
+      return <SiUnity className={twclsx('text-gray-800 dark:text-white', className)} />
 
     case 'csharp':
-      return <SiCsharp className={twclsx('text-emerald-600 dark:text-emerald-500', className)} />
+    case 'c#':
+      return <SiSharp className={twclsx('text-purple-600 dark:text-purple-500', className)} />
 
     case 'figma':
       return <SiFigma className={twclsx('text-pink-600', className)} />
@@ -142,7 +146,8 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
       return <SiPerforce className={twclsx('text-pink-50', className)} />
 
     case 'vscode':
-      return <SiVisualstudiocode className={twclsx('text-blue-500', className)} />
+    case 'visual studio code':
+      return <VscVscode className={twclsx('text-blue-500', className)} />
 
     case 'bash':
       return <SiGnubash className={twclsx('text-orange-500', className)} />
@@ -154,7 +159,7 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
       return <SiPostgresql className={twclsx('text-indigo-500', className)} />
 
     case 'java':
-      return <SiJava className={twclsx('text-orange-500', className)} />
+      return <FaJava className={twclsx('text-orange-600', className)} />
 
     case 'android':
       return <SiAndroid className={twclsx('text-green-400', className)} />
@@ -163,7 +168,7 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
       return <SiAndroidstudio className={twclsx('text-green-400', className)} />
 
     case 'ios':
-      return <SiIos className={twclsx('text-grey-400', className)} />
+      return <SiIos className={twclsx('text-gray-400', className)} />
 
     case 'xcode':
       return <SiXcode className={twclsx('text-blue-600', className)} />
@@ -181,10 +186,11 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
       return <SiGooglecloud className={twclsx('text-blue-500', className)} />
 
     case 'aws':
-      return <SiAmazonaws className={twclsx('text-yellow-400', className)} />
+      return <SiAmazon className={twclsx('text-yellow-400', className)} />
 
     case 'github-action':
-      return <SiGithubactions className={twclsx('text-grey-400', className)} />
+    case 'github-actions':
+      return <SiGithubactions className={twclsx('text-gray-800 dark:text-white', className)} />
 
     case 'serverless':
       return <SiServerless className={twclsx('text-orange-500', className)} />
@@ -193,7 +199,7 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
       return <SiDiscord className={twclsx('text-indigo-600', className)} />
 
     case 'expo':
-      return <SiExpo className={twclsx('text-b-600', className)} />
+      return <SiExpo className={twclsx('text-blue-600', className)} />
 
     case 'webhook':
       return <TbWebhook className={twclsx('text-purple-600', className)} />
@@ -214,9 +220,21 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
 
     case 'SpringBoot':
     case 'spring-boot':
+    case 'spring boot':
       return <SiSpringboot className={twclsx('text-green-400', className)} />
 
+    case 'python':
+    case 'py':
+      return <SiPython className={twclsx('text-yellow-500', className)} />
+
+    case 'docker':
+      return <SiDocker className={twclsx('text-blue-500', className)} />
+
+    case 'kubernetes':
+    case 'k8s':
+      return <SiKubernetes className={twclsx('text-blue-600', className)} />
+
     default:
-      return <SiCodesandbox className={twclsx('text-slate-900 dark:text-slate-800', className)} />
+      return <SiCodesandbox className={twclsx('text-slate-500 dark:text-slate-400', className)} />
   }
 }

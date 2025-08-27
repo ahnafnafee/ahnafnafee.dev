@@ -1,29 +1,36 @@
+'use client'
+
 import { UnstyledLink } from '@/UI/links'
 
 import { twclsx } from '@/libs'
 
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 type HeadingProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>
 
-const getHashURL = (asPath: string) => asPath.split('#')[1]
-const isBrowser = typeof window !== 'undefined'
+const getHashURL = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.hash.slice(1)
+  }
+  return ''
+}
 
 export const HeadingTwo: React.FunctionComponent<HeadingProps> = ({ id, ...props }) => {
   const [hashPath, setHasPath] = useState(false)
-  const r = useRouter()
 
   useEffect(() => {
-    if (isBrowser) {
-      if (id === getHashURL(r.asPath)) {
-        setHasPath(true)
-      } else {
-        setHasPath(false)
-      }
+    const checkHash = () => {
+      const currentHash = getHashURL()
+      setHasPath(currentHash === id)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [r.asPath])
+
+    checkHash()
+    window.addEventListener('hashchange', checkHash)
+
+    return () => {
+      window.removeEventListener('hashchange', checkHash)
+    }
+  }, [id])
 
   return (
     <h2 id={id} {...props}>
@@ -46,18 +53,20 @@ export const HeadingTwo: React.FunctionComponent<HeadingProps> = ({ id, ...props
 
 export const HeadingThree: React.FunctionComponent<HeadingProps> = ({ id, ...props }) => {
   const [hashPath, setHasPath] = useState(false)
-  const r = useRouter()
 
   useEffect(() => {
-    if (isBrowser) {
-      if (id === getHashURL(r.asPath)) {
-        setHasPath(true)
-      } else {
-        setHasPath(false)
-      }
+    const checkHash = () => {
+      const currentHash = getHashURL()
+      setHasPath(currentHash === id)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [r.asPath])
+
+    checkHash()
+    window.addEventListener('hashchange', checkHash)
+
+    return () => {
+      window.removeEventListener('hashchange', checkHash)
+    }
+  }, [id])
 
   return (
     <h3 id={id} {...props}>
@@ -80,18 +89,20 @@ export const HeadingThree: React.FunctionComponent<HeadingProps> = ({ id, ...pro
 
 export const HeadingFour: React.FunctionComponent<HeadingProps> = ({ id, ...props }) => {
   const [hashPath, setHasPath] = useState(false)
-  const r = useRouter()
 
   useEffect(() => {
-    if (isBrowser) {
-      if (id === getHashURL(r.asPath)) {
-        setHasPath(true)
-      } else {
-        setHasPath(false)
-      }
+    const checkHash = () => {
+      const currentHash = getHashURL()
+      setHasPath(currentHash === id)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [r.asPath])
+
+    checkHash()
+    window.addEventListener('hashchange', checkHash)
+
+    return () => {
+      window.removeEventListener('hashchange', checkHash)
+    }
+  }, [id])
 
   return (
     <h4 id={id} {...props}>

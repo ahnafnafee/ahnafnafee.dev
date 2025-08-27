@@ -20,18 +20,17 @@ export const LINKS: typeof SOCIAL = [
 
 export const SKILLS = [
   {
+    name: 'Top Skills',
+    list: ['OpenShift', 'Go', 'Kubernetes']
+  },
+  {
     name: 'Programming',
     list: [
       'Python',
-      'TypeScript',
-      'JavaScript',
       'Kotlin',
       'Java',
-      'Jest',
-      'Detox',
-      'TypeScript',
-      'JUnit',
-      'Selenium',
+      'Groovy',
+      'GoLang',
       'PostgreSQL',
       'MySQL',
       'WebGL',
@@ -39,23 +38,17 @@ export const SKILLS = [
       'C',
       'C++',
       'Haskell',
+      'SQLite',
+      'JavaScript',
+      'TypeScript',
+      'Bash',
       'GLSL',
-      'HLSL',
-      'SQLite'
+      'HLSL'
     ]
   },
   {
     name: 'Tools & Frameworks',
     list: [
-      'React Native',
-      'SpringBoot',
-      'Node.js',
-      'React',
-      'JIRA',
-      'Android Studio',
-      'Xcode',
-      'GitHub',
-      'Postman',
       'Unity',
       'Unreal Engine',
       'Maya',
@@ -70,15 +63,30 @@ export const SKILLS = [
       'Figma',
       'Perforce',
       'Plastic SCM',
+      'React Native',
+      'SpringBoot',
+      'Node.js',
+      'React',
+      'JIRA',
       'AI',
       'ML',
-      'AWS (ECS, EC2, SNS, SES, Route 53, RDS, Lambda, Cloud Formation Stack)',
-      'Firebase',
+      'AWS',
+      'PostgreSQL',
       'Docker',
-      'WebSocket Integration',
-      'ERM',
-      'Microservice API',
-      'OAuth'
+      'Kubernetes',
+      'OpenShift',
+      'Terraform',
+      'Hashicorp Vault',
+      'Jenkins',
+      'AWS ECS',
+      'AWS AKS',
+      'GCP',
+      'Gradle',
+      'Puppet',
+      'Ansible',
+      'Maven',
+      'Kong Mesh',
+      'KEDA'
     ]
   }
 ]
@@ -95,27 +103,79 @@ export const KEY_SKILLS = [
 
 export const EXPERIENCE: Experience[] = [
   {
-    companyName: `<a href=\'https://dynasty11.com\'>Dynasty 11 Studios</a>`,
-    role: 'Software Developer',
+    companyName: `<a href='https://gmu.edu'>George Mason University</a>`,
+    role: 'Graduate Teaching Assistant',
     period: {
-      start: 'Sept 2021',
+      start: 'Aug 2025',
       end: 'Present'
     },
     lists: [
-      `Optimized existing React Native codebase to improve stability, reduce memory usage and enhance user experience, resulting in a 40% increase in mobile performance within 3 months`,
-      `Led the backend migration to AWS, and implemented ELB and Auto Scale Groups, resulting in an 80% reduction in application load and costs`,
-      `Streamlined build and deployment process by implementing automated CI/CD using GitHub Actions and Maven, resulting in an 85% reduction in manual work and improved reliability through Serverless Lambda monitoring functions`,
-      `Implemented a custom Axios API interceptor for seamless CRUD and JWT token management, improving security and scalability`,
-      'Engineered Java service integration for STOMP WebSockets to enable in-app chat functionality, enhancing user engagement and experience',
-      'Integrated third-party services and OAuth services with over 20+ RESTful endpoints, contributing to the development of a scalable, user-facing application and increasing user engagement'
+      `Serving as a Graduate Teaching Assistant for the Computer Science department, supporting students through hands-on learning and mentorship to help them grasp complex technical concepts`
     ]
   },
   {
-    companyName: `<a href=\'https://phlcollective.com\'>PHL Collective</a>`,
-    role: 'Technical Programmer Co-op',
+    companyName: `<a href='https://paychex.com'>Paychex</a>`,
+    role: 'Software Engineer',
+    period: {
+      start: 'Feb 2023',
+      end: 'Aug 2025'
+    },
+    lists: [
+      `As a Software Engineer, I was part of a collaborative effort to upgrade observability infrastructure, automate key processes, and enhance CI/CD pipeline efficiency for enterprise-level applications`,
+      `Led a cross-team initiative to standardize deployment dictionaries, facilitating discussions and building consensus to create conflict-free configurations that improved developer workflow`,
+      `Partnered with infrastructure teams to design and implement role-based access control in OpenShift, effectively translating developer needs into security requirements to streamline operations`,
+      `Automated certificate management, eliminating manual renewals and reducing downtime related to certificate expirations by 100%`,
+      `Innovated CI/CD processes by introducing a gradle plugin for image certification, which reduced build congestion and lowered operational expenses by 10% annually`
+    ]
+  },
+  {
+    companyName: `<a href='https://dynasty11.com'>Dynasty 11 Studios</a>`,
+    role: 'Chief Technology Officer',
+    period: {
+      start: 'Jun 2022',
+      end: 'Feb 2023'
+    },
+    lists: [
+      `As CTO, I directed the company's technical vision, led engineering teams, and managed the full project lifecycle from architecture to deployment to improve application efficiency, scalability, and reliability`,
+      `As CTO, mentored and led multiple student engineering teams to spearhead the design and implementation of several new microservices across the application`,
+      `Spearheaded a critical backend migration to AWS, leading the project from conception to completion and coordinating with multiple teams to achieve an 80% reduction in application load and costs`,
+      `Automated the build and deployment process with GitHub Actions and Maven, leading to an 85% reduction in manual work and improved team efficiency`,
+      `Acted as a key liaison between stakeholders and the project team, facilitating weekly meetings to ensure clear communication, manage expectations, and drive successful project execution`
+    ]
+  },
+  {
+    companyName: `<a href='https://dynasty11.com'>Dynasty 11 Studios</a>`,
+    role: 'Software Engineer',
+    period: {
+      start: 'Sep 2021',
+      end: 'Jun 2022'
+    },
+    lists: [
+      `Engineered Java service integration for STOMP WebSockets to enable in-app chat functionality, enhancing user engagement and communication within the application`,
+      `Integrated Third-Party services and OAuth services with over 20 RESTful endpoints to create a scalable, user-facing application and increase user engagement`,
+      `Reduced performance bottlenecks in the custom chat service using Redux state management by 80%, improving the overall efficiency of the application`,
+      `Designed and integrated APIs that processed match data to power matchmaking recommendations for thousands of users, improving the personalization and effectiveness of the application`,
+      `Collaborated in weekly meetings with stakeholders and the project team to ensure streamlined communication and the successful execution of projects`
+    ]
+  },
+  {
+    companyName: `<a href='https://drexel.edu'>Drexel University College of Computing & Informatics</a>`,
+    role: 'Teaching Assistant',
+    period: {
+      start: 'Sep 2021',
+      end: 'Jun 2022'
+    },
+    lists: [
+      `Assisted with multiple undergraduate and graduate courses covering systems engineering, programming, and management`,
+      `Mentored undergraduate and graduate students, enhancing their comprehension of abstract concepts by developing and leading hands-on demonstrations and facilitating weekly labs`
+    ]
+  },
+  {
+    companyName: `<a href='https://phlcollective.com'>PHL Collective</a>`,
+    role: 'Technical Programmer',
     period: {
       start: 'Mar 2021',
-      end: 'Sept 2022'
+      end: 'Sep 2021'
     },
     lists: [
       `Integrated and scripted versatile game managers to streamline future design processes and improve efficiency, resulting in a more efficient and effective workflow for the development team`,
@@ -139,32 +199,89 @@ type Education = Array<{
 
 export const EDUCATION: Education = [
   {
-    school: 'Drexel University',
+    school: 'PhD in Computer Science, George Mason University',
     period: {
-      start: 'Sept 2018',
-      end: 'June 2022'
+      start: '2024',
+      end: 'Present'
     },
     paragraphs: [
-      'BS in Computer Science',
-      'Concentration in Artificial Intelligence, Game Programming and Development',
-      `GPA: 3.8 (<i>manga cum laude</i>)`
-    ]
+      'Research Focus: AI and 3D Computer Graphics',
+      `<strong>Research Areas:</strong> Human-Computer Interaction, Immersive Digital Environments, AI-Driven Creative Workflows`
+    ],
+    list: {
+      title: 'Current Research',
+      listItem: [
+        'Developing novel AI approaches for intuitive human-computer interaction in 3D environments',
+        'Creating machine learning models to automate and optimize 3D modeling pipelines, including UV mapping and NPR techniques',
+        'Exploring scalable cloud infrastructure for deploying AI-powered graphics applications'
+      ]
+    }
+  },
+  {
+    school: 'BS in Computer Science, Drexel University',
+    period: {
+      start: '2018',
+      end: '2022'
+    },
+    paragraphs: [
+      'Concentration in AI and Game Programming',
+      `<strong>Honors:</strong> Magna Cum Laude, Winner of Senior Project Showcase with the 'Player 2' app, Dean's List`
+    ],
+    list: {
+      title: 'Notable Achievements',
+      listItem: [
+        'Senior Project Showcase Winner with innovative mobile application development',
+        "Consistent Dean's List recognition for academic excellence",
+        'Strong foundation in AI, machine learning, and game development technologies'
+      ]
+    }
   }
 ]
 
 export const SUMMARY = [
-  `Software Engineer`,
-  'Passion for <strong>Game Programming</strong> and <strong>Development</strong>',
-  'Deploy optimized apps with scalable user interface, user experience, and user accessibility based on design thinking process.'
+  `I operate at the intersection of three fascinating domains: AI 🧠, 3D Computer Graphics 🌐, and scalable Cloud Infrastructure ☁️. As a Computer Science PhD student at George Mason University, my research is driven by a central ambition: to build the next generation of intuitive and immersive ways for humans to interact with digital worlds.`,
+  `But I'm not just a theorist. My journey into deep research began after my time as a co-founder and CTO of a tech startup. There, I led teams in building, launching, and scaling complex products from the ground up. That experience taught me a critical lesson: the most brilliant AI models are only as good as the infrastructure they run on. It gave me a deep, practical expertise in creating robust, production-ready systems.`,
+  `This unique background allows me to bridge the critical gap 🔗 between theory and practice. I don't just design novel AI and graphics concepts; I understand how to deploy and scale them efficiently using modern DevOps principles.`,
+  `My core areas of expertise include:`,
+  `🧠 AI & Graphics: Generative AI, 3D Computer Graphics, Rendering Pipelines, Parameterized Shaders`,
+  `🛠️ DevOps & Cloud: Kubernetes, OpenShift, Amazon Web Services (AWS), Go, Python, CI/CD, Infrastructure Automation`,
+  `📈 Leadership: Technical Product Leadership, Agile Development, Team Building & Management`,
+  `I'm always eager to connect with fellow researchers, industry pioneers, and anyone passionate about building the future of interactive technology. Let's explore what's next, together! 🤝`
+]
+
+export const CERTIFICATIONS = [
+  {
+    title: 'Bachelor of Science',
+    issuer: 'Drexel University',
+    date: '2022'
+  },
+  {
+    title: 'Python 3',
+    issuer: 'Programming Certification',
+    date: '2021'
+  }
+]
+
+export const HONORS_AWARDS = [
+  {
+    title: "Dean's List",
+    issuer: 'Drexel University',
+    date: 'Multiple Semesters'
+  },
+  {
+    title: "Founder's Scholarship",
+    issuer: 'Academic Excellence',
+    date: '2018-2022'
+  }
 ]
 
 export const LANGUAGES = [
   {
-    title: 'English',
-    level: 'Native & Fluent'
+    title: 'Bangla',
+    level: 'Full Professional'
   },
   {
-    title: 'Bangla',
-    level: 'Native & Fluent'
+    title: 'English',
+    level: 'Full Professional'
   }
 ]

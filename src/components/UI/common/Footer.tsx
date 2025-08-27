@@ -1,13 +1,15 @@
+'use client'
+
 import { FooterSocialHome } from '@/UI/common/FooterSocialHome'
 import { UnstyledLink } from '@/UI/links'
 
 import APP_ROUTE from '@/libs/constants/route'
 import { twclsx } from '@/libs/twclsx'
 
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 
 export const Footer: React.FunctionComponent = () => {
-  const { pathname } = useRouter()
+  const pathname = usePathname()
   const isError = pathname === '/_error' || pathname === '/_offline' || pathname === '/404'
 
   if (isError) {

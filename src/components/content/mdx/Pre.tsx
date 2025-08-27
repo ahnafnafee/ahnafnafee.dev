@@ -1,3 +1,5 @@
+'use client'
+
 import { UnstyledButton } from '@/UI/buttons'
 
 import { twclsx } from '@/libs/twclsx'

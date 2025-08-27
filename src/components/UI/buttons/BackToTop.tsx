@@ -1,3 +1,5 @@
+'use client'
+
 import variants, { withExit } from '@/libs/animation/variants'
 import { twclsx } from '@/libs/twclsx'
 
@@ -14,7 +16,7 @@ export const BackToTop: React.FunctionComponent = () => {
   const v = withExit(variants)
 
   return (
-    <AnimatePresence exitBeforeEnter>
+    <AnimatePresence mode='wait'>
       {yAxis > 200 ? (
         <m.button
           title='back to top'
