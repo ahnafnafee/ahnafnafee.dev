@@ -1,9 +1,6 @@
 import { generateOgImage } from '@/libs/metapage'
 import type { Metadata } from 'next'
 
-// Force dynamic rendering to avoid SSR context issues
-export const dynamic = 'force-dynamic'
-
 export const metadata: Metadata = {
   title: 'Security Policy - Ahnaf An Nafee',
   description: 'Security policy and responsible disclosure guidelines for ahnafnafee.dev',

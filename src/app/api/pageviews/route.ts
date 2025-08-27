@@ -31,8 +31,8 @@ export async function GET(req: NextRequest) {
 
   const config = { headers: { Authorization: 'Bearer ' + token } }
 
-  const articleURL = `/api/website/1/stats?start_at=${firtsDeployedAppAtMs}&end_at=${end_date.getTime()}&url=/article/${slug.toString()}`
-  const blogURL = `/api/website/1/stats?start_at=${firtsDeployedAppAtMs}&end_at=${end_date.getTime()}&url=/blog/${slug.toString()}`
+  // const articleURL = `/api/website/1/stats?start_at=${firtsDeployedAppAtMs}&end_at=${end_date.getTime()}&url=/article/${slug.toString()}`
+  // const blogURL = `/api/website/1/stats?start_at=${firtsDeployedAppAtMs}&end_at=${end_date.getTime()}&url=/blog/${slug.toString()}`
 
   // const settles = await Promise.allSettled([
   //   UMAMI.get<PageView>(articleURL, config),

@@ -78,7 +78,7 @@ async function getBlogData() {
       const views = data.view ?? 0
 
       return { ...r.header, views, est_read } as Blog
-    } catch (error) {
+    } catch {
       // Fallback if pageviews API fails
       const est_read = readingTime(r.content).text
       return { ...r.header, views: 0, est_read } as Blog

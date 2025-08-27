@@ -1,7 +1,6 @@
 import { twclsx } from '@/libs'
 
 import { Category } from 'me'
-import Link from 'next/link'
 
 export const CategoryLabel: React.FunctionComponent<Category> = ({ label, className }) => {
   return (

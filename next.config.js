@@ -73,12 +73,17 @@ const withPWA = require("next-pwa")({
 });
 
 const isStaticExport = process.env.STATIC_EXPORT === "true";
+const basePath = process.env.BASE_PATH || "";
 
 /** @type {import('next').NextConfig} */
 const config = {
 	...(isStaticExport && {
 		output: "export",
 		trailingSlash: true,
+		...(basePath && {
+			basePath: basePath,
+			assetPrefix: basePath,
+		}),
 		images: {
 			unoptimized: true,
 		},

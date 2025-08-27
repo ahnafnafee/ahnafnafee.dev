@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     // e.g. for "/blog/[slug]" this should be "/blog/post-1"
     revalidatePath(slug)
     return NextResponse.json({ revalidated: true })
-  } catch (err) {
+  } catch {
     // If there was an error, Next.js will continue
     // to show the last successfully generated page
     return NextResponse.json({ message: 'Error revalidating' }, { status: 500 })

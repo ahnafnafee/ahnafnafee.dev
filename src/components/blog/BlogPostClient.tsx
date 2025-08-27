@@ -31,7 +31,7 @@ export function BlogPostClient({ header, children }: BlogPostClientProps) {
           const data: PageViewResponse = await res.json()
           const view = data.view ?? 0
           setPostViews(view)
-        } catch (error) {
+        } catch {
           console.info('Could not retrieve page views')
         }
       })()
