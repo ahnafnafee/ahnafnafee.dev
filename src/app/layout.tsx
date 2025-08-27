@@ -6,7 +6,7 @@ import { Toaster } from 'react-hot-toast'
 import { Header } from '@/components/UI/common'
 
 import '@/styles/globals.css'
-import 'prismjs/themes/prism.css'
+import '@/styles/prism-themes.css'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -18,7 +18,7 @@ const inter = Inter({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           <Header />
           {children}

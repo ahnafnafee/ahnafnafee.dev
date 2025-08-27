@@ -8,6 +8,7 @@ import { twclsx } from '@/libs/twclsx'
 import type { Portfolio } from 'me'
 import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import mdxPrism from 'mdx-prism'
 import rehypeSlug from 'rehype-slug'
 
 type Props = {
@@ -22,7 +23,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const res = await getContentBySlug<Portfolio>('/portfolio', params.slug)
+  const { slug } = await params
+  const res = await getContentBySlug<Portfolio>('/portfolio', slug)
   const header = res.header
 
   return {
@@ -65,7 +67,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PortfolioDetailPage({ params }: Props) {
-  const res = await getContentBySlug<Portfolio>('/portfolio', params.slug)
+  const { slug } = await params
+  const res = await getContentBySlug<Portfolio>('/portfolio', slug)
   const header = res.header
 
   return (
@@ -106,7 +109,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
             components={MDXComponents}
             options={{
               mdxOptions: {
-                rehypePlugins: [rehypeSlug]
+                rehypePlugins: [mdxPrism, rehypeSlug]
               }
             }}
           />

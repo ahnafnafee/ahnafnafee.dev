@@ -75,7 +75,7 @@ export function ResumePageClient() {
             <br />
             {SUMMARY.map((summ, idx) => {
               return (
-                <>
+                <div key={`${idx}`}>
                   <p>
                     {htmr(summ, {
                       transform: {
@@ -84,7 +84,7 @@ export function ResumePageClient() {
                     })}
                   </p>
                   <br />
-                </>
+                </div>
               )
             })}
           </ul>

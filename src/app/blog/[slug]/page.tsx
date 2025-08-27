@@ -6,6 +6,7 @@ import { generateOgImage } from '@/libs/metapage'
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import mdxPrism from 'mdx-prism'
 import readingTime from 'reading-time'
 import rehypeSlug from 'rehype-slug'
 
@@ -26,7 +27,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const res = await getContentBySlug<Blog>('/blog', params.slug)
+  const { slug } = await params
+  const res = await getContentBySlug<Blog>('/blog', slug)
   const header = res.header
 
   return {
@@ -66,7 +68,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPost({ params }: Props) {
   try {
-    const res = await getContentBySlug<Blog>('/blog', params.slug)
+    const { slug } = await params
+    const res = await getContentBySlug<Blog>('/blog', slug)
     const est_read = readingTime(res.content).text
     const header = { est_read, ...res.header }
 
@@ -79,7 +82,7 @@ export default async function BlogPost({ params }: Props) {
               components={MDXComponents}
               options={{
                 mdxOptions: {
-                  rehypePlugins: [rehypeSlug]
+                  rehypePlugins: [mdxPrism, rehypeSlug]
                 }
               }}
             />
