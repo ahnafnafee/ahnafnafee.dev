@@ -2,7 +2,7 @@ import { WrappedImage } from '@/components/UI/images'
 
 import { UnstyledLink } from '@/UI/links'
 
-import { twclsx } from '@/libs'
+import { twclsx, createUrl } from '@/libs'
 
 import { CategoryLabel } from './CategoryLabel'
 import { IconStack } from './IconStack'
@@ -10,7 +10,7 @@ import { IconStack } from './IconStack'
 import type { Portfolio } from 'me'
 
 export const PortfolioItem: React.FunctionComponent<Portfolio> = (props) => {
-  const urlPortfolio = `/portfolio/${props.slug}`
+  const urlPortfolio = createUrl(`/portfolio/${props.slug}`)
 
   return (
     <div key={props.slug} className='group flex flex-col'>

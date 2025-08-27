@@ -55,6 +55,7 @@ listFiles(outDir);
 console.log('');
 console.log('⚠️  Important Notes:');
 console.log('   - Make sure your university server supports static file serving');
-console.log('   - Some universities require .htaccess files for proper routing');
+console.log('   - .htaccess file has been removed as it causes issues - the site works without it');
+console.log('   - Portfolio links now correctly use the university base path');
 console.log('   - Test all pages after deployment to ensure routing works');
 console.log('   - Contact your IT department if you encounter issues');
