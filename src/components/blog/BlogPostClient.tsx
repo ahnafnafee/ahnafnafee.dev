@@ -1,43 +1,21 @@
+'use client'
+
 import { UnstyledButton } from '@/components/UI/buttons'
 import { PRButton } from '@/components/content'
 import { AuthorSection, GiscusComment, HeadingContent } from '@/components/content/blog'
-import { MDXComponents } from '@/components/content/mdx'
-
-import { LayoutPage } from '@/UI/templates'
-import type { LayoutPageProps } from '@/UI/templates'
-
-import { getContentBySlug, getContents } from '@/services/content'
-
 import { isDev } from '@/libs/constants/environmentState'
-import { getMetaPageBlog } from '@/libs/metapage'
 import { twclsx } from '@/libs/twclsx'
-
-import axios from 'axios'
 import type { Blog, PageViewResponse } from 'me'
-import { GetStaticPaths, GetStaticPathsResult, GetStaticProps, NextPage } from 'next'
-import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote'
-import { serialize } from 'next-mdx-remote/serialize'
-import { ParsedUrlQuery } from 'querystring'
 import { useCallback, useEffect, useState } from 'react'
 import { HiArrowUp } from 'react-icons/hi'
-import readingTime from 'reading-time'
-import rehypeSlug from 'rehype-slug'
 
-interface BlogPostProps {
-  mdxSource: MDXRemoteSerializeResult
+type BlogPostClientProps = {
   header: Blog
+  children: React.ReactNode
 }
 
-interface slug extends ParsedUrlQuery {
-  slug: string
-}
-
-const BlogPost: NextPage<BlogPostProps> = ({ header, mdxSource }) => {
+export function BlogPostClient({ header, children }: BlogPostClientProps) {
   const [postViews, setPostViews] = useState<number>(0)
-  const metaData = getMetaPageBlog({
-    ...header,
-    slug: '/blog/' + header.slug
-  })
   const toTop = useCallback(() => window.scrollTo({ top: 0, behavior: 'smooth' }), [])
 
   useEffect(() => {
@@ -49,8 +27,9 @@ const BlogPost: NextPage<BlogPostProps> = ({ header, mdxSource }) => {
           const baseURL = isDev
             ? 'http://localhost:3000'
             : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev')
-          const res = await axios.get<PageViewResponse>(baseURL + '/api/pageviews?slug=' + header.slug)
-          const view = res.data.view ?? 0
+          const res = await fetch(`${baseURL}/api/pageviews?slug=${header.slug}`)
+          const data: PageViewResponse = await res.json()
+          const view = data.view ?? 0
           setPostViews(view)
         } catch (error) {
           console.info('Could not retrieve page views')
@@ -60,7 +39,7 @@ const BlogPost: NextPage<BlogPostProps> = ({ header, mdxSource }) => {
   }, [header.slug])
 
   return (
-    <LayoutPage {...metaData} className='pb-4'>
+    <>
       <article className={twclsx('content-auto', 'flex flex-col', 'gap-8')}>
         <HeadingContent
           topics={header.topics}
@@ -76,7 +55,7 @@ const BlogPost: NextPage<BlogPostProps> = ({ header, mdxSource }) => {
         <div
           className={twclsx('prose dark:prose-invert', 'md:prose-lg', 'prose-headings:scroll-mt-24', 'prose-img:my-4')}
         >
-          <MDXRemote {...mdxSource} components={MDXComponents} />
+          {children}
         </div>
       </article>
 
@@ -93,39 +72,6 @@ const BlogPost: NextPage<BlogPostProps> = ({ header, mdxSource }) => {
           <span>Back to top</span>
         </UnstyledButton>
       </div>
-    </LayoutPage>
+    </>
   )
 }
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const res = await getContents<Blog>('/blog')
-
-  const paths = res.map((r) => ({ params: { slug: r.header.slug } })) as GetStaticPathsResult['paths']
-
-  return {
-    paths,
-    fallback: false
-  }
-}
-
-export const getStaticProps: GetStaticProps<BlogPostProps> = async (ctx) => {
-  const mdxPrism = await import('mdx-prism')
-
-  const { slug } = ctx.params as slug
-
-  const res = await getContentBySlug<Blog>('/blog', slug)
-  const est_read = readingTime(res.content).text
-
-  const mdxSource = await serialize(res.content, {
-    mdxOptions: { rehypePlugins: [mdxPrism.default, rehypeSlug] }
-  })
-
-  return {
-    props: {
-      header: { est_read, ...res.header },
-      mdxSource
-    }
-  }
-}
-
-export default BlogPost

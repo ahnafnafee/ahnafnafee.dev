@@ -1,3 +1,5 @@
+'use client'
+
 import { twclsx } from '@/libs'
 import APP_ROUTE from '@/libs/constants/route'
 
@@ -7,11 +9,11 @@ import { MobileNav } from './MobileNav'
 import { ThemeMenu } from './ThemeMenu'
 
 import NextLink from 'next/link'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 
 export const Header: React.FunctionComponent = () => {
   const y = useWindowScrollY()
-  const router = useRouter()
+  const pathname = usePathname()
   const exceptedPage = [
     // '/404',
     '/_error',
@@ -19,7 +21,7 @@ export const Header: React.FunctionComponent = () => {
     '/_offline'
   ]
 
-  if (exceptedPage.includes(router.pathname)) return null
+  if (exceptedPage.includes(pathname)) return null
 
   return (
     <header
@@ -52,8 +54,8 @@ export const Header: React.FunctionComponent = () => {
 }
 
 function NavItem({ href, text }: { href: string; text: string }) {
-  const router = useRouter()
-  const isActive = router.asPath === href
+  const pathname = usePathname()
+  const isActive = pathname === href
 
   return (
     <NextLink

@@ -119,7 +119,7 @@ const config = {
 				hostname: "img.shields.io",
 			},
 		],
-		qualities: [25, 50, 75, 100],
+		qualities: [25, 50, 60, 75, 100],
 		formats: ["image/webp", "image/avif"],
 		deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
 		imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
@@ -147,8 +147,11 @@ const config = {
 			"@vercel/analytics",
 			"@vercel/speed-insights",
 			"framer-motion",
+			"react-icons",
+			"next-themes",
 		],
 		webVitalsAttribution: ["CLS", "LCP"],
+		scrollRestoration: true,
 	},
 	async headers() {
 		return [
@@ -195,21 +198,13 @@ const config = {
 				destination: "/AhnafAnNafeeResume.pdf",
 				permanent: true,
 			},
-			{
-				source: "/blog",
-				destination: "/portfolio",
-				permanent: true,
-			},
+
 			{
 				source: "/projects",
 				destination: "/portfolio",
 				permanent: true,
 			},
-			{
-				source: "/snippet",
-				destination: "/portfolio",
-				permanent: true,
-			},
+
 			{
 				source: "/tags",
 				destination: "/",
@@ -228,11 +223,6 @@ const config = {
 			{
 				source: "/linkedin",
 				destination: "https://www.linkedin.com/in/ahnafnafee",
-				permanent: true,
-			},
-			{
-				source: "/twitter",
-				destination: "https://twitter.com/ahnaf_nafee",
 				permanent: true,
 			},
 		];

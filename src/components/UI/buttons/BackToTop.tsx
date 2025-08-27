@@ -1,3 +1,5 @@
+'use client'
+
 import variants, { withExit } from '@/libs/animation/variants'
 import { twclsx } from '@/libs/twclsx'
 

@@ -1,16 +1,15 @@
 import type { PageView, PageViewResponse } from 'me'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextRequest, NextResponse } from 'next/server'
 
 let token: null | string | false = null
 
-const allowedMethod = ['GET']
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+  const slug = searchParams.get('slug')
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<PageViewResponse>) {
-  if (req.method && !allowedMethod.includes(req.method)) {
-    return res.status(405).send({ message: 'Method not allowed.', view: null })
+  if (!slug) {
+    return NextResponse.json({ message: 'query parameter is required', view: null }, { status: 400 })
   }
-
-  if (!req.query.slug) return res.status(400).send({ message: 'query parameter is required', view: null })
 
   // if (!token && token !== false) {
   //   const newToken = await getToken()
@@ -21,11 +20,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   //   }
   // }
 
-  if (token === false) return res.status(500).send({ message: 'Cannot get token', view: null })
+  if (token === false) {
+    return NextResponse.json({ message: 'Cannot get token', view: null }, { status: 500 })
+  }
 
   let view = 0
 
-  const slug = req.query.slug
   const end_date = new Date()
   const firtsDeployedAppAtMs = 1645722000000
 
@@ -46,5 +46,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   //   }
   // })
 
-  return res.status(200).json({ message: 'Retrieved succesfully', view })
+  return NextResponse.json({ message: 'Retrieved succesfully', view })
 }

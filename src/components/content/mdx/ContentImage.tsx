@@ -1,3 +1,5 @@
+'use client'
+
 import { WrappedImage } from '@/UI/images'
 
 import { twclsx } from '@/libs/twclsx'

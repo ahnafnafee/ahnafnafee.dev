@@ -1,3 +1,5 @@
+'use client'
+
 import { useTheme } from '@/hooks'
 
 import Giscus from '@giscus/react'

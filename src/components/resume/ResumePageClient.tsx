@@ -1,9 +1,8 @@
-import { CustomSeo } from '@/components'
-import { AlertResume, HowToPrintDialog } from '@/components/dialog'
+'use client'
 
+import { HowToPrintDialog } from '@/components/dialog'
 import { UnstyledButton } from '@/UI/buttons'
 import { UnderlineLink } from '@/UI/links'
-
 import {
   CERTIFICATIONS,
   EDUCATION,
@@ -15,82 +14,11 @@ import {
   SKILLS,
   SUMMARY
 } from '@/libs/constants/resume'
-import { generateOgImage, getMetaPage } from '@/libs/metapage'
-
 import htmr from '@/libs/htmr-replacement'
-import type { NextPage } from 'next'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { HiInformationCircle } from 'react-icons/hi'
 
-const meta = getMetaPage({
-  title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher | DevOps Engineer',
-  description:
-    '🚀 Professional Resume of Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University. I operate at the intersection of AI 🧠, 3D Computer Graphics 🌐, and scalable Cloud Infrastructure ☁️. Ex-CTO with expertise in Kubernetes, OpenShift, AWS, and technical leadership. Download PDF resume.',
-  keywords: [
-    'Ahnaf An Nafee resume',
-    'ahnafnafee resume',
-    'curriculum vitae',
-    'cv download',
-    'PhD AI 3D Graphics resume',
-    'Computer Science PhD resume',
-    'AI researcher resume',
-    '3D Computer Graphics researcher',
-    'Machine Learning researcher',
-    'Computer Vision expert',
-    'Generative AI specialist',
-    'Rendering Pipeline expert',
-    'DevOps Engineer resume',
-    'Kubernetes expert resume',
-    'OpenShift engineer resume',
-    'Cloud Infrastructure specialist',
-    'AWS certified professional',
-    'Docker containerization expert',
-    'CI/CD pipeline specialist',
-    'Infrastructure automation expert',
-    'George Mason University PhD',
-    'GMU computer science PhD',
-    'Drexel University alumni',
-    'Game Development experience',
-    'Unity 3D developer resume',
-    'Unreal Engine developer',
-    '3D modeling expert',
-    'Software Engineer resume',
-    'Full stack developer',
-    'Python developer resume',
-    'Go programming expert',
-    'Java developer',
-    'Kotlin developer',
-    'React Native developer',
-    'Tech startup CTO resume',
-    'Technical leadership resume',
-    'Startup founder experience',
-    'Team building experience',
-    'Agile development expert',
-    'Product leadership',
-    'Research publications',
-    'Academic research experience',
-    'Human computer interaction',
-    'Immersive technology expert',
-    'Interactive technology',
-    'Digital worlds development',
-    'Computer graphics research',
-    'AI graphics intersection',
-    'Theory to practice bridge',
-    'Production ready systems',
-    'Scalable infrastructure',
-    'Modern DevOps principles',
-    'ahnafnafee.dev resume'
-  ],
-  og_image: generateOgImage({
-    title: 'Resume',
-    subTitle: 'PhD Student in AI & 3D Graphics | Ex-CTO'
-  }),
-  og_image_alt: 'Resume - Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO',
-  slug: '/resume',
-  type: 'website'
-})
-
-const Resume: NextPage = () => {
+export function ResumePageClient() {
   const listStyle = useMemo(() => 'list-disc list-inside [&>li]:my-2', [])
   // const isMatch = useMediaQuery('(min-width: 768px)')
   const isMatch = true
@@ -117,11 +45,8 @@ const Resume: NextPage = () => {
   }, [closeAlert, openAlert])
 
   return (
-    <main className='py-4 dark:print:text-theme-800 dark:print:[&:is(h1)]:text-primary-700'>
-      <CustomSeo {...meta} />
-
+    <main className='layout py-4 dark:print:text-theme-800 dark:print:[&:is(h1)]:text-primary-700'>
       <HowToPrintDialog isOpen={modal.popup} onClose={closePopup} />
-      {modal.alert && <AlertResume isOpen={modal.alert} onClose={closeAlert} />}
 
       <section className='w-full mb-4'>
         <h1 className='text-center'>{HEADLINE.name}</h1>
@@ -164,7 +89,6 @@ const Resume: NextPage = () => {
             })}
           </ul>
         </section>
-
         <section>
           <h3 className='mb-4 pb-2.5 border-b-2 border-b-theme-700'>Techinal Skills</h3>
 
@@ -303,17 +227,4 @@ const Resume: NextPage = () => {
       </div>
     </main>
   )
-}
-
-export default Resume
-
-export async function getStaticProps() {
-  /* Fetch data here */
-
-  return {
-    props: {
-      /* Add something to your props */
-    },
-    revalidate: 10 // Seconds
-  }
 }
