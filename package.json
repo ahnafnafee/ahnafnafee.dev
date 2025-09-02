@@ -61,7 +61,7 @@
 		"@trivago/prettier-plugin-sort-imports": "^5.2.2",
 		"cross-env": "^7.0.3",
 		"env-cmd": "^10.1.0",
-		"@types/minimatch": "^5.1.2",
+		"@types/minimatch": "^6.0.0",
 		"@types/node": "^24.3.0",
 		"@types/react": "19.1.11",
 		"@types/react-dom": "19.1.8",
