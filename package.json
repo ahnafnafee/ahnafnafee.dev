@@ -59,7 +59,7 @@
 	},
 	"devDependencies": {
 		"@trivago/prettier-plugin-sort-imports": "^5.2.2",
-		"cross-env": "^7.0.3",
+		"cross-env": "^10.0.0",
 		"env-cmd": "^10.1.0",
 		"@types/minimatch": "^5.1.2",
 		"@types/node": "^24.3.0",
