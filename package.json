@@ -40,7 +40,7 @@
 		"isomorphic-fetch": "^3.0.0",
 		"jotai": "^2.13.1",
 		"mdx-prism": "^0.3.4",
-		"next": "15.5.1",
+		"next": "15.5.2",
 		"next-axiom": "^1.9.2",
 		"next-mdx-remote": "^5.0.0",
 		"next-pwa": "^5.6.0",
