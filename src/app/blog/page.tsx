@@ -39,15 +39,7 @@ export const metadata: Metadata = {
     ],
     locale: 'en_US',
     type: 'website'
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Blog - Ahnaf An Nafee',
-    description: "You'll find a collection of my thoughts and musings on a variety of topics.",
-    site: '@ahnaf_nafee',
-    creator: '@ahnaf_nafee',
-    images: [
-      generateOgImage({
+  }
         title: 'Blog',
         subTitle: 'Thoughts on AI, 3D Graphics, and Technology'
       })

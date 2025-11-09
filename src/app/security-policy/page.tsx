@@ -23,15 +23,7 @@ export const metadata: Metadata = {
     ],
     locale: 'en_US',
     type: 'website'
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Security Policy - Ahnaf An Nafee',
-    description: 'Security policy and responsible disclosure guidelines for ahnafnafee.dev',
-    site: '@ahnaf_nafee',
-    creator: '@ahnaf_nafee',
-    images: [
-      generateOgImage({
+  }
         title: 'Security Policy',
         subTitle: 'Responsible Disclosure Guidelines'
       })

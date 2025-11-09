@@ -2,7 +2,6 @@ import type { CustomSeoProps } from '@/components'
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL
 export const SITE_NAME = process.env.NEXT_PUBLIC_SITE_NAME
-export const TWITER_USERNAME = process.env.NEXT_PUBLIC_TWITTER_USERNAME
 
 export type MetaPage = {
   title: string

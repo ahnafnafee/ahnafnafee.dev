@@ -31,12 +31,6 @@ export const CustomSeo: React.FunctionComponent<CustomSeoProps> = ({ ...props })
       ],
       ...props.openGraph
     },
-    twitter: {
-      handle: '@ahnaf_nafee',
-      site: '@ahnaf_nafee',
-      cardType: 'summary_large_image',
-      ...props.twitter
-    },
     additionalMetaTags: [
       {
         name: 'author',

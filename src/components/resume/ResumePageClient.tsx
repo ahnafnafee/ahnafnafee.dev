@@ -75,7 +75,12 @@ export function ResumePageClient() {
             <br />
             {SUMMARY.map((summ, idx) => {
               return (
-                <div key={`${idx}`}>
+                <div
+                  key={`${
+                    // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                    idx
+                  }`}
+                >
                   <p>
                     {htmr(summ, {
                       transform: {

@@ -80,20 +80,6 @@ export const metadata: Metadata = {
     ],
     locale: 'en_US',
     type: 'website'
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher',
-    description:
-      'PhD student researching AI-driven 3D content generation and graphics pipelines at GMU. DCXR Lab, advised by Dr. Craig Yu.',
-    site: '@ahnaf_nafee',
-    creator: '@ahnaf_nafee',
-    images: [
-      generateOgImage({
-        title: 'Resume',
-        subTitle: 'PhD Student in AI & 3D Graphics | Ex-CTO'
-      })
-    ]
   }
 }
 

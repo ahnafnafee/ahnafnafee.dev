@@ -50,14 +50,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       ],
       locale: 'en_US',
       type: 'website'
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: header.title,
-      description: header.summary,
-      site: '@ahnaf_nafee',
-      creator: '@ahnaf_nafee',
-      images: [generateOgImage({ title: header.title, subTitle: 'Snippet - ahnafnafee.dev' })]
     }
   }
 }
