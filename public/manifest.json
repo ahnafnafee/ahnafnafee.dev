@@ -6,10 +6,10 @@
 	"start_url": "/",
 	"orientation": "portrait-primary",
 	"author": "Ahnaf An Nafee",
-	"name": "Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ GMU | Scaling Immersive Worlds",
+	"name": "Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ GMU | DCXR Lab",
 	"app_name": "ahnafnafee.dev",
 	"short_name": "Ahnaf An Nafee",
-	"description": "🚀 PhD Student in AI & 3D Graphics @ George Mason University. I operate at the intersection of AI 🧠, 3D Computer Graphics 🌐, and scalable Cloud Infrastructure ☁️. Building the next generation of intuitive and immersive ways for humans to interact with digital worlds. Ex-CTO with expertise in DevOps, Kubernetes, and technical leadership.",
+	"description": "PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics. DCXR Lab, advised by Dr. Craig Yu.",
 	"categories": [
 		"education",
 		"technology",

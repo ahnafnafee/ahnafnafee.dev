@@ -7,12 +7,12 @@ import { format } from 'date-fns'
 import { CategoryTypes } from 'me'
 import NextImage from 'next/image'
 import { HiGlobeAlt } from 'react-icons/hi'
-import { SiGithub } from 'react-icons/si'
+import { SiGithub, SiApple, SiGoogleplay } from 'react-icons/si'
 
 type HeadingPortfolioProps = {
   title: string
   summary: string
-  link: { github: string; live: string }
+  link: { github?: string; live?: string; appStore?: string; playStore?: string }
   category?: CategoryTypes
   date: string
 }
@@ -23,6 +23,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
       <CategoryLabel label={props.category} className={'my-2'} />
       <h1 className={twclsx('mb-4 text-3xl font-bold tracking-tight text-black md:text-5xl dark:text-white')}>
         {props.title.split('').map((c, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
           <span key={i}>{c}</span>
         ))}
       </h1>
@@ -44,10 +45,10 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
           </p>
         </div>
 
-        <div className={'flex items-center justify-end gap-2 mt-4 md:mt-0'}>
-          {props.link.github && (
+        <div className={'flex items-center justify-end gap-2 mt-4 md:mt-0 flex-wrap'}>
+          {props.link.appStore && (
             <UnstyledLink
-              href={props.link.github}
+              href={props.link.appStore}
               className={twclsx(
                 'flex items-center justify-start gap-1 max-w-max',
                 'gap-2 py-1',
@@ -56,8 +57,24 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
                 'text-primary-700 dark:text-primary-400 font-semibold'
               )}
             >
-              <SiGithub className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
-              <span className={twclsx('text-sm md:text-base')}>Repository</span>
+              <SiApple className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
+              <span className={twclsx('text-sm md:text-base')}>App Store</span>
+            </UnstyledLink>
+          )}
+
+          {props.link.playStore && (
+            <UnstyledLink
+              href={props.link.playStore}
+              className={twclsx(
+                'flex items-center justify-start gap-1 max-w-max',
+                'gap-2 py-1',
+                'text-theme-700 dark:text-theme-200',
+                'relative inline-flex items-center',
+                'text-primary-700 dark:text-primary-400 font-semibold'
+              )}
+            >
+              <SiGoogleplay className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
+              <span className={twclsx('text-sm md:text-base')}>Play Store</span>
             </UnstyledLink>
           )}
 
@@ -73,7 +90,23 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
               )}
             >
               <HiGlobeAlt className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
-              <span className={twclsx('text-sm md:text-base')}>Live Demo</span>
+              <span className={twclsx('text-sm md:text-base')}>Website</span>
+            </UnstyledLink>
+          )}
+
+          {props.link.github && (
+            <UnstyledLink
+              href={props.link.github}
+              className={twclsx(
+                'flex items-center justify-start gap-1 max-w-max',
+                'gap-2 py-1',
+                'text-theme-700 dark:text-theme-200',
+                'relative inline-flex items-center',
+                'text-primary-700 dark:text-primary-400 font-semibold'
+              )}
+            >
+              <SiGithub className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
+              <span className={twclsx('text-sm md:text-base')}>Repository</span>
             </UnstyledLink>
           )}
         </div>

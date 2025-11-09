@@ -103,7 +103,7 @@ const structuredData = {
     }
   ],
   description:
-    '🚀 PhD Student in AI & 3D Graphics at George Mason University. I operate at the intersection of AI 🧠, 3D Computer Graphics 🌐, and scalable Cloud Infrastructure ☁️. Building the next generation of intuitive and immersive ways for humans to interact with digital worlds.',
+    'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.',
   mainEntityOfPage: {
     '@type': 'WebPage',
     '@id': 'https://www.ahnafnafee.dev'
@@ -111,9 +111,9 @@ const structuredData = {
 }
 
 export const metadata: Metadata = {
-  title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | Scaling Immersive Worlds',
+  title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
   description:
-    '🚀 PhD Student in AI & 3D Graphics @ George Mason University. I operate at the intersection of AI 🧠, 3D Computer Graphics 🌐, and scalable Cloud Infrastructure ☁️. Building the next generation of intuitive and immersive ways for humans to interact with digital worlds. Ex-CTO with expertise in DevOps, Kubernetes, OpenShift, and AWS.',
+    'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics. DCXR Lab, advised by Dr. Craig Yu.',
   other: {
     'application/ld+json': JSON.stringify(structuredData)
   },
@@ -166,9 +166,9 @@ export const metadata: Metadata = {
     'Jenkins'
   ],
   openGraph: {
-    title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | Scaling Immersive Worlds',
+    title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
     description:
-      '🚀 PhD Student in AI & 3D Graphics @ George Mason University. Building the next generation of intuitive and immersive ways for humans to interact with digital worlds.',
+      'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.',
     url: 'https://www.ahnafnafee.dev',
     siteName: 'Ahnaf An Nafee',
     images: [
@@ -184,9 +184,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | Scaling Immersive Worlds',
+    title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
     description:
-      '🚀 PhD Student in AI & 3D Graphics @ George Mason University. Building the next generation of intuitive and immersive ways for humans to interact with digital worlds.',
+      'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.',
     site: '@ahnaf_nafee',
     creator: '@ahnaf_nafee',
     images: [`https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`]
@@ -220,8 +220,7 @@ export default async function HomePage() {
               </h1>
               <br />
               <h2 className='text-base text-gray-700 dark:text-gray-200 mb-4'>
-                PhD Student in AI & 3D Graphics @ <span className='font-semibold'>GMU</span> | Building Immersive Worlds
-                through Machine Learning & Computer Graphics | Ex-CTO
+                PhD Student in AI & 3D Graphics @ <span className='font-semibold'>GMU</span> | DCXR Lab | Ex-CTO
               </h2>
             </div>
             <div className='flex-shrink-0 mb-8 sm:mb-0 sm:ml-8'>
@@ -242,55 +241,37 @@ export default async function HomePage() {
           </div>
 
           <div className='text-gray-600 dark:text-gray-400 space-y-4 mt-4'>
-            <p>I operate at the intersection of two fascinating domains:</p>
-            <ul className='ml-4 space-y-2 text-gray-700 dark:text-gray-200'>
-              <li>
-                • <strong>AI 🧠</strong> (Machine Learning, Deep Learning, Computer Vision)
-              </li>
-              <li>
-                • <strong>3D Computer Graphics 🌐</strong> (Rendering, Shaders, Real-time Graphics)
-              </li>
-            </ul>
-            <p>
-              As a Computer Science PhD student at George Mason University, my research is driven by a central ambition:
-              to build the next generation of intuitive and immersive ways for humans to interact with digital worlds.
+            <p className='text-lg text-gray-700 dark:text-gray-300'>
+              I&apos;m a PhD student at George Mason University&apos;s DCXR Lab, advised by Dr. Craig Yu. My research
+              sits at the intersection of <strong>AI and 3D computer graphics</strong> - exploring how machine learning
+              can transform how we create, interact with, and experience immersive digital worlds.
             </p>
 
             <p>
-              But I&apos;m not just a theorist. My journey into deep research began after my time as a co-founder and
-              CTO of a tech startup. There, I led teams in building, launching, and scaling complex products from the
-              ground up. That experience taught me a critical lesson: the most brilliant AI models are only as good as
-              the infrastructure they run on. It gave me a deep, practical expertise in creating robust,
-              production-ready systems.
+              Before diving into research, I co-founded a tech startup as CTO, where I learned that the best ideas mean
+              nothing without execution. That experience shapes how I approach research: I build systems that work, not
+              just papers that publish.
             </p>
 
-            <p>
-              This unique background allows me to{' '}
-              <strong>bridge the critical gap 🔗 between theory and practice</strong>. I don&apos;t just design novel AI
-              and graphics concepts; I understand how to deploy and scale them efficiently using modern DevOps
-              principles.
-            </p>
-
-            <div className='bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border-l-4 border-primary-500'>
-              <p className='font-semibold text-gray-800 dark:text-gray-200 mb-2'>My core areas of expertise include:</p>
-              <ul className='space-y-1 text-sm'>
+            <div className='bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-800 p-4 rounded-lg border-l-4 border-purple-500'>
+              <p className='font-semibold text-gray-800 dark:text-gray-200 mb-2'>Research Focus:</p>
+              <ul className='space-y-1 text-sm text-gray-700 dark:text-gray-300'>
                 <li>
-                  <strong>🧠 AI & Machine Learning:</strong> Deep Learning, Computer Vision, Generative AI, Neural
-                  Networks
+                  <strong>AI-driven creative workflows</strong> for 3D content generation
                 </li>
                 <li>
-                  <strong>🌐 3D Computer Graphics:</strong> Real-time Rendering, Shaders, Graphics Pipelines, Game
-                  Engines
+                  <strong>Machine learning for graphics pipelines</strong> - automating UV mapping, NPR techniques, and
+                  modeling workflows
                 </li>
                 <li>
-                  <strong>📈 Leadership:</strong> Technical Product Leadership, Research & Development, Team Building
+                  <strong>Human-computer interaction</strong> in immersive environments
                 </li>
               </ul>
             </div>
 
             <p className='text-sm italic'>
-              I&apos;m always eager to connect with fellow researchers, industry pioneers, and anyone passionate about
-              building the future of interactive technology. Let&apos;s explore what&apos;s next, together! 🤝
+              Always open to collaborations with researchers and industry partners pushing the boundaries of AI and
+              graphics.
             </p>
           </div>
 

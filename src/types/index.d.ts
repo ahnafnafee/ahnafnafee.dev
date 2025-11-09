@@ -28,8 +28,10 @@ declare module 'me' {
     stack: Array<string>
     image: string
     link: {
-      github: string
-      live: string
+      github?: string
+      live?: string
+      appStore?: string
+      playStore?: string
     }
     category?: CategoryTypes
   }
