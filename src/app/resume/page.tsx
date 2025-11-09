@@ -3,9 +3,9 @@ import { generateOgImage } from '@/libs/metapage'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher | DevOps Engineer',
+  title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher',
   description:
-    '🚀 Professional Resume of Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University. I operate at the intersection of AI 🧠, 3D Computer Graphics 🌐, and scalable Cloud Infrastructure ☁️. Ex-CTO with expertise in Kubernetes, OpenShift, AWS, and technical leadership. Download PDF resume.',
+    'PhD student researching AI-driven 3D content generation and graphics pipelines at GMU. DCXR Lab, advised by Dr. Craig Yu. Ex-CTO with experience building production systems. Download PDF resume.',
   keywords: [
     'Ahnaf An Nafee resume',
     'ahnafnafee resume',
@@ -62,9 +62,9 @@ export const metadata: Metadata = {
     'ahnafnafee.dev resume'
   ],
   openGraph: {
-    title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher | DevOps Engineer',
+    title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher',
     description:
-      '🚀 Professional Resume of Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University.',
+      'PhD student researching AI-driven 3D content generation and graphics pipelines at GMU. DCXR Lab, advised by Dr. Craig Yu.',
     url: 'https://www.ahnafnafee.dev/resume',
     siteName: 'Ahnaf An Nafee',
     images: [
@@ -83,9 +83,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher | DevOps Engineer',
+    title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher',
     description:
-      '🚀 Professional Resume of Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University.',
+      'PhD student researching AI-driven 3D content generation and graphics pipelines at GMU. DCXR Lab, advised by Dr. Craig Yu.',
     site: '@ahnaf_nafee',
     creator: '@ahnaf_nafee',
     images: [

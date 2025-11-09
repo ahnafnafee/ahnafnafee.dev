@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
 
     const hasTitle = searchParams.has('title')
     const title = hasTitle ? searchParams.get('title')?.slice(0, 100) : 'Ahnaf An Nafee'
-    const subtitle = searchParams.get('subtitle') || 'PhD Student in AI & 3D Graphics @ GMU | Building Immersive Worlds'
+    const subtitle = searchParams.get('subtitle') || 'PhD Student in AI & 3D Graphics @ GMU | DCXR Lab'
     const theme = searchParams.get('theme') || 'default'
 
     return new ImageResponse(

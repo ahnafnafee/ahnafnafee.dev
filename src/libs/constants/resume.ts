@@ -106,11 +106,11 @@ export const EXPERIENCE: Experience[] = [
     companyName: `<a href='https://gmu.edu'>George Mason University</a>`,
     role: 'Graduate Teaching Assistant',
     period: {
-      start: 'Aug 2025',
+      start: 'Aug 2024',
       end: 'Present'
     },
     lists: [
-      `Serving as a Graduate Teaching Assistant for the Computer Science department, supporting students through hands-on learning and mentorship to help them grasp complex technical concepts`
+      `Serving as a Graduate Teaching Assistant for the Computer Science department, supporting students through hands-on learning and mentorship in complex technical concepts`
     ]
   },
   {
@@ -118,7 +118,7 @@ export const EXPERIENCE: Experience[] = [
     role: 'Software Engineer',
     period: {
       start: 'Feb 2023',
-      end: 'Aug 2025'
+      end: 'Aug 2024'
     },
     lists: [
       `As a Software Engineer, I was part of a collaborative effort to upgrade observability infrastructure, automate key processes, and enhance CI/CD pipeline efficiency for enterprise-level applications`,
@@ -206,6 +206,8 @@ export const EDUCATION: Education = [
     },
     paragraphs: [
       'Research Focus: AI and 3D Computer Graphics',
+      `<strong>Lab:</strong> DCXR (Distributed Computing and Extended Reality) Lab`,
+      `<strong>Advisor:</strong> Dr. Craig Yu`,
       `<strong>Research Areas:</strong> Human-Computer Interaction, Immersive Digital Environments, AI-Driven Creative Workflows`
     ],
     list: {
@@ -239,14 +241,14 @@ export const EDUCATION: Education = [
 ]
 
 export const SUMMARY = [
-  `I operate at the intersection of three fascinating domains: AI 🧠, 3D Computer Graphics 🌐, and scalable Cloud Infrastructure ☁️. As a Computer Science PhD student at George Mason University, my research is driven by a central ambition: to build the next generation of intuitive and immersive ways for humans to interact with digital worlds.`,
-  `But I'm not just a theorist. My journey into deep research began after my time as a co-founder and CTO of a tech startup. There, I led teams in building, launching, and scaling complex products from the ground up. That experience taught me a critical lesson: the most brilliant AI models are only as good as the infrastructure they run on. It gave me a deep, practical expertise in creating robust, production-ready systems.`,
-  `This unique background allows me to bridge the critical gap 🔗 between theory and practice. I don't just design novel AI and graphics concepts; I understand how to deploy and scale them efficiently using modern DevOps principles.`,
-  `My core areas of expertise include:`,
-  `🧠 AI & Graphics: Generative AI, 3D Computer Graphics, Rendering Pipelines, Parameterized Shaders`,
-  `🛠️ DevOps & Cloud: Kubernetes, OpenShift, Amazon Web Services (AWS), Go, Python, CI/CD, Infrastructure Automation`,
-  `📈 Leadership: Technical Product Leadership, Agile Development, Team Building & Management`,
-  `I'm always eager to connect with fellow researchers, industry pioneers, and anyone passionate about building the future of interactive technology. Let's explore what's next, together! 🤝`
+  `I'm a PhD student at George Mason University's DCXR Lab, advised by Dr. Craig Yu, working at the intersection of AI and 3D computer graphics. My research explores how machine learning can transform how we create, interact with, and experience immersive digital worlds.`,
+  `Before research, I co-founded a tech startup as CTO, where I learned that the best ideas mean nothing without execution. That experience shapes my approach: I build systems that work, not just papers that publish.`,
+  `Research Focus:`,
+  `AI-driven creative workflows for 3D content generation`,
+  `Machine learning for graphics pipelines—automating UV mapping, NPR techniques, and modeling workflows`,
+  `Human-computer interaction in immersive environments`,
+  `Technical Skills: Python, C++, PyTorch, TensorFlow, Unity, Unreal Engine, OpenGL, GLSL, Kubernetes, AWS`,
+  `Always open to collaborations with researchers and industry partners pushing the boundaries of AI and graphics.`
 ]
 
 export const CERTIFICATIONS = [

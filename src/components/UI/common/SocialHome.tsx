@@ -4,14 +4,26 @@ import { twclsx } from '@/libs'
 import SOCIAL from '@/libs/constants/social'
 
 import type { IconType } from 'react-icons/lib'
-import { SiArtstation, SiBehance, SiGithub, SiItchdotio, SiLinkedin, SiMaildotru, SiTelegram } from 'react-icons/si'
+import {
+  SiArtstation,
+  SiBehance,
+  SiGithub,
+  SiGooglescholar,
+  SiItchdotio,
+  SiLinkedin,
+  SiMaildotru,
+  SiOrcid,
+  SiTelegram
+} from 'react-icons/si'
 
-type SocialWithIcon = typeof SOCIAL[0] & { icon: IconType }
+type SocialWithIcon = (typeof SOCIAL)[0] & { icon: IconType }
 
 const icon = {
   email: SiMaildotru,
   linkedin: SiLinkedin,
   github: SiGithub,
+  'google scholar': SiGooglescholar,
+  orcid: SiOrcid,
   telegram: SiTelegram,
   'itch.io': SiItchdotio,
   artstation: SiArtstation,

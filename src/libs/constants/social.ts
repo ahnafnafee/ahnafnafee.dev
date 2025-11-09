@@ -12,6 +12,14 @@ const SOCIAL = [
     href: 'https://github.com/ahnafnafee'
   },
   {
+    title: 'Google Scholar',
+    href: 'https://scholar.google.com/citations?user=u15DO0cAAAAJ&hl=en'
+  },
+  {
+    title: 'ORCID',
+    href: 'https://orcid.org/0009-0000-9363-4536'
+  },
+  {
     title: 'Itch.io',
     href: 'https://ahnafnafee.itch.io/'
   },
