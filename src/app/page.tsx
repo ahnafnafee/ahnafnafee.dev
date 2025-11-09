@@ -242,9 +242,18 @@ export default async function HomePage() {
 
           <div className='text-gray-600 dark:text-gray-400 space-y-4 mt-4'>
             <p className='text-lg text-gray-700 dark:text-gray-300'>
-              I&apos;m a PhD student at George Mason University&apos;s DCXR Lab, advised by Dr. Craig Yu. My research
-              sits at the intersection of <strong>AI and 3D computer graphics</strong> - exploring how machine learning
-              can transform how we create, interact with, and experience immersive digital worlds.
+              I&apos;m a PhD student at George Mason University&apos;s{' '}
+              <a
+                href='https://craigyuyu.github.io/home/group.html'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-purple-600 dark:text-purple-400 hover:underline font-semibold'
+              >
+                DCXR Lab
+              </a>
+              , advised by Dr. Craig Yu. My research sits at the intersection of{' '}
+              <strong>AI and 3D computer graphics</strong>—exploring how machine learning can transform how we create,
+              interact with, and experience immersive digital worlds.
             </p>
 
             <p>
