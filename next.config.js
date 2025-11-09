@@ -7,8 +7,8 @@ const isDev = process.env.NODE_ENV === "development";
 // https://nextjs.org/docs/advanced-features/security-headers
 const ContentSecurityPolicy = `
     default-src 'self';
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' *.youtube.com *.vercel-scripts.com;
-    child-src *.youtube.com *.google.com;
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' *.youtube.com *.twitter.com *.vercel-scripts.com;
+    child-src *.youtube.com *.google.com *.twitter.com;
     style-src 'self' 'unsafe-inline' *.googleapis.com *.unpkg.com;
     img-src * blob: data:;
     media-src 'none';

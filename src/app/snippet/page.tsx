@@ -36,7 +36,15 @@ export const metadata: Metadata = {
     ],
     locale: 'en_US',
     type: 'website'
-  }
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Code Snippets - Ahnaf An Nafee',
+    description: 'A collection of helpful snippets to help you, including myself to spin up the development.',
+    site: '@ahnaf_nafee',
+    creator: '@ahnaf_nafee',
+    images: [
+      generateOgImage({
         title: 'Code Snippets',
         subTitle: 'Helpful Development Snippets & Tools'
       })

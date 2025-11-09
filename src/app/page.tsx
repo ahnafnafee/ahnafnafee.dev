@@ -12,19 +12,14 @@ const structuredData = {
   '@context': 'https://schema.org',
   '@type': ['Person', 'Researcher'],
   name: 'Ahnaf An Nafee',
-  alternateName: 'ahnafnafee',
   url: 'https://www.ahnafnafee.dev',
   image: 'https://ik.imagekit.io/8ieg70pvks/profile?tr=w-400,h-400',
   sameAs: [
     'https://www.linkedin.com/in/ahnafnafee',
     'https://github.com/ahnafnafee',
-    'https://scholar.google.com/citations?user=u15DO0cAAAAJ&hl=en',
-    'https://orcid.org/0009-0000-9363-4536',
-    'https://ahnafnafee.itch.io',
-    'https://www.artstation.com/ahnafnafee',
-    'https://www.behance.net/ahnafannafee'
+    'https://scholar.google.com/citations?user=ahnafnafee',
+    'https://orcid.org/0009-0000-9363-4536'
   ],
-  email: 'ahnafnafee@gmail.com',
   jobTitle: 'PhD Student in Computer Science',
   hasOccupation: {
     '@type': 'Occupation',
@@ -69,42 +64,22 @@ const structuredData = {
   knowsAbout: [
     'Artificial Intelligence',
     '3D Computer Graphics',
-    'Machine Learning for Graphics',
-    'AI-driven 3D Content Generation',
     'Generative AI',
-    'Computer Vision',
-    'Deep Learning',
-    'Neural Networks',
     'Rendering Pipelines',
-    'Real-time Rendering',
     'Parameterized Shaders',
-    'UV Mapping Automation',
-    'NPR Techniques',
-    'Human Computer Interaction',
-    'Immersive Technology',
-    'Extended Reality',
+    'DevOps Engineering',
+    'Cloud Infrastructure',
+    'Kubernetes',
+    'OpenShift',
+    'Amazon Web Services',
+    'Machine Learning',
+    'Computer Vision',
     'Game Development',
-    'Unity Engine',
-    'Unreal Engine',
-    'WebGL',
-    'GLSL',
-    'Python Programming',
-    'PyTorch',
-    'TensorFlow',
-    'Computer Graphics Research',
-    'AI Research'
+    'Software Engineering',
+    'Technical Leadership',
+    'Human Computer Interaction',
+    'Immersive Technology'
   ],
-  researchInterests: [
-    'AI-driven creative workflows for 3D content generation',
-    'Machine learning for graphics pipelines',
-    'Automating UV mapping and NPR techniques',
-    'Human-computer interaction in immersive environments'
-  ],
-  affiliation: {
-    '@type': 'Organization',
-    name: 'DCXR Lab, George Mason University',
-    url: 'https://craigyuyu.github.io/home/group.html'
-  },
   hasCredential: [
     {
       '@type': 'EducationalOccupationalCredential',
@@ -136,40 +111,9 @@ const structuredData = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.ahnafnafee.dev'),
-  title: {
-    default: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
-    template: '%s | Ahnaf An Nafee'
-  },
+  title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
   description:
     'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics. DCXR Lab, advised by Dr. Craig Yu.',
-  applicationName: 'Ahnaf An Nafee Portfolio',
-  authors: [{ name: 'Ahnaf An Nafee', url: 'https://www.ahnafnafee.dev' }],
-  creator: 'Ahnaf An Nafee',
-  publisher: 'Ahnaf An Nafee',
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false
-  },
-  alternates: {
-    canonical: 'https://www.ahnafnafee.dev'
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1
-    }
-  },
-  verification: {
-    google: 'your-google-verification-code',
-    yandex: 'your-yandex-verification-code'
-  },
   other: {
     'application/ld+json': JSON.stringify(structuredData)
   },
@@ -177,53 +121,49 @@ export const metadata: Metadata = {
     'Ahnaf An Nafee',
     'ahnafnafee',
     'PhD AI 3D Graphics',
-    'AI 3D Graphics Research',
-    'Machine Learning Graphics',
-    'Computer Science PhD GMU',
-    'George Mason University PhD',
-    'DCXR Lab',
-    'Dr. Craig Yu',
-    'AI-driven 3D content generation',
-    'Machine learning for graphics pipelines',
-    'UV mapping automation',
-    'NPR techniques',
-    'AI researcher',
-    'Computer graphics researcher',
+    'Computer Science PhD',
+    'George Mason University',
+    'GMU PhD Student',
+    'AI Research',
     '3D Computer Graphics',
+    'Machine Learning',
+    'DevOps Engineer',
+    'Kubernetes Expert',
+    'OpenShift',
+    'Cloud Infrastructure',
+    'AWS Certified',
     'Generative AI',
-    'Deep Learning',
-    'Computer Vision',
-    'Neural Networks',
-    'PyTorch',
-    'TensorFlow',
     'Rendering Pipelines',
-    'Real-time Rendering',
     'Parameterized Shaders',
-    'GLSL',
-    'WebGL',
-    'Human Computer Interaction',
-    'Immersive Technology',
-    'Extended Reality',
-    'XR Research',
     'Game Development',
-    'Unity 3D',
+    'Unity Expert',
     'Unreal Engine',
-    'Game Engine Development',
-    'Technical Artist',
-    'Graphics Programming',
-    'Shader Programming',
-    'AI Graphics Intersection',
-    'Creative AI',
-    'Procedural Generation',
-    'Academic Research',
-    'PhD Researcher',
-    'Research Portfolio',
-    'Ex-CTO',
-    'Tech Startup',
+    'Technical Leadership',
+    'CTO Experience',
+    'Startup Founder',
     'Software Engineering',
     'Python Developer',
-    'C++ Developer',
-    'Full Stack Developer'
+    'Go Developer',
+    'React Developer',
+    'AI Researcher',
+    'Computer Graphics Researcher',
+    'Immersive Technology',
+    'Human Computer Interaction',
+    'Digital Worlds',
+    'Interactive Technology',
+    'Research Publications',
+    'Academic Research',
+    'PhD Researcher',
+    'AI Graphics',
+    'Computer Vision',
+    'Deep Learning',
+    'Neural Networks',
+    'Cloud Computing',
+    'Infrastructure Automation',
+    'CI/CD',
+    'Docker',
+    'Terraform',
+    'Jenkins'
   ],
   openGraph: {
     title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
@@ -233,19 +173,23 @@ export const metadata: Metadata = {
     siteName: 'Ahnaf An Nafee',
     images: [
       {
-        url: 'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747',
+        url: `https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`,
         width: 1200,
         height: 600,
-        alt: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics at George Mason University | DCXR Lab',
-        type: 'image/png'
+        alt: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics at George Mason University | Building Immersive Worlds'
       }
     ],
     locale: 'en_US',
-    type: 'profile',
-    firstName: 'Ahnaf',
-    lastName: 'An Nafee',
-    username: 'ahnafnafee',
-    emails: ['ahnafnafee@gmail.com']
+    type: 'website'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
+    description:
+      'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.',
+    site: '@ahnaf_nafee',
+    creator: '@ahnaf_nafee',
+    images: [`https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`]
   }
 }
 
@@ -267,39 +211,26 @@ export default async function HomePage() {
 
   return (
     <>
-      <main className='layout' itemScope itemType='https://schema.org/ProfilePage'>
-        <section className='flex flex-col' itemScope itemType='https://schema.org/Person'>
+      <main className='layout'>
+        <section className='flex flex-col'>
           <div className='flex flex-col-reverse sm:flex-row items-start mt-3 md:mt-6'>
             <div className='flex flex-col sm:pr-8 flex-1'>
-              <h1
-                className='font-bold text-3xl md:text-5xl tracking-tight mb-1 text-black dark:text-white'
-                itemProp='name'
-              >
+              <h1 className='font-bold text-3xl md:text-5xl tracking-tight mb-1 text-black dark:text-white'>
                 Ahnaf An Nafee
               </h1>
               <br />
-              <h2 className='text-base text-gray-700 dark:text-gray-200 mb-4' itemProp='jobTitle'>
-                PhD Student in AI & 3D Graphics @{' '}
-                <span
-                  className='font-semibold'
-                  itemProp='affiliation'
-                  itemScope
-                  itemType='https://schema.org/Organization'
-                >
-                  <span itemProp='name'>GMU</span>
-                </span>{' '}
-                | DCXR Lab | Ex-CTO
+              <h2 className='text-base text-gray-700 dark:text-gray-200 mb-4'>
+                PhD Student in AI & 3D Graphics @ <span className='font-semibold'>GMU</span> | DCXR Lab | Ex-CTO
               </h2>
             </div>
             <div className='flex-shrink-0 mb-8 sm:mb-0 sm:ml-8'>
               <ContentImage
                 src='https://ik.imagekit.io/8ieg70pvks/profile?tr=w-400,h-400'
-                alt='Ahnaf An Nafee - PhD Student in AI and 3D Graphics at George Mason University'
+                alt='Ahnaf An Nafee'
                 width={176}
                 height={176}
                 className='rounded-full border-4 cursor-pointer border-theme-100 dark:border-theme-800 w-[100px] h-[100px] sm:w-[176px] sm:h-[176px] object-cover'
                 title="Ahnaf An Nafee's Profile Picture"
-                itemProp='image'
                 quality={100}
                 sizes='(max-width: 640px) 100px, 176px'
                 priority

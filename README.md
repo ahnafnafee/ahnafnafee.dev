@@ -145,6 +145,7 @@ yarn install
 Create a `.env.development.local` file in the root directory:
 
 ```env
+NEXT_PUBLIC_TWITTER_USERNAME=@ahnaf_nafee
 NEXT_PUBLIC_SITE_NAME="Ahnaf An Nafee"
 NEXT_PUBLIC_SITE_URL="https://localhost:3000"
 ```

@@ -54,6 +54,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: header.published,
       authors: [header.author_name],
       tags: header.topics
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: header.title,
+      description: header.summary,
+      site: '@ahnaf_nafee',
+      creator: '@ahnaf_nafee',
+      images: [generateOgImage({ title: header.title, theme: 'dark' })]
     }
   }
 }

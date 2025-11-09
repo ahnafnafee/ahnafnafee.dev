@@ -76,7 +76,16 @@ export const metadata: Metadata = {
     ],
     locale: 'en_US',
     type: 'website'
-  }
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Portfolio - Ahnaf An Nafee',
+    description:
+      "Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!",
+    site: '@ahnaf_nafee',
+    creator: '@ahnaf_nafee',
+    images: [
+      generateOgImage({
         title: 'Portfolio',
         subTitle: 'AI & 3D Graphics Projects | Machine Learning & Computer Vision'
       })

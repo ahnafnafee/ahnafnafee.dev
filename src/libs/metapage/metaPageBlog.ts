@@ -3,7 +3,7 @@ import type { CustomSeoProps } from '@/components'
 import { dateStringToISO } from '@/libs/intl'
 
 import { generateOgImage } from './ogImage'
-import { SITE_NAME, SITE_URL } from './type'
+import { SITE_NAME, SITE_URL, TWITER_USERNAME } from './type'
 
 import type { Blog } from 'me'
 
@@ -25,6 +25,12 @@ export const getMetaPageBlog = (data: Blog): CustomSeoProps => ({
     ],
     url: SITE_URL + data.slug,
     site_name: SITE_NAME
+  },
+  twitter: {
+    cardType: 'summary_large_image',
+    // TODO: Change to your Tiwitter username
+    site: TWITER_USERNAME,
+    handle: TWITER_USERNAME
   },
   additionalMetaTags: [
     {

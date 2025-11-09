@@ -1,6 +1,6 @@
 import type { CustomSeoProps } from '@/components'
 
-import { MetaPage, SITE_NAME, SITE_URL } from './type'
+import { MetaPage, SITE_NAME, SITE_URL, TWITER_USERNAME } from './type'
 
 export const getMetaPage = (data: MetaPage): CustomSeoProps => {
   return {
@@ -18,6 +18,11 @@ export const getMetaPage = (data: MetaPage): CustomSeoProps => {
       url: SITE_URL + data.slug,
       type: data.type ?? 'website',
       locale: 'en_US'
+    },
+    twitter: {
+      cardType: 'summary_large_image',
+      site: TWITER_USERNAME,
+      handle: TWITER_USERNAME
     },
     additionalMetaTags: [
       {
