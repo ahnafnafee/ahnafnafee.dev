@@ -206,7 +206,7 @@ export const EDUCATION: Education = [
     },
     paragraphs: [
       'Research Focus: AI and 3D Computer Graphics',
-      `<strong>Lab:</strong> DCXR (Distributed Computing and Extended Reality) Lab`,
+      `<strong>Lab:</strong> DCXR (Design Computing and eXtended Reality) Lab`,
       `<strong>Advisor:</strong> Dr. Craig Yu`,
       `<strong>Research Areas:</strong> Human-Computer Interaction, Immersive Digital Environments, AI-Driven Creative Workflows`
     ],

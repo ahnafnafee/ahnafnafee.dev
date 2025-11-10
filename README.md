@@ -15,14 +15,14 @@
 
 ## About Me
 
-I work at the intersection of AI, 3D computer graphics, and cloud infrastructure. As a Computer Science PhD student at George Mason University, I'm part of the DCXR (Distributed Computing and Extended Reality) Lab, where I'm advised by Dr. Craig Yu. My research focuses on building intuitive and immersive ways for humans to interact with digital worlds.
+I work at the intersection of AI, 3D computer graphics, and cloud infrastructure. As a Computer Science PhD student at George Mason University, I'm part of the DCXR (Design Computing and eXtended Reality) Lab, where I'm advised by Dr. Craig Yu. My research focuses on building intuitive and immersive ways for humans to interact with digital worlds.
 
 My path to research came through industry experience as a co-founder and CTO of a tech startup. Leading teams through the full lifecycle of building, launching, and scaling products taught me that even the most sophisticated AI models need solid infrastructure to deliver real value.
 
 ### Current Focus
 
 - **PhD Research**: AI-driven workflows for creative applications, 3D modeling automation, UV mapping, NPR techniques
-- **Lab**: DCXR (Distributed Computing and Extended Reality) Lab at George Mason University
+- **Lab**: DCXR (Design Computing and eXtended Reality) Lab at George Mason University
 - **Advisor**: Dr. Craig Yu
 - **Research Areas**: Human-Computer Interaction, Immersive Digital Environments, AI-Graphics Intersection
 
