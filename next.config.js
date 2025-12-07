@@ -139,14 +139,8 @@ const config = {
 	compress: true,
 	poweredByHeader: false,
 	generateEtags: true,
-	turbopack: {
-		rules: {
-			"*.css": {
-				loaders: ["css-loader"],
-				as: "*.css",
-			},
-		},
-	},
+
+	turbopack: {},
 	experimental: {
 		optimizePackageImports: [
 			"@vercel/analytics",

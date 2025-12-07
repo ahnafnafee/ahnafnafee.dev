@@ -240,16 +240,17 @@ export const EDUCATION: Education = [
   }
 ]
 
-export const SUMMARY = [
-  `I'm a PhD student at George Mason University's DCXR Lab, advised by Dr. Craig Yu, working at the intersection of AI and 3D computer graphics. My research explores how machine learning can transform how we create, interact with, and experience immersive digital worlds.`,
-  `Before research, I co-founded a tech startup as CTO, where I learned that the best ideas mean nothing without execution. That experience shapes my approach: I build systems that work, not just papers that publish.`,
-  `Research Focus:`,
-  `AI-driven creative workflows for 3D content generation`,
-  `Machine learning for graphics pipelines—automating UV mapping, NPR techniques, and modeling workflows`,
-  `Human-computer interaction in immersive environments`,
-  `Technical Skills: Python, C++, PyTorch, TensorFlow, Unity, Unreal Engine, OpenGL, GLSL, Kubernetes, AWS`,
-  `Always open to collaborations with researchers and industry partners pushing the boundaries of AI and graphics.`
-]
+export const SUMMARY = {
+  intro: `PhD student at GMU's DCXR Lab, advised by Dr. Craig Yu. Researching the intersection of AI and 3D graphics to transform immersive experiences.`,
+  experience: `Ex-CTO of a tech startup with a focus on building scalable, production-ready systems. I build systems that work, not just papers that publish.`,
+  researchFocus: [
+    `AI-driven creative workflows for 3D content generation`,
+    `Machine learning for graphics pipelines - automating UV mapping, NPR techniques, and modeling workflows`,
+    `Human-computer interaction in immersive environments`
+  ],
+  technicalSkills: `Python, C++, PyTorch, TensorFlow, Unity, Unreal Engine, OpenGL, GLSL, Kubernetes, AWS`,
+  outro: `Open to collaborations pushing the boundaries of AI and graphics.`
+}
 
 export const CERTIFICATIONS = [
   {

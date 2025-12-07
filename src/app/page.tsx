@@ -330,7 +330,7 @@ export default async function HomePage() {
                 DCXR Lab
               </a>
               , advised by Dr. Craig Yu. My research sits at the intersection of{' '}
-              <strong>AI and 3D computer graphics</strong>—exploring how machine learning can transform how we create,
+              <strong>AI and 3D computer graphics</strong> - exploring how machine learning can transform how we create,
               interact with, and experience immersive digital worlds.
             </p>
 

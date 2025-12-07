@@ -62,7 +62,7 @@ export function ResumePageClient() {
 
       <div className='space-y-8'>
         <section>
-          <div className='flex items-center justify-between pb-2.5 border-b-2 border-b-theme-700'>
+          <div className='flex items-center justify-between pb-2.5 border-b-2 border-b-theme-700 gap-4'>
             <h3>Summary</h3>
 
             <UnstyledButton onClick={openPopup} className='print:hidden'>
@@ -71,23 +71,31 @@ export function ResumePageClient() {
             </UnstyledButton>
           </div>
 
-          <ul className={listStyle}>
-            <br />
-            {SUMMARY.map((summ, idx) => {
-              return (
-                <div key={`${idx}`}>
-                  <p>
-                    {htmr(summ, {
-                      transform: {
-                        a: (props: any) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>
-                      }
-                    })}
-                  </p>
-                  <br />
-                </div>
-              )
-            })}
-          </ul>
+          <div className='mt-4 space-y-4'>
+            <p>
+              {htmr(SUMMARY.intro, {
+                transform: {
+                  a: (props: any) => <UnderlineLink href={props.href ?? ''}>{props.children}</UnderlineLink>
+                }
+              })}
+            </p>
+            <p>{SUMMARY.experience}</p>
+
+            <div>
+              <p className='font-bold mb-2'>Research Focus:</p>
+              <ul className={listStyle + ' ml-5'}>
+                {SUMMARY.researchFocus.map((item, idx) => (
+                  <li key={`${idx}`}>{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <p>
+              <strong>Technical Skills:</strong> {SUMMARY.technicalSkills}
+            </p>
+
+            <p className='italic text-sm'>{SUMMARY.outro}</p>
+          </div>
         </section>
         <section>
           <h3 className='mb-4 pb-2.5 border-b-2 border-b-theme-700'>Techinal Skills</h3>
