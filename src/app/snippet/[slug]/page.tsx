@@ -7,9 +7,8 @@ import { generateOgImage } from '@/libs/metapage'
 import type { Snippet } from 'me'
 import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import mdxPrism from 'mdx-prism'
 import readingTime from 'reading-time'
-import rehypeSlug from 'rehype-slug'
+import { commonMDXOptions } from '@/libs/mdxConfig'
 
 type Props = {
   params: { slug: string }
@@ -106,11 +105,7 @@ export default async function SnippetPostPage({ params }: Props) {
             <MDXRemote
               source={res.content}
               components={MDXComponents}
-              options={{
-                mdxOptions: {
-                  rehypePlugins: [mdxPrism, rehypeSlug]
-                }
-              }}
+              options={commonMDXOptions}
             />
           </section>
 

@@ -40,6 +40,9 @@ module.exports = {
     } else if (path === '/portfolio') {
       priority = 0.8
       changefreq = 'weekly'
+    } else if (path === '/blog') {
+      priority = 0.8
+      changefreq = 'weekly'
     } else if (path.startsWith('/portfolio/')) {
       priority = 0.7
       changefreq = 'monthly'
@@ -64,6 +67,7 @@ module.exports = {
       await config.transform(config, '/'),
       await config.transform(config, '/resume'),
       await config.transform(config, '/portfolio'),
+      await config.transform(config, '/blog'),
     ]
   }
 }

@@ -20,10 +20,11 @@ export function PortfolioPageClient({ portfolios, softwarePortfolios, gamePortfo
   return (
     <>
       <Hero
-        title='Portfolio - Ahnaf An Nafee'
+        title='Portfolio'
         description="Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!"
       />
-      <Searchbar onChange={search.handleChange} value={search.query} />
+      {/* Search Bar - Full width with focus interaction */}
+      <Searchbar placeholder="Search portfolios..." value={search.query} onChange={search.handleChange} />
 
       <div className={twclsx('flex flex-col gap-8')}>
         {search.query === '' && portfolios.length > 0 && (

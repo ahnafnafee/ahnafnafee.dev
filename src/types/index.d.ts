@@ -14,6 +14,7 @@ declare module 'me' {
     views?: number
     est_read?: string
     displayViews?: boolean
+    thumbnail?: string
   }
 
   type CategoryTypes = 'software' | 'game'
