@@ -1,11 +1,13 @@
 import { Footer, SocialHome } from '@/components/UI/common'
 import { ContentImage } from '@/components/content'
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
+import { BlogItem } from '@/components/content/blog/BlogItem'
 
 import { getContents } from '@/services'
-import { getNewestPortfolio } from '@/libs/sorters'
+import { getNewestPortfolio, getNewestBlog } from '@/libs/sorters'
+import readingTime from 'reading-time'
 
-import type { Portfolio } from 'me'
+import type { Portfolio, Blog } from 'me'
 import type { Metadata } from 'next'
 
 const structuredData = {
@@ -258,6 +260,23 @@ export const metadata: Metadata = {
   }
 }
 
+async function getLatestBlog() {
+  try {
+    const blogs = await getContents<Blog>('/blog')
+    const sorted = blogs.sort((a, b) => getNewestBlog(a.header, b.header))
+    const latest = sorted[0]
+    if (!latest) return null
+    
+    return {
+      ...latest.header,
+      est_read: readingTime(latest.content).text,
+    } as Blog
+  } catch (error) {
+    console.warn('Failed to load blog:', error)
+    return null
+  }
+}
+
 async function getPortfolios() {
   try {
     const portfolios = await getContents<Portfolio>('/portfolio')
@@ -273,6 +292,7 @@ async function getPortfolios() {
 
 export default async function HomePage() {
   const portfolios = await getPortfolios()
+  const latestBlog = await getLatestBlog()
 
   return (
     <>
@@ -364,6 +384,16 @@ export default async function HomePage() {
 
           <SocialHome className='flex-shrink flex-wrap self-start gap-3 mt-6 mb-8' />
         </section>
+
+        {latestBlog && (
+          <section className='pt-8 pb-4 border-t border-gray-200 dark:border-gray-800'>
+            <h3 className='mb-1 md:mb-3 font-bold text-2xl tracking-tight text-black dark:text-white'>Latest Blog</h3>
+            <p className='mb-6 md:mb-8 text-gray-600 dark:text-gray-400'>
+              Fresh thoughts on AI, graphics, and tech. <a href="/blog" className="text-purple-600 dark:text-purple-400 hover:underline">Read all blogs</a>
+            </p>
+            <BlogItem {...latestBlog} />
+          </section>
+        )}
 
         <PortfolioList
           description={`Check out my featured portfolio. View all my works <a href="/portfolio">here</a>!`}

@@ -7,10 +7,11 @@ const isDev = process.env.NODE_ENV === "development";
 // https://nextjs.org/docs/advanced-features/security-headers
 const ContentSecurityPolicy = `
     default-src 'self';
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' *.youtube.com *.twitter.com *.vercel-scripts.com;
-    child-src *.youtube.com *.google.com *.twitter.com;
-    style-src 'self' 'unsafe-inline' *.googleapis.com *.unpkg.com;
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' *.youtube.com *.twitter.com *.vercel-scripts.com giscus.app *.giscus.app;
+    child-src *.youtube.com *.google.com *.twitter.com giscus.app *.giscus.app;
+    style-src 'self' 'unsafe-inline' *.googleapis.com *.unpkg.com *.giscus.app;
     img-src * blob: data:;
+    frame-src *.youtube.com *.google.com *.twitter.com giscus.app *.giscus.app;
     media-src 'none';
     connect-src *;
     font-src 'self';
