@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const res = await getContentBySlug<Blog>('/blog', slug)
   const header = res.header
+  const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
 
   return {
     title: header.title,
@@ -43,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: 'Ahnaf An Nafee',
       images: [
         {
-          url: generateOgImage({ title: header.title, theme: 'dark' }),
+          url: ogImage,
           width: 1200,
           height: 600,
           alt: header.title
@@ -61,7 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: header.summary,
       site: '@ahnaf_nafee',
       creator: '@ahnaf_nafee',
-      images: [generateOgImage({ title: header.title, theme: 'dark' })]
+      images: [ogImage]
     }
   }
 }

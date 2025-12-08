@@ -1,5 +1,4 @@
 import { ResumePageClient } from '@/components/resume/ResumePageClient'
-import { generateOgImage } from '@/libs/metapage'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -69,10 +68,7 @@ export const metadata: Metadata = {
     siteName: 'Ahnaf An Nafee',
     images: [
       {
-        url: generateOgImage({
-          title: 'Resume',
-          subTitle: 'PhD Student in AI & 3D Graphics | Ex-CTO'
-        }),
+        url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-resume.png?tr=w-1200,h-630',
         width: 1200,
         height: 600,
         alt: 'Resume - Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO'
@@ -89,10 +85,7 @@ export const metadata: Metadata = {
     site: '@ahnaf_nafee',
     creator: '@ahnaf_nafee',
     images: [
-      generateOgImage({
-        title: 'Resume',
-        subTitle: 'PhD Student in AI & 3D Graphics | Ex-CTO'
-      })
+      'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-resume.png?tr=w-1200,h-630'
     ]
   }
 }
