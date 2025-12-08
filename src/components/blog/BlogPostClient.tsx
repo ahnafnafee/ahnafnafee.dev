@@ -2,7 +2,7 @@
 
 import { UnstyledButton } from '@/components/UI/buttons'
 import { PRButton } from '@/components/content'
-import { AuthorSection, GiscusComment, HeadingContent } from '@/components/content/blog'
+import { GiscusComment, HeadingContent } from '@/components/content/blog'
 import { isDev } from '@/libs/constants/environmentState'
 import { twclsx } from '@/libs/twclsx'
 import type { Blog, PageViewResponse } from 'me'
@@ -48,9 +48,11 @@ export function BlogPostClient({ header, children }: BlogPostClientProps) {
           published={header.published}
           summary={header.summary}
           title={header.title}
+          author_name={header.author_name}
+          github_username={header.github_username}
         />
 
-        <AuthorSection name={header.author_name} username={header.github_username} />
+
 
         <div
           className={twclsx('prose dark:prose-invert', 'md:prose-lg', 'prose-headings:scroll-mt-24', 'prose-img:my-4')}

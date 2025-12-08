@@ -9,10 +9,6 @@
       "destination": "/AhnafAnNafeeResume.pdf"
     },
     {
-      "source": "/blog",
-      "destination": "/portfolio"
-    },
-    {
       "source": "/projects",
       "destination": "/portfolio"
     },

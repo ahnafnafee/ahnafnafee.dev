@@ -1,7 +1,6 @@
 import { PortfolioPageClient } from '@/components/portfolio/PortfolioPageClient'
 import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
 import { getContents } from '@/services'
-import { generateOgImage } from '@/libs/metapage'
 import { getNewestPortfolio } from '@/libs/sorters'
 import type { Portfolio } from 'me'
 import type { Metadata } from 'next'
@@ -65,10 +64,7 @@ export const metadata: Metadata = {
     siteName: 'Ahnaf An Nafee',
     images: [
       {
-        url: generateOgImage({
-          title: 'Portfolio',
-          subTitle: 'AI & 3D Graphics Projects | Machine Learning & Computer Vision'
-        }),
+        url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-portfolio.png?tr=w-1200,h-630',
         width: 1200,
         height: 600,
         alt: 'Portfolio - Ahnaf An Nafee - AI & 3D Graphics Projects'
@@ -85,10 +81,7 @@ export const metadata: Metadata = {
     site: '@ahnaf_nafee',
     creator: '@ahnaf_nafee',
     images: [
-      generateOgImage({
-        title: 'Portfolio',
-        subTitle: 'AI & 3D Graphics Projects | Machine Learning & Computer Vision'
-      })
+      'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-portfolio.png?tr=w-1200,h-630'
     ]
   }
 }

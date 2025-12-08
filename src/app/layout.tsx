@@ -7,6 +7,7 @@ import { Header } from '@/components/UI/common'
 
 import '@/styles/globals.css'
 import '@/styles/prism-themes.css'
+import 'katex/dist/katex.min.css'
 
 const inter = Inter({
   subsets: ['latin'],

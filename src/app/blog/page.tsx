@@ -2,7 +2,6 @@ import { BlogPageClient } from '@/components/blog/BlogPageClient'
 import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
 import { getContents } from '@/services'
 import { isDev } from '@/libs/constants/environmentState'
-import { generateOgImage } from '@/libs/metapage'
 import { getNewestBlog } from '@/libs/sorters'
 import type { Blog, PageViewResponse } from 'me'
 import type { Metadata } from 'next'
@@ -28,10 +27,7 @@ export const metadata: Metadata = {
     siteName: 'Ahnaf An Nafee',
     images: [
       {
-        url: generateOgImage({
-          title: 'Blog',
-          subTitle: 'Thoughts on AI, 3D Graphics, and Technology'
-        }),
+        url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-blog.png?tr=w-1200,h-630',
         width: 1200,
         height: 600,
         alt: 'Blog - Ahnaf An Nafee - Thoughts on AI, 3D Graphics, and Technology'
@@ -47,10 +43,7 @@ export const metadata: Metadata = {
     site: '@ahnaf_nafee',
     creator: '@ahnaf_nafee',
     images: [
-      generateOgImage({
-        title: 'Blog',
-        subTitle: 'Thoughts on AI, 3D Graphics, and Technology'
-      })
+      'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-blog.png?tr=w-1200,h-630'
     ]
   }
 }

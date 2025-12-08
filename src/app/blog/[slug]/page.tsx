@@ -6,9 +6,9 @@ import { generateOgImage } from '@/libs/metapage'
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import mdxPrism from 'mdx-prism'
 import readingTime from 'reading-time'
-import rehypeSlug from 'rehype-slug'
+import { commonMDXOptions } from '@/libs/mdxConfig'
+
 
 type Props = {
   params: { slug: string }
@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const res = await getContentBySlug<Blog>('/blog', slug)
   const header = res.header
+  const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
 
   return {
     title: header.title,
@@ -43,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: 'Ahnaf An Nafee',
       images: [
         {
-          url: generateOgImage({ title: header.title, theme: 'dark' }),
+          url: ogImage,
           width: 1200,
           height: 600,
           alt: header.title
@@ -61,7 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: header.summary,
       site: '@ahnaf_nafee',
       creator: '@ahnaf_nafee',
-      images: [generateOgImage({ title: header.title, theme: 'dark' })]
+      images: [ogImage]
     }
   }
 }
@@ -80,11 +81,7 @@ export default async function BlogPost({ params }: Props) {
             <MDXRemote
               source={res.content}
               components={MDXComponents}
-              options={{
-                mdxOptions: {
-                  rehypePlugins: [mdxPrism, rehypeSlug]
-                }
-              }}
+              options={commonMDXOptions}
             />
           </BlogPostClient>
         </main>
