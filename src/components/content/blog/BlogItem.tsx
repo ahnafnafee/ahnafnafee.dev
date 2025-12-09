@@ -21,7 +21,7 @@ export const BlogItem: React.FunctionComponent<Blog> = (props) => {
         <div className='flex flex-col flex-1 min-w-0'>
           {/* Metadata Top */}
           <div className='flex items-center gap-2 mb-2 text-xs font-bold tracking-wide uppercase text-purple-600 dark:text-purple-400'>
-             {props.published}
+             {new Date(props.published).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
           </div>
 
           <h3 className='text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-3 group-hover:text-purple-600 transition-colors'>
@@ -39,7 +39,7 @@ export const BlogItem: React.FunctionComponent<Blog> = (props) => {
             {props.topics.length > 0 && (
               <div className='flex items-center gap-2'>
                 {props.topics.slice(0, 3).map((topic) => (
-                  <span key={topic} className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-sm">
+                  <span key={topic} className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-sm">
                     {topic}
                   </span>
                 ))}

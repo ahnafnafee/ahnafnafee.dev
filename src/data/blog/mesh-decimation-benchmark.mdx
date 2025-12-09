@@ -4,7 +4,7 @@ summary: 'A rigorous statistical comparison of mesh decimation algorithms using 
 featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
-published: '12/08/2024'
+published: '12/08/2025'
 topics: ['3D Graphics', 'Research', 'Computer Graphics', 'Computer Geometry', 'Mesh Simplification']
 keywords: ['mesh decimation', 'QEM', 'quadric error metrics', 'vertex clustering', 'PyMeshLab', 'statistical analysis', 'ANOVA', 'Hausdorff distance', '3D mesh simplification', 'computer graphics research', 'mesh optimization', 'polygon reduction', 'ModelNet40', 'Thingi10k']
 thumbnail: 'https://ik.imagekit.io/8ieg70pvks/mesh-decimation.jpg'
@@ -97,44 +97,12 @@ Vertex Clustering is a fast, low-memory technique using spatial hashing:
 
 ### Summary Statistics
 
-<div className="overflow-x-auto my-6">
-  <table className="min-w-full text-sm">
-    <thead>
-      <tr className="border-b border-gray-200 dark:border-gray-700">
-        <th className="px-4 py-3 text-left font-semibold">Algorithm</th>
-        <th className="px-4 py-3 text-left font-semibold">Mesh Type</th>
-        <th className="px-4 py-3 text-left font-semibold">Time (s)</th>
-        <th className="px-4 py-3 text-left font-semibold">Hausdorff Dist.</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr className="border-b border-gray-100 dark:border-gray-800">
-        <td className="px-4 py-3 font-medium">Clustering</td>
-        <td className="px-4 py-3">Clean CAD (ModelNet40)</td>
-        <td className="px-4 py-3">0.005 ± 0.004</td>
-        <td className="px-4 py-3">0.006 ± 0.006</td>
-      </tr>
-      <tr className="border-b border-gray-100 dark:border-gray-800">
-        <td className="px-4 py-3 font-medium">Clustering</td>
-        <td className="px-4 py-3">Organic (Thingi10k)</td>
-        <td className="px-4 py-3">0.032 ± 0.062</td>
-        <td className="px-4 py-3">0.013 ± 0.012</td>
-      </tr>
-      <tr className="border-b border-gray-100 dark:border-gray-800">
-        <td className="px-4 py-3 font-medium">QEM</td>
-        <td className="px-4 py-3">Clean CAD (ModelNet40)</td>
-        <td className="px-4 py-3">0.259 ± 0.178</td>
-        <td className="px-4 py-3">0.034 ± 0.061</td>
-      </tr>
-      <tr>
-        <td className="px-4 py-3 font-medium">QEM</td>
-        <td className="px-4 py-3">Organic (Thingi10k)</td>
-        <td className="px-4 py-3">1.290 ± 1.718</td>
-        <td className="px-4 py-3">0.006 ± 0.007</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+| Algorithm | Mesh Type | Time (s) | Hausdorff Dist. |
+| :--- | :--- | :--- | :--- |
+| **Clustering** | Clean CAD (ModelNet40) | 0.005 ± 0.004 | 0.006 ± 0.006 |
+| **Clustering** | Organic (Thingi10k) | 0.032 ± 0.062 | 0.013 ± 0.012 |
+| **QEM** | Clean CAD (ModelNet40) | 0.259 ± 0.178 | 0.034 ± 0.061 |
+| **QEM** | Organic (Thingi10k) | 1.290 ± 1.718 | 0.006 ± 0.007 |
 
 <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-8">
   Table 1: Mean ± SD across all decimation levels. Lower Hausdorff Distance indicates better geometric preservation.
@@ -201,16 +169,15 @@ The "one-size-fits-all" approach is suboptimal. Future pipelines should incorpor
 
 - [GitHub Repository](https://github.com/ahnafnafee/mesh-decimation-benchmark) — Full source code
 - [Full Report (PDF)](https://github.com/ahnafnafee/mesh-decimation-benchmark/blob/main/Report/Ahnaf-AnNafee-CS700-Project-Report.pdf) — Complete paper
-- [Detailed Methodology](https://github.com/ahnafnafee/mesh-decimation-benchmark/blob/main/DETAILS.md) — Mathematical foundations
 - [Results Documentation](https://github.com/ahnafnafee/mesh-decimation-benchmark/blob/main/RESULTS.md) — Statistical analysis
 
 ### Citation
 
 ```text
-@misc{nafee2024meshdecimation,
+@misc{annafee2025meshdecimation,
   author = {An Nafee, Ahnaf},
   title = {Mesh Decimation Benchmark: A Statistical Comparison of QEM and Vertex Clustering},
-  year = {2024},
+  year = {2025},
   publisher = {GitHub},
   url = {https://github.com/ahnafnafee/mesh-decimation-benchmark}
 }
