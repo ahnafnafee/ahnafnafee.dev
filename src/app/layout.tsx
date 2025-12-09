@@ -3,6 +3,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ThemeProvider } from 'next-themes'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
+import Script from 'next/script'
 import { Header } from '@/components/UI/common'
 
 import '@/styles/globals.css'
@@ -26,6 +27,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Toaster position='bottom-center' />
           <Analytics />
           <SpeedInsights />
+          <Script src="https://www.googletagmanager.com/gtag/js?id=G-7S76865HNX" strategy="afterInteractive" />
+          <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-7S76865HNX');
+          `}
+          </Script>
         </ThemeProvider>
       </body>
     </html>
