@@ -298,7 +298,7 @@ export default async function HomePage() {
   return (
     <>
       <main className='layout' itemScope itemType='https://schema.org/ProfilePage'>
-        <section className='flex flex-col' itemScope itemType='https://schema.org/Person'>
+        <section className='flex flex-col' itemScope itemType='https://schema.org/Person' itemProp='mainEntity'>
           <div className='flex flex-col-reverse sm:flex-row items-start mt-3 md:mt-6'>
             <div className='flex flex-col sm:pr-8 flex-1'>
               <h1
