@@ -97,6 +97,25 @@ This portfolio is a high-performance, SEO-optimized web application built with t
     yarn dev
     ```
 
+
+---
+
+## 🔍 Google Indexing
+
+This project includes a script to batch index pages using the **Google Indexing API**. It automatically checks if a URL is already indexed using the **Search Console API** before submitting, to respect quota.
+
+### Setup
+1.  **Service Account**: Place your `service_account.json` in `indexing/service_account.json`.
+2.  **Permissions**:
+    *   Enable **Indexing API** and **Google Search Console API** in Google Cloud.
+    *   Add the Service Account email as an **Owner** in Google Search Console.
+
+### Run Indexing
+Trigger the script manually:
+```bash
+npx tsx indexing/sendIndexingRequest.ts
+```
+
 ---
 
 ## 🚀 Deployment

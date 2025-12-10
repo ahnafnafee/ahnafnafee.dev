@@ -37,6 +37,7 @@
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",
 		"framer-motion": "^12.23.25",
+		"googleapis": "^168.0.0",
 		"html-react-parser": "^5.2.10",
 		"isomorphic-fetch": "^3.0.0",
 		"jotai": "^2.15.2",
