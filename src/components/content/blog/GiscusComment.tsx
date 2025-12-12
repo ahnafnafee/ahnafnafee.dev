@@ -16,13 +16,13 @@ export const GiscusComment = memo(() => {
         lang='en'
         theme={gcTheme}
         emitMetadata='0'
-        inputPosition='top'
+        inputPosition='bottom'
         repo='ahnafnafee/ahnafnafee.dev'
-        repoId='R_kgDOGh4MEw'
+        repoId='R_kgDOInMbvA'
         category='General'
-        categoryId='DIC_kwDOGh4ME84CPxWe'
+        categoryId='DIC_kwDOInMbvM4CTIGg'
         mapping='pathname'
-        reactionsEnabled='0'
+        reactionsEnabled='1'
         loading='lazy'
       />
     </div>
