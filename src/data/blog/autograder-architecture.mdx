@@ -25,7 +25,6 @@ We use Python for its flexibility in file manipulation, process management, and 
 
 <img src="https://kroki.io/mermaid/svg/eNpNz8FqwzAMBuB7n0L0tB3aRxi0Tpqtp9Gku5gcXEdkhsQytjxayMPPsSlUx1_fL9DolfuFrtpAmoPc-mj37gFvguwQNZN_3_aw230sLU6oOUDLXjGOjwWOsvFqMHZ8Rn05kvkX4xomH2-zCcGQDQsIeYhMaw19bUdjsXRE7nx7dMpjcpXscHbQKjvc6F5MlY2g2ZlpNbU8qz-lX5f1HXXkdXmS56s1DB0GDoWcMrlgiBMn0UjR_sAFHXkuoMng6iZSQwKf-T0MmhzCkbj_ByXkYQg" alt="Diagram showing the architecture of the autograder" className="w-full bg-theme-50 rounded-lg p-2" />
 
-
 ### The Strategy Pattern
 
 The biggest challenge in building a "universal" grader is that every assignment is different. Some require graph traversal, others list manipulation, and some need strict time complexity checks.
@@ -60,6 +59,30 @@ class GradingStrategy(ABC):
         return source_code
 ```
 
+```python
+# core/strategies/graph_strategy.py
+
+class GraphSearchStrategy(GradingStrategy):
+    @property
+    def assignment_name(self) -> str:
+        return "GraphSearch"
+    
+    @property
+    def rubric(self) -> dict:
+        # Maps JUnit test names to point values
+        return {
+            "testBFS": 15,
+            "testDFS": 15,
+            "testDijkstra": 20,
+            "testEdgeCases": 5
+        }
+
+    def preprocess_code(self, source_code: str) -> str:
+        # Specific to this assignment: Remove student's main method
+        # to prevent it from conflicting with our test harness
+        return re.sub(r"public static void main.*?}", "", source_code, flags=re.DOTALL)
+```
+
  This structure allows the main engine (`universal_grader.py`) to be completely agnostic of the assignment details. It treats every assignment as just a generic `GradingStrategy`.
 
 ## The "Frankenstein" Method
@@ -73,26 +96,26 @@ In `universal_grader.py`, we extract specific methods from the student's submiss
 ```python
 # core/universal_grader.py
 
-def _create_frankenstein_file(self, dest, extracted_methods, target_method, target_file):
-    # ... imports ...
+def _create_frankenstein_file(self, content_buffer, student_code):
+    # ... imports and class definition ...
     
-    student_code = extracted_methods.get(target_method)
-    if student_code:
-        # The "Frankenstein" Logic: Force visibility to public
-        student_code = re.sub(r"private\s", "public ", student_code)
-        student_code = re.sub(r"protected\s", "public ", student_code)
+    # The "Frankenstein" Logic: Force visibility to public
+    # This allows JUnit to access private helper methods directly
+    public_code = re.sub(r"private\s", "public ", student_code)
+    public_code = re.sub(r"protected\s", "public ", public_code)
         
-        content.append(f"// Student Code for {target_method}")
-        content.append(student_code)
+    # Track line number offset to map compiler errors back to student's original file
+    self.line_offset = len(content_buffer.splitlines())
+    content_buffer += f"\n// --- STUDENT CODE START ---\n{public_code}\n"
     
-    # ... write to file ...
+    return content_buffer
 ```
 
-This allows us to maintain strict interface requirements for students (`private void helper()`) while having full access to test those internals during grading.
+This allows us to maintain strict interface requirements for students (`private void helper()`) while having full access to test those internals during grading. We also maintain a line offset map so if the compiler fails on line 150 of the Frankenstein file, we can tell the student the error is actually on line 20 of their submission.
 
 ## Dynamic Compilation & Loading
-
-We compile everything locally in a sandboxed temporary directory to prevent pollution. The system dynamically builds the classpath based on the assignment's needs.
+ 
+We compile everything locally in a sandboxed temporary directory to prevent pollution. The system dynamically builds the classpath based on the assignment's needs. We use Python's `subprocess` with a timeout to catch infinite loops (a common issue in student code).
 
 ```python
 # core/universal_grader.py
@@ -102,9 +125,24 @@ self.base_jars = ["junit-4.13.1.jar", "hamcrest-core-1.3.jar"]
 extra_jars = getattr(self.strategy, "extra_jars", [])
 
 # Constructing the javac command
+# Note: We use ';' separator for Windows, ':' for Linux
 classpath = ";".join([".", *self.base_jars, *extra_jars])
+
 cmd = ["javac", "-cp", classpath, student_file, tester_file]
-subprocess.run(cmd, cwd=self.temp_dir)
+
+try:
+    result = subprocess.run(
+        cmd, 
+        cwd=self.temp_dir,
+        capture_output=True,
+        text=True,
+        timeout=10 # Kill compilation if it freezes
+    )
+    if result.returncode != 0:
+        # Handle compilation error...
+        pass
+except subprocess.TimeoutExpired:
+    self.record_error("Compilation Timed Out")
 ```
 
 ## AI-Assisted Grading with Local LLMs
@@ -119,18 +157,41 @@ To catch these, I integrated a **Local LLM** (Mininstral 3B) running on a local 
 ```python
 # utils/llm_utils.py
 
-def check_student_info(header_text: str, expected_name: str) -> bool:
-    prompt = f"""
-    Analyze the following file.
-    Goal: Check if the file contains the Student's Name/ID...
-    Output strictly in JSON format: {{ "present": <boolean> }}
-    """
-    # ... request to localhost:3002 ...
+SYSTEM_PROMPT = """
+You are a strict grader for a Computer Science course.
+Analyze the source code provided.
+Output strictly valid JSON with no markdown formatting.
+Schema:
+{
+    "present": boolean, // Is the required info present?
+    "feedback": string // Brief feedback for the student
+}
+"""
+
+def check_student_info(header_text: str) -> dict:
+    payload = {
+        "model": "mininstral-3b",
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": f"Check for Student Name/ID in:\n{header_text}"}
+        ],
+        "temperature": 0.1 # Low temp for deterministic outputs
+    }
+    
+    response = requests.post("http://localhost:3002/v1/chat/completions", json=payload)
+    raw_content = response.json()['choices'][0]['message']['content']
+    
+    try:
+        # Validation Loop: Ensure we got valid JSON back
+        return json.loads(raw_content)
+    except json.JSONDecodeError:
+        # Fallback or retry logic...
+        return {"present": False, "feedback": "Error parsing AI response"}
 ```
-
-
+ 
+ 
 <img src="https://kroki.io/mermaid/svg/eNplkMFOwzAQRO98xcgnkKgE4pZDpUJppSoF1NAP2DpLWOqsi-2cEP-Om6QCVB8s7-rNzo4jf3asludCTaD2AvkcKCSxciBNeNRGlEERsy75ZaCaw9g8Y8tyfQTXoqIxBXK4u8dl6S25qx7ur0E8mU6HR4FNp1htVRJeOabYQ-TGCi8Uh9Y_bbYq8PDOdo-K22wuFpscRQK3rOlXkcHJH69V9fyEL5jmGMQUuL25hnljrndk97k2S-9rfPidwXc_g13kcZMFiTvf5DR5FqM0ikWnNonXHL6yPgyfxFr_AMspbnI" alt="Sequence Diagram of LLM Integration" className="w-full bg-theme-50 rounded-lg p-2" />
-
+ 
 This hybrid approach gives us the best of both worlds: the precision of unit tests and the semantic understanding of LLMs, without sending student data to external cloud providers.
 
 ## Automating the Last Mile
@@ -143,16 +204,60 @@ I built a **Playwright** bot that:
 3.  Navigates to each student's submission.
 4.  Fills in the rubric and uploads the detailed feedback file.
 
-{/* Placeholder: GIF of the bot filling out a dummy gradescope form. Caption: "The bot automatically navigating and filling forms." */}
-
 ```python
-# automation/bot.py
+import os
+import csv
+import time
+from playwright.sync_api import sync_playwright
+from dotenv import load_dotenv
 
-async def submit_grade(page, student_id, grade, feedback):
-    await page.locator(f"tr:has-text('{student_id}')").click()
-    await page.fill("input[name='score']", str(grade))
-    await page.fill("textarea[name='comments']", feedback)
-    await page.click("button:text('Submit')")
+# Load credentials
+load_dotenv()
+EMAIL = os.getenv("GRADESCOPE_EMAIL")
+PASSWORD = os.getenv("GRADESCOPE_PASSWORD")
+
+def main():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)  # Visible browser
+        context = browser.new_context()
+        page = context.new_page()
+
+        # 1. Login
+        print("Logging in...")
+        page.goto("https://www.gradescope.com/login")
+        page.fill("input[name='session[email]']", EMAIL)
+        page.fill("input[name='session[password]']", PASSWORD)
+        page.click("input[type='submit']")
+        page.wait_for_selector("text=Your Courses", timeout=10000)
+
+        # 2. Grading Loop
+        print(f"Reading CSV: {CSV_FILE}...")
+        # ... read csv logic ...
+
+        for row in rows:
+            student_email = row.get("Email")
+            
+            # Resilience: Ensure we are on the right page
+            if page.url != review_grades_url:
+                page.goto(review_grades_url)
+            
+            # Search and Navigate
+            page.get_by_placeholder("Search").fill(student_email)
+            page.get_by_role("link", name=student_name).first.click()
+            
+            # Robust Rubric Selection
+            def ensure_rubric_item(name_or_index, desired_state=True):
+                btn = page.get_by_role("button", name=name_or_index)
+                if btn.get_attribute("aria-pressed") != str(desired_state).lower():
+                    btn.click()
+
+            # Grade Question 2
+            page.get_by_role("link", name="2:").click()
+            if float(row.get("Q2 Score")) == 1.0:
+                ensure_rubric_item(1, True)
+            
+            # Submit
+            # ... submission logic ...
 ```
 
 ## Conclusion
