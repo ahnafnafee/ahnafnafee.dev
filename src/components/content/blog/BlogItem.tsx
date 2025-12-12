@@ -37,9 +37,9 @@ export const BlogItem: React.FunctionComponent<Blog> = (props) => {
           <div className='flex flex-wrap items-center gap-3 mt-auto'>
              {/* Labels */}
             {props.topics.length > 0 && (
-              <div className='flex items-center gap-2'>
+              <div className='flex flex-wrap items-center gap-2'>
                 {props.topics.slice(0, 3).map((topic) => (
-                  <span key={topic} className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-sm">
+                  <span key={topic} className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-sm whitespace-nowrap">
                     {topic}
                   </span>
                 ))}

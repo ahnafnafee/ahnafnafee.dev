@@ -20,7 +20,7 @@ export function BlogPageClient({ allBlogs }: BlogPageClientProps) {
         title='Blog' 
         description='Thoughts on Artificial Intelligence, Computer Graphics, and Software Engineering.' 
       />
-      <Searchbar placeholder="Search blogs..." value={search.query} onChange={search.handleChange} />
+      <Searchbar placeholder="Search blogs..." value={search.query} onChange={search.handleChange} className='mb-0' />
 
       <div className='flex flex-col gap-8 pb-24'>
         {search.query.length > 0 ? (

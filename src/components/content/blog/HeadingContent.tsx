@@ -55,6 +55,16 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
         {props.summary}
       </p>
 
+      {props.topics && props.topics.length > 0 && (
+        <div className='flex flex-wrap items-center gap-2 mb-8 w-full justify-center'>
+          {props.topics.map((topic) => (
+            <span key={topic} className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-sm whitespace-nowrap">
+              {topic}
+            </span>
+          ))}
+        </div>
+      )}
+
       {/* Author Block */}
       {/* Author & Action Bar Combined */}
       <div className='flex items-center justify-between w-full border-t border-b border-gray-200 dark:border-gray-800 py-4 mb-8'>
@@ -70,8 +80,8 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
             priority
           />
           <div className='flex flex-col'>
-            <span className='font-bold text-sm text-gray-900 dark:text-white uppercase tracking-wide'>
-              <UnderlineLink href={authorProfile} title={authorName}>
+            <span className='font-bold text-sm text-purple-600 dark:text-purple-400 uppercase tracking-wide'>
+              <UnderlineLink href={authorProfile} title={authorName} className='text-purple-600 dark:text-purple-400'>
                 {authorName}
               </UnderlineLink>
             </span>
@@ -92,6 +102,8 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
           <span className='text-sm font-medium'>{isCopied ? 'Copied!' : 'Share'}</span>
         </button>
       </div>
+
+      
 
     </section>
   )

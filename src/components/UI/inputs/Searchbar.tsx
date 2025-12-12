@@ -1,15 +1,17 @@
 import { memo } from 'react'
 import { HiOutlineSearch } from 'react-icons/hi'
+import { twclsx } from '@/libs/twclsx'
 
 interface SearchbarProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   value: string
   placeholder?: string
+  className?: string
 }
 
-const Component: React.FunctionComponent<SearchbarProps> = ({ onChange, value, placeholder = 'Search...' }) => {
+const Component: React.FunctionComponent<SearchbarProps> = ({ onChange, value, placeholder = 'Search...', className }) => {
   return (
-    <div className='relative w-full mb-10 group'>
+    <div className={twclsx('relative w-full mb-10 group', className)}>
        <div className="absolute inset-y-0 left-0 flex items-center pl-0 pointer-events-none">
           <HiOutlineSearch className='text-gray-400 text-xl group-focus-within:text-purple-500 transition-colors duration-300' />
        </div>
