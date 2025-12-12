@@ -1,0 +1,160 @@
+---
+title: 'Scaling Education: A Strategy Pattern Approach to Grading at Scale'
+summary: 'Deep dive into building a scalable autograder using Python, Java, and the Strategy Pattern. Learn how we can automate grading for hundreds of students using "Frankenstein" code stitching, dynamic rubrics, and local LLMs.'
+featured: true
+author_name: 'Ahnaf An Nafee'
+github_username: 'ahnafnafee'
+published: '12/11/2025'
+topics: ['Education Technology', 'Software Architecture', 'Python', 'Java', 'Automation', 'LLM']
+keywords: ['autograder', 'strategy pattern', 'python automation', 'java testing', 'junit', 'playwright', 'education at scale', 'local llm', 'code instrumentation']
+thumbnail: 'https://ik.imagekit.io/8ieg70pvks/autograder-architecture.jpg'
+related: []
+---
+
+Grading programming assignments provides a unique sandbox to experiment with software architecture. It presents a classic engineering challenge: **how can we build a system that is both flexible enough to handle diverse assignments and robust enough to run at scale?**
+
+This article explores a hobby project of mine where I attempted to engineer a solution using the **Strategy Pattern**, **"Frankenstein" code instrumentation**, and **Local LLMs**. The goal was to see if modern software patterns and local AI could create a "universal" grading engine.
+
+## The Architecture: Python Conductor, Java Engine
+
+The core philosophy is simple: **Python orchestrates, Java executes.**
+
+<img src="/images/autograder_architecture_terminal.png" alt="Screenshot of the terminal output showing the 'Python Conductor' starting the grading process" className="w-full" />
+
+We use Python for its flexibility in file manipulation, process management, and API interactions. Java is used strictly for running the student's code against JUnit tests.
+
+<img src="https://kroki.io/mermaid/svg/eNpNz8FqwzAMBuB7n0L0tB3aRxi0Tpqtp9Gku5gcXEdkhsQytjxayMPPsSlUx1_fL9DolfuFrtpAmoPc-mj37gFvguwQNZN_3_aw230sLU6oOUDLXjGOjwWOsvFqMHZ8Rn05kvkX4xomH2-zCcGQDQsIeYhMaw19bUdjsXRE7nx7dMpjcpXscHbQKjvc6F5MlY2g2ZlpNbU8qz-lX5f1HXXkdXmS56s1DB0GDoWcMrlgiBMn0UjR_sAFHXkuoMng6iZSQwKf-T0MmhzCkbj_ByXkYQg" alt="Diagram showing the architecture of the autograder" className="w-full bg-theme-50 rounded-lg p-2" />
+
+
+### The Strategy Pattern
+
+The biggest challenge in building a "universal" grader is that every assignment is different. Some require graph traversal, others list manipulation, and some need strict time complexity checks.
+
+Instead of writing a massive `if-else` block, I used the **Strategy Pattern**. We define a **Parent Strategy** (`GradingStrategy`) that acts as the blueprint. It enforces a contract that all assignments must follow, while also providing shared utility methods (like code preprocessing and penalty calculations) that child strategies can inherit.
+
+```python
+# core/grading_strategy.py
+
+from abc import ABC, abstractmethod
+
+# The Parent Strategy
+class GradingStrategy(ABC):
+    @property
+    @abstractmethod
+    def assignment_name(self) -> str:
+        """Name of the assignment (e.g., 'GraphAssignment')"""
+        pass
+
+    @property
+    @abstractmethod
+    def rubric(self) -> dict:
+        """
+        Dynamic rubric mapping.
+        Keys are test names, values are points.
+        """
+        pass
+
+    # Shared logic inherited by all child strategies
+    def preprocess_code(self, source_code: str) -> str:
+        """Optional hook to modify student code before compilation."""
+        return source_code
+```
+
+ This structure allows the main engine (`universal_grader.py`) to be completely agnostic of the assignment details. It treats every assignment as just a generic `GradingStrategy`.
+
+## The "Frankenstein" Method
+
+One of the most complex parts of autograding is testing private methods or ensuring students follow specific implementation details without exposing our test logic.
+
+To solve this, I implemented what I call the **"Frankenstein" Method**. We don't just compile the student's file; we surgically alter it.
+
+In `universal_grader.py`, we extract specific methods from the student's submission and stitch them into a "Frankenstein" class that contains our test harnesses. Crucially, we use regex to flip visibility modifiers so we can test private helper methods directly.
+
+```python
+# core/universal_grader.py
+
+def _create_frankenstein_file(self, dest, extracted_methods, target_method, target_file):
+    # ... imports ...
+    
+    student_code = extracted_methods.get(target_method)
+    if student_code:
+        # The "Frankenstein" Logic: Force visibility to public
+        student_code = re.sub(r"private\s", "public ", student_code)
+        student_code = re.sub(r"protected\s", "public ", student_code)
+        
+        content.append(f"// Student Code for {target_method}")
+        content.append(student_code)
+    
+    # ... write to file ...
+```
+
+This allows us to maintain strict interface requirements for students (`private void helper()`) while having full access to test those internals during grading.
+
+## Dynamic Compilation & Loading
+
+We compile everything locally in a sandboxed temporary directory to prevent pollution. The system dynamically builds the classpath based on the assignment's needs.
+
+```python
+# core/universal_grader.py
+
+# Dynamic Classpath Construction
+self.base_jars = ["junit-4.13.1.jar", "hamcrest-core-1.3.jar"]
+extra_jars = getattr(self.strategy, "extra_jars", [])
+
+# Constructing the javac command
+classpath = ";".join([".", *self.base_jars, *extra_jars])
+cmd = ["javac", "-cp", classpath, student_file, tester_file]
+subprocess.run(cmd, cwd=self.temp_dir)
+```
+
+## AI-Assisted Grading with Local LLMs
+
+While JUnit captures functional correctness, it fails at **semantic analysis**. 
+- *Did the student comment their code?*
+- *Is the variable naming descriptive?*
+- *Did they explain their logic in the header?*
+
+To catch these, I integrated a **Local LLM** (Mininstral 3B) running on a local server. When a submission needs semantic checking, we send the code snippets to the LLM with a strict JSON system prompt.
+
+```python
+# utils/llm_utils.py
+
+def check_student_info(header_text: str, expected_name: str) -> bool:
+    prompt = f"""
+    Analyze the following file.
+    Goal: Check if the file contains the Student's Name/ID...
+    Output strictly in JSON format: {{ "present": <boolean> }}
+    """
+    # ... request to localhost:3002 ...
+```
+
+
+<img src="https://kroki.io/mermaid/svg/eNplkMFOwzAQRO98xcgnkKgE4pZDpUJppSoF1NAP2DpLWOqsi-2cEP-Om6QCVB8s7-rNzo4jf3asludCTaD2AvkcKCSxciBNeNRGlEERsy75ZaCaw9g8Y8tyfQTXoqIxBXK4u8dl6S25qx7ur0E8mU6HR4FNp1htVRJeOabYQ-TGCi8Uh9Y_bbYq8PDOdo-K22wuFpscRQK3rOlXkcHJH69V9fyEL5jmGMQUuL25hnljrndk97k2S-9rfPidwXc_g13kcZMFiTvf5DR5FqM0ikWnNonXHL6yPgyfxFr_AMspbnI" alt="Sequence Diagram of LLM Integration" className="w-full bg-theme-50 rounded-lg p-2" />
+
+This hybrid approach gives us the best of both worlds: the precision of unit tests and the semantic understanding of LLMs, without sending student data to external cloud providers.
+
+## Automating the Last Mile
+
+The final step is getting grades into the system. Manually entering thousands of grades is error-prone. 
+
+I built a **Playwright** bot that:
+1.  Reads the final CSV report generated by the `UniversalGrader`.
+2.  Logs into the grading portal.
+3.  Navigates to each student's submission.
+4.  Fills in the rubric and uploads the detailed feedback file.
+
+{/* Placeholder: GIF of the bot filling out a dummy gradescope form. Caption: "The bot automatically navigating and filling forms." */}
+
+```python
+# automation/bot.py
+
+async def submit_grade(page, student_id, grade, feedback):
+    await page.locator(f"tr:has-text('{student_id}')").click()
+    await page.fill("input[name='score']", str(grade))
+    await page.fill("textarea[name='comments']", feedback)
+    await page.click("button:text('Submit')")
+```
+
+## Conclusion
+
+By treating grading as a software engineering problem, we turned a multi-day ordeal into a process that takes minutes. The combination of the **Strategy Pattern** for extensibility, **Frankenstein** code manipulation for deep testing, and **Local LLMs** for semantic checks creates a robust, scalable system that serves hundreds of students efficiently.

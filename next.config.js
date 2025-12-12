@@ -124,6 +124,10 @@ const config = {
 				protocol: "https",
 				hostname: "img.shields.io",
 			},
+			{
+				protocol: "https",
+				hostname: "mermaid.live",
+			},
 		],
 		qualities: [25, 50, 60, 75, 100],
 		formats: ["image/webp", "image/avif"],
