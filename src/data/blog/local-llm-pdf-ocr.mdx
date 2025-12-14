@@ -39,7 +39,7 @@ When building an OCR tool today, you typically pick two:
 | Tool                  | Layout                      | Semantics                  | Speed             |
 | :-------------------- | :-------------------------- | :------------------------- | :---------------- |
 | **Tesseract/EasyOCR** | ✅ Excellent                | ❌ Fails on Handwriting    | ⚡ Fast           |
-| **GPT-4o/OlmOCR**     | ❌ Hallucinates Coordinates | ✅ Reads Cursive Perfectly | 🐢 Slow/Expensive |
+| **OlmOCR**     | ❌ Hallucinates Coordinates | ✅ Reads Cursive Perfectly | 🐢 Slow/Expensive |
 
 My goal was to break this triangle. I needed the **semantic brains** of the LLM to read the messy handwriting, but the **structural eyes** of EasyOCR to place that text in the correct spot on the PDFs.
 
