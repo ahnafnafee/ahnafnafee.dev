@@ -1,4 +1,5 @@
 import { BlogPostClient } from '@/components/blog/BlogPostClient'
+import { notFound } from 'next/navigation'
 import { MDXComponents } from '@/components/content/mdx'
 import { Footer } from '@/UI/common'
 import { getContentBySlug, getContents } from '@/services/content'
@@ -28,42 +29,46 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const res = await getContentBySlug<Blog>('/blog', slug)
-  const header = res.header
-  const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
+  try {
+    const res = await getContentBySlug<Blog>('/blog', slug)
+    const header = res.header
+    const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
 
-  return {
-    title: header.title,
-    description: header.summary,
-    keywords: header.keywords,
-    authors: [{ name: header.author_name }],
-    openGraph: {
+    return {
       title: header.title,
       description: header.summary,
-      url: `https://www.ahnafnafee.dev/blog/${header.slug}`,
-      siteName: 'Ahnaf An Nafee',
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 600,
-          alt: header.title
-        }
-      ],
-      locale: 'en_US',
-      type: 'article',
-      publishedTime: header.published,
-      authors: [header.author_name],
-      tags: header.topics
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: header.title,
-      description: header.summary,
-      site: '@ahnaf_nafee',
-      creator: '@ahnaf_nafee',
-      images: [ogImage]
+      keywords: header.keywords,
+      authors: [{ name: header.author_name }],
+      openGraph: {
+        title: header.title,
+        description: header.summary,
+        url: `https://www.ahnafnafee.dev/blog/${header.slug}`,
+        siteName: 'Ahnaf An Nafee',
+        images: [
+          {
+            url: ogImage,
+            width: 1200,
+            height: 600,
+            alt: header.title
+          }
+        ],
+        locale: 'en_US',
+        type: 'article',
+        publishedTime: header.published,
+        authors: [header.author_name],
+        tags: header.topics
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: header.title,
+        description: header.summary,
+        site: '@ahnaf_nafee',
+        creator: '@ahnaf_nafee',
+        images: [ogImage]
+      }
     }
+  } catch {
+    return {}
   }
 }
 
@@ -90,16 +95,6 @@ export default async function BlogPost({ params }: Props) {
     )
   } catch (error) {
     console.error('Failed to load blog post:', error)
-    return (
-      <>
-        <main className='layout pb-4'>
-          <div className='text-center py-8'>
-            <h1>Blog post not found</h1>
-            <p>The requested blog post could not be loaded.</p>
-          </div>
-        </main>
-        <Footer />
-      </>
-    )
+    return notFound()
   }
 }
