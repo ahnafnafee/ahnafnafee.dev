@@ -1,0 +1,131 @@
+---
+title: 'Building a Local LLM-Powered Hybrid OCR Engine'
+summary: 'How I combined the speed of EasyOCR with the semantic power of Local LLMs to create pixel-perfect, searchable PDFs from handwriting and complex forms.'
+featured: true
+author_name: 'Ahnaf An Nafee'
+github_username: 'ahnafnafee'
+published: '12/14/2025'
+topics: ['OCR', 'Python', 'LLM', 'Local Integration', 'AI Engineering']
+keywords:
+    [
+        'pdf ocr',
+        'local llm',
+        'easyocr',
+        'olmocr',
+        'rag',
+        'document processing',
+        'python automation',
+    ]
+thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/local-llm-pdf-ocr.jpeg?updatedAt=1765747593635'
+related: []
+---
+
+We live in a digital world, yet the most valuable data is often trapped in the analog prison of scanned PDFs. Invoices, handwritten notes, and medical forms are essentially black boxes to our computers—pixels without meaning.
+
+I wanted to solve this. But I didn't want to pay API fees to Cloud Vision providers, and I didn't want my private documents leaving my machine.
+
+This article details how I engineered a **Local, Hybrid OCR Engine** that combines the layout precision of **EasyOCR** with the reasoning capabilities of **OlmOCR (running locally via LM Studio)** to create searchable, indexable PDFs.
+
+<img src="https://ik.imagekit.io/8ieg70pvks/blog/local-llm-ocr-ui.png" alt="Project UI" className="w-full rounded-lg" />
+
+## The Problem: The "OCR Triangle"
+
+When building an OCR tool today, you typically pick two:
+
+1.  **Layout Accuracy** (Knowing _where_ the text is).
+2.  **Semantic Accuracy** (Knowing _what_ the text says).
+3.  **Speed/Cost** (Running it on a laptop).
+
+| Tool                  | Layout                      | Semantics                  | Speed             |
+| :-------------------- | :-------------------------- | :------------------------- | :---------------- |
+| **Tesseract/EasyOCR** | ✅ Excellent                | ❌ Fails on Handwriting    | ⚡ Fast           |
+| **GPT-4o/OlmOCR**     | ❌ Hallucinates Coordinates | ✅ Reads Cursive Perfectly | 🐢 Slow/Expensive |
+
+My goal was to break this triangle. I needed the **semantic brains** of the LLM to read the messy handwriting, but the **structural eyes** of EasyOCR to place that text in the correct spot on the PDFs.
+
+## The Architecture: "The Hybrid Aligner"
+
+The core innovation of this project is a Python algorithm I call **Anchor-Based Gap Filling**. It acts as the glue between the two OCR systems.
+
+<img src="https://kroki.io/mermaid/svg/eNplks1uAiEUhfc-xY2baZP6Al00mX9Hx2jUdENcXIHMkDJgGCZqat-9CFOTtmwg9x7O-fhpDJ5a2GcTcCMmlToNFjZZcYDZ7A0S4pZgNVQdNvzgRYnvpJ8bNCgll5BfOB2s0Opr4gX9cGy863RnzUDt4HTwLnqngKcc--s63T5PvTT1XhkZqyEg88WcbPEMiR4UE6pxiwvvQz-_92-FwabjynL2ClEsm-gFIm3EfbJtF92gIDVetTvND8XIzxX7x8k7VFbQB2WtqWOu69UvzpKsZffALH1tTjbOGfb8YkN57ulS3XLj6AKb4wpMFXlEpdqxK_uHqfCmCzK_Ho1gEEvRKG6CqAq9IFz4mFjRVptZgj1nUOIJCiGlu64bLEnYyzwaJFLTj_H-lt6nJjtU7Cxoe39uKLnLQavHrNprVg4XDW3xKLn_FN_uAqNG" alt="Architecture Flow" className="w-full bg-theme-50 rounded-lg p-2" />
+
+Here is the strategy:
+
+1.  **The Skeleton (EasyOCR)**: We run a fast layout analysis. This gives us thousands of bounding boxes: `[x, y, w, h]`. It reads printed text well ("Name:", "Date:") but returns garbage for handwriting (`$#@!`).
+2.  **The Brain (LLM)**: We ask a local vision model (e.g., `allenai/olmocr-2-7b`) to "transcribe this page line by line". It gives us perfect text but no coordinates.
+3.  **The Merge**: The Hybrid Aligner treats the EasyOCR-detected printed text as **"Anchors"**.
+
+### The "Anchor & Gap" Algorithm
+
+Instead of trying to match everything, we find high-confidence matches (Anchors) to pin the LLM text to the page.
+
+```python
+# hybrid_aligner.py
+
+def align_text(self, structured_data, llm_text):
+    # 1. fuzzy match "Anchors"
+    # We look for EasyOCR boxes that match LLM words with >80% confidence.
+    matches = process.extractOne(clean_box, clean_candidates, scorer=fuzz.ratio)
+
+    if match and score > 80:
+        # We found an Anchor! Pin it.
+        create_anchor(box_idx, llm_idx)
+```
+
+Once we have anchors (e.g., the printed labels on a form), we are left with **Gaps**.
+
+A "Gap" is a region of space between two anchors (e.g., the space between "Name:" and "Date:"). If the LLM has extra words that didn't match the anchors ("John Doe"), and EasyOCR has extra boxes in that region (scrawled ink), we assume they map to each other.
+
+### Solving "The Fragmentation Problem"
+
+One major engineering hurdle was that EasyOCR often splits single handwritten words into multiple tiny boxes. If the LLM says "Algorithm", EasyOCR might see `["Alg", "ori", "thm"]`.
+
+To fix this, I implemented a **Vertical Overlap Grouping** logic. Instead of just looking at distance, we group floating boxes that share a vertical slice of the page.
+
+```python
+# Checking intersection over union for line grouping
+inter_y0 = max(y0_a, y0_b)
+inter_y1 = min(y1_a, y1_b)
+intersection = max(0, inter_y1 - inter_y0)
+
+min_height = min(y1_a - y0_a, y1_b - y0_b)
+
+# If boxes overlap vertically by >50%, they are on the same line.
+if intersection > (min_height * 0.5):
+    current_row.append(gap_box)
+```
+
+## The "Sandwich" PDF
+
+Once we have aligned the text, we need to embed it. I used `PyMuPDF` to create a "Sandwich PDF".
+
+1.  **Render the Page as an Image**: This strips all existing selectable text (cleaning the slate).
+2.  **Insert the Image**: The background is now just pixels.
+3.  **Embed Invisible Text**: We take our aligned text and inject it using `render_mode=3` (invisible text).
+
+This technique means the user sees the original visual document (preserving all fonts and layout), but their cursor interacts with a hidden layer of perfect, searchable text.
+
+## CLI & Real-time Web UI
+
+A tool is only as good as its DX. I implemented a dual-interface approach:
+
+<img src="https://ik.imagekit.io/8ieg70pvks/blog/local-llm-ocr-cli.png" alt="Project CLI" className="w-full rounded-lg" />
+
+1.  **CLI**: Powered by `rich`, providing beautiful progress bars, spinners, and live status updates.
+2.  **Web UI**: A FastAPI backend allows users to drag-and-drop files. I used **WebSockets** to push the exact same rich progress updates to the browser in real-time.
+
+```python
+# main.py
+with progress:
+    task_id = progress.add_task(f"[cyan]Hybrid OCR Processing...", total=total_pages)
+    # ... processing loop ...
+    progress.advance(task_id)
+```
+
+## Conclusion
+
+This project started as a way to digitize my handwritten notes, but it evolved into a robust case study on **Hybrid AI Systems**.
+
+By combining deterministic algorithms (EasyOCR/Fuzzy Matching) with probabilistic ones (LLMs), we can cover the weaknesses of both. The result is a tool that feels "native" but possesses the reading comprehension of a state-of-the-art AI.
+
+The full source code is available on [GitHub](https://github.com/ahnafnafee/pdf-ocr-llm).
