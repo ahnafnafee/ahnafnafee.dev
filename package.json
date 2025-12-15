@@ -5,6 +5,7 @@
 	"description": "Portfolio, built with React, Next.js, MDX and Tailwind CSS",
 	"scripts": {
 		"dev": "env-cmd -f .env.development.local next dev",
+		"dev:webpack": "env-cmd -f .env.development.local next dev --webpack",
 		"build": "next build",
 		"export": "yarn export:prepare && cross-env STATIC_EXPORT=true next build && yarn export:cleanup",
 		"export:university": "yarn export:prepare && env-cmd -f .env.development.static.local next build && yarn export:cleanup",
@@ -42,6 +43,7 @@
 		"isomorphic-fetch": "^3.0.0",
 		"jotai": "^2.15.2",
 		"mdx-prism": "^0.3.4",
+		"mermaid": "10",
 		"next": "16.0.7",
 		"next-axiom": "^1.9.3",
 		"next-mdx-remote": "^5.0.0",
@@ -56,6 +58,7 @@
 		"react-icons": "^5.5.0",
 		"react-image-lightbox": "^5.1.4",
 		"rehype-katex": "^7.0.1",
+		"rehype-prism-plus": "^2.0.1",
 		"remark-gfm": "^4.0.1",
 		"remark-math": "^6.0.0",
 		"sharp": "^0.34.5",

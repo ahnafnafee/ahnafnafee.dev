@@ -54,11 +54,11 @@ export const BlogItem: React.FunctionComponent<Blog> = (props) => {
         </div>
 
         {/* Right Thumbnail */}
-        <div className='w-full md:w-48 aspect-[1.91/1] md:aspect-square flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700'>
+        <div className='w-full md:w-48 aspect-[1.91/1] md:aspect-square flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700' onClick={() => window.location.href = urlPost}>
            <img 
              src={ogImageUrl} 
              alt={props.title}
-             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+             className="w-full h-full cursor-pointer object-cover transition-transform duration-300 group-hover:scale-105"
              loading="lazy"
            />
         </div>

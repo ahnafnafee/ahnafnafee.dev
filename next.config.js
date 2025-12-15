@@ -7,7 +7,7 @@ const isDev = process.env.NODE_ENV === "development";
 // https://nextjs.org/docs/advanced-features/security-headers
 const ContentSecurityPolicy = `
     default-src 'self';
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' *.youtube.com *.twitter.com *.vercel-scripts.com giscus.app *.giscus.app *.googletagmanager.com;
+    script-src 'self' 'unsafe-eval' 'unsafe-inline' *.youtube.com *.twitter.com *.vercel-scripts.com giscus.app *.giscus.app *.googletagmanager.com cdn.jsdelivr.net;
     child-src *.youtube.com *.google.com *.twitter.com giscus.app *.giscus.app;
     style-src 'self' 'unsafe-inline' *.googleapis.com *.unpkg.com *.giscus.app;
     img-src * blob: data:;
@@ -145,6 +145,9 @@ const config = {
 	poweredByHeader: false,
 	generateEtags: true,
 
+	// Transpile mermaid and its dependencies to fix bundling issues
+	transpilePackages: ['mermaid', 'stylis'],
+
 	turbopack: {},
 	experimental: {
 		optimizePackageImports: [
@@ -153,6 +156,9 @@ const config = {
 			"framer-motion",
 			"react-icons",
 			"next-themes",
+			'mermaid',
+			'stylis',
+			'shiki'
 		],
 		webVitalsAttribution: ["CLS", "LCP"],
 		scrollRestoration: true,
