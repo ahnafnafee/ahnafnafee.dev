@@ -20,30 +20,6 @@ thumbnail: "https://ik.imagekit.io/8ieg70pvks/blog/local-llm-pdf-ocr.jpeg?update
 related: []
 ---
 
-```mermaid
-graph TD
-    A["Input PDF"] --> B["PDF to Image Conversion"]
-    B --> C["Batch Processing"]
-
-    subgraph "Phase 1: Layout Detection (Surya)"
-        C --> D["Surya DetectionPredictor"]
-        D --> E["Bounding Boxes"]
-        E --> F["Sorted by Reading Order"]
-    end
-
-    subgraph "Phase 2: Text Extraction (Local LLM)"
-        C --> G["OlmOCR Vision Model"]
-        G --> H["Pure Text Content"]
-    end
-
-    F --> I["Position-Based Aligner"]
-    H --> I
-
-    I -->|"Distribute by Box Width"| J["Aligned Text Blocks"]
-    J --> K["Sandwich PDF Generator"]
-    K --> L["Searchable PDF Output"]
-```
-
 We live in a digital world, yet the most valuable data is often trapped in the analog prison of scanned PDFs. Invoices, handwritten notes, and medical forms are essentially black boxes to our computers; pixels without meaning.
 
 I wanted to solve this. But I didn't want to pay API fees to Cloud Vision providers, and I didn't want my private documents leaving my machine.
