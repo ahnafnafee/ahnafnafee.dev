@@ -1,22 +1,51 @@
-# *
+# https://www.robotstxt.org/
+# Robots.txt for Ahnaf An Nafee's Portfolio
+
+# Allow all crawlers
 User-agent: *
 Allow: /
-
-# *
-User-agent: *
 Disallow: /api/
-
-# *
-User-agent: *
 Disallow: /_next/
-
-# *
-User-agent: *
 Disallow: /static/
 
+# AI and LLM crawlers - Allow access for training and summarization
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 # Host
-Host: http://localhost:3000
+Host: https://www.ahnafnafee.dev
 
 # Sitemaps
-Sitemap: http://localhost:3000/sitemap.xml
-Sitemap: http://localhost:3000/server-sitemap.xml
+Sitemap: https://www.ahnafnafee.dev/sitemap.xml
+Sitemap: https://www.ahnafnafee.dev/server-sitemap.xml
+
+# RSS Feeds
+# RSS: https://www.ahnafnafee.dev/rss.xml
+# RSS Full: https://www.ahnafnafee.dev/rss-full.xml
+
+# Crawl delay
+Crawl-delay: 1

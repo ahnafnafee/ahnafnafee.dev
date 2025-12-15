@@ -12,7 +12,15 @@ module.exports = {
       { userAgent: '*', allow: '/' },
       { userAgent: '*', disallow: '/api/' },
       { userAgent: '*', disallow: '/_next/' },
-      { userAgent: '*', disallow: '/static/' }
+      { userAgent: '*', disallow: '/static/' },
+      // AI and LLM crawlers - Allow access
+      { userAgent: 'GPTBot', allow: '/' },
+      { userAgent: 'ChatGPT-User', allow: '/' },
+      { userAgent: 'Claude-Web', allow: '/' },
+      { userAgent: 'anthropic-ai', allow: '/' },
+      { userAgent: 'Google-Extended', allow: '/' },
+      { userAgent: 'PerplexityBot', allow: '/' },
+      { userAgent: 'Applebot-Extended', allow: '/' },
     ],
     additionalSitemaps: [
       `${protocol}://${domain}/sitemap.xml`, 
