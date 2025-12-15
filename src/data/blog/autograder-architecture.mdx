@@ -23,7 +23,16 @@ The core philosophy is simple: **Python orchestrates, Java executes.**
 
 We use Python for its flexibility in file manipulation, process management, and API interactions. Java is used strictly for running the student's code against JUnit tests.
 
-<img src="https://kroki.io/mermaid/svg/eNpNz8FqwzAMBuB7n0L0tB3aRxi0Tpqtp9Gku5gcXEdkhsQytjxayMPPsSlUx1_fL9DolfuFrtpAmoPc-mj37gFvguwQNZN_3_aw230sLU6oOUDLXjGOjwWOsvFqMHZ8Rn05kvkX4xomH2-zCcGQDQsIeYhMaw19bUdjsXRE7nx7dMpjcpXscHbQKjvc6F5MlY2g2ZlpNbU8qz-lX5f1HXXkdXmS56s1DB0GDoWcMrlgiBMn0UjR_sAFHXkuoMng6iZSQwKf-T0MmhzCkbj_ByXkYQg" alt="Diagram showing the architecture of the autograder" className="w-full bg-theme-50 rounded-lg p-2" />
+```mermaid
+graph TD
+    A["run.py (Conductor)"] -->|Selects Strategy| B[GradingStrategy]
+    A -->|Iterates Submissions| C[AutoGraderEngine]
+    C -->|Prepares| D[Temp Sandbox]
+    D -->|Compiles| E[Javac]
+    D -->|Executes| F[JUnit Tests]
+    F -->|Results| G[CSV Report]
+    G -->|Uploads| H[Gradescope Bot]
+```
 
 ### The Strategy Pattern
 
@@ -190,7 +199,19 @@ def check_student_info(header_text: str) -> dict:
 ```
  
  
-<img src="https://kroki.io/mermaid/svg/eNplkMFOwzAQRO98xcgnkKgE4pZDpUJppSoF1NAP2DpLWOqsi-2cEP-Om6QCVB8s7-rNzo4jf3asludCTaD2AvkcKCSxciBNeNRGlEERsy75ZaCaw9g8Y8tyfQTXoqIxBXK4u8dl6S25qx7ur0E8mU6HR4FNp1htVRJeOabYQ-TGCi8Uh9Y_bbYq8PDOdo-K22wuFpscRQK3rOlXkcHJH69V9fyEL5jmGMQUuL25hnljrndk97k2S-9rfPidwXc_g13kcZMFiTvf5DR5FqM0ikWnNonXHL6yPgyfxFr_AMspbnI" alt="Sequence Diagram of LLM Integration" className="w-full bg-theme-50 rounded-lg p-2" />
+```mermaid
+sequenceDiagram
+    participant Engine as AutoGrader Engine
+    participant LLM as Mininstral 3B (Local)
+    
+    Engine->>Engine: Run JUnit Tests
+    alt Tests Pass
+        Engine->>LLM: Check Semantic Requirements
+        LLM-->>Engine: JSON { "grade": 10, "feedback": "Good job" }
+    else Tests Fail
+        Engine->>Engine: Assign Functional Score
+    end
+```
  
 This hybrid approach gives us the best of both worlds: the precision of unit tests and the semantic understanding of LLMs, without sending student data to external cloud providers.
 

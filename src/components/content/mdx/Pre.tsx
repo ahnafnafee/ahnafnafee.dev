@@ -169,7 +169,7 @@ export const Pre = ({ children, className }: PreProps) => {
         </UnstyledButton>
       </div>
 
-      <pre ref={preRef} className={twclsx('[&>code]:border-none pt-[3.5rem!important] text-sm', className)}>
+      <pre ref={preRef} className={twclsx('[&>code]:border-none pt-[3.5rem!important]', className)}>
         {children}
       </pre>
     </div>
