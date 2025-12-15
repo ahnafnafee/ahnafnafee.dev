@@ -6,16 +6,16 @@
   
   <p>
     <a href="https://www.ahnafnafee.dev">
-      <img src="https://img.shields.io/badge/Website-ahnafnafee.dev-blueviolet?style=flat-square&logo=google-chrome" alt="Website" />
+      <img src="https://img.shields.io/badge/Website-ahnafnafee.dev-blueviolet?style=for-the-badge" alt="Website" />
     </a>
     <a href="https://www.linkedin.com/in/ahnafnafee">
-      <img src="https://img.shields.io/badge/LinkedIn-Ahnaf%20An%20Nafee-blue?style=flat-square&logo=linkedin" alt="LinkedIn" />
+      <img src="https://img.shields.io/badge/LinkedIn-Ahnaf%20An%20Nafee-blue?style=for-the-badge&logo=linkedin" alt="LinkedIn" />
     </a>
     <a href="https://github.com/ahnafnafee">
-      <img src="https://img.shields.io/badge/GitHub-ahnafnafee-black?style=flat-square&logo=github" alt="GitHub" />
+      <img src="https://img.shields.io/badge/GitHub-ahnafnafee-black?style=for-the-badge&logo=github" alt="GitHub" />
     </a>
     <a href="mailto:ahnafnafee@gmail.com">
-      <img src="https://img.shields.io/badge/Email-ahnafnafee%40gmail.com-red?style=flat-square&logo=gmail" alt="Email" />
+      <img src="https://img.shields.io/badge/Email-ahnafnafee%40gmail.com-red?style=for-the-badge&logo=gmail" alt="Email" />
     </a>
   </p>
 </div>
