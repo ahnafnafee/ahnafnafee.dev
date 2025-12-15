@@ -43,7 +43,6 @@
 		"isomorphic-fetch": "^3.0.0",
 		"jotai": "^2.15.2",
 		"mdx-prism": "^0.3.4",
-		"mermaid": "10",
 		"next": "16.0.7",
 		"next-axiom": "^1.9.3",
 		"next-mdx-remote": "^5.0.0",

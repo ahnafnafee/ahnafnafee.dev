@@ -7,6 +7,6 @@ import rehypePrismPlus from 'rehype-prism-plus'
 export const commonMDXOptions = {
   mdxOptions: {
     remarkPlugins: [remarkGfm, remarkMath],
-    rehypePlugins: [[rehypePrismPlus, { ignoreMissing: true }], rehypeSlug, rehypeKatex]
+    rehypePlugins: [[rehypePrismPlus, { ignoreMissing: true }], rehypeSlug, rehypeKatex] as any[]
   }
 }
