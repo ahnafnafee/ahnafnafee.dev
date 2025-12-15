@@ -69,9 +69,36 @@ export default async function PortfolioDetailPage({ params }: Props) {
   const { slug } = await params
   const res = await getContentBySlug<Portfolio>('/portfolio', slug)
   const header = res.header
+  const ogImage = generateOgImage({ title: header.title, subTitle: header.summary })
+
+  // JSON-LD structured data for Google rich results
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareSourceCode',
+    name: header.title,
+    description: header.summary,
+    image: header.image,
+    dateCreated: header.date,
+    author: {
+      '@type': 'Person',
+      name: 'Ahnaf An Nafee',
+      url: 'https://www.ahnafnafee.dev'
+    },
+    programmingLanguage: header.stack,
+    ...(header.link.github && { codeRepository: header.link.github }),
+    ...(header.link.live && { url: header.link.live }),
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://www.ahnafnafee.dev/portfolio/${header.slug}`
+    }
+  }
 
   return (
     <AppLayoutPage>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <BackToTop />
 
       <article className={twclsx('flex flex-col', 'gap-8')}>

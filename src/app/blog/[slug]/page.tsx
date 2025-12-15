@@ -78,9 +78,40 @@ export default async function BlogPost({ params }: Props) {
     const res = await getContentBySlug<Blog>('/blog', slug)
     const est_read = readingTime(res.content).text
     const header = { est_read, ...res.header }
+    const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
+
+    // JSON-LD structured data for Google rich results
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: header.title,
+      description: header.summary,
+      image: ogImage,
+      datePublished: header.published,
+      author: {
+        '@type': 'Person',
+        name: header.author_name,
+        url: 'https://www.ahnafnafee.dev'
+      },
+      publisher: {
+        '@type': 'Person',
+        name: 'Ahnaf An Nafee',
+        url: 'https://www.ahnafnafee.dev'
+      },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `https://www.ahnafnafee.dev/blog/${header.slug}`
+      },
+      keywords: header.keywords?.join(', '),
+      articleSection: header.topics?.[0] || 'Technology'
+    }
 
     return (
       <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <main className='layout pb-4'>
           <BlogPostClient header={header}>
             <MDXRemote

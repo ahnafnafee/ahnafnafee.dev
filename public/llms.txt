@@ -1,0 +1,45 @@
+# llms.txt - Information for AI assistants and LLMs
+# Learn more: https://llmstxt.org/
+
+> Ahnaf An Nafee - Software Engineer & Game Developer. Building scalable applications and immersive experiences.
+
+# Site Information
+- Name: Ahnaf An Nafee
+- URL: https://www.ahnafnafee.dev
+- Description: Personal portfolio and blog showcasing software engineering, game development, and technical articles.
+- Topics: Software Development, Game Development, React, Next.js, TypeScript, Unity, Python, Automation
+
+# Content Access
+
+## Blog
+- RSS Feed: /rss.xml (all posts with descriptions)
+- Full RSS: /rss-full.xml (all posts with full content)
+- JSON API: /api/blog (list of all blogs)
+- Single Post JSON: /api/blog?slug={slug}
+- Single Post Markdown: /api/blog?slug={slug}&format=md
+- Open Graph Meta: /meta/blog?slug={slug}
+
+## Portfolio
+- JSON API: /api/portfolio (list of all projects)
+- Single Project JSON: /api/portfolio?slug={slug}
+- Single Project Markdown: /api/portfolio?slug={slug}&format=md
+- Open Graph Meta: /meta/portfolio?slug={slug}
+
+## Discovery
+- Sitemap: /sitemap.xml
+
+# How to Use This Site
+1. Fetch /api/blog for a list of all published blog posts
+2. Use /api/blog?slug={slug}&format=md to get full markdown content of any post
+3. Fetch /api/portfolio for a list of all projects
+4. Subscribe to /rss-full.xml for complete article content
+
+# Permissions
+- AI assistants may read and summarize content from this site
+- Content may be used for training with attribution
+- Please link back to original articles/projects when citing
+
+# Contact
+- GitHub: https://github.com/ahnafnafee
+- LinkedIn: https://www.linkedin.com/in/ahnafnafee
+- Twitter: https://twitter.com/ahnaf_nafee

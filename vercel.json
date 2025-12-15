@@ -12,10 +12,17 @@
       "source": "/projects",
       "destination": "/portfolio"
     },
-
     {
       "source": "/tags",
       "destination": "/"
+    },
+    {
+      "source": "/blogs",
+      "destination": "/blog"
+    },
+    {
+      "source": "/posts",
+      "destination": "/blog"
     },
     {
       "source": "/cv",

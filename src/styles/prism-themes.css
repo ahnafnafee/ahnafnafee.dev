@@ -45,13 +45,13 @@ pre[class*="language-"] {
   background: var(--prism-bg);
   text-shadow: none;
   font-family: 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
-  font-size: 1em;
+  font-size: 0.875rem; /* 14px - more compact */
   text-align: left;
   white-space: pre;
   word-spacing: normal;
   word-break: normal;
   word-wrap: normal;
-  line-height: 1.5;
+  line-height: 1.6;
   tab-size: 4;
   hyphens: none;
 }
