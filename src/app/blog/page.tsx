@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     '3D graphics blog',
     'technology blog'
   ],
+  alternates: {
+    canonical: 'https://www.ahnafnafee.dev/blog'
+  },
   openGraph: {
     title: 'Blog - Ahnaf An Nafee',
     description: "You'll find a collection of my thoughts and musings on a variety of topics.",
@@ -92,8 +95,32 @@ async function getBlogData() {
 export default async function BlogPage() {
   const allBlogs = await getBlogData()
 
+  // Breadcrumb structured data for search engines
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://www.ahnafnafee.dev'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Blog',
+        item: 'https://www.ahnafnafee.dev/blog'
+      }
+    ]
+  }
+
   return (
     <AppLayoutPage>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <BlogPageClient allBlogs={allBlogs} />
     </AppLayoutPage>
   )

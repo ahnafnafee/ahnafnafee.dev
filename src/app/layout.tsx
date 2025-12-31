@@ -18,6 +18,7 @@ const inter = Inter({
 })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // WebSite schema with SearchAction for sitelinks search box
   const websiteJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -39,12 +40,50 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }
   }
 
+  // SiteNavigationElement schema for sitelinks
+  const navigationJsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'SiteNavigationElement',
+        '@id': 'https://www.ahnafnafee.dev/#navigation',
+        name: 'Main Navigation',
+        hasPart: [
+          {
+            '@type': 'SiteNavigationElement',
+            name: 'Home',
+            url: 'https://www.ahnafnafee.dev'
+          },
+          {
+            '@type': 'SiteNavigationElement',
+            name: 'Blog',
+            url: 'https://www.ahnafnafee.dev/blog'
+          },
+          {
+            '@type': 'SiteNavigationElement',
+            name: 'Portfolio',
+            url: 'https://www.ahnafnafee.dev/portfolio'
+          },
+          {
+            '@type': 'SiteNavigationElement',
+            name: 'Resume',
+            url: 'https://www.ahnafnafee.dev/resume'
+          }
+        ]
+      }
+    ]
+  }
+
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(navigationJsonLd) }}
         />
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           <Header />

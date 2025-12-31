@@ -56,6 +56,9 @@ export const metadata: Metadata = {
     'ahnafnafee.dev portfolio',
     'ahnafnafee GitHub'
   ],
+  alternates: {
+    canonical: 'https://www.ahnafnafee.dev/portfolio'
+  },
   openGraph: {
     title: 'Portfolio - Ahnaf An Nafee',
     description:
@@ -111,8 +114,32 @@ async function getPortfolioData() {
 export default async function PortfolioPage() {
   const { portfolios, softwarePortfolios, gamePortfolios } = await getPortfolioData()
 
+  // Breadcrumb structured data for search engines
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://www.ahnafnafee.dev'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Portfolio',
+        item: 'https://www.ahnafnafee.dev/portfolio'
+      }
+    ]
+  }
+
   return (
     <AppLayoutPage>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <PortfolioPageClient
         portfolios={portfolios}
         softwarePortfolios={softwarePortfolios}
