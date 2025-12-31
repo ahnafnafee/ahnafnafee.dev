@@ -3,12 +3,6 @@
   "cleanUrls": true,
   "public": true,
   "alias": "ahnafnafee.dev",
-  "rewrites": [
-    {
-      "source": "/yandex_4085f4892e0b1a1e.html",
-      "destination": "/yandex_4085f4892e0b1a1e.html"
-    }
-  ],
   "redirects": [
     {
       "source": "/resume.pdf",

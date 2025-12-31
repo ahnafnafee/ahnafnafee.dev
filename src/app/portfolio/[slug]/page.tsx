@@ -30,6 +30,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: header.title,
     description: header.summary,
     keywords: header.stack,
+    alternates: {
+      canonical: `https://www.ahnafnafee.dev/portfolio/${header.slug}`
+    },
     openGraph: {
       title: header.title,
       description: header.summary,
@@ -93,11 +96,41 @@ export default async function PortfolioDetailPage({ params }: Props) {
     }
   }
 
+  // Breadcrumb structured data for navigation trails in search results
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://www.ahnafnafee.dev'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Portfolio',
+        item: 'https://www.ahnafnafee.dev/portfolio'
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: header.title,
+        item: `https://www.ahnafnafee.dev/portfolio/${header.slug}`
+      }
+    ]
+  }
+
   return (
     <AppLayoutPage>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <BackToTop />
 

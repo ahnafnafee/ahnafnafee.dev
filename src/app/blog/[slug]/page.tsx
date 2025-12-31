@@ -39,6 +39,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: header.summary,
       keywords: header.keywords,
       authors: [{ name: header.author_name }],
+      alternates: {
+        canonical: `https://www.ahnafnafee.dev/blog/${header.slug}`
+      },
       openGraph: {
         title: header.title,
         description: header.summary,
@@ -106,11 +109,41 @@ export default async function BlogPost({ params }: Props) {
       articleSection: header.topics?.[0] || 'Technology'
     }
 
+    // Breadcrumb structured data for navigation trails in search results
+    const breadcrumbJsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: 'https://www.ahnafnafee.dev'
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Blog',
+          item: 'https://www.ahnafnafee.dev/blog'
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: header.title,
+          item: `https://www.ahnafnafee.dev/blog/${header.slug}`
+        }
+      ]
+    }
+
     return (
       <>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
         />
         <main className='layout pb-4'>
           <BlogPostClient header={header}>
