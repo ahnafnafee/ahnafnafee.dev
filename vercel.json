@@ -3,6 +3,7 @@
   "cleanUrls": false,
   "public": true,
   "alias": "ahnafnafee.dev",
+  "installCommand": "corepack enable && yarn install --immutable",
   "redirects": [
     {
       "source": "/resume.pdf",
