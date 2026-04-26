@@ -19,7 +19,12 @@ export const SITE_AUTHOR = {
 
 export const TWITTER_HANDLE = SITE_AUTHOR.twitterHandle
 
-export const PROFILE_IMAGE = 'https://ik.imagekit.io/8ieg70pvks/profile?tr=w-400,h-400'
+// 800×800 square headshot. Google's name-search thumbnail (and Knowledge Panel
+// when it eventually fires) prefers ≥600 px on the short edge; the original
+// 400×400 was technically valid but visibly soft on retina rich-result cards.
+export const PROFILE_IMAGE = 'https://ik.imagekit.io/8ieg70pvks/profile?tr=w-800,h-800'
+export const PROFILE_IMAGE_WIDTH = 800
+export const PROFILE_IMAGE_HEIGHT = 800
 
 // Canonical entity @id used to dedupe the Person across every page that emits
 // schema. The fragment-based form is the schema.org-recommended convention.

@@ -7,7 +7,14 @@
 // deduplicated (best case) or weaken entity confidence (worst case).
 // Cross-referencing by @id keeps the graph coherent.
 
-import { PERSON_ID, PROFILE_IMAGE, SITE_AUTHOR, SITE_URL } from '@/libs/constants/site'
+import {
+  PERSON_ID,
+  PROFILE_IMAGE,
+  PROFILE_IMAGE_HEIGHT,
+  PROFILE_IMAGE_WIDTH,
+  SITE_AUTHOR,
+  SITE_URL
+} from '@/libs/constants/site'
 
 export { PERSON_ID }
 
@@ -24,7 +31,17 @@ export const getPersonNode = () => ({
   name: SITE_AUTHOR.name,
   alternateName: SITE_AUTHOR.githubUsername,
   url: SITE_URL,
-  image: PROFILE_IMAGE,
+  // ImageObject (rather than a bare URL string) so Google has explicit
+  // dimensions + caption for the Knowledge Graph / name-search thumbnail.
+  // Required by https://developers.google.com/search/docs/appearance/structured-data/profile-page
+  image: {
+    '@type': 'ImageObject',
+    url: PROFILE_IMAGE,
+    width: PROFILE_IMAGE_WIDTH,
+    height: PROFILE_IMAGE_HEIGHT,
+    caption: SITE_AUTHOR.name,
+    contentUrl: PROFILE_IMAGE
+  },
   sameAs: [
     'https://www.linkedin.com/in/ahnafnafee',
     'https://github.com/ahnafnafee',
