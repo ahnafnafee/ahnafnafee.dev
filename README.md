@@ -348,8 +348,8 @@ identifiers:
   # doi / arxivId / researchGateId — fed into ScholarlyArticle.identifier
   researchGateId: '400103838'
 bibtex: |
-  @misc{annafee2025meshdecimation,
-    author = {An Nafee, Ahnaf},
+  @misc{annafee2025meshsimplification,
+    author = {Ahnaf {An Nafee}},
     title  = {…},
     year   = {2025}
   }
