@@ -1,3 +1,4 @@
+export * from './ComingSoonImage'
 export * from './HeadingResearch'
 export * from './ResearchAbstract'
 export * from './ResearchAreas'

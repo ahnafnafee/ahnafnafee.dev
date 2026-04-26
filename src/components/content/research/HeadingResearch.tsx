@@ -122,6 +122,15 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
                 const isOwner = author.name === SITE_AUTHOR.name
                 const nameClass = isOwner ? twclsx('font-semibold text-purple-700 dark:text-purple-300') : undefined
 
+                // Resolve affiliation names for the tooltip so a reader who mouses
+                // over `<sup>1,2</sup>` gets "George Mason University; …" instead
+                // of having to scan down to the affiliation legend.
+                const affTitle = indices
+                  .map((idx) => props.affiliations?.[idx - 1])
+                  .filter((a): a is Affiliation => Boolean(a))
+                  .map((a) => (a.location ? `${a.name}, ${a.location}` : a.name))
+                  .join('; ')
+
                 const nameNode = author.url ? (
                   <UnstyledLink href={author.url} className={twclsx('hover:underline', nameClass)}>
                     {author.name}
@@ -133,8 +142,16 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
                 return (
                   <span key={`${author.name}-${i}`} className={twclsx('inline-flex items-baseline')}>
                     {nameNode}
-                    {author.corresponding && showCorrespondingSup && <sup className={nameClass}>*</sup>}
-                    {supText && showAffSup && <sup className={nameClass}>{supText}</sup>}
+                    {author.corresponding && showCorrespondingSup && (
+                      <sup className={twclsx(nameClass, 'cursor-help')} title='Corresponding author'>
+                        *
+                      </sup>
+                    )}
+                    {supText && showAffSup && (
+                      <sup className={twclsx(nameClass, 'cursor-help')} title={affTitle || undefined}>
+                        {supText}
+                      </sup>
+                    )}
                     {!isLast && <span>,&nbsp;</span>}
                   </span>
                 )
@@ -149,7 +166,11 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
                   const isLast = i === (props.affiliations as Affiliation[]).length - 1
                   return (
                     <span key={`${aff.name}-${i}`}>
-                      {showAffSup && <sup>{idx}</sup>}
+                      {showAffSup && (
+                        <sup className='cursor-help' title={text}>
+                          {idx}
+                        </sup>
+                      )}
                       {aff.url ? (
                         <UnstyledLink href={aff.url} className={twclsx('hover:underline')}>
                           {text}

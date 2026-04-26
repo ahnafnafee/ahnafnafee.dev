@@ -107,6 +107,9 @@ declare module 'me' {
     section?: 'top-tier' | 'conferences' | 'journals' | 'workshops' | 'others'
     /** Renders a "NEW" badge inline with the title on listing cards. */
     new?: boolean
+    /** Renders a "Coming soon!" placeholder in place of the listing thumbnail
+     * when no thumbnail/teaser exists yet (e.g. conditionally accepted papers). */
+    comingSoon?: boolean
     related?: Array<string>
   }
 
