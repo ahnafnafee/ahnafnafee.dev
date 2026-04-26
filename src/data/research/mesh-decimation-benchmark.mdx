@@ -141,7 +141,7 @@ The optimal placement minimizes $\bar{v}^T \bar{Q} \bar{v}$.
 Vertex Clustering is a fast, low-memory technique using spatial hashing:
 
 1. Compute bounding box and divide into uniform 3D grid cells
-2. Map each vertex to cell index: $\text{cell}(v) = \lfloor (v - v_{\min}) / \delta \rfloor$
+2. Map each vertex to cell index: $\text{cell}(v) = \lfloor (v - v_{\text{min}}) / \delta \rfloor$
 3. Collapse all vertices within a cell to representative vertex
 4. Remove degenerate faces
 
