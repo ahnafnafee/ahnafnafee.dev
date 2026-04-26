@@ -1,8 +1,14 @@
 import { ResumePageClient } from '@/components/resume/ResumePageClient'
+import { PERSON_REFERENCE } from '@/libs/seo/personSchema'
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import type { Metadata } from 'next'
 
+const RESUME_URL = `${SITE_URL}/resume`
+const RESUME_OG_IMAGE = 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-resume.png?tr=w-1200,h-630'
+const RESUME_OG_ALT = `Resume - ${SITE_NAME} - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO`
+
 export const metadata: Metadata = {
-  title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher',
+  title: `Resume - ${SITE_NAME} | PhD AI & 3D Graphics Researcher`,
   description:
     'PhD student researching AI-driven 3D content generation and graphics pipelines at GMU. DCXR Lab, advised by Dr. Craig Yu. Ex-CTO with experience building production systems. Download PDF resume.',
   keywords: [
@@ -60,36 +66,79 @@ export const metadata: Metadata = {
     'Modern DevOps principles',
     'ahnafnafee.dev resume'
   ],
+  alternates: {
+    canonical: RESUME_URL
+  },
   openGraph: {
-    title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher',
+    title: `Resume - ${SITE_NAME} | PhD AI & 3D Graphics Researcher`,
     description:
       'PhD student researching AI-driven 3D content generation and graphics pipelines at GMU. DCXR Lab, advised by Dr. Craig Yu.',
-    url: 'https://www.ahnafnafee.dev/resume',
-    siteName: 'Ahnaf An Nafee',
+    url: RESUME_URL,
+    siteName: SITE_NAME,
     images: [
       {
-        url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-resume.png?tr=w-1200,h-630',
+        url: RESUME_OG_IMAGE,
         width: 1200,
-        height: 600,
-        alt: 'Resume - Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO'
+        height: 630,
+        alt: RESUME_OG_ALT,
+        type: 'image/png'
       }
     ],
     locale: 'en_US',
-    type: 'website'
+    type: 'profile',
+    firstName: 'Ahnaf',
+    lastName: 'Nafee',
+    username: 'ahnafnafee'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher',
+    title: `Resume - ${SITE_NAME} | PhD AI & 3D Graphics Researcher`,
     description:
       'PhD student researching AI-driven 3D content generation and graphics pipelines at GMU. DCXR Lab, advised by Dr. Craig Yu.',
-    site: '@ahnaf_nafee',
-    creator: '@ahnaf_nafee',
-    images: [
-      'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-resume.png?tr=w-1200,h-630'
-    ]
+    site: TWITTER_HANDLE,
+    creator: TWITTER_HANDLE,
+    images: [{ url: RESUME_OG_IMAGE, alt: RESUME_OG_ALT }]
   }
 }
 
 export default function ResumePage() {
-  return <ResumePageClient />
+  // Reference the canonical Person by @id rather than re-emitting the full
+  // sameAs/knowsAbout/credentials block (those live on the home page). A few
+  // resume-relevant fields are inlined so the resume page still has useful
+  // standalone schema even if a crawler doesn't follow the @id back to /.
+  const profileJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    '@id': `${RESUME_URL}#profile`,
+    url: RESUME_URL,
+    name: `Resume — ${SITE_NAME}`,
+    description:
+      'PhD student researching AI-driven 3D content generation and graphics pipelines at George Mason University.',
+    mainEntity: {
+      ...PERSON_REFERENCE,
+      jobTitle: 'PhD Student in Computer Science',
+      description: SITE_DESCRIPTION
+    },
+    isPartOf: {
+      '@type': 'WebSite',
+      url: SITE_URL
+    }
+  }
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Resume', item: RESUME_URL }
+    ]
+  }
+
+  return (
+    <>
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <ResumePageClient />
+    </>
+  )
 }

@@ -1,36 +1,44 @@
 import { toLowerCase } from '@/libs/string'
 
 import type { Blog } from 'me'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useMemo } from 'react'
 
+// Sync search state with the `?q=` URL param so the WebSite SearchAction
+// schema (target: /blog?q={search_term_string}) actually works when Google
+// or another agent dispatches a search.
+//
+// Both `query` and `filteredBlog` are derived directly from `searchParams` —
+// no local useState. That keeps the URL as the single source of truth (deep
+// links work, back/forward nav works) and avoids React's set-state-in-effect
+// pitfalls.
 export const useSearchBlog = (blogs: Blog[]) => {
-  const [query, setQ] = useState('')
-  const [filteredBlog, sFB] = useState<Blog[]>([])
-  const mounted = useRef(true)
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const query = searchParams?.get('q') ?? ''
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setQ(e.target.value), [])
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const next = e.target.value
+      const params = new URLSearchParams(searchParams?.toString() ?? '')
+      if (next) params.set('q', next)
+      else params.delete('q')
+      const qs = params.toString()
+      router.replace(qs ? `/blog?${qs}` : '/blog', { scroll: false })
+    },
+    [router, searchParams]
+  )
 
-  useEffect(() => {
-    if (mounted.current) {
-      mounted.current = false
-      return
-    }
-
-    ;(() => {
-      if (blogs.length === 0) return
-
-      const filtered = blogs.filter((blog) => {
-        return (
-          toLowerCase(blog.title).includes(toLowerCase(query)) ||
-          toLowerCase(blog.summary).includes(toLowerCase(query)) ||
-          blog.topics.map((t) => t.includes(query)).includes(true)
-        )
-      })
-
-      sFB(filtered)
-    })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query])
+  const filteredBlog = useMemo<Blog[]>(() => {
+    if (!query || blogs.length === 0) return []
+    const q = toLowerCase(query)
+    return blogs.filter(
+      (blog) =>
+        toLowerCase(blog.title).includes(q) ||
+        toLowerCase(blog.summary).includes(q) ||
+        blog.topics.some((t) => toLowerCase(t).includes(q))
+    )
+  }, [blogs, query])
 
   return {
     query,

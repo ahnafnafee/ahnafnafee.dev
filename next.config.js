@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const { withAxiom } = require("next-axiom");
 
 const runtimeCaching = require("next-pwa/cache");
@@ -94,6 +93,14 @@ const config = {
 		remotePatterns: [
 			{
 				protocol: "https",
+				hostname: "www.ahnafnafee.dev",
+			},
+			{
+				protocol: "https",
+				hostname: "ahnafnafee.dev",
+			},
+			{
+				protocol: "https",
 				hostname: "cdn.sanity.io",
 			},
 			{
@@ -160,7 +167,7 @@ const config = {
 			'stylis',
 			'shiki'
 		],
-		webVitalsAttribution: ["CLS", "LCP"],
+		webVitalsAttribution: ["CLS", "LCP", "INP", "FCP", "TTFB"],
 		scrollRestoration: true,
 	},
 	async headers() {
@@ -217,7 +224,7 @@ const config = {
 
 			{
 				source: "/tags",
-				destination: "/",
+				destination: "/blog/topics",
 				permanent: true,
 			},
 			{

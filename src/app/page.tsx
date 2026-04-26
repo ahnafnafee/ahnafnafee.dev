@@ -5,158 +5,56 @@ import { BlogItem } from '@/components/content/blog/BlogItem'
 
 import { getContents } from '@/services'
 import { getNewestPortfolio, getNewestBlog } from '@/libs/sorters'
+import { getPersonNode } from '@/libs/seo/personSchema'
+import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import readingTime from 'reading-time'
+import Link from 'next/link'
 
 import type { Portfolio, Blog } from 'me'
 import type { Metadata } from 'next'
+
+const HOME_OG_IMAGE =
+  'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747'
+const HOME_OG_ALT = `${SITE_NAME} - PhD Student in AI & 3D Graphics at George Mason University | DCXR Lab`
+const HOME_TITLE = `${SITE_NAME} - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU`
 
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'ProfilePage',
   dateCreated: '2022-12-08T00:00:00-05:00',
   dateModified: new Date().toISOString(),
-  mainEntity: {
-    '@type': 'Person',
-    name: 'Ahnaf An Nafee',
-    alternateName: 'ahnafnafee',
-    url: 'https://www.ahnafnafee.dev',
-    image: 'https://ik.imagekit.io/8ieg70pvks/profile?tr=w-400,h-400',
-    sameAs: [
-      'https://www.linkedin.com/in/ahnafnafee',
-      'https://github.com/ahnafnafee',
-      'https://scholar.google.com/citations?user=u15DO0cAAAAJ&hl=en',
-      'https://orcid.org/0009-0000-9363-4536',
-      'https://ahnafnafee.itch.io',
-      'https://www.artstation.com/ahnafnafee',
-      'https://www.behance.net/ahnafannafee'
-    ],
-    email: 'ahnafnafee@gmail.com',
-    jobTitle: 'PhD Student in Computer Science',
-    hasOccupation: {
-      '@type': 'Occupation',
-      name: 'Computer Science Researcher',
-      occupationLocation: {
-        '@type': 'Place',
-        name: 'George Mason University, Fairfax, VA'
-      },
-      skills: [
-        'Artificial Intelligence',
-        '3D Computer Graphics',
-        'Machine Learning',
-        'DevOps Engineering',
-        'Cloud Infrastructure',
-        'Kubernetes',
-        'Research & Development'
-      ]
-    },
-    worksFor: {
-      '@type': 'Organization',
-      name: 'George Mason University',
-      url: 'https://www.gmu.edu',
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Fairfax',
-        addressRegion: 'VA',
-        addressCountry: 'US'
-      }
-    },
-    alumniOf: [
-      {
-        '@type': 'Organization',
-        name: 'George Mason University',
-        url: 'https://www.gmu.edu'
-      },
-      {
-        '@type': 'Organization',
-        name: 'Drexel University',
-        url: 'https://drexel.edu'
-      }
-    ],
-    knowsAbout: [
-      'Artificial Intelligence',
-      '3D Computer Graphics',
-      'Machine Learning for Graphics',
-      'AI-driven 3D Content Generation',
-      'Generative AI',
-      'Computer Vision',
-      'Deep Learning',
-      'Neural Networks',
-      'Rendering Pipelines',
-      'Real-time Rendering',
-      'Parameterized Shaders',
-      'UV Mapping Automation',
-      'NPR Techniques',
-      'Human Computer Interaction',
-      'Immersive Technology',
-      'Extended Reality',
-      'Game Development',
-      'Unity Engine',
-      'Unreal Engine',
-      'WebGL',
-      'GLSL',
-      'Python Programming',
-      'PyTorch',
-      'TensorFlow',
-      'Computer Graphics Research',
-      'AI Research'
-    ],
-    researchInterests: [
-      'AI-driven creative workflows for 3D content generation',
-      'Machine learning for graphics pipelines',
-      'Automating UV mapping and NPR techniques',
-      'Human-computer interaction in immersive environments'
-    ],
-    affiliation: {
-      '@type': 'Organization',
-      name: 'DCXR Lab, George Mason University',
-      url: 'https://craigyuyu.github.io/home/group.html'
-    },
-    hasCredential: [
-      {
-        '@type': 'EducationalOccupationalCredential',
-        name: 'PhD in Computer Science',
-        educationalLevel: 'Doctoral',
-        credentialCategory: 'degree',
-        recognizedBy: {
-          '@type': 'Organization',
-          name: 'George Mason University'
-        }
-      },
-      {
-        '@type': 'EducationalOccupationalCredential',
-        name: 'BS in Computer Science',
-        educationalLevel: 'Bachelor',
-        credentialCategory: 'degree',
-        recognizedBy: {
-          '@type': 'Organization',
-          name: 'Drexel University'
-        }
-      }
-    ],
-    description:
-      'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.'
-  }
+  mainEntity: getPersonNode()
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.ahnafnafee.dev'),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
-    template: '%s | Ahnaf An Nafee'
+    default: HOME_TITLE,
+    template: `%s | ${SITE_NAME}`
   },
   description:
     'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics. DCXR Lab, advised by Dr. Craig Yu.',
-  applicationName: 'Ahnaf An Nafee Portfolio',
-  authors: [{ name: 'Ahnaf An Nafee', url: 'https://www.ahnafnafee.dev' }],
-  creator: 'Ahnaf An Nafee',
-  publisher: 'Ahnaf An Nafee',
+  applicationName: `${SITE_NAME} Portfolio`,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   formatDetection: {
     email: false,
     address: false,
     telephone: false
   },
   alternates: {
-    canonical: 'https://www.ahnafnafee.dev'
+    canonical: SITE_URL,
+    languages: {
+      'en-US': SITE_URL,
+      'x-default': SITE_URL
+    },
+    types: {
+      'application/rss+xml': [
+        { url: `${SITE_URL}/rss.xml`, title: `${SITE_NAME} — Blog (RSS)` },
+        { url: `${SITE_URL}/rss-full.xml`, title: `${SITE_NAME} — Blog (Full RSS)` }
+      ]
+    }
   },
   robots: {
     index: true,
@@ -229,35 +127,27 @@ export const metadata: Metadata = {
     'Full Stack Developer'
   ],
   openGraph: {
-    title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
+    title: HOME_TITLE,
     description:
       'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.',
-    url: 'https://www.ahnafnafee.dev',
-    siteName: 'Ahnaf An Nafee',
-    images: [
-      {
-        url: 'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747',
-        width: 1200,
-        height: 600,
-        alt: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics at George Mason University | DCXR Lab',
-        type: 'image/png'
-      }
-    ],
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    images: [{ url: HOME_OG_IMAGE, width: 1200, height: 630, alt: HOME_OG_ALT, type: 'image/png' }],
     locale: 'en_US',
     type: 'profile',
     firstName: 'Ahnaf',
     lastName: 'Nafee',
-    username: 'ahnafnafee',
-    emails: ['ahnafnafee@gmail.com']
+    username: SITE_AUTHOR.githubUsername,
+    emails: [SITE_AUTHOR.email]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
+    title: HOME_TITLE,
     description:
       'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.',
-    site: '@ahnaf_nafee',
-    creator: '@ahnaf_nafee',
-    images: [`https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`]
+    site: TWITTER_HANDLE,
+    creator: TWITTER_HANDLE,
+    images: [{ url: HOME_OG_IMAGE, alt: HOME_OG_ALT }]
   }
 }
 
@@ -390,7 +280,7 @@ export default async function HomePage() {
           <section className='pt-8 pb-4 border-t border-gray-200 dark:border-gray-800'>
             <h3 className='mb-1 md:mb-3 font-bold text-2xl tracking-tight text-black dark:text-white'>Latest Blog</h3>
             <p className='mb-6 md:mb-8 text-gray-600 dark:text-gray-400'>
-              Fresh thoughts on AI, graphics, and tech. <a href="/blog" className="text-purple-600 dark:text-purple-400 hover:underline">Read all blogs</a>
+              Fresh thoughts on AI, graphics, and tech. <Link href="/blog" className="text-purple-600 dark:text-purple-400 hover:underline">Read all blogs</Link>
             </p>
             <BlogItem {...latestBlog} />
           </section>

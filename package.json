@@ -6,9 +6,10 @@
 	"scripts": {
 		"dev": "env-cmd -f .env.development.local next dev",
 		"dev:webpack": "env-cmd -f .env.development.local next dev --webpack",
+		"prebuild": "node scripts/generate-llms-txt.js",
 		"build": "next build",
-		"export": "yarn export:prepare && cross-env STATIC_EXPORT=true next build && yarn export:cleanup",
-		"export:university": "yarn export:prepare && env-cmd -f .env.development.static.local next build && yarn export:cleanup",
+		"export": "node scripts/generate-llms-txt.js && yarn export:prepare && cross-env STATIC_EXPORT=true next build && yarn export:cleanup",
+		"export:university": "node scripts/generate-llms-txt.js && yarn export:prepare && env-cmd -f .env.development.static.local next build && yarn export:cleanup",
 		"export:prepare": "node scripts/export-prepare.js",
 		"export:cleanup": "node scripts/export-cleanup.js",
 		"serve:export": "node scripts/serve-export.js",
@@ -17,11 +18,16 @@
 		"analyze": "cross-env ANALYZE=true next build",
 		"clean:build": "npx rimraf **/.next **/out",
 		"clean:export": "npx rimraf out",
-		"lint": "next lint",
-		"lint:fix": "next lint --fix",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
 		"type-check": "tsc --noEmit",
 		"postbuild": "next-sitemap --config=custom-next-sitemap.js",
 		"format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,mdx,json}\"",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"validate:json-ld": "node scripts/validate-json-ld.js",
+		"audit:alt-text": "node scripts/audit-alt-text.js",
 		"commit": "cz",
 		"remove-modules": "Remove-Item -Recurse -Force node_modules"
 	},
@@ -54,7 +60,7 @@
 		"react": "19.2.1",
 		"react-dom": "19.2.1",
 		"react-hot-toast": "^2.6.0",
-		"react-icons": "^5.5.0",
+		"react-icons": "5.5.0",
 		"react-image-lightbox": "^5.1.4",
 		"rehype-katex": "^7.0.1",
 		"rehype-prism-plus": "^2.0.1",
@@ -65,11 +71,14 @@
 		"tailwind-merge": "^3.4.0"
 	},
 	"devDependencies": {
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.2",
 		"@trivago/prettier-plugin-sort-imports": "^6.0.0",
 		"@types/node": "^24.10.1",
 		"@types/react": "19.2.7",
 		"@types/react-dom": "19.2.3",
 		"@typescript-eslint/eslint-plugin": "^8.48.1",
+		"@vitejs/plugin-react": "^6.0.1",
 		"autoprefixer": "^10.4.22",
 		"commitizen": "^4.3.1",
 		"cross-env": "^10.1.0",
@@ -78,6 +87,7 @@
 		"eslint": "^9.39.1",
 		"eslint-config-next": "16.0.7",
 		"gray-matter": "^4.0.3",
+		"happy-dom": "^20.9.0",
 		"lint-staged": "^16.2.7",
 		"next-sitemap": "^4.2.3",
 		"postcss": "^8.5.6",
@@ -86,7 +96,9 @@
 		"reading-time": "^1.5.0",
 		"rehype-slug": "^6.0.0",
 		"tailwindcss": "^4.1.17",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"vite-tsconfig-paths": "^6.1.1",
+		"vitest": "^4.1.5"
 	},
 	"resolutions": {
 		"prismjs": ">=1.27.0",
@@ -126,5 +138,6 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
-	}
+	},
+	"packageManager": "yarn@4.14.1"
 }
