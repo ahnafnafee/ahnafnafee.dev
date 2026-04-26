@@ -28,10 +28,10 @@ export const ResearchSections: React.FunctionComponent<ResearchSectionsProps> = 
   })).filter((group) => group.items.length > 0)
 
   return (
-    <div className='flex flex-col gap-10 pb-8'>
+    <div className='flex flex-col gap-12 pb-12'>
       {grouped.map((group, groupIdx) => (
         <section key={group.key}>
-          <h2 className='text-lg md:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2 pb-2 border-b border-gray-200 dark:border-gray-800'>
+          <h2 className='text-sm md:text-base font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 pb-2 mb-2 border-b border-gray-200 dark:border-gray-800'>
             {group.label}
           </h2>
           <div className='flex flex-col divide-y divide-gray-100 dark:divide-gray-800'>

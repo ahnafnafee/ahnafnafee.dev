@@ -28,32 +28,43 @@ const buildVenueLine = (props: ResearchItemProps): string | null => {
   return v.year ? `${name} ${v.year}` : name
 }
 
+// Prefer the high-resolution teaser figure (academic visual). Fall back to the
+// blog-style square thumbnail, then to a generated OG image. ImageKit URLs get
+// a width transform so we don't upscale a small original.
+const resolveListingImage = (props: ResearchItemProps): string => {
+  const isImagekit = (s: string) => s.includes('ik.imagekit.io')
+  const withWidth = (s: string) => (isImagekit(s) && !s.includes('?tr=') ? `${s}?tr=w-500` : s)
+  if (props.teaser) return withWidth(props.teaser)
+  if (props.thumbnail) return withWidth(props.thumbnail)
+  return generateOgImage({ title: props.title, theme: 'dark' })
+}
+
 export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) => {
   const urlPost = `/research/${props.slug}`
-  const ogImageUrl =
-    props.thumbnail || props.teaser || generateOgImage({ title: props.title, theme: 'dark' })
+  const imageSrc = resolveListingImage(props)
   const venueLine = buildVenueLine(props)
   const actions = buildActionLinks(props)
 
   return (
-    <div className='w-full py-5 group'>
-      <div className='flex flex-row items-start gap-4 md:gap-6'>
+    <article className='w-full py-8 group'>
+      <div className='flex flex-row items-start gap-5 md:gap-7'>
         <UnstyledLink
           href={urlPost}
-          className='relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 block'
+          className='relative w-32 sm:w-36 md:w-44 aspect-[5/4] flex-shrink-0 rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800 ring-1 ring-gray-200 dark:ring-gray-800 block shadow-sm'
         >
           <NextImage
-            src={ogImageUrl}
+            src={imageSrc}
             alt={props.title}
             fill
-            sizes='(max-width: 640px) 96px, (max-width: 768px) 112px, 128px'
-            className='object-cover transition-transform duration-300 group-hover:scale-105'
+            sizes='(max-width: 640px) 128px, (max-width: 768px) 144px, 176px'
+            quality={90}
+            className='object-cover transition-transform duration-300 group-hover:scale-[1.03]'
             priority={props.priority ?? false}
           />
         </UnstyledLink>
 
-        <div className='flex flex-col flex-1 min-w-0'>
-          <h3 className='text-base md:text-lg font-bold text-purple-700 dark:text-purple-300 leading-snug mb-1 hover:underline'>
+        <div className='flex flex-col flex-1 min-w-0 pt-0.5'>
+          <h3 className='text-base md:text-lg font-bold text-purple-700 dark:text-purple-300 leading-snug mb-1.5 hover:underline decoration-purple-400 underline-offset-2'>
             <UnstyledLink href={urlPost}>{props.title}</UnstyledLink>
             {props.new && (
               <span className='ml-2 align-middle text-[10px] font-bold uppercase tracking-wider text-orange-500 dark:text-orange-400'>
@@ -82,20 +93,20 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
           )}
 
           {venueLine && (
-            <div className='text-sm font-bold text-gray-900 dark:text-gray-200 leading-snug mb-2'>
+            <div className='text-sm font-bold text-gray-900 dark:text-gray-200 leading-snug mb-2.5'>
               [{venueLine}]
             </div>
           )}
 
           {actions.length > 0 && (
-            <div className='flex flex-wrap items-center gap-x-1 text-xs md:text-sm text-purple-600 dark:text-purple-400'>
+            <div className='flex flex-wrap items-center gap-x-2 text-xs md:text-sm text-purple-600 dark:text-purple-400'>
               {actions.map((action, i) => (
                 <Fragment key={action.label}>
                   <UnstyledLink href={action.href} className='hover:underline'>
                     {action.label}
                   </UnstyledLink>
                   {i < actions.length - 1 && (
-                    <span className='text-gray-400 dark:text-gray-600' aria-hidden='true'>
+                    <span className='text-gray-300 dark:text-gray-700' aria-hidden='true'>
                       |
                     </span>
                   )}
@@ -105,6 +116,6 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
           )}
         </div>
       </div>
-    </div>
+    </article>
   )
 }
