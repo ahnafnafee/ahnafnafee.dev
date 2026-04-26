@@ -337,6 +337,8 @@ authors:
     email: 'aannafee@gmu.edu'
     affiliations: [1] # 1-based indices into the entry's affiliations array
     corresponding: true
+    # equalContribution: true       # OPTIONAL: → † on each flagged author + a "†Equal contribution" caption
+    # principalInvestigator: true   # OPTIONAL: → ‡ on PI + a "‡Principal investigator" caption
 affiliations:
   - name: 'George Mason University'
     location: 'Fairfax, Virginia, USA'
@@ -375,7 +377,16 @@ bibtex: |
 
 The detail page renders the structured fields in the hero (status chip from `venue.status`, authors with affiliation superscripts, venue line, action-button row driven by `links` and `bibtex`). Authors matching `SITE_AUTHOR.name` are bolded. The `bibtex` field renders as a copy-to-clipboard code block anchored at `#bibtex`.
 
-**Author / affiliation superscripts are conditional**: `*` (corresponding author) only renders when there are 2+ authors and at least one is `corresponding: true`; `¹ ² ³` (affiliation indices) only render when there are 2+ affiliations. Single-author / single-affiliation entries skip both — no orphan markers. When the markers do show, they carry hover tooltips (native `title` + `cursor-help`) that resolve to the actual affiliation names so the meaning is clear without scrolling.
+**Author / affiliation superscripts are conditional** — each marker only renders when it actually disambiguates something:
+
+| Flag on `Author`              | Glyph   | Caption                 | Renders when                    |
+| ----------------------------- | ------- | ----------------------- | ------------------------------- |
+| `corresponding: true`         | `*`     | \*Corresponding author  | 2+ authors AND ≥1 corresponding |
+| `equalContribution: true`     | `†`     | †Equal contribution     | 2+ authors AND ≥2 flagged equal |
+| `principalInvestigator: true` | `‡`     | ‡Principal investigator | 2+ authors AND ≥1 PI            |
+| `affiliations: [n]`           | `¹ ² ³` | _(legend below)_        | 2+ affiliations on the entry    |
+
+Marker order on each author: `*†‡` then numeric affiliation indices (academic convention). Single-author / single-affiliation entries skip everything — no orphan markers. When markers do show, each `<sup>` carries a native `title` tooltip (affiliation index sups resolve to the full affiliation name; symbol sups resolve to their caption). A combined caption line — e.g. `*Corresponding author · †Equal contribution · ‡Principal investigator` — auto-renders below the affiliation row.
 
 The research listing page (`/research`) renders an Overview paragraph, a date-column News timeline, and a colored chip row of Research Areas above the section-grouped listings. Section headings across the page (Overview / News / Research Areas / Top-Tier Venues / Conferences / Journals / Workshops / Others) share a single `<SectionHeading>` component (`text-lg md:text-xl`, `font-bold`, `text-black dark:text-white`, bordered bottom).
 

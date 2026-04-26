@@ -4,6 +4,7 @@ import { SITE_AUTHOR } from '@/libs/constants/site'
 import { twclsx } from '@/libs/twclsx'
 
 import { Affiliation, Author, ResearchLinks, Venue } from 'me'
+import { Fragment } from 'react'
 import {
   HiGlobeAlt,
   HiOutlineDatabase,
@@ -100,12 +101,23 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
         </div>
       )}
 
-      {/* Suppress meaningless markers: only show affiliation superscripts when there are 2+ affiliations,
-          and only show the corresponding-author asterisk when there are 2+ authors. Otherwise the markers
-          are noise on a single-author / single-affiliation paper. */}
+      {/* Suppress meaningless markers: each superscript only renders when it actually
+          disambiguates something. Single-author / single-affiliation entries collapse
+          to clean text. Marker order on each author follows academic convention:
+          symbol markers (* † ‡) first, then numeric affiliation indices. */}
       {(() => {
+        const hasMultipleAuthors = props.authors.length > 1
+        const equalContribCount = props.authors.filter((a) => a.equalContribution).length
+
         const showAffSup = (props.affiliations?.length ?? 0) > 1
-        const showCorrespondingSup = props.authors.length > 1 && props.authors.some((a) => a.corresponding)
+        const showCorrespondingSup = hasMultipleAuthors && props.authors.some((a) => a.corresponding)
+        const showEqualContribSup = hasMultipleAuthors && equalContribCount >= 2
+        const showPISup = hasMultipleAuthors && props.authors.some((a) => a.principalInvestigator)
+
+        const captions: { glyph: string; label: string }[] = []
+        if (showCorrespondingSup) captions.push({ glyph: '*', label: 'Corresponding author' })
+        if (showEqualContribSup) captions.push({ glyph: '†', label: 'Equal contribution' })
+        if (showPISup) captions.push({ glyph: '‡', label: 'Principal investigator' })
 
         return (
           <>
@@ -147,6 +159,16 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
                         *
                       </sup>
                     )}
+                    {author.equalContribution && showEqualContribSup && (
+                      <sup className={twclsx(nameClass, 'cursor-help')} title='Equal contribution'>
+                        †
+                      </sup>
+                    )}
+                    {author.principalInvestigator && showPISup && (
+                      <sup className={twclsx(nameClass, 'cursor-help')} title='Principal investigator'>
+                        ‡
+                      </sup>
+                    )}
                     {supText && showAffSup && (
                       <sup className={twclsx(nameClass, 'cursor-help')} title={affTitle || undefined}>
                         {supText}
@@ -185,9 +207,17 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
               </p>
             )}
 
-            {showCorrespondingSup && (
+            {captions.length > 0 && (
               <p className={twclsx('mt-1 text-center text-xs text-gray-500 dark:text-gray-400')}>
-                <sup>*</sup>Corresponding author
+                {captions.map((cap, i) => (
+                  <Fragment key={cap.glyph}>
+                    {i > 0 && <span aria-hidden='true'>{' · '}</span>}
+                    <span>
+                      <sup>{cap.glyph}</sup>
+                      {cap.label}
+                    </span>
+                  </Fragment>
+                ))}
               </p>
             )}
           </>
