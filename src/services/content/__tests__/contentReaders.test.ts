@@ -7,6 +7,7 @@ import type { Blog, Portfolio } from 'me'
 // site (committed content). If the repo is ever scaffolded fresh, these
 // would need fixture files.
 
+describe('getContents (filesystem integration)', () => {
   it('returns every blog post with parsed frontmatter and content', async () => {
     const posts = await getContents<Blog>('/blog')
     expect(posts.length).toBeGreaterThan(0)
