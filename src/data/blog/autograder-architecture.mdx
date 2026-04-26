@@ -6,7 +6,18 @@ author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
 published: '12/11/2025'
 topics: ['Education Technology', 'Software Architecture', 'Python', 'Java', 'Automation', 'LLM']
-keywords: ['autograder', 'strategy pattern', 'python automation', 'java testing', 'junit', 'playwright', 'education at scale', 'local llm', 'code instrumentation']
+keywords:
+  [
+    'autograder',
+    'strategy pattern',
+    'python automation',
+    'java testing',
+    'junit',
+    'playwright',
+    'education at scale',
+    'local llm',
+    'code instrumentation'
+  ]
 thumbnail: 'https://ik.imagekit.io/8ieg70pvks/autograder-architecture.jpg'
 related: []
 ---
@@ -19,7 +30,11 @@ This article explores a hobby project of mine where I attempted to engineer a so
 
 The core philosophy is simple: **Python orchestrates, Java executes.**
 
-<img src="/images/autograder_architecture_terminal.png" alt="Screenshot of the terminal output showing the 'Python Conductor' starting the grading process" className="w-full" />
+<img
+  src='/images/autograder_architecture_terminal.png'
+  alt="Screenshot of the terminal output showing the 'Python Conductor' starting the grading process"
+  className='w-full'
+/>
 
 We use Python for its flexibility in file manipulation, process management, and API interactions. Java is used strictly for running the student's code against JUnit tests.
 
@@ -75,7 +90,7 @@ class GraphSearchStrategy(GradingStrategy):
     @property
     def assignment_name(self) -> str:
         return "GraphSearch"
-    
+
     @property
     def rubric(self) -> dict:
         # Maps JUnit test names to point values
@@ -92,7 +107,7 @@ class GraphSearchStrategy(GradingStrategy):
         return re.sub(r"public static void main.*?}", "", source_code, flags=re.DOTALL)
 ```
 
- This structure allows the main engine (`universal_grader.py`) to be completely agnostic of the assignment details. It treats every assignment as just a generic `GradingStrategy`.
+This structure allows the main engine (`universal_grader.py`) to be completely agnostic of the assignment details. It treats every assignment as just a generic `GradingStrategy`.
 
 ## The "Frankenstein" Method
 
@@ -107,23 +122,23 @@ In `universal_grader.py`, we extract specific methods from the student's submiss
 
 def _create_frankenstein_file(self, content_buffer, student_code):
     # ... imports and class definition ...
-    
+
     # The "Frankenstein" Logic: Force visibility to public
     # This allows JUnit to access private helper methods directly
     public_code = re.sub(r"private\s", "public ", student_code)
     public_code = re.sub(r"protected\s", "public ", public_code)
-        
+
     # Track line number offset to map compiler errors back to student's original file
     self.line_offset = len(content_buffer.splitlines())
     content_buffer += f"\n// --- STUDENT CODE START ---\n{public_code}\n"
-    
+
     return content_buffer
 ```
 
 This allows us to maintain strict interface requirements for students (`private void helper()`) while having full access to test those internals during grading. We also maintain a line offset map so if the compiler fails on line 150 of the Frankenstein file, we can tell the student the error is actually on line 20 of their submission.
 
 ## Dynamic Compilation & Loading
- 
+
 We compile everything locally in a sandboxed temporary directory to prevent pollution. The system dynamically builds the classpath based on the assignment's needs. We use Python's `subprocess` with a timeout to catch infinite loops (a common issue in student code).
 
 ```python
@@ -141,7 +156,7 @@ cmd = ["javac", "-cp", classpath, student_file, tester_file]
 
 try:
     result = subprocess.run(
-        cmd, 
+        cmd,
         cwd=self.temp_dir,
         capture_output=True,
         text=True,
@@ -156,10 +171,11 @@ except subprocess.TimeoutExpired:
 
 ## AI-Assisted Grading with Local LLMs
 
-While JUnit captures functional correctness, it fails at **semantic analysis**. 
-- *Did the student comment their code?*
-- *Is the variable naming descriptive?*
-- *Did they explain their logic in the header?*
+While JUnit captures functional correctness, it fails at **semantic analysis**.
+
+- _Did the student comment their code?_
+- _Is the variable naming descriptive?_
+- _Did they explain their logic in the header?_
 
 To catch these, I integrated a **Local LLM** (Mininstral 3B) running on a local server. When a submission needs semantic checking, we send the code snippets to the LLM with a strict JSON system prompt.
 
@@ -186,10 +202,10 @@ def check_student_info(header_text: str) -> dict:
         ],
         "temperature": 0.1 # Low temp for deterministic outputs
     }
-    
+
     response = requests.post("http://localhost:3002/v1/chat/completions", json=payload)
     raw_content = response.json()['choices'][0]['message']['content']
-    
+
     try:
         # Validation Loop: Ensure we got valid JSON back
         return json.loads(raw_content)
@@ -197,13 +213,12 @@ def check_student_info(header_text: str) -> dict:
         # Fallback or retry logic...
         return {"present": False, "feedback": "Error parsing AI response"}
 ```
- 
- 
+
 ```mermaid
 sequenceDiagram
     participant Engine as AutoGrader Engine
     participant LLM as Mininstral 3B (Local)
-    
+
     Engine->>Engine: Run JUnit Tests
     alt Tests Pass
         Engine->>LLM: Check Semantic Requirements
@@ -212,14 +227,15 @@ sequenceDiagram
         Engine->>Engine: Assign Functional Score
     end
 ```
- 
+
 This hybrid approach gives us the best of both worlds: the precision of unit tests and the semantic understanding of LLMs, without sending student data to external cloud providers.
 
 ## Automating the Last Mile
 
-The final step is getting grades into the system. Manually entering thousands of grades is error-prone. 
+The final step is getting grades into the system. Manually entering thousands of grades is error-prone.
 
 I built a **Playwright** bot that:
+
 1.  Reads the final CSV report generated by the `UniversalGrader`.
 2.  Logs into the grading portal.
 3.  Navigates to each student's submission.
@@ -257,15 +273,15 @@ def main():
 
         for row in rows:
             student_email = row.get("Email")
-            
+
             # Resilience: Ensure we are on the right page
             if page.url != review_grades_url:
                 page.goto(review_grades_url)
-            
+
             # Search and Navigate
             page.get_by_placeholder("Search").fill(student_email)
             page.get_by_role("link", name=student_name).first.click()
-            
+
             # Robust Rubric Selection
             def ensure_rubric_item(name_or_index, desired_state=True):
                 btn = page.get_by_role("button", name=name_or_index)
@@ -276,7 +292,7 @@ def main():
             page.get_by_role("link", name="2:").click()
             if float(row.get("Q2 Score")) == 1.0:
                 ensure_rubric_item(1, True)
-            
+
             # Submit
             # ... submission logic ...
 ```

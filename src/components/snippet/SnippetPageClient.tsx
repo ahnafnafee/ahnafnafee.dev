@@ -1,10 +1,13 @@
 'use client'
 
 import { SnippetList } from '@/components/content/snippet'
+
 import { EmptyResult } from '@/UI/common'
 import { Searchbar } from '@/UI/inputs'
 import { Hero } from '@/UI/templates'
+
 import { useSearchSnippet } from '@/hooks'
+
 import type { Snippet } from 'me'
 
 type SnippetPageClientProps = {

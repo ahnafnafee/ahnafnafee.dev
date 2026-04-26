@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { getContentBySlug } from '@/services/content'
-import type { Blog } from 'me'
+
 import { generateOgImage } from '@/libs/metapage'
+
+import type { Blog } from 'me'
+import { NextRequest, NextResponse } from 'next/server'
 
 const SITE_URL = 'https://www.ahnafnafee.dev'
 const SITE_NAME = 'Ahnaf An Nafee'

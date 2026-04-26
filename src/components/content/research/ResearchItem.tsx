@@ -1,10 +1,12 @@
 import { UnstyledLink } from '@/UI/links'
-import type { Research } from 'me'
-import { generateOgImage } from '@/libs/metapage'
+
 import { SITE_AUTHOR } from '@/libs/constants/site'
+import { generateOgImage } from '@/libs/metapage'
 import { twclsx } from '@/libs/twclsx'
-import { Fragment } from 'react'
+
+import type { Research } from 'me'
 import NextImage from 'next/image'
+import { Fragment } from 'react'
 
 type ResearchItemProps = Research & { priority?: boolean }
 
@@ -54,11 +56,11 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
   const actions = buildActionLinks(props)
 
   return (
-    <article className='w-full py-8 group'>
+    <article className='group w-full py-8'>
       <div className='flex flex-row items-start gap-5 md:gap-7'>
         <UnstyledLink
           href={urlPost}
-          className='relative w-32 sm:w-36 md:w-44 aspect-[5/4] flex-shrink-0 rounded-md overflow-hidden bg-gray-100 dark:bg-gray-800 ring-1 ring-gray-200 dark:ring-gray-800 block shadow-sm'
+          className='relative block aspect-[5/4] w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 shadow-sm ring-1 ring-gray-200 sm:w-36 md:w-44 dark:bg-gray-800 dark:ring-gray-800'
         >
           <NextImage
             src={imageSrc}
@@ -71,26 +73,24 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
           />
         </UnstyledLink>
 
-        <div className='flex flex-col flex-1 min-w-0 pt-0.5'>
-          <h3 className='text-base md:text-lg font-bold text-purple-700 dark:text-purple-300 leading-snug mb-1.5 hover:underline decoration-purple-400 underline-offset-2'>
+        <div className='flex min-w-0 flex-1 flex-col pt-0.5'>
+          <h3 className='mb-1.5 text-base leading-snug font-bold text-purple-700 decoration-purple-400 underline-offset-2 hover:underline md:text-lg dark:text-purple-300'>
             <UnstyledLink href={urlPost}>{props.title}</UnstyledLink>
             {props.new && (
-              <span className='ml-2 align-middle text-[10px] font-bold uppercase tracking-wider text-orange-500 dark:text-orange-400'>
+              <span className='ml-2 inline-flex items-center rounded-sm bg-orange-100 px-1.5 py-0.5 align-middle text-[10px] font-bold tracking-wider text-orange-700 uppercase dark:bg-orange-500/15 dark:text-orange-300'>
                 NEW
               </span>
             )}
           </h3>
 
           {props.authors.length > 0 && (
-            <div className='text-sm text-gray-700 dark:text-gray-300 leading-snug mb-1'>
+            <div className='mb-1 text-sm leading-snug text-gray-700 dark:text-gray-300'>
               {props.authors.map((author, i) => {
                 const isOwner = author.name === SITE_AUTHOR.name
                 const isLast = i === props.authors.length - 1
                 return (
                   <Fragment key={`${author.name}-${i}`}>
-                    <span
-                      className={twclsx(isOwner && 'font-bold text-gray-900 dark:text-gray-100')}
-                    >
+                    <span className={twclsx(isOwner && 'font-bold text-gray-900 dark:text-gray-100')}>
                       {author.name}
                     </span>
                     {!isLast && ', '}
@@ -101,13 +101,11 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
           )}
 
           {venueLine && (
-            <div className='text-sm font-bold text-gray-900 dark:text-gray-200 leading-snug mb-2.5'>
-              [{venueLine}]
-            </div>
+            <div className='mb-2.5 text-sm leading-snug font-bold text-gray-900 dark:text-gray-200'>[{venueLine}]</div>
           )}
 
           {actions.length > 0 && (
-            <div className='flex flex-wrap items-center gap-x-2 text-xs md:text-sm text-purple-600 dark:text-purple-400'>
+            <div className='flex flex-wrap items-center gap-x-2 text-xs text-purple-600 md:text-sm dark:text-purple-400'>
               {actions.map((action, i) => (
                 <Fragment key={action.label}>
                   <UnstyledLink href={action.href} className='hover:underline'>

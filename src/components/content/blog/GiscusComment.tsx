@@ -33,7 +33,7 @@ export const GiscusComment = memo(() => {
   const gcTheme = theme === 'dark' || (theme === 'system' && systemTheme === 'dark') ? 'dark' : 'light'
 
   return (
-    <div ref={containerRef} className='mt-4 md:mt-8 min-h-[180px]'>
+    <div ref={containerRef} className='mt-4 min-h-[180px] md:mt-8'>
       {shouldMount && (
         <Giscus
           lang='en'

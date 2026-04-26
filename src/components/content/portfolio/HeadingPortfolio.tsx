@@ -1,5 +1,5 @@
-import { UnstyledLink } from '@/components/UI/links'
 import { CategoryLabel } from '@/components/content/portfolio/CategoryLabel'
+import { UnstyledLink } from '@/components/legacy-ui/links'
 
 import { twclsx } from '@/libs'
 
@@ -7,7 +7,7 @@ import { format } from 'date-fns'
 import { CategoryTypes } from 'me'
 import NextImage from 'next/image'
 import { HiGlobeAlt } from 'react-icons/hi'
-import { SiGithub, SiApple, SiGoogleplay } from 'react-icons/si'
+import { SiApple, SiGithub, SiGoogleplay } from 'react-icons/si'
 
 type HeadingPortfolioProps = {
   title: string
@@ -29,7 +29,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
       </h1>
       {/*<p className={twclsx('w-full my-8 font-medium text-gray-600 dark:text-gray-400 italic')}>{props.summary}</p>*/}
 
-      <div className={twclsx('flex flex-col items-start justify-between w-full mt-2 md:flex-row md:items-center')}>
+      <div className={twclsx('mt-2 flex w-full flex-col items-start justify-between md:flex-row md:items-center')}>
         <div className='flex items-center'>
           <NextImage
             src='https://ik.imagekit.io/8ieg70pvks/profile?tr=w-400,h-400'
@@ -45,12 +45,12 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
           </p>
         </div>
 
-        <div className={'flex items-center justify-end gap-2 mt-4 md:mt-0 flex-wrap'}>
+        <div className={'mt-4 flex flex-wrap items-center justify-end gap-2 md:mt-0'}>
           {props.link.appStore && (
             <UnstyledLink
               href={props.link.appStore}
               className={twclsx(
-                'flex items-center justify-start gap-1 max-w-max',
+                'flex max-w-max items-center justify-start gap-1',
                 'gap-2 py-1',
                 'text-theme-700 dark:text-theme-200',
                 'relative inline-flex items-center',
@@ -66,7 +66,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
             <UnstyledLink
               href={props.link.playStore}
               className={twclsx(
-                'flex items-center justify-start gap-1 max-w-max',
+                'flex max-w-max items-center justify-start gap-1',
                 'gap-2 py-1',
                 'text-theme-700 dark:text-theme-200',
                 'relative inline-flex items-center',
@@ -82,7 +82,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
             <UnstyledLink
               href={props.link.live}
               className={twclsx(
-                'flex items-center justify-start gap-1 max-w-max',
+                'flex max-w-max items-center justify-start gap-1',
                 'gap-2 py-1',
                 'text-theme-700 dark:text-theme-200',
                 'relative inline-flex items-center',
@@ -98,7 +98,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
             <UnstyledLink
               href={props.link.github}
               className={twclsx(
-                'flex items-center justify-start gap-1 max-w-max',
+                'flex max-w-max items-center justify-start gap-1',
                 'gap-2 py-1',
                 'text-theme-700 dark:text-theme-200',
                 'relative inline-flex items-center',
@@ -112,7 +112,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
         </div>
       </div>
 
-      <hr className='w-full border-1 border-gray-200 dark:border-gray-800 mb-2 mt-8' />
+      <hr className='mt-8 mb-2 w-full border-1 border-gray-200 dark:border-gray-800' />
     </section>
   )
 }

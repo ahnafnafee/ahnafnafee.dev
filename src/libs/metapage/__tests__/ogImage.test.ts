@@ -1,5 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { generateOgImage } from '../ogImage'
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 describe('generateOgImage', () => {
   const originalEnv = { ...process.env }

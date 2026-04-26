@@ -1,6 +1,6 @@
-import { LOCATION_DIR } from './location'
-
 import { readdir } from 'fs/promises'
+
+import { LOCATION_DIR } from './location'
 
 /**
  * It reads the contents of a directory and returns an array of strings that are the names of the files
@@ -14,5 +14,5 @@ export const readDirectory = async (path: string): Promise<Array<string>> => {
    * 2. filter the files, exclude all files that doesn't ends with extension .mdx
    * 3. return list of file names
    */
-  return (await readdir(`${LOCATION_DIR}/${path}`)).filter((p) => /\.mdx?$/.test(p));
+  return (await readdir(`${LOCATION_DIR}/${path}`)).filter((p) => /\.mdx?$/.test(p))
 }

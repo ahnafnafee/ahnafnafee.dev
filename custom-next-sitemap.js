@@ -70,8 +70,7 @@ const buildTime = new Date().toISOString()
 // to the list URL.
 const STATIC_PAGE_IMAGES = {
   '/': {
-    image:
-      'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747',
+    image: 'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747',
     title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ GMU'
   },
   '/blog': {
@@ -153,11 +152,12 @@ module.exports = {
     }
     // Resolve the canonical image for this URL: frontmatter first (per-post
     // thumbnails), then a static map for the top-level pages.
-    const imageMeta = (meta && meta.image)
-      ? { url: meta.image, title: meta.title || urlPath }
-      : staticImage
-        ? { url: staticImage.image, title: staticImage.title }
-        : null
+    const imageMeta =
+      meta && meta.image
+        ? { url: meta.image, title: meta.title || urlPath }
+        : staticImage
+          ? { url: staticImage.image, title: staticImage.title }
+          : null
     if (imageMeta) {
       // next-sitemap reads `image.loc.href`, so wrap in a URL object.
       // Skip silently if the URL is malformed (don't block the build).
@@ -175,7 +175,7 @@ module.exports = {
       await config.transform(config, '/resume'),
       await config.transform(config, '/portfolio'),
       await config.transform(config, '/blog'),
-      await config.transform(config, '/research'),
+      await config.transform(config, '/research')
     ]
   }
 }

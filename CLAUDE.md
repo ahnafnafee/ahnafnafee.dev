@@ -30,7 +30,7 @@ yarn postbuild          # runs automatically after build — generates sitemap v
 npx tsx indexing/sendIndexingRequest.ts   # batch-submit URLs to Google Indexing API
 ```
 
-Tests live under `__tests__` directories co-located with the code they cover (e.g. `src/libs/seo/__tests__/`, `src/services/content/__tests__/`). The Vitest config (`vitest.config.ts`) uses `happy-dom` and resolves `@/*` paths via `vite-tsconfig-paths`. CI runs the suite on every push/PR via `.github/workflows/ci.yml`.
+Tests live under `__tests__` directories co-located with the code they cover (e.g. `src/libs/seo/__tests__/`, `src/services/content/__tests__/`). The Vitest config (`vitest.config.ts`) uses `happy-dom` and resolves `@/*` paths via Vite's native `resolve.tsconfigPaths: true`. CI runs the suite on every push/PR via `.github/workflows/ci.yml`.
 
 ## Content Pipeline (the core architecture)
 
@@ -39,31 +39,55 @@ All blog, portfolio, and research entries are MDX files on disk — there's no C
 1. **Source files** live in `src/data/blog/*.mdx`, `src/data/portfolio/*.mdx`, and `src/data/research/*.mdx`. Filename (minus `.mdx`) becomes the URL slug.
 2. **Frontmatter** is parsed by `gray-matter` in `src/services/content/`. The shape is enforced by ambient types in `src/types/index.d.ts` (`declare module 'me'`) — `Blog`, `Portfolio`, `Research` (plus its sub-types `Author`, `Affiliation`, `Venue`, `ResearchLinks`, `ResearchIdentifiers`), `Snippet`, etc. Add new content fields there first, then update the MDX files.
 3. **Reading content**:
-    - `getContents<T>('/blog')` — list all entries (used by `generateStaticParams` and listing pages).
-    - `getContentBySlug<T>('/blog', slug)` — single entry.
-    - `getContentHeaders<T>('/blog')` — header-only (skips MDX body parsing) — use this whenever a page only needs frontmatter.
-    - All three resolve paths through `LOCATION_DIR` in `src/services/directory/location.ts` (= `src/data`). Change content location there, not in the readers.
+   - `getContents<T>('/blog')` — list all entries (used by `generateStaticParams` and listing pages).
+   - `getContentBySlug<T>('/blog', slug)` — single entry.
+   - `getContentHeaders<T>('/blog')` — header-only (skips MDX body parsing) — use this whenever a page only needs frontmatter.
+   - All three resolve paths through `LOCATION_DIR` in `src/services/directory/location.ts` (= `src/data`). Change content location there, not in the readers.
 4. **Rendering** uses `next-mdx-remote/rsc`'s `MDXRemote` in `src/app/blog/[slug]/page.tsx` and the portfolio / research equivalents. Plugin set is centralized in `src/libs/mdxConfig.ts` (remark-gfm, remark-math, rehype-prism-plus, rehype-slug, rehype-katex).
 5. **Custom MDX components** live in `src/components/content/mdx/` and are wired into the `MDXComponents` map in `mdx/index.ts`. Notable overrides:
-    - `Pre`, `Code` — code blocks with prism syntax highlighting.
-    - `Mermaid` — renders ` ```mermaid ` blocks; mermaid + stylis are transpiled and pre-bundled (see `transpilePackages` and `experimental.optimizePackageImports` in `next.config.js`).
-    - `ContentImage` — explicit component for ImageKit-hosted images. The default `img` MDX mapping was intentionally removed so external images / SVGs in MDX don't break; use `<ContentImage>` (or a raw `<img>`) explicitly.
-    - `MDXLink`, `Blockquote`, `Table`, `Headings` — styled overrides.
+   - `Pre`, `Code` — code blocks with prism syntax highlighting.
+   - `Mermaid` — renders ` ```mermaid ` blocks; mermaid + stylis are transpiled and pre-bundled (see `transpilePackages` and `experimental.optimizePackageImports` in `next.config.js`).
+   - `ContentImage` — explicit component for ImageKit-hosted images. The default `img` MDX mapping was intentionally removed so external images / SVGs in MDX don't break; use `<ContentImage>` (or a raw `<img>`) explicitly.
+   - `MDXLink`, `Blockquote`, `Table`, `Headings` — styled overrides.
 6. **Research-specific components** live in `src/components/content/research/`: `HeadingResearch` (status chip, title, structured authors + affiliations, venue, action-button row, hr), `ResearchTeaser` (full-bleed figure + caption, lives outside `prose` so it can breathe), `ResearchAbstract` (purple-accented `not-prose` card), `ResearchBibTeX` (anchored at `#bibtex`, copy-to-clipboard, mirrors `Pre.tsx` chrome), `ResearchItem` + `ResearchSections` (listing card + section grouping). The detail page composition is in `src/app/research/[slug]/page.tsx`.
 7. **SEO** is generated per-page in `src/app/blog/[slug]/page.tsx` and the portfolio / research equivalents: `generateMetadata` builds Next.js Metadata (OG, Twitter, canonical, `modifiedTime`), and the page itself injects a single `@graph` JSON-LD block:
-    - Blog: `BlogPosting` + `WebPage` + `BreadcrumbList`
-    - Portfolio: `SoftwareSourceCode` + `WebPage` + `BreadcrumbList`
-    - Research: `ScholarlyArticle` + `WebPage` + `BreadcrumbList`. The first author (matching `SITE_AUTHOR.name`) maps to `{'@id': PERSON_ID}`; coauthors emit inline `Person` nodes with `affiliation` and ORCID `identifier`. `isPartOf` resolves to `Periodical` for `published`/`accepted`/`workshop` venues and `CreativeWork` otherwise. DOI / arXiv / ResearchGate IDs from `identifiers` become `PropertyValue` entries on `identifier`.
-   The Person `@id` (`https://www.ahnafnafee.dev/#person`) is referenced from author/publisher; the full Person node is emitted only on the home page. When you add a new content type, mirror this pattern.
+   - Blog: `BlogPosting` + `WebPage` + `BreadcrumbList`
+   - Portfolio: `SoftwareSourceCode` + `WebPage` + `BreadcrumbList`
+   - Research: `ScholarlyArticle` + `WebPage` + `BreadcrumbList`. The first author (matching `SITE_AUTHOR.name`) maps to `{'@id': PERSON_ID}`; coauthors emit inline `Person` nodes with `affiliation` and ORCID `identifier`. `isPartOf` resolves to `Periodical` for `published`/`accepted`/`workshop` venues and `CreativeWork` otherwise. DOI / arXiv / ResearchGate IDs from `identifiers` become `PropertyValue` entries on `identifier`.
+     The Person `@id` (`https://www.ahnafnafee.dev/#person`) is referenced from author/publisher; the full Person node is emitted only on the home page. When you add a new content type, mirror this pattern.
 8. **OG image fallback**: if a post has no `thumbnail`, `generateOgImage` from `src/libs/metapage` constructs one via `/api/og`. For research listing cards, the resolution order is `thumbnail > teaser > generated OG`; ImageKit URLs without an explicit `?tr=` get `?tr=w-600` appended so retina displays render sharp on the 176px max slot. The `isImagekitUrl` check parses `new URL(...).hostname` (CodeQL flagged the substring form as bypassable).
 
 ## Path Aliases
 
 `tsconfig.json` baseUrl is `./src`. Use:
-- `@/*` → `src/*`
-- `@/UI` and `@/UI/*` → `src/components/UI` and `src/components/UI/*`
 
-Imports are auto-sorted by `@trivago/prettier-plugin-sort-imports` (order defined in `.prettierrc.js`): `@/components` → `@/UI` → `@/services` → `@/libs` → `@/...` → relative → external → `@/styles/*`. Don't reshuffle by hand; let Prettier do it.
+- `@/*` → `src/*`
+- `@/UI` and `@/UI/*` → `src/components/legacy-ui` and `src/components/legacy-ui/*` (transitional alias for the bespoke site components — see "Component Layout" below)
+
+Imports are auto-sorted by `@ianvs/prettier-plugin-sort-imports` (order defined in `.prettierrc.js`): `@/components` → `@/UI` → `@/services` → `@/libs` → `@/...` → relative → third-party → `@/styles/*`. Empty strings in `importOrder` produce blank-line separators between groups. Don't reshuffle by hand; let Prettier do it.
+
+## Component Layout
+
+Two roots under `src/components/`:
+
+- **`ui/`** — shadcn/ui primitives. Every file here is generated by `npx shadcn@latest add <name>` and follows shadcn's data-slot, variant, and class conventions. Don't edit by hand unless intentionally extending; instead use `npx shadcn@latest add <name> --diff` to merge upstream changes. Built on `radix-ui` (configured in `components.json` as `style: radix-nova`); `radix-ui` is **not** a competing UI system — it's shadcn's primitive layer.
+- **`legacy-ui/`** — bespoke composition components specific to this site (Header, Footer, Nav, AppLayoutPage, Hero, Searchbar, BackToTop, EmptyResult, MobileNav, ThemeMenu, links, image wrappers). They compose `ui/` primitives + project state. The folder is named "legacy-ui" because it predates shadcn; the contents now use shadcn primitives internally and the rename is a future-PR concern.
+
+When you need a new primitive, **search shadcn first** (`npx shadcn@latest search`). Only fall back to a bespoke component in `legacy-ui/` (or a feature folder) if no primitive fits.
+
+## Theme System
+
+Two layers feed Tailwind v4:
+
+1. **`tailwind.config.js`** keeps the **legacy palette scales** — `primary: colors.blue`, `theme: colors.neutral`, plus a custom `gray-{0..900}` ramp. Existing classes like `bg-primary-500`, `text-theme-700`, `dark:bg-gray-900` resolve through this. Bridged into v4 via `@config "../../tailwind.config.js"` in `globals.css`.
+2. **`globals.css` `@theme inline` + `:root` / `.dark` blocks** define the **shadcn semantic tokens** (`--background`, `--foreground`, `--primary`, `--muted`, `--border`, `--ring`, etc.) and _intentionally_ map them to the same OKLCH values as the legacy scales:
+   - `--primary` ↔ `blue-500` (light) / `blue-400` (dark) — same as legacy `primary-500/400`.
+   - `--background` ↔ `neutral-50` (light) / custom `gray-900` `#111` (dark) — matches legacy body bg.
+   - `--foreground` ↔ `neutral-800/100`, `--muted` ↔ `neutral-100/800`, `--border` ↔ `neutral-200/700`, `--ring` ↔ blue-500/400 (legacy focus ring).
+
+Net result: `bg-primary` (shadcn) and `bg-primary-500` (legacy) render the same color; both surfaces remain valid during the transition. When adding new code, prefer the semantic tokens. Don't write `dark:` overrides for shadcn classes — `--background` etc. switch automatically via `.dark`.
+
+Fonts: `--font-sans` resolves to `var(--font-inter)` (Next/font Google) with the local `@font-face` Inter as a fallback. The legacy `font-primary` utility still maps to Inter via `tailwind.config.js`.
 
 ## Two Build Modes
 
@@ -95,7 +119,8 @@ ISR endpoint at `GET /api/revalidate?secret=<SECRET>&slug=/blog/<slug>`. Secret 
 
 ## Conventions
 
-- Prettier: no semicolons, 2-space indent, single quotes, 120-col print width, `trailingComma: 'none'`. ESLint extends `next/core-web-vitals` + `@typescript-eslint/recommended`; `no-explicit-any` is intentionally off.
+- Prettier: no semicolons, 2-space indent, single quotes, 120-col print width, `trailingComma: 'none'`. Import sorting via `@ianvs/prettier-plugin-sort-imports`; tailwind class sorting via `prettier-plugin-tailwindcss`. ESLint extends `next/core-web-vitals` + `@typescript-eslint/recommended`; `no-explicit-any` is intentionally off.
+- **shadcn rules**: forms compose `Field` + `FieldLabel` + `FieldDescription` (no raw `div` + `Label`); inputs with leading/trailing icons use `InputGroup` + `InputGroupAddon`; icons inside `Button` get `data-icon="inline-start"` / `inline-end` (no `size-*` classes); use `cn()` for conditional classes; reach for `<Empty>`, `<Skeleton>`, `<Alert>`, `<Badge>`, `<Separator>` instead of styled `div`s. Toasts via `sonner` (`toast()` from `sonner`, `<Toaster>` from `@/components/ui/sonner`).
 - Commits go through `commitizen` with `cz-conventional-changelog` — run `yarn commit` for the prompt. `lint-staged` runs Prettier on staged `js/jsx/ts/tsx/mdx/md/css` files.
 - Frontmatter `published` for blog and research is `MM/DD/YYYY` (portfolio uses `date`). `featured: true` surfaces an entry on the home page. Optional `updated: "MM/DD/YYYY"` overrides `published` as the freshness signal — it flows into `dateModified` (BlogPosting / ScholarlyArticle JSON-LD), `<meta property="article:modified_time">`, and the sitemap `lastmod`. Set it whenever you make a substantive content edit; leave it off for typo fixes.
 - Authoring convention: open every blog post with a 60–120 word TL;DR paragraph immediately under the H1. LLM crawlers (ChatGPT, Perplexity, AI Overviews) draw ~44% of their citations from the first 30% of an article, so front-loading the answer compounds visibility.

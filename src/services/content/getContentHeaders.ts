@@ -1,8 +1,9 @@
+import { readFile } from 'fs/promises'
+import { join } from 'path'
+
 import { LOCATION_DIR, readDirectory } from '@/services'
 
-import { readFile } from 'fs/promises'
 import matter from 'gray-matter'
-import { join } from 'path'
 
 export type GetContentHeader<T> = { header: { slug: string } & T }
 

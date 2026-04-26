@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest'
-import { PERSON_ID, PERSON_REFERENCE, getPersonNode } from '../personSchema'
+import { getPersonNode, PERSON_ID, PERSON_REFERENCE } from '../personSchema'
+
+import { describe, expect, it } from 'vitest'
 
 describe('personSchema', () => {
   it('exports a stable canonical @id URL', () => {
@@ -21,12 +22,14 @@ describe('personSchema', () => {
     })
 
     it('lists every social profile in sameAs (LinkedIn, GitHub, Scholar, ORCID)', () => {
-      expect(node.sameAs).toEqual(expect.arrayContaining([
-        expect.stringContaining('linkedin.com/in/ahnafnafee'),
-        expect.stringContaining('github.com/ahnafnafee'),
-        expect.stringContaining('scholar.google.com'),
-        expect.stringContaining('orcid.org')
-      ]))
+      expect(node.sameAs).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('linkedin.com/in/ahnafnafee'),
+          expect.stringContaining('github.com/ahnafnafee'),
+          expect.stringContaining('scholar.google.com'),
+          expect.stringContaining('orcid.org')
+        ])
+      )
     })
 
     it('declares occupation, employer, alma mater', () => {
@@ -38,12 +41,14 @@ describe('personSchema', () => {
 
     it('exposes knowsAbout with research-relevant topics for AI Mode citation', () => {
       expect(node.knowsAbout.length).toBeGreaterThanOrEqual(20)
-      expect(node.knowsAbout).toEqual(expect.arrayContaining([
-        'Artificial Intelligence',
-        '3D Computer Graphics',
-        'Machine Learning for Graphics',
-        'Generative AI'
-      ]))
+      expect(node.knowsAbout).toEqual(
+        expect.arrayContaining([
+          'Artificial Intelligence',
+          '3D Computer Graphics',
+          'Machine Learning for Graphics',
+          'Generative AI'
+        ])
+      )
     })
 
     it('includes credentials (PhD + BS)', () => {

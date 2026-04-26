@@ -1,7 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { SITE_URL } from '@/libs/constants/site'
+
+import Link from 'next/link'
 
 export interface BreadcrumbItem {
   name: string
@@ -18,10 +19,7 @@ interface BreadcrumbsProps {
  */
 export function Breadcrumbs({ items }: BreadcrumbsProps) {
   // Always include Home as the first item
-  const allItems: BreadcrumbItem[] = [
-    { name: 'Home', href: SITE_URL },
-    ...items
-  ]
+  const allItems: BreadcrumbItem[] = [{ name: 'Home', href: SITE_URL }, ...items]
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -36,27 +34,22 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <nav aria-label="Breadcrumb" className="mb-4 text-sm">
-        <ol className="flex flex-wrap items-center gap-1.5 text-gray-500 dark:text-gray-400">
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <nav aria-label='Breadcrumb' className='mb-4 text-sm'>
+        <ol className='flex flex-wrap items-center gap-1.5 text-gray-500 dark:text-gray-400'>
           {allItems.map((item, index) => {
             const isLast = index === allItems.length - 1
             return (
-              <li key={item.href} className="flex items-center gap-1.5">
-                {index > 0 && (
-                  <span className="text-gray-400 dark:text-gray-500">/</span>
-                )}
+              <li key={item.href} className='flex items-center gap-1.5'>
+                {index > 0 && <span className='text-gray-400 dark:text-gray-500'>/</span>}
                 {isLast ? (
-                  <span className="text-gray-700 dark:text-gray-200 font-medium truncate max-w-[200px] sm:max-w-none">
+                  <span className='max-w-[200px] truncate font-medium text-gray-700 sm:max-w-none dark:text-gray-200'>
                     {item.name}
                   </span>
                 ) : (
                   <Link
                     href={item.href}
-                    className="hover:text-primary-500 dark:hover:text-primary-400 transition-colors"
+                    className='hover:text-primary-500 dark:hover:text-primary-400 transition-colors'
                   >
                     {item.name}
                   </Link>
@@ -75,10 +68,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
  * Use this when you only need the structured data without visual breadcrumbs
  */
 export function generateBreadcrumbJsonLd(items: BreadcrumbItem[]) {
-  const allItems: BreadcrumbItem[] = [
-    { name: 'Home', href: SITE_URL },
-    ...items
-  ]
+  const allItems: BreadcrumbItem[] = [{ name: 'Home', href: SITE_URL }, ...items]
 
   return {
     '@context': 'https://schema.org',

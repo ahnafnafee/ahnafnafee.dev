@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getContents, getContentBySlug } from '@/services/content'
+import { getContentBySlug, getContents } from '@/services/content'
+
 import type { Research } from 'me'
+import { NextRequest, NextResponse } from 'next/server'
 
 const SITE_URL = 'https://www.ahnafnafee.dev'
 const SITE_NAME = 'Ahnaf An Nafee'

@@ -1,4 +1,4 @@
-import parse, { HTMLReactParserOptions, Element, domToReact } from 'html-react-parser'
+import parse, { domToReact, Element, HTMLReactParserOptions } from 'html-react-parser'
 import React from 'react'
 
 interface HtmrOptions {

@@ -20,10 +20,10 @@ export const PRButton: React.FunctionComponent<PRButtonProps> = (props) => {
   return (
     <UnstyledLink
       title='Edit on GitHub'
-      className='inline-flex items-center text-sm md:text-base py-1 max-w-max space-x-1.5 border-b-2 border-dashed border-theme-500 text-theme-800 dark:text-theme-200'
+      className='border-theme-500 text-theme-800 dark:text-theme-200 inline-flex max-w-max items-center space-x-1.5 border-b-2 border-dashed py-1 text-sm md:text-base'
       href={`https://github.com/ahnafnafee/ahnafnafee.dev/edit/main/src/data` + props.path}
     >
-      <HiExternalLink className='w-5 h-5' />
+      <HiExternalLink className='h-5 w-5' />
       <span>Edit on GitHub</span>
     </UnstyledLink>
   )

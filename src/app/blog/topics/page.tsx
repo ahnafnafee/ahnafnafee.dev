@@ -1,10 +1,14 @@
+import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
+import { Hero } from '@/components/legacy-ui/templates/Hero'
 import { Breadcrumbs } from '@/components/SEO/Breadcrumbs'
-import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
-import { Hero } from '@/components/UI/templates/Hero'
+
 import { UnstyledLink } from '@/UI/links'
-import { generateOgImage } from '@/libs/metapage'
+
 import { getContents } from '@/services'
+
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { generateOgImage } from '@/libs/metapage'
+
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 
@@ -85,7 +89,7 @@ export default async function TopicsIndexPage() {
             <li key={t.slug}>
               <UnstyledLink
                 href={`/blog/topics/${t.slug}`}
-                className='inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-800 px-4 py-2 hover:border-purple-400 dark:hover:border-purple-500 transition-colors'
+                className='inline-flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 transition-colors hover:border-purple-400 dark:border-gray-800 dark:hover:border-purple-500'
               >
                 <span className='text-sm font-medium text-gray-900 dark:text-gray-100'>{t.label}</span>
                 <span className='text-xs font-semibold text-gray-500 dark:text-gray-400'>{t.count}</span>

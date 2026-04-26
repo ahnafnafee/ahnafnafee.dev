@@ -1,20 +1,23 @@
 import { BlogPostClient } from '@/components/blog/BlogPostClient'
-import { notFound } from 'next/navigation'
-import { MDXComponents } from '@/components/content/mdx'
 import { AdjacentPosts } from '@/components/content/blog/AdjacentPosts'
 import { RelatedPosts } from '@/components/content/blog/RelatedPosts'
+import { MDXComponents } from '@/components/content/mdx'
+
 import { Footer } from '@/UI/common'
+
 import { getContentBySlug, getContentHeaders } from '@/services/content'
-import { generateOgImage } from '@/libs/metapage'
-import { getAdjacentPosts } from '@/libs/sorters/getAdjacentPosts'
-import { PERSON_ID } from '@/libs/seo/personSchema'
+
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { commonMDXOptions } from '@/libs/mdxConfig'
+import { generateOgImage } from '@/libs/metapage'
+import { PERSON_ID } from '@/libs/seo/personSchema'
+import { getAdjacentPosts } from '@/libs/sorters/getAdjacentPosts'
+
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import { notFound } from 'next/navigation'
 import readingTime from 'reading-time'
-import { commonMDXOptions } from '@/libs/mdxConfig'
-
 
 type Props = {
   params: { slug: string }
@@ -99,10 +102,7 @@ export default async function BlogPost({ params }: Props) {
     const { slug } = await params
     // Adjacent-post nav only needs frontmatter (slug, title, published) — use
     // getContentHeaders to skip parsing every MDX body.
-    const [res, allPosts] = await Promise.all([
-      getContentBySlug<Blog>('/blog', slug),
-      getContentHeaders<Blog>('/blog')
-    ])
+    const [res, allPosts] = await Promise.all([getContentBySlug<Blog>('/blog', slug), getContentHeaders<Blog>('/blog')])
     const stats = readingTime(res.content)
     const est_read = stats.text
     const header = { est_read, ...res.header }
@@ -167,22 +167,13 @@ export default async function BlogPost({ params }: Props) {
 
     return (
       <>
-        <script
-          type='application/ld+json'
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }}
-        />
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
         <main className='layout pb-4'>
           <BlogPostClient header={header}>
-            <MDXRemote
-              source={res.content}
-              components={MDXComponents}
-              options={commonMDXOptions}
-            />
+            <MDXRemote source={res.content} components={MDXComponents} options={commonMDXOptions} />
           </BlogPostClient>
           <AdjacentPosts {...adjacent} />
-          {header.related && header.related.length > 0 && (
-            <RelatedPosts slugs={header.related} />
-          )}
+          {header.related && header.related.length > 0 && <RelatedPosts slugs={header.related} />}
         </main>
         <Footer />
       </>

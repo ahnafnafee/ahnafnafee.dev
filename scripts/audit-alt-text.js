@@ -5,7 +5,10 @@
 const fs = require('fs')
 const path = require('path')
 
-const ROOTS = [path.join(__dirname, '..', 'src', 'data', 'blog'), path.join(__dirname, '..', 'src', 'data', 'portfolio')]
+const ROOTS = [
+  path.join(__dirname, '..', 'src', 'data', 'blog'),
+  path.join(__dirname, '..', 'src', 'data', 'portfolio')
+]
 const WEAK_PATTERNS = [
   /^image$/i,
   /^photo$/i,
@@ -83,8 +86,7 @@ for (const root of ROOTS) {
   }
 }
 
-const totalIssues =
-  findings.MISSING.length + findings.EMPTY.length + findings.TOO_SHORT.length + findings.WEAK.length
+const totalIssues = findings.MISSING.length + findings.EMPTY.length + findings.TOO_SHORT.length + findings.WEAK.length
 
 console.log(`[audit-alt-text] Scanned ${totalImages} image tags across MDX content`)
 console.log(`[audit-alt-text] Found ${totalIssues} potential issue(s)\n`)

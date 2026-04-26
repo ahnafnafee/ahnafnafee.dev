@@ -1,8 +1,10 @@
 'use client'
 
 import { HowToPrintDialog } from '@/components/dialog'
-import { UnstyledButton } from '@/UI/buttons'
+import { Button } from '@/components/ui/button'
+
 import { UnderlineLink } from '@/UI/links'
+
 import {
   CERTIFICATIONS,
   EDUCATION,
@@ -15,43 +17,25 @@ import {
   SUMMARY
 } from '@/libs/constants/resume'
 import htmr from '@/libs/htmr-replacement'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+
+import { useCallback, useMemo, useState } from 'react'
 import { HiInformationCircle } from 'react-icons/hi'
 
 export function ResumePageClient() {
   const listStyle = useMemo(() => 'list-disc list-inside [&>li]:my-2', [])
-  // const isMatch = useMediaQuery('(min-width: 768px)')
-  const isMatch = true
-  const [modal, setModal] = useState({ alert: false, popup: false })
+  const [popupOpen, setPopupOpen] = useState(false)
 
-  const closePopup = useCallback(() => setModal((prev) => ({ ...prev, popup: false })), [])
-  const openPopup = useCallback(() => setModal((prev) => ({ ...prev, popup: true })), [])
-  const closeAlert = useCallback(() => setModal((prev) => ({ ...prev, alert: false })), [])
-  const openAlert = useCallback(() => setModal((prev) => ({ ...prev, alert: true })), [])
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (isMatch) {
-        closeAlert()
-      }
-
-      if (!isMatch) {
-        openAlert()
-      }
-    }, 100)
-
-    return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [closeAlert, openAlert])
+  const closePopup = useCallback(() => setPopupOpen(false), [])
+  const openPopup = useCallback(() => setPopupOpen(true), [])
 
   return (
-    <main className='layout py-4 dark:print:text-theme-800 dark:print:[&:is(h1)]:text-primary-700'>
-      <HowToPrintDialog isOpen={modal.popup} onClose={closePopup} />
+    <main className='layout dark:print:text-theme-800 dark:print:[&:is(h1)]:text-primary-700 py-4'>
+      <HowToPrintDialog isOpen={popupOpen} onClose={closePopup} />
 
-      <section className='w-full mb-4'>
+      <section className='mb-4 w-full'>
         <h1 className='text-center'>{HEADLINE.name}</h1>
 
-        <div className='space-x-4 text-center mt-1.5'>
+        <div className='mt-1.5 space-x-4 text-center'>
           {LINKS.map((s) => (
             <UnderlineLink className='print:text-primary-500' key={s.href} href={s.href}>
               {s.title}
@@ -62,13 +46,18 @@ export function ResumePageClient() {
 
       <div className='space-y-8'>
         <section>
-          <div className='flex items-center justify-between pb-2.5 border-b-2 border-b-theme-700 gap-4'>
+          <div className='border-b-theme-700 flex items-center justify-between gap-4 border-b-2 pb-2.5'>
             <h3>Summary</h3>
 
-            <UnstyledButton onClick={openPopup} className='print:hidden'>
-              <HiInformationCircle className='text-yellow-600 animate-pulse text-lg' />
-              <span className='sr-only'>How to print?</span>
-            </UnstyledButton>
+            <Button
+              variant='ghost'
+              size='icon-sm'
+              onClick={openPopup}
+              className='text-yellow-600 print:hidden'
+              aria-label='How to print?'
+            >
+              <HiInformationCircle className='animate-pulse' />
+            </Button>
           </div>
 
           <div className='mt-4 space-y-4'>
@@ -82,7 +71,7 @@ export function ResumePageClient() {
             <p>{SUMMARY.experience}</p>
 
             <div>
-              <p className='font-bold mb-2'>Research Focus:</p>
+              <p className='mb-2 font-bold'>Research Focus:</p>
               <ul className={listStyle + ' ml-5'}>
                 {SUMMARY.researchFocus.map((item, idx) => (
                   <li key={`${idx}`}>{item}</li>
@@ -94,11 +83,11 @@ export function ResumePageClient() {
               <strong>Technical Skills:</strong> {SUMMARY.technicalSkills}
             </p>
 
-            <p className='italic text-sm'>{SUMMARY.outro}</p>
+            <p className='text-sm italic'>{SUMMARY.outro}</p>
           </div>
         </section>
         <section>
-          <h3 className='mb-4 pb-2.5 border-b-2 border-b-theme-700'>Techinal Skills</h3>
+          <h3 className='border-b-theme-700 mb-4 border-b-2 pb-2.5'>Techinal Skills</h3>
 
           {SKILLS.map((skill) => (
             <p className='[&:not(:first-of-type)]:mt-2.5' key={skill.name}>
@@ -108,14 +97,14 @@ export function ResumePageClient() {
         </section>
 
         <section>
-          <div className='flex items-center justify-between pb-2.5 border-b-2 border-b-theme-700'>
+          <div className='border-b-theme-700 flex items-center justify-between border-b-2 pb-2.5'>
             <h3>Experience</h3>
           </div>
 
           {EXPERIENCE.map((exp, i) => (
             // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             <div key={i} className='mt-4'>
-              <div className='flex items-start justify-between mb-2.5'>
+              <div className='mb-2.5 flex items-start justify-between'>
                 <div>
                   <h4>
                     {htmr(exp.companyName, {
@@ -151,13 +140,13 @@ export function ResumePageClient() {
         </section>
 
         <section>
-          <h3 className='pb-2.5 border-b-2 border-b-theme-700'>Education</h3>
+          <h3 className='border-b-theme-700 border-b-2 pb-2.5'>Education</h3>
 
           {EDUCATION.map((ed) => (
             <div key={ed.school} className='mt-4'>
-              <div className='flex items-start justify-between mb-2.5'>
+              <div className='mb-2.5 flex items-start justify-between'>
                 <h4 className='max-w-md'>{ed.school}</h4>
-                <p className='text-sm font-semibold self-end text-right'>
+                <p className='self-end text-right text-sm font-semibold'>
                   {ed.period.start} - {ed.period.end}
                 </p>
               </div>
@@ -188,7 +177,7 @@ export function ResumePageClient() {
         </section>
 
         <section>
-          <h3 className='mb-4 pb-2.5 border-b-2 border-b-theme-700'>Certifications</h3>
+          <h3 className='border-b-theme-700 mb-4 border-b-2 pb-2.5'>Certifications</h3>
 
           {CERTIFICATIONS.map((cert) => (
             <div className='[&:not(:first-of-type)]:mt-2.5' key={cert.title}>
@@ -206,7 +195,7 @@ export function ResumePageClient() {
         </section>
 
         <section>
-          <h3 className='mb-4 pb-2.5 border-b-2 border-b-theme-700'>Honors-Awards</h3>
+          <h3 className='border-b-theme-700 mb-4 border-b-2 pb-2.5'>Honors-Awards</h3>
 
           {HONORS_AWARDS.map((award) => (
             <div className='[&:not(:first-of-type)]:mt-2.5' key={award.title}>
@@ -224,7 +213,7 @@ export function ResumePageClient() {
         </section>
 
         <section>
-          <h3 className='mb-4 pb-2.5 border-b-2 border-b-theme-700'>Languages</h3>
+          <h3 className='border-b-theme-700 mb-4 border-b-2 pb-2.5'>Languages</h3>
 
           {LANGUAGES.map((lang) => (
             <p className='[&:not(:first-of-type)]:mt-2.5' key={lang.title}>

@@ -1,4 +1,4 @@
-import { UnstyledLink } from '@/components/UI/links'
+import { UnstyledLink } from '@/components/legacy-ui/links'
 
 import { SITE_AUTHOR } from '@/libs/constants/site'
 import { twclsx } from '@/libs/twclsx'
@@ -73,8 +73,8 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
     <section className={twclsx('pb-2')}>
       <h1
         className={twclsx(
-          'text-center text-3xl md:text-5xl font-bold tracking-tight',
-          'text-black dark:text-white mb-4'
+          'text-center text-3xl font-bold tracking-tight md:text-5xl',
+          'mb-4 text-black dark:text-white'
         )}
       >
         {props.title.split('').map((c, i) => (
@@ -84,13 +84,13 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
       </h1>
 
       {props.topics && props.topics.length > 0 && (
-        <div className={twclsx('flex flex-wrap items-center gap-2 mb-6 w-full justify-center')}>
+        <div className={twclsx('mb-6 flex w-full flex-wrap items-center justify-center gap-2')}>
           {props.topics.map((topic) => (
             <span
               key={topic}
               className={twclsx(
-                'px-2 py-1 text-[10px] font-bold uppercase tracking-wider',
-                'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300',
+                'px-2 py-1 text-[10px] font-bold tracking-wider uppercase',
+                'bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
                 'rounded-sm whitespace-nowrap'
               )}
             >
@@ -111,9 +111,7 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
           const supText = indices.join(',')
           const isLast = i === props.authors.length - 1
           const isOwner = author.name === SITE_AUTHOR.name
-          const nameClass = isOwner
-            ? twclsx('font-semibold text-purple-700 dark:text-purple-300')
-            : undefined
+          const nameClass = isOwner ? twclsx('font-semibold text-purple-700 dark:text-purple-300') : undefined
 
           const nameNode = author.url ? (
             <UnstyledLink href={author.url} className={twclsx('hover:underline', nameClass)}>
@@ -135,12 +133,7 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
       </div>
 
       {props.affiliations && props.affiliations.length > 0 && (
-        <p
-          className={twclsx(
-            'text-center text-sm text-gray-500 dark:text-gray-400',
-            'mt-2 max-w-2xl mx-auto'
-          )}
-        >
+        <p className={twclsx('text-center text-sm text-gray-500 dark:text-gray-400', 'mx-auto mt-2 max-w-2xl')}>
           {props.affiliations.map((aff, i) => {
             const idx = i + 1
             const text = aff.location ? `${aff.name}, ${aff.location}` : aff.name
@@ -163,17 +156,12 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
       )}
 
       {venueParts.length > 0 && (
-        <p
-          className={twclsx(
-            'italic text-center mt-2 text-sm',
-            'text-gray-500 dark:text-gray-400'
-          )}
-        >
+        <p className={twclsx('mt-2 text-center text-sm italic', 'text-gray-500 dark:text-gray-400')}>
           {venueParts.join(' \u00B7 ')}
         </p>
       )}
 
-      <div className={twclsx('flex items-center justify-center gap-3 mt-6 flex-wrap')}>
+      <div className={twclsx('mt-6 flex flex-wrap items-center justify-center gap-3')}>
         {props.links?.paper && (
           <ActionButton
             href={props.links.paper}
@@ -188,11 +176,7 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
           <ActionButton href={props.links.code} icon={<SiGithub className={ICON_CLASS} />} label='Code' />
         )}
         {props.links?.video && (
-          <ActionButton
-            href={props.links.video}
-            icon={<HiOutlinePlay className={ICON_CLASS} />}
-            label='Video'
-          />
+          <ActionButton href={props.links.video} icon={<HiOutlinePlay className={ICON_CLASS} />} label='Video' />
         )}
         {props.links?.slides && (
           <ActionButton
@@ -226,16 +210,11 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
           />
         )}
         {props.bibtex && (
-          <ActionButton
-            href='#bibtex'
-            icon={<HiOutlineHashtag className={ICON_CLASS} />}
-            label='BibTeX'
-            isAnchor
-          />
+          <ActionButton href='#bibtex' icon={<HiOutlineHashtag className={ICON_CLASS} />} label='BibTeX' isAnchor />
         )}
       </div>
 
-      <hr className={twclsx('w-full border-1 border-gray-200 dark:border-gray-800 mb-2 mt-8')} />
+      <hr className={twclsx('mt-8 mb-2 w-full border-1 border-gray-200 dark:border-gray-800')} />
     </section>
   )
 }

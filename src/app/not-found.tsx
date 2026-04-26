@@ -1,6 +1,7 @@
+import { Footer } from '@/UI/common'
 import { WrappedImage } from '@/UI/images'
 import { UnderlineLink } from '@/UI/links'
-import { Footer } from '@/UI/common'
+
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -26,7 +27,7 @@ export default function NotFound() {
   return (
     <>
       <main className='layout'>
-        <div className='flex flex-col items-center justify-center gap-4 min-h-screen'>
+        <div className='flex min-h-screen flex-col items-center justify-center gap-4'>
           <WrappedImage priority src='/static/404.svg' alt='illustration' quality={60} width={225} height={225} />
 
           <section className='text-center'>

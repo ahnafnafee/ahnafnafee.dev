@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest'
-import type { Blog } from 'me'
 import { getAdjacentPosts } from '../getAdjacentPosts'
+
+import type { Blog } from 'me'
+import { describe, expect, it } from 'vitest'
 
 const make = (slug: string, published: string, title = slug): { header: Blog } => ({
   header: {
@@ -19,11 +20,7 @@ const make = (slug: string, published: string, title = slug): { header: Blog } =
 
 describe('getAdjacentPosts', () => {
   // Sorted newest-first: c (2024), b (2022), a (2020)
-  const posts = [
-    make('a', '01/01/2020'),
-    make('b', '01/01/2022'),
-    make('c', '01/01/2024')
-  ]
+  const posts = [make('a', '01/01/2020'), make('b', '01/01/2022'), make('c', '01/01/2024')]
 
   it('returns prev (older) and next (newer) for a middle post', () => {
     const { prev, next } = getAdjacentPosts('b', posts)

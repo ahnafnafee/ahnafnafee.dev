@@ -54,13 +54,7 @@ export const ContentImage = ({ src, alt, width, height, sizes, ...props }: Conte
         {...props}
       />
 
-      {isOpen && (
-        <LightboxLazy
-          mainSrc={src}
-          imageTitle={props.title}
-          onCloseRequest={() => setIsOpen(false)}
-        />
-      )}
+      {isOpen && <LightboxLazy mainSrc={src} imageTitle={props.title} onCloseRequest={() => setIsOpen(false)} />}
     </>
   )
 }

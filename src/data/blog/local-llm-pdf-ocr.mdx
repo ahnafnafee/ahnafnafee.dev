@@ -1,56 +1,56 @@
 ---
-title: "Building a Local LLM-Powered Hybrid OCR Engine"
+title: 'Building a Local LLM-Powered Hybrid OCR Engine'
 summary: "How I built a privacy-first, fully offline OCR pipeline that pairs Surya's layout detection with local Vision Language Models (OlmOCR, GLM-OCR, Qwen3-VL) and a Needleman-Wunsch aligner — turning handwriting, forms, and scanned PDFs into pixel-perfect searchable documents on your own laptop."
 featured: true
-author_name: "Ahnaf An Nafee"
-github_username: "ahnafnafee"
-published: "04/26/2026"
-topics: ["OCR", "LLM", "Vision Language Models", "AI Engineering", "Python", "PDF"]
+author_name: 'Ahnaf An Nafee'
+github_username: 'ahnafnafee'
+published: '04/26/2026'
+topics: ['OCR', 'LLM', 'Vision Language Models', 'AI Engineering', 'Python', 'PDF']
 keywords:
-    [
-        "pdf ocr",
-        "local llm ocr",
-        "vision language models",
-        "vlm ocr",
-        "surya ocr",
-        "olmocr",
-        "olmocr 2",
-        "qwen2.5 vl",
-        "qwen3 vl",
-        "qwen3 vl flash",
-        "qwen3 vl ocr",
-        "glm ocr",
-        "glm 4.6v",
-        "deepseek ocr",
-        "deepseek ocr2",
-        "internvl3",
-        "chandra ocr",
-        "minerU 2.5",
-        "paddleocr vl",
-        "nanonets ocr2",
-        "dots.ocr",
-        "lightonocr",
-        "exaone 4.5",
-        "needleman wunsch alignment",
-        "dynamic programming ocr",
-        "document ai",
-        "handwriting recognition",
-        "searchable pdf",
-        "sandwich pdf",
-        "lm studio",
-        "ollama",
-        "vllm",
-        "rag preprocessing",
-        "document intelligence",
-        "omnidocbench",
-        "olmocr bench",
-        "python ocr",
-        "private ocr",
-        "offline ocr",
-        "pymupdf",
-        "fastapi ocr",
-    ]
-thumbnail: "https://ik.imagekit.io/8ieg70pvks/blog/local-llm-pdf-ocr.jpeg?updatedAt=1765747593635"
+  [
+    'pdf ocr',
+    'local llm ocr',
+    'vision language models',
+    'vlm ocr',
+    'surya ocr',
+    'olmocr',
+    'olmocr 2',
+    'qwen2.5 vl',
+    'qwen3 vl',
+    'qwen3 vl flash',
+    'qwen3 vl ocr',
+    'glm ocr',
+    'glm 4.6v',
+    'deepseek ocr',
+    'deepseek ocr2',
+    'internvl3',
+    'chandra ocr',
+    'minerU 2.5',
+    'paddleocr vl',
+    'nanonets ocr2',
+    'dots.ocr',
+    'lightonocr',
+    'exaone 4.5',
+    'needleman wunsch alignment',
+    'dynamic programming ocr',
+    'document ai',
+    'handwriting recognition',
+    'searchable pdf',
+    'sandwich pdf',
+    'lm studio',
+    'ollama',
+    'vllm',
+    'rag preprocessing',
+    'document intelligence',
+    'omnidocbench',
+    'olmocr bench',
+    'python ocr',
+    'private ocr',
+    'offline ocr',
+    'pymupdf',
+    'fastapi ocr'
+  ]
+thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/local-llm-pdf-ocr.jpeg?updatedAt=1765747593635'
 related: []
 ---
 
@@ -60,7 +60,11 @@ Cloud OCR APIs solve this, but at a cost: your privacy, a per-page bill, and an 
 
 This is how I engineered a **fully local, privacy-first, hybrid OCR engine** that pairs the surgical layout precision of **Surya** with the semantic understanding of **local Vision Language Models** (OlmOCR, GLM-OCR, Qwen2.5/3-VL) — bound together by a **Needleman-Wunsch dynamic-programming aligner** — to produce searchable PDFs from anything you can rasterize. No cloud. No API keys. No documents leaving your machine.
 
-<img src="https://ik.imagekit.io/8ieg70pvks/blog/local-llm-ocr-ui.png" alt="Local LLM PDF OCR Web UI" className="w-full rounded-lg" />
+<img
+  src='https://ik.imagekit.io/8ieg70pvks/blog/local-llm-ocr-ui.png'
+  alt='Local LLM PDF OCR Web UI'
+  className='w-full rounded-lg'
+/>
 
 ## The OCR Triangle
 
@@ -70,13 +74,13 @@ When you build OCR today, the literature lets you pick two of three:
 2. **Semantic accuracy** — knowing _what_ the text says.
 3. **Speed and privacy** — running it on your laptop, offline.
 
-| Tool                          | Layout            | Semantics                  | Speed / Privacy        |
-| :---------------------------- | :---------------- | :------------------------- | :--------------------- |
-| **Tesseract / EasyOCR**       | ✅ Good           | ❌ Fails on handwriting    | ⚡ Fast, local         |
-| **Surya Recognition**         | ✅ Excellent      | ⚠️ Moderate on cursive     | 🐢 ~20s/page, local    |
-| **Surya Detection-Only**      | ✅ Excellent      | ❌ No text output          | ⚡ ~1s/page, local     |
-| **Local VLM (OlmOCR-2, Qwen3-VL, GLM-OCR, DeepSeek-OCR)** | ❌ No coordinates | ✅ Reads cursive perfectly | 🐢 GPU-bound, local |
-| **Cloud Vision APIs**         | ✅ Good           | ✅ Good                    | ☁️ Not local, not free |
+| Tool                                                      | Layout            | Semantics                  | Speed / Privacy        |
+| :-------------------------------------------------------- | :---------------- | :------------------------- | :--------------------- |
+| **Tesseract / EasyOCR**                                   | ✅ Good           | ❌ Fails on handwriting    | ⚡ Fast, local         |
+| **Surya Recognition**                                     | ✅ Excellent      | ⚠️ Moderate on cursive     | 🐢 ~20s/page, local    |
+| **Surya Detection-Only**                                  | ✅ Excellent      | ❌ No text output          | ⚡ ~1s/page, local     |
+| **Local VLM (OlmOCR-2, Qwen3-VL, GLM-OCR, DeepSeek-OCR)** | ❌ No coordinates | ✅ Reads cursive perfectly | 🐢 GPU-bound, local    |
+| **Cloud Vision APIs**                                     | ✅ Good           | ✅ Good                    | ☁️ Not local, not free |
 
 The bet: a vision-language model has the _semantic brain_ to read messy handwriting, but no idea where pixels live on a page. A detection-only Surya pass has _structural eyes_ but nothing to say. **Compose them, and the triangle collapses into a quadrilateral.**
 
@@ -84,8 +88,8 @@ The bet: a vision-language model has the _semantic brain_ to read messy handwrit
 
 The pipeline lives behind a single `OCRPipeline` orchestration seam, with **two execution paths**:
 
--   **Hybrid path** (default) — works with _any_ OCR-capable VLM, including text-only models.
--   **Grounded path** (opt-in via `--grounded`) — for the new generation of bbox-native VLMs that emit text and coordinates in a single call.
+- **Hybrid path** (default) — works with _any_ OCR-capable VLM, including text-only models.
+- **Grounded path** (opt-in via `--grounded`) — for the new generation of bbox-native VLMs that emit text and coordinates in a single call.
 
 ```mermaid
 graph TD
@@ -139,9 +143,9 @@ You have **N detected boxes** in reading order on the left, and **M LLM lines** 
 
 That is exactly the shape of [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) — the same dynamic-programming algorithm that aligns DNA sequences in bioinformatics. The score function:
 
--   **Rewards** a line whose character count fits a box's width.
--   **Mildly penalizes** skipping a box (many detected boxes are rules, decorations, or page furniture).
--   **Heavily penalizes** skipping a line (LLM text is precious).
+- **Rewards** a line whose character count fits a box's width.
+- **Mildly penalizes** skipping a box (many detected boxes are rules, decorations, or page furniture).
+- **Heavily penalizes** skipping a line (LLM text is precious).
 
 Unmatched LLM lines aren't dropped on the floor — they're attached to the nearest matched box, so no semantic content disappears. The DP runs in `O(N × M)` time, which is nothing on a per-page basis.
 
@@ -165,10 +169,10 @@ No Surya. No DP. No refine. The model returns `{"bbox_2d": [...], "content": "..
 
 It also requires a model that emits coordinates reliably — which is why the hybrid path remains the default. Hybrid works with _any_ OCR-capable VLM, including the long tail of text-only models. Grounded is the cleaner path when your model can support it.
 
-| Path                       | Detection | Text             | Alignment        | Refine       | When to use                                         |
-| :------------------------- | :-------- | :--------------- | :--------------- | :----------- | :-------------------------------------------------- |
-| **Hybrid** (default)       | Surya     | LLM full-page    | Needleman-Wunsch | Per-box crop | Any OCR-capable VLM; max coverage                   |
-| **Grounded** (`--grounded`) | —         | Bbox-native VLM  | —                | —            | Qwen2.5/3-VL, MinerU; simplest path, fewest bugs    |
+| Path                        | Detection | Text            | Alignment        | Refine       | When to use                                      |
+| :-------------------------- | :-------- | :-------------- | :--------------- | :----------- | :----------------------------------------------- |
+| **Hybrid** (default)        | Surya     | LLM full-page   | Needleman-Wunsch | Per-box crop | Any OCR-capable VLM; max coverage                |
+| **Grounded** (`--grounded`) | —         | Bbox-native VLM | —                | —            | Qwen2.5/3-VL, MinerU; simplest path, fewest bugs |
 
 ## The "Sandwich" PDF — Invisible Text Over Real Pixels
 
@@ -186,9 +190,9 @@ The user sees the original document — every font, every annotation, every coff
 
 The pipeline accepts whatever you throw at it:
 
--   `.pdf` — multi-page handled natively.
--   `.jpg`, `.jpeg`, `.png`, `.bmp`, `.webp` — single-page images skip the PDF round-trip and feed straight into rasterization.
--   `.tif`, `.tiff` — multi-frame TIFFs **expand to one output page per frame**. No manual PDF-wrapping step. This is the format archives, hospitals, and law firms still ship in.
+- `.pdf` — multi-page handled natively.
+- `.jpg`, `.jpeg`, `.png`, `.bmp`, `.webp` — single-page images skip the PDF round-trip and feed straight into rasterization.
+- `.tif`, `.tiff` — multi-frame TIFFs **expand to one output page per frame**. No manual PDF-wrapping step. This is the format archives, hospitals, and law firms still ship in.
 
 ```bash
 # Raw image — no PDF required
@@ -204,14 +208,14 @@ Output is always a PDF, even when the input isn't.
 
 Here's the punchline: **detection is no longer the bottleneck — full-page LLM OCR is.** Once you've offloaded recognition to a VLM, Surya's contribution is rounding error. Warm-run breakdown on an LM Studio + OlmOCR-2-7B + single GPU setup:
 
-| Phase                        | Per-page cost              | Notes                                                            |
-| ---------------------------- | -------------------------- | ---------------------------------------------------------------- |
-| Rasterize PDF → image        | ~0.3 s                     | Linear in pages                                                  |
-| Surya batch detection        | ~0.5 s                     | Amortized across all pages in one batched call                   |
-| **LLM full-page OCR**        | **~2–4 s**                 | **Dominant cost.** Parallelize with `--concurrency 3`            |
-| Per-box refine (if any)      | ~0.5–1 s × empty boxes     | Typically 0–2 s; disable with `--no-refine`                      |
-| PDF assembly                 | ~0.2 s                     | Linear in pages                                                  |
-| Cold-start Surya load        | +5–10 s (paid once)        | Paid even on grounded runs                                       |
+| Phase                   | Per-page cost          | Notes                                                 |
+| ----------------------- | ---------------------- | ----------------------------------------------------- |
+| Rasterize PDF → image   | ~0.3 s                 | Linear in pages                                       |
+| Surya batch detection   | ~0.5 s                 | Amortized across all pages in one batched call        |
+| **LLM full-page OCR**   | **~2–4 s**             | **Dominant cost.** Parallelize with `--concurrency 3` |
+| Per-box refine (if any) | ~0.5–1 s × empty boxes | Typically 0–2 s; disable with `--no-refine`           |
+| PDF assembly            | ~0.2 s                 | Linear in pages                                       |
+| Cold-start Surya load   | +5–10 s (paid once)    | Paid even on grounded runs                            |
 
 End-to-end on the example PDFs (hybrid path, OlmOCR-2-7B, warm cache): digital ≈ 14 s, hybrid form ≈ 5 s, handwritten ≈ 4 s. The handwritten case being the cheapest is genuinely funny — fewer detected boxes means a shorter DP, fewer LLM tokens to align, less refine work. Messy is sometimes faster than clean.
 
@@ -221,10 +225,14 @@ End-to-end on the example PDFs (hybrid path, OlmOCR-2-7B, warm cache): digital �
 
 A tool is only as good as its developer experience. The pipeline ships **two interfaces, each rendering the same progress events** so you don't have to learn two mental models.
 
-<img src="https://ik.imagekit.io/8ieg70pvks/blog/local-llm-ocr-cli.png" alt="Local LLM PDF OCR CLI" className="w-full rounded-lg" />
+<img
+  src='https://ik.imagekit.io/8ieg70pvks/blog/local-llm-ocr-cli.png'
+  alt='Local LLM PDF OCR CLI'
+  className='w-full rounded-lg'
+/>
 
--   **CLI** — Powered by `rich`, with live progress bars for detection, LLM OCR, refinement, and embedding. Full flag surface for batch automation: `--pages`, `--concurrency`, `--dpi`, `--no-refine`, `--api-base`, `--model`, `--grounded`.
--   **Web UI** — FastAPI + WebSockets, drag-and-drop, dark mode, real-time per-page progress, and an in-browser preview of the raw VLM output _before_ it gets aligned. Same WebSocket events drive both surfaces.
+- **CLI** — Powered by `rich`, with live progress bars for detection, LLM OCR, refinement, and embedding. Full flag surface for batch automation: `--pages`, `--concurrency`, `--dpi`, `--no-refine`, `--api-base`, `--model`, `--grounded`.
+- **Web UI** — FastAPI + WebSockets, drag-and-drop, dark mode, real-time per-page progress, and an in-browser preview of the raw VLM output _before_ it gets aligned. Same WebSocket events drive both surfaces.
 
 ```python
 with progress:
@@ -258,9 +266,9 @@ That's the honest way to choose between hybrid and grounded — measure it on th
 
 This project is, at its heart, a case study in **hybrid AI systems** — the architectural pattern of decomposing a problem into a fast deterministic stage and a slow semantic stage, then binding them together with a classical algorithm.
 
--   **Surya detection** — fast, deterministic, well-defined contract.
--   **Local VLM** — slow, semantic, the part that actually reads.
--   **Needleman-Wunsch DP** — a 1970 algorithm, still the cleanest tool for monotonic alignment.
+- **Surya detection** — fast, deterministic, well-defined contract.
+- **Local VLM** — slow, semantic, the part that actually reads.
+- **Needleman-Wunsch DP** — a 1970 algorithm, still the cleanest tool for monotonic alignment.
 
 Each piece is replaceable. Swap Surya for a different layout model. Swap OlmOCR for Qwen3-VL and flip the `--grounded` switch. Swap the embedder for one that emits HTML or Markdown instead of PDF. The seams are clean because each stage has a crisp contract: "boxes in reading order," "text in reading order," "aligned `(box, text)` pairs."
 

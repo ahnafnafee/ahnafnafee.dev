@@ -1,19 +1,20 @@
-import { Footer, SocialHome } from '@/components/UI/common'
 import { ContentImage } from '@/components/content'
-import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 import { BlogItem } from '@/components/content/blog/BlogItem'
+import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 import { ResearchItem } from '@/components/content/research/ResearchItem'
+import { Footer, SocialHome } from '@/components/legacy-ui/common'
 
 import { getContents } from '@/services'
 import { getContentHeaders } from '@/services/content'
-import { getNewestPortfolio, getNewestBlog, getNewestResearch } from '@/libs/sorters'
-import { getPersonNode } from '@/libs/seo/personSchema'
-import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
-import readingTime from 'reading-time'
-import Link from 'next/link'
 
-import type { Portfolio, Blog, Research } from 'me'
+import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { getPersonNode } from '@/libs/seo/personSchema'
+import { getNewestBlog, getNewestPortfolio, getNewestResearch } from '@/libs/sorters'
+
+import type { Blog, Portfolio, Research } from 'me'
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import readingTime from 'reading-time'
 
 const HOME_OG_IMAGE =
   'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747'
@@ -171,10 +172,10 @@ async function getLatestBlog() {
     const sorted = blogs.sort((a, b) => getNewestBlog(a.header, b.header))
     const latest = sorted[0]
     if (!latest) return null
-    
+
     return {
       ...latest.header,
-      est_read: readingTime(latest.content).text,
+      est_read: readingTime(latest.content).text
     } as Blog
   } catch (error) {
     console.warn('Failed to load blog:', error)
@@ -219,16 +220,16 @@ export default async function HomePage() {
     <>
       <main className='layout' itemScope itemType='https://schema.org/ProfilePage'>
         <section className='flex flex-col' itemScope itemType='https://schema.org/Person' itemProp='mainEntity'>
-          <div className='flex flex-col-reverse sm:flex-row items-start mt-3 md:mt-6'>
-            <div className='flex flex-col sm:pr-8 flex-1'>
+          <div className='mt-3 flex flex-col-reverse items-start sm:flex-row md:mt-6'>
+            <div className='flex flex-1 flex-col sm:pr-8'>
               <h1
-                className='font-bold text-3xl md:text-5xl tracking-tight mb-1 text-black dark:text-white'
+                className='mb-1 text-3xl font-bold tracking-tight text-black md:text-5xl dark:text-white'
                 itemProp='name'
               >
                 Ahnaf An Nafee
               </h1>
               <br />
-              <h2 className='text-base text-gray-700 dark:text-gray-200 mb-4' itemProp='jobTitle'>
+              <h2 className='mb-4 text-base text-gray-700 dark:text-gray-200' itemProp='jobTitle'>
                 PhD Student in AI & 3D Graphics @{' '}
                 <span
                   className='font-semibold'
@@ -241,13 +242,13 @@ export default async function HomePage() {
                 | DCXR Lab | Ex-CTO
               </h2>
             </div>
-            <div className='flex-shrink-0 mb-8 sm:mb-0 sm:ml-8'>
+            <div className='mb-8 flex-shrink-0 sm:mb-0 sm:ml-8'>
               <ContentImage
                 src='https://ik.imagekit.io/8ieg70pvks/profile?tr=w-400,h-400'
                 alt='Ahnaf An Nafee - PhD Student in AI and 3D Graphics at George Mason University'
                 width={176}
                 height={176}
-                className='rounded-full border-4 cursor-pointer border-theme-100 dark:border-theme-800 w-[100px] h-[100px] sm:w-[176px] sm:h-[176px] object-cover'
+                className='border-theme-100 dark:border-theme-800 h-[100px] w-[100px] cursor-pointer rounded-full border-4 object-cover sm:h-[176px] sm:w-[176px]'
                 title="Ahnaf An Nafee's Profile Picture"
                 itemProp='image'
                 quality={100}
@@ -259,14 +260,14 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className='text-gray-600 dark:text-gray-400 space-y-4 mt-4'>
+          <div className='mt-4 space-y-4 text-gray-600 dark:text-gray-400'>
             <p className='text-lg text-gray-700 dark:text-gray-300'>
               I&apos;m a PhD student at George Mason University&apos;s{' '}
               <a
                 href='https://craigyuyu.github.io/home/group.html'
                 target='_blank'
                 rel='noopener noreferrer'
-                className='text-purple-600 dark:text-purple-400 hover:underline font-semibold'
+                className='font-semibold text-purple-600 hover:underline dark:text-purple-400'
               >
                 DCXR Lab
               </a>
@@ -281,8 +282,8 @@ export default async function HomePage() {
               just papers that publish.
             </p>
 
-            <div className='bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-800 p-4 rounded-lg border-l-4 border-purple-500'>
-              <p className='font-semibold text-gray-800 dark:text-gray-200 mb-2'>Research Focus:</p>
+            <div className='rounded-lg border-l-4 border-purple-500 bg-gradient-to-r from-purple-50 to-blue-50 p-4 dark:from-gray-800 dark:to-gray-800'>
+              <p className='mb-2 font-semibold text-gray-800 dark:text-gray-200'>Research Focus:</p>
               <ul className='space-y-1 text-sm text-gray-700 dark:text-gray-300'>
                 <li>
                   <strong>AI-driven creative workflows</strong> for 3D content generation
@@ -303,24 +304,32 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <SocialHome className='flex-shrink flex-wrap self-start gap-3 mt-6 mb-8' />
+          <SocialHome className='mt-6 mb-8 flex-shrink flex-wrap gap-3 self-start' />
         </section>
 
         {latestBlog && (
-          <section className='pt-8 pb-4 border-t border-gray-200 dark:border-gray-800'>
-            <h3 className='mb-1 md:mb-3 font-bold text-2xl tracking-tight text-black dark:text-white'>Latest Blog</h3>
-            <p className='mb-6 md:mb-8 text-gray-600 dark:text-gray-400'>
-              Fresh thoughts on AI, graphics, and tech. <Link href="/blog" className="text-purple-600 dark:text-purple-400 hover:underline">Read all blogs</Link>
+          <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
+            <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>Latest Blog</h3>
+            <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
+              Fresh thoughts on AI, graphics, and tech.{' '}
+              <Link href='/blog' className='text-purple-600 hover:underline dark:text-purple-400'>
+                Read all blogs
+              </Link>
             </p>
             <BlogItem {...latestBlog} />
           </section>
         )}
 
         {featuredResearch.length > 0 && (
-          <section className='pt-8 pb-4 border-t border-gray-200 dark:border-gray-800'>
-            <h3 className='mb-1 md:mb-3 font-bold text-2xl tracking-tight text-black dark:text-white'>Featured Research</h3>
-            <p className='mb-6 md:mb-8 text-gray-600 dark:text-gray-400'>
-              Papers and projects at the intersection of AI and 3D computer graphics. <Link href="/research" className="text-purple-600 dark:text-purple-400 hover:underline">View all research</Link>
+          <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
+            <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>
+              Featured Research
+            </h3>
+            <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
+              Papers and projects at the intersection of AI and 3D computer graphics.{' '}
+              <Link href='/research' className='text-purple-600 hover:underline dark:text-purple-400'>
+                View all research
+              </Link>
             </p>
             <div className='flex flex-col'>
               {featuredResearch.slice(0, 2).map((entry, i) => (

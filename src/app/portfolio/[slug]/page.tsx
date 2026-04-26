@@ -1,16 +1,20 @@
-import { WrappedImage } from '@/components/UI/images'
 import { HeadingPortfolio, IconStack, MDXComponents, PRButton } from '@/components/content'
+import { WrappedImage } from '@/components/legacy-ui/images'
+import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
+
 import { BackToTop } from '@/UI/buttons'
-import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
+
 import { getContentBySlug, getContents } from '@/services'
-import { generateOgImage } from '@/libs/metapage'
-import { twclsx } from '@/libs/twclsx'
-import { PERSON_ID } from '@/libs/seo/personSchema'
+
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { commonMDXOptions } from '@/libs/mdxConfig'
+import { generateOgImage } from '@/libs/metapage'
+import { PERSON_ID } from '@/libs/seo/personSchema'
+import { twclsx } from '@/libs/twclsx'
+
 import type { Portfolio } from 'me'
 import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import { commonMDXOptions } from '@/libs/mdxConfig'
 
 type Props = {
   params: { slug: string }
@@ -134,27 +138,24 @@ export default async function PortfolioDetailPage({ params }: Props) {
 
   return (
     <AppLayoutPage>
-      <script
-        type='application/ld+json'
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }}
-      />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
       <BackToTop />
 
       <article className={twclsx('flex flex-col', 'gap-8')}>
         <HeadingPortfolio {...header} />
 
         <section className={twclsx('flex flex-col gap-4', 'md:flex-row md:items-center md:justify-between')}>
-          <div className={twclsx('flex items-center gap-4 flex-wrap flex-shrink', 'w-full')}>
+          <div className={twclsx('flex flex-shrink flex-wrap items-center gap-4', 'w-full')}>
             {header.stack.map((s) => (
-              <span className={'flex flex-row items-center gap-2 cursor-pointer'} key={s}>
+              <span className={'flex cursor-pointer flex-row items-center gap-2'} key={s}>
                 <IconStack type={s} />
-                <p className={'uppercase text-xs font-medium'}>{s}</p>
+                <p className={'text-xs font-medium uppercase'}>{s}</p>
               </span>
             ))}
           </div>
         </section>
 
-        <p className={'w-full mt-4 font-medium text-gray-600 dark:text-gray-400 italic text-center'}>
+        <p className={'mt-4 w-full text-center font-medium text-gray-600 italic dark:text-gray-400'}>
           {header.summary}
         </p>
 
@@ -163,17 +164,13 @@ export default async function PortfolioDetailPage({ params }: Props) {
           alt={header.title}
           src={header.image + '&tr=w-700'}
           parentStyle='w-full h-56 sm:h-72 md:h-96 my-4'
-          className='object-cover rounded-lg'
+          className='rounded-lg object-cover'
           priority
           fill
         />
 
         <section className={twclsx('prose', 'dark:prose-invert', 'md:prose-lg')}>
-          <MDXRemote
-            source={res.content}
-            components={MDXComponents}
-            options={commonMDXOptions}
-          />
+          <MDXRemote source={res.content} components={MDXComponents} options={commonMDXOptions} />
         </section>
 
         <div className='mt-5 mb-2'>

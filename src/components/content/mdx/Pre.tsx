@@ -1,10 +1,12 @@
 'use client'
 
-import { UnstyledButton } from '@/UI/buttons'
-import { Mermaid } from './Mermaid'
+import { Button } from '@/components/ui/button'
+
 import { twclsx } from '@/libs/twclsx'
 
-import { useEffect, useRef, useState, isValidElement, Children, Suspense } from 'react'
+import { Mermaid } from './Mermaid'
+
+import { Children, isValidElement, Suspense, useEffect, useRef, useState } from 'react'
 import { HiCheck, HiClipboardCopy } from 'react-icons/hi'
 
 interface PreProps {
@@ -44,7 +46,7 @@ function MermaidCodeBlock({ children }: { children: React.ReactNode }) {
       observer.observe(codeRef.current, {
         childList: true,
         subtree: true,
-        characterData: true,
+        characterData: true
       })
 
       // Also try after a delay for safety
@@ -64,16 +66,14 @@ function MermaidCodeBlock({ children }: { children: React.ReactNode }) {
 
   // While extracting, render hidden code block to extract from
   return (
-    <div className="mermaid-wrapper my-8 not-prose">
-      <div className="flex items-center justify-center py-8 text-gray-400">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
-        <span className="ml-2">Loading diagram...</span>
+    <div className='mermaid-wrapper not-prose my-8'>
+      <div className='flex items-center justify-center py-8 text-gray-400'>
+        <div className='border-primary-500 h-8 w-8 animate-spin rounded-full border-b-2'></div>
+        <span className='ml-2'>Loading diagram...</span>
       </div>
       {/* Hidden div to extract content from */}
-      <div ref={codeRef} className="sr-only" aria-hidden="true">
-        <Suspense fallback={null}>
-          {children}
-        </Suspense>
+      <div ref={codeRef} className='sr-only' aria-hidden='true'>
+        <Suspense fallback={null}>{children}</Suspense>
       </div>
     </div>
   )
@@ -127,16 +127,16 @@ export const Pre = ({ children, className }: PreProps) => {
     <div className={twclsx('relative')}>
       <div
         className={twclsx(
-          'absolute left-0 right-12',
+          'absolute right-12 left-0',
           'h-11 rounded-tl rounded-br',
-          'font-semibold text-sm',
-          'bg-slate-700 text-main-1.5'
+          'text-sm font-semibold',
+          'text-main-1.5 bg-slate-700'
         )}
       >
         <div
           className={twclsx(
             'inline-flex items-center justify-start',
-            'px-4 md:px-8 h-full rounded-tl',
+            'h-full rounded-tl px-4 md:px-8',
             'text-theme-100 bg-primary-600'
           )}
         >
@@ -148,30 +148,22 @@ export const Pre = ({ children, className }: PreProps) => {
         className={twclsx(
           'absolute top-0 right-0',
           'flex items-center justify-center',
-          'w-11 h-11 rounded-tr rounded-bl',
+          'h-11 w-11 rounded-tr rounded-bl',
           'bg-slate-700'
         )}
       >
-        <UnstyledButton
+        <Button
+          variant='ghost'
+          size='icon-sm'
           onClick={copyToClipboard}
-          className={twclsx(
-            'group relative',
-            'w-8 h-8 rounded-lg transition-all duration-200',
-            'ring-primary-400',
-            'ring-offset-primary-400',
-            'hover:ring'
-          )}
+          aria-label='Copy to clipboard'
+          className='hover:bg-slate-600'
         >
-          {isCopied ? (
-            <HiCheck className={twclsx('w-4 h-4', 'text-emerald-500')} />
-          ) : (
-            <HiClipboardCopy className={twclsx('w-4 h-4', 'text-theme-100')} />
-          )}
-          <span className='sr-only'>Copy to clipboard</span>
-        </UnstyledButton>
+          {isCopied ? <HiCheck className='text-emerald-500' /> : <HiClipboardCopy className='text-theme-100' />}
+        </Button>
       </div>
 
-      <pre ref={preRef} className={twclsx('[&>code]:border-none pt-[3.5rem!important]', className)}>
+      <pre ref={preRef} className={twclsx('pt-[3.5rem!important] [&>code]:border-none', className)}>
         {children}
       </pre>
     </div>

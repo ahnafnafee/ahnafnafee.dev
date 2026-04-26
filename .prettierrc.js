@@ -1,3 +1,4 @@
+/** @type {import('prettier').Config} */
 const config = {
   semi: false,
   tabWidth: 2,
@@ -7,18 +8,26 @@ const config = {
   trailingComma: 'none',
   arrowParens: 'always',
   endOfLine: 'auto',
+  plugins: ['@ianvs/prettier-plugin-sort-imports', 'prettier-plugin-tailwindcss'],
   importOrder: [
     '^@/components(.*)$',
+    '',
     '^@/UI(.*)$',
+    '',
     '^@/services(.*)$',
+    '',
     '^@/libs(.*)$',
-    '^@/(.*)$',
+    '',
+    '^@/(?!styles)(.*)$',
+    '',
     '^[./]',
-    '^',
+    '',
+    '<THIRD_PARTY_MODULES>',
+    '',
     '^@/styles/(.*)$'
   ],
-  importOrderSeparation: true,
-  importOrderSortSpecifiers: true
+  importOrderTypeScriptVersion: '5.0.0',
+  importOrderParserPlugins: ['typescript', 'jsx', 'decorators-legacy']
 }
 
 module.exports = config

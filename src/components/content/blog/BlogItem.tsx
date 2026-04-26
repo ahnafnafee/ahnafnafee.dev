@@ -1,8 +1,10 @@
 import { UnstyledLink } from '@/UI/links'
-import type { Blog } from 'me'
-import { HiOutlineClock } from 'react-icons/hi'
+
 import { generateOgImage } from '@/libs/metapage'
+
+import type { Blog } from 'me'
 import NextImage from 'next/image'
+import { HiOutlineClock } from 'react-icons/hi'
 
 type BlogItemProps = Blog & { priority?: boolean }
 
@@ -13,41 +15,41 @@ export const BlogItem: React.FunctionComponent<BlogItemProps> = (props) => {
   const ogImageUrl = props.thumbnail || generateOgImage({ title: props.title, theme: 'dark' })
 
   return (
-    <div className='w-full py-8 border-b border-gray-100 dark:border-gray-800 last:border-0 group'>
-      <div className='flex flex-col-reverse md:flex-row md:items-start md:justify-between gap-6 md:gap-8'>
-
+    <div className='group w-full border-b border-gray-100 py-8 last:border-0 dark:border-gray-800'>
+      <div className='flex flex-col-reverse gap-6 md:flex-row md:items-start md:justify-between md:gap-8'>
         {/* Left Content */}
-        <div className='flex flex-col flex-1 min-w-0'>
+        <div className='flex min-w-0 flex-1 flex-col'>
           {/* Metadata Top */}
-          <div className='flex items-center gap-2 mb-2 text-xs font-bold tracking-wide uppercase text-purple-600 dark:text-purple-400'>
-             {new Date(props.published).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+          <div className='mb-2 flex items-center gap-2 text-xs font-bold tracking-wide text-purple-600 uppercase dark:text-purple-400'>
+            {new Date(props.published).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
           </div>
 
-          <h3 className='text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-3 group-hover:text-purple-600 transition-colors'>
-            <UnstyledLink href={urlPost}>
-              {props.title}
-            </UnstyledLink>
+          <h3 className='mb-3 text-xl leading-tight font-bold text-gray-900 transition-colors group-hover:text-purple-600 md:text-2xl dark:text-gray-100'>
+            <UnstyledLink href={urlPost}>{props.title}</UnstyledLink>
           </h3>
 
-          <p className='text-gray-600 dark:text-gray-400 leading-relaxed mb-4 line-clamp-2 md:line-clamp-3'>
+          <p className='mb-4 line-clamp-2 leading-relaxed text-gray-600 md:line-clamp-3 dark:text-gray-400'>
             {props.summary}
           </p>
 
-          <div className='flex flex-wrap items-center gap-3 mt-auto'>
-             {/* Labels */}
+          <div className='mt-auto flex flex-wrap items-center gap-3'>
+            {/* Labels */}
             {props.topics.length > 0 && (
               <div className='flex flex-wrap items-center gap-2'>
                 {props.topics.slice(0, 3).map((topic) => (
-                  <span key={topic} className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-sm whitespace-nowrap">
+                  <span
+                    key={topic}
+                    className='rounded-sm bg-gray-200 px-2 py-1 text-[10px] font-bold tracking-wider whitespace-nowrap text-gray-700 uppercase dark:bg-gray-800 dark:text-gray-300'
+                  >
                     {topic}
                   </span>
                 ))}
               </div>
             )}
 
-            <div className='flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500 font-medium'>
-               <HiOutlineClock className='w-3.5 h-3.5' />
-               <span>{props.est_read ?? '0 min'}</span>
+            <div className='flex items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-500'>
+              <HiOutlineClock className='h-3.5 w-3.5' />
+              <span>{props.est_read ?? '0 min'}</span>
             </div>
           </div>
         </div>
@@ -55,7 +57,7 @@ export const BlogItem: React.FunctionComponent<BlogItemProps> = (props) => {
         {/* Right Thumbnail */}
         <UnstyledLink
           href={urlPost}
-          className='relative w-full md:w-48 aspect-[1.91/1] md:aspect-square flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 block'
+          className='relative block aspect-[1.91/1] w-full flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-100 md:aspect-square md:w-48 dark:border-gray-700 dark:bg-gray-800'
         >
           <NextImage
             src={ogImageUrl}
@@ -66,9 +68,7 @@ export const BlogItem: React.FunctionComponent<BlogItemProps> = (props) => {
             priority={props.priority ?? false}
           />
         </UnstyledLink>
-
       </div>
     </div>
   )
 }
-

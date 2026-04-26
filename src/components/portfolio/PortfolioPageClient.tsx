@@ -1,11 +1,15 @@
 'use client'
 
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
+
 import { EmptyResult } from '@/UI/common'
 import { Searchbar } from '@/UI/inputs'
 import { Hero } from '@/UI/templates'
+
 import { twclsx } from '@/libs/twclsx'
+
 import { useSearchPortfolio } from '@/hooks'
+
 import type { Portfolio } from 'me'
 
 type PortfolioPageClientProps = {
@@ -24,7 +28,7 @@ export function PortfolioPageClient({ portfolios, softwarePortfolios, gamePortfo
         description="Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!"
       />
       {/* Search Bar - Full width with focus interaction */}
-      <Searchbar placeholder="Search portfolios..." value={search.query} onChange={search.handleChange} />
+      <Searchbar placeholder='Search portfolios...' value={search.query} onChange={search.handleChange} />
 
       <div className={twclsx('flex flex-col gap-8')}>
         {search.query === '' && portfolios.length > 0 && (

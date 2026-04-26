@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest'
 import { getContentBySlug, getContents } from '../index'
+
 import type { Blog, Portfolio } from 'me'
+import { describe, expect, it } from 'vitest'
 
 // Integration tests — read actual MDX files from src/data/. They depend on
 // at least one entry existing in each section, which is true for the live
@@ -56,9 +57,7 @@ describe('getContentBySlug', () => {
   })
 
   it('throws when the slug does not exist', async () => {
-    await expect(
-      getContentBySlug<Blog>('/blog', 'this-post-does-not-exist-and-never-will')
-    ).rejects.toThrow()
+    await expect(getContentBySlug<Blog>('/blog', 'this-post-does-not-exist-and-never-will')).rejects.toThrow()
   })
 
   it('content is just the markdown body — frontmatter is stripped', async () => {

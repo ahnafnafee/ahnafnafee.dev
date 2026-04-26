@@ -1,4 +1,5 @@
 import { SITE_URL } from '@/libs/constants/site'
+
 import type { genOgImagePayload } from 'me'
 
 export const generateOgImage = (payload: genOgImagePayload) => {
