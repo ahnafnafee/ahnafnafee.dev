@@ -30,7 +30,7 @@ yarn postbuild          # runs automatically after build — generates sitemap v
 npx tsx indexing/sendIndexingRequest.ts   # batch-submit URLs to Google Indexing API
 ```
 
-Tests live under `__tests__` directories co-located with the code they cover (e.g. `src/libs/seo/__tests__/`, `src/services/content/__tests__/`). The Vitest config (`vitest.config.ts`) uses `happy-dom` and resolves `@/*` paths via `vite-tsconfig-paths`. CI runs the suite on every push/PR via `.github/workflows/ci.yml`.
+Tests live under `__tests__` directories co-located with the code they cover (e.g. `src/libs/seo/__tests__/`, `src/services/content/__tests__/`). The Vitest config (`vitest.config.ts`) uses `happy-dom` and resolves `@/*` paths via Vite's native `resolve.tsconfigPaths: true`. CI runs the suite on every push/PR via `.github/workflows/ci.yml`.
 
 ## Content Pipeline (the core architecture)
 
