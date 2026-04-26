@@ -1,11 +1,11 @@
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
+const http = require('http')
+const fs = require('fs')
+const path = require('path')
 
-const port = 3001;
-const outDir = path.join(process.cwd(), 'out');
+const port = 3001
+const outDir = path.join(process.cwd(), 'out')
+const root = path.resolve(outDir)
 
-// MIME types
 const mimeTypes = {
   '.html': 'text/html',
   '.js': 'text/javascript',
@@ -21,52 +21,74 @@ const mimeTypes = {
   '.woff2': 'font/woff2',
   '.ttf': 'font/ttf',
   '.eot': 'application/vnd.ms-fontobject'
-};
+}
+
+// True iff `target` resolves to a path inside (or equal to) `root`. Guards
+// against URL-driven path traversal — `req.url` may be `/../../etc/passwd`.
+function isInsideRoot(target) {
+  return target === root || target.startsWith(root + path.sep)
+}
+
+// Resolve the request path to an actual file inside `outDir`. Returns null
+// if no candidate exists or if any candidate escapes the root.
+function resolveFile(filePath) {
+  if (!isInsideRoot(filePath)) return null
+  try {
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) return filePath
+  } catch {
+    return null
+  }
+  const html = filePath + '.html'
+  if (isInsideRoot(html) && fs.existsSync(html)) return html
+  const indexInDir = path.join(filePath, 'index.html')
+  if (isInsideRoot(indexInDir) && fs.existsSync(indexInDir)) return indexInDir
+  return null
+}
 
 const server = http.createServer((req, res) => {
-  let filePath = path.join(outDir, req.url === '/' ? 'index.html' : req.url);
-  
-  // Handle trailing slashes by looking for index.html
-  if (req.url.endsWith('/') && req.url !== '/') {
-    filePath = path.join(outDir, req.url, 'index.html');
-  }
-  
-  // Check if file exists
-  if (!fs.existsSync(filePath)) {
-    // Try adding .html extension
-    const htmlPath = filePath + '.html';
-    if (fs.existsSync(htmlPath)) {
-      filePath = htmlPath;
-    } else {
-      // Try looking for index.html in directory
-      const indexPath = path.join(filePath, 'index.html');
-      if (fs.existsSync(indexPath)) {
-        filePath = indexPath;
-      } else {
-        res.writeHead(404);
-        res.end('File not found');
-        return;
-      }
-    }
+  let requestedPath
+  try {
+    const raw = (req.url ?? '/').split('?')[0].split('#')[0]
+    requestedPath = decodeURIComponent(raw)
+  } catch {
+    res.writeHead(400)
+    res.end('Bad request')
+    return
   }
 
-  const extname = path.extname(filePath);
-  const contentType = mimeTypes[extname] || 'application/octet-stream';
+  const trailingSlash = requestedPath.endsWith('/') && requestedPath !== '/'
+  const initial = path.resolve(path.join(root, requestedPath === '/' ? 'index.html' : requestedPath))
 
-  fs.readFile(filePath, (err, content) => {
+  if (!isInsideRoot(initial)) {
+    res.writeHead(403)
+    res.end('Forbidden')
+    return
+  }
+
+  const filePath = trailingSlash ? path.join(initial, 'index.html') : initial
+  const resolved = resolveFile(filePath)
+  if (!resolved) {
+    res.writeHead(404)
+    res.end('File not found')
+    return
+  }
+
+  const extname = path.extname(resolved)
+  const contentType = mimeTypes[extname] || 'application/octet-stream'
+
+  fs.readFile(resolved, (err, content) => {
     if (err) {
-      res.writeHead(500);
-      res.end('Server error');
-      return;
+      res.writeHead(500)
+      res.end('Server error')
+      return
     }
-
-    res.writeHead(200, { 'Content-Type': contentType });
-    res.end(content);
-  });
-});
+    res.writeHead(200, { 'Content-Type': contentType })
+    res.end(content)
+  })
+})
 
 server.listen(port, () => {
-  console.log(`🚀 Static export server running at http://localhost:${port}`);
-  console.log(`📁 Serving files from: ${outDir}`);
-  console.log('📝 Open http://localhost:3001 in your browser to test the export');
-});
+  console.log(`🚀 Static export server running at http://localhost:${port}`)
+  console.log(`📁 Serving files from: ${outDir}`)
+  console.log('📝 Open http://localhost:3001 in your browser to test the export')
+})

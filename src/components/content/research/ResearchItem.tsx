@@ -31,9 +31,15 @@ const buildVenueLine = (props: ResearchItemProps): string | null => {
 // Prefer the high-resolution teaser figure (academic visual). Fall back to the
 // blog-style square thumbnail, then to a generated OG image. ImageKit URLs get
 // a width transform so we don't upscale a small original.
+const isImagekitUrl = (s: string): boolean => {
+  try {
+    return new URL(s).hostname === 'ik.imagekit.io'
+  } catch {
+    return false
+  }
+}
 const resolveListingImage = (props: ResearchItemProps): string => {
-  const isImagekit = (s: string) => s.includes('ik.imagekit.io')
-  const withWidth = (s: string) => (isImagekit(s) && !s.includes('?tr=') ? `${s}?tr=w-500` : s)
+  const withWidth = (s: string) => (isImagekitUrl(s) && !s.includes('?tr=') ? `${s}?tr=w-500` : s)
   if (props.teaser) return withWidth(props.teaser)
   if (props.thumbnail) return withWidth(props.thumbnail)
   return generateOgImage({ title: props.title, theme: 'dark' })
