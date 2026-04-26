@@ -23,53 +23,63 @@ const mimeTypes = {
   '.eot': 'application/vnd.ms-fontobject'
 }
 
-// True iff `target` resolves to a path inside (or equal to) `root`. Guards
-// against URL-driven path traversal — `req.url` may be `/../../etc/passwd`.
-function isInsideRoot(target) {
-  return target === root || target.startsWith(root + path.sep)
-}
-
-// Resolve the request path to an actual file inside `outDir`. Returns null
-// if no candidate exists or if any candidate escapes the root.
-function resolveFile(filePath) {
-  if (!isInsideRoot(filePath)) return null
+// Resolve a candidate file path that's guaranteed to live under `root`.
+// Returns the absolute path of an existing regular file, or null otherwise.
+// Containment is enforced via `path.relative` (the CodeQL-recognized barrier
+// for js/path-injection): a value is in-tree iff its relative path doesn't
+// climb out and isn't itself absolute.
+function safeResolveFile(candidate) {
+  const abs = path.resolve(candidate)
+  const rel = path.relative(root, abs)
+  if (rel.startsWith('..') || path.isAbsolute(rel)) return null
   try {
-    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) return filePath
+    if (fs.existsSync(abs) && fs.statSync(abs).isFile()) return abs
   } catch {
     return null
   }
-  const html = filePath + '.html'
-  if (isInsideRoot(html) && fs.existsSync(html)) return html
-  const indexInDir = path.join(filePath, 'index.html')
-  if (isInsideRoot(indexInDir) && fs.existsSync(indexInDir)) return indexInDir
   return null
 }
 
 const server = http.createServer((req, res) => {
-  let requestedPath
+  let urlPath
   try {
     const raw = (req.url ?? '/').split('?')[0].split('#')[0]
-    requestedPath = decodeURIComponent(raw)
+    urlPath = decodeURIComponent(raw)
   } catch {
     res.writeHead(400)
     res.end('Bad request')
     return
   }
 
-  const trailingSlash = requestedPath.endsWith('/') && requestedPath !== '/'
-  const initial = path.resolve(path.join(root, requestedPath === '/' ? 'index.html' : requestedPath))
-
-  if (!isInsideRoot(initial)) {
+  // Reject explicit traversal segments before any path operations. Keeps the
+  // taint flow shallow and makes the safeResolveFile barrier the only sink
+  // CodeQL has to reason about.
+  if (urlPath.split(/[/\\]/).some((seg) => seg === '..')) {
     res.writeHead(403)
     res.end('Forbidden')
     return
   }
 
-  const filePath = trailingSlash ? path.join(initial, 'index.html') : initial
-  const resolved = resolveFile(filePath)
+  const trailingSlash = urlPath.endsWith('/') && urlPath !== '/'
+  const base = urlPath === '/' ? 'index.html' : urlPath
+  const candidate = path.join(root, base)
+
+  // Try a small fixed set of candidates in order. `safeResolveFile` re-checks
+  // containment for each (defense in depth — covers the case where any
+  // future change introduces additional path manipulation).
+  const candidates = trailingSlash
+    ? [path.join(candidate, 'index.html')]
+    : [candidate, candidate + '.html', path.join(candidate, 'index.html')]
+
+  let resolved = null
+  for (const c of candidates) {
+    resolved = safeResolveFile(c)
+    if (resolved) break
+  }
+
   if (!resolved) {
     res.writeHead(404)
-    res.end('File not found')
+    res.end('Not found')
     return
   }
 
