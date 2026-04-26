@@ -7,19 +7,14 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Viewport } from 'next'
 import { ThemeProvider } from 'next-themes'
-import { Inter } from 'next/font/google'
 import Script from 'next/script'
 
 import '@/styles/globals.css'
 import '@/styles/prism-themes.css'
 import 'katex/dist/katex.min.css'
 
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  preload: true,
-  variable: '--font-inter'
-})
+const GOOGLE_FONTS_HREF =
+  'https://fonts.googleapis.com/css2?family=Google+Sans+Text:ital,wght@0,400..700;1,400..700&display=swap'
 
 export const viewport: Viewport = {
   themeColor: [
@@ -70,8 +65,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <html lang='en' suppressHydrationWarning className={inter.variable}>
+    <html lang='en' suppressHydrationWarning>
       <head>
+        {/* Google Sans Text — primary site font; local Inter @font-face stays as a fallback in globals.css */}
+        <link rel='preconnect' href='https://fonts.googleapis.com' />
+        <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
+        <link rel='stylesheet' href={GOOGLE_FONTS_HREF} />
+
         {/* IndieAuth / Mastodon / Bluesky identity links — verifiable backlinks
             that cement the canonical Person entity across the federated web. */}
         <link rel='me' href='https://github.com/ahnafnafee' />
@@ -80,7 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel='me' href='https://orcid.org/0009-0000-9363-4536' />
         <link rel='author' href={`${SITE_URL}/resume`} />
       </head>
-      <body className={inter.className} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
         <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(navigationJsonLd) }} />
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>

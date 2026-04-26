@@ -1,4 +1,4 @@
-import { ResearchSections } from '@/components/content/research'
+import { ResearchAreas, ResearchNews, ResearchOverview, ResearchSections } from '@/components/content/research'
 import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
 
 import { Hero } from '@/UI/templates'
@@ -122,6 +122,9 @@ export default async function ResearchPage() {
         title='Research'
         description='Papers, course projects, and ongoing investigations at the intersection of AI and 3D computer graphics.'
       />
+      <ResearchOverview />
+      <ResearchNews />
+      <ResearchAreas />
       <ResearchSections posts={allResearch} />
     </AppLayoutPage>
   )

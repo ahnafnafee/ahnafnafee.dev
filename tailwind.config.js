@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        primary: ['"Inter"', ...fontFamily.sans]
+        primary: ['"Google Sans Text"', '"Inter"', ...fontFamily.sans]
       },
       colors: {
         primary: colors.blue,
