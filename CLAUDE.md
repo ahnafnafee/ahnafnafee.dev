@@ -16,16 +16,21 @@ yarn dev:webpack        # dev server forced to webpack (use if Turbopack misbeha
 yarn build              # production build (Vercel)
 yarn export             # static export — runs export:prepare → next build → export:cleanup
 yarn export:university  # static export with .env.development.static.local (BASE_PATH-aware)
-yarn lint               # next lint
-yarn lint:fix           # auto-fix
+yarn lint               # eslint . (flat config in eslint.config.mjs)
+yarn lint:fix           # eslint . --fix
 yarn type-check         # tsc --noEmit
+yarn test               # vitest run (unit + integration suite)
+yarn test:watch         # vitest in watch mode
+yarn test:coverage      # vitest with v8 coverage report
 yarn format             # prettier write across js/ts/tsx/md/mdx/json
 yarn analyze            # bundle analyzer (cross-env ANALYZE=true next build)
+yarn validate:json-ld   # walk built HTML, verify every <script type="application/ld+json">
+yarn audit:alt-text     # scan MDX for weak <ContentImage>/<img> alt attributes
 yarn postbuild          # runs automatically after build — generates sitemap via custom-next-sitemap.js
 npx tsx indexing/sendIndexingRequest.ts   # batch-submit URLs to Google Indexing API
 ```
 
-There are no tests in this repo.
+Tests live under `__tests__` directories co-located with the code they cover (e.g. `src/libs/seo/__tests__/`, `src/services/content/__tests__/`). The Vitest config (`vitest.config.ts`) uses `happy-dom` and resolves `@/*` paths via `vite-tsconfig-paths`. CI runs the suite on every push/PR via `.github/workflows/ci.yml`.
 
 ## Content Pipeline (the core architecture)
 

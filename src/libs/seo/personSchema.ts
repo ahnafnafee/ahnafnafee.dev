@@ -7,22 +7,24 @@
 // deduplicated (best case) or weaken entity confidence (worst case).
 // Cross-referencing by @id keeps the graph coherent.
 
-export const PERSON_ID = 'https://www.ahnafnafee.dev/#person'
+import { PERSON_ID, PROFILE_IMAGE, SITE_AUTHOR, SITE_URL } from '@/libs/constants/site'
+
+export { PERSON_ID }
 
 export const PERSON_REFERENCE = {
   '@type': 'Person',
   '@id': PERSON_ID,
-  name: 'Ahnaf An Nafee',
-  url: 'https://www.ahnafnafee.dev'
+  name: SITE_AUTHOR.name,
+  url: SITE_URL
 } as const
 
 export const getPersonNode = () => ({
   '@type': 'Person',
   '@id': PERSON_ID,
-  name: 'Ahnaf An Nafee',
-  alternateName: 'ahnafnafee',
-  url: 'https://www.ahnafnafee.dev',
-  image: 'https://ik.imagekit.io/8ieg70pvks/profile?tr=w-400,h-400',
+  name: SITE_AUTHOR.name,
+  alternateName: SITE_AUTHOR.githubUsername,
+  url: SITE_URL,
+  image: PROFILE_IMAGE,
   sameAs: [
     'https://www.linkedin.com/in/ahnafnafee',
     'https://github.com/ahnafnafee',
@@ -32,7 +34,7 @@ export const getPersonNode = () => ({
     'https://www.artstation.com/ahnafnafee',
     'https://www.behance.net/ahnafannafee'
   ],
-  email: 'ahnafnafee@gmail.com',
+  email: SITE_AUTHOR.email,
   jobTitle: 'PhD Student in Computer Science',
   hasOccupation: {
     '@type': 'Occupation',

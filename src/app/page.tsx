@@ -6,11 +6,17 @@ import { BlogItem } from '@/components/content/blog/BlogItem'
 import { getContents } from '@/services'
 import { getNewestPortfolio, getNewestBlog } from '@/libs/sorters'
 import { getPersonNode } from '@/libs/seo/personSchema'
+import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import readingTime from 'reading-time'
 import Link from 'next/link'
 
 import type { Portfolio, Blog } from 'me'
 import type { Metadata } from 'next'
+
+const HOME_OG_IMAGE =
+  'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747'
+const HOME_OG_ALT = `${SITE_NAME} - PhD Student in AI & 3D Graphics at George Mason University | DCXR Lab`
+const HOME_TITLE = `${SITE_NAME} - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU`
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -21,32 +27,32 @@ const structuredData = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.ahnafnafee.dev'),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
-    template: '%s | Ahnaf An Nafee'
+    default: HOME_TITLE,
+    template: `%s | ${SITE_NAME}`
   },
   description:
     'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics. DCXR Lab, advised by Dr. Craig Yu.',
-  applicationName: 'Ahnaf An Nafee Portfolio',
-  authors: [{ name: 'Ahnaf An Nafee', url: 'https://www.ahnafnafee.dev' }],
-  creator: 'Ahnaf An Nafee',
-  publisher: 'Ahnaf An Nafee',
+  applicationName: `${SITE_NAME} Portfolio`,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   formatDetection: {
     email: false,
     address: false,
     telephone: false
   },
   alternates: {
-    canonical: 'https://www.ahnafnafee.dev',
+    canonical: SITE_URL,
     languages: {
-      'en-US': 'https://www.ahnafnafee.dev',
-      'x-default': 'https://www.ahnafnafee.dev'
+      'en-US': SITE_URL,
+      'x-default': SITE_URL
     },
     types: {
       'application/rss+xml': [
-        { url: 'https://www.ahnafnafee.dev/rss.xml', title: 'Ahnaf An Nafee — Blog (RSS)' },
-        { url: 'https://www.ahnafnafee.dev/rss-full.xml', title: 'Ahnaf An Nafee — Blog (Full RSS)' }
+        { url: `${SITE_URL}/rss.xml`, title: `${SITE_NAME} — Blog (RSS)` },
+        { url: `${SITE_URL}/rss-full.xml`, title: `${SITE_NAME} — Blog (Full RSS)` }
       ]
     }
   },
@@ -121,40 +127,27 @@ export const metadata: Metadata = {
     'Full Stack Developer'
   ],
   openGraph: {
-    title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
+    title: HOME_TITLE,
     description:
       'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.',
-    url: 'https://www.ahnafnafee.dev',
-    siteName: 'Ahnaf An Nafee',
-    images: [
-      {
-        url: 'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747',
-        width: 1200,
-        height: 630,
-        alt: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics at George Mason University | DCXR Lab',
-        type: 'image/png'
-      }
-    ],
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    images: [{ url: HOME_OG_IMAGE, width: 1200, height: 630, alt: HOME_OG_ALT, type: 'image/png' }],
     locale: 'en_US',
     type: 'profile',
     firstName: 'Ahnaf',
     lastName: 'Nafee',
-    username: 'ahnafnafee',
-    emails: ['ahnafnafee@gmail.com']
+    username: SITE_AUTHOR.githubUsername,
+    emails: [SITE_AUTHOR.email]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU',
+    title: HOME_TITLE,
     description:
       'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.',
-    site: '@ahnaf_nafee',
-    creator: '@ahnaf_nafee',
-    images: [
-      {
-        url: 'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747',
-        alt: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics at George Mason University | DCXR Lab'
-      }
-    ]
+    site: TWITTER_HANDLE,
+    creator: TWITTER_HANDLE,
+    images: [{ url: HOME_OG_IMAGE, alt: HOME_OG_ALT }]
   }
 }
 

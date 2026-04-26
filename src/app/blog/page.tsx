@@ -3,12 +3,17 @@ import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
 import { getContents } from '@/services'
 import { isDev } from '@/libs/constants/environmentState'
 import { getNewestBlog } from '@/libs/sorters'
+import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 import readingTime from 'reading-time'
 
+const BLOG_URL = `${SITE_URL}/blog`
+const BLOG_OG_IMAGE = 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-blog.png?tr=w-1200,h-630'
+const BLOG_OG_ALT = `Blog - ${SITE_NAME} - Thoughts on AI, 3D Graphics, and Technology`
+
 export const metadata: Metadata = {
-  title: 'Blog - Ahnaf An Nafee',
+  title: `Blog - ${SITE_NAME}`,
   description:
     "You'll find a collection of my thoughts and musings on a variety of topics. I write about everything from current events to personal experiences, and I always strive to share my honest opinions. Keep in mind that my views are my own and do not necessarily reflect those of any other person or organization.",
   keywords: [
@@ -21,37 +26,24 @@ export const metadata: Metadata = {
     'technology blog'
   ],
   alternates: {
-    canonical: 'https://www.ahnafnafee.dev/blog'
+    canonical: BLOG_URL
   },
   openGraph: {
-    title: 'Blog - Ahnaf An Nafee',
+    title: `Blog - ${SITE_NAME}`,
     description: "You'll find a collection of my thoughts and musings on a variety of topics.",
-    url: 'https://www.ahnafnafee.dev/blog',
-    siteName: 'Ahnaf An Nafee',
-    images: [
-      {
-        url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-blog.png?tr=w-1200,h-630',
-        width: 1200,
-        height: 630,
-        alt: 'Blog - Ahnaf An Nafee - Thoughts on AI, 3D Graphics, and Technology',
-        type: 'image/png'
-      }
-    ],
+    url: BLOG_URL,
+    siteName: SITE_NAME,
+    images: [{ url: BLOG_OG_IMAGE, width: 1200, height: 630, alt: BLOG_OG_ALT, type: 'image/png' }],
     locale: 'en_US',
     type: 'website'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Blog - Ahnaf An Nafee',
+    title: `Blog - ${SITE_NAME}`,
     description: "You'll find a collection of my thoughts and musings on a variety of topics.",
-    site: '@ahnaf_nafee',
-    creator: '@ahnaf_nafee',
-    images: [
-      {
-        url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-blog.png?tr=w-1200,h-630',
-        alt: 'Blog - Ahnaf An Nafee - Thoughts on AI, 3D Graphics, and Technology'
-      }
-    ]
+    site: TWITTER_HANDLE,
+    creator: TWITTER_HANDLE,
+    images: [{ url: BLOG_OG_IMAGE, alt: BLOG_OG_ALT }]
   }
 }
 
@@ -67,14 +59,13 @@ async function getBlogData() {
       .sort(getNewestBlog)
   }
 
-  const baseURL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev'
   const slugs = response.map((r) => r.header.slug)
 
   // Single batched fetch instead of one request per post.
   let views: Record<string, number> = {}
   if (slugs.length > 0) {
     try {
-      const res = await fetch(`${baseURL}/api/pageviews/batch?slugs=${encodeURIComponent(slugs.join(','))}`, {
+      const res = await fetch(`${SITE_URL}/api/pageviews/batch?slugs=${encodeURIComponent(slugs.join(','))}`, {
         next: { revalidate: 300 }
       })
       if (res.ok) {
@@ -102,18 +93,8 @@ export default async function BlogPage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: 'https://www.ahnafnafee.dev'
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Blog',
-        item: 'https://www.ahnafnafee.dev/blog'
-      }
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: BLOG_URL }
     ]
   }
 

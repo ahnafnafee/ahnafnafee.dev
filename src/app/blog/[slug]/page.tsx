@@ -4,9 +4,11 @@ import { MDXComponents } from '@/components/content/mdx'
 import { AdjacentPosts } from '@/components/content/blog/AdjacentPosts'
 import { RelatedPosts } from '@/components/content/blog/RelatedPosts'
 import { Footer } from '@/UI/common'
-import { getContentBySlug, getContents } from '@/services/content'
+import { getContentBySlug, getContentHeaders } from '@/services/content'
 import { generateOgImage } from '@/libs/metapage'
 import { getAdjacentPosts } from '@/libs/sorters/getAdjacentPosts'
+import { PERSON_ID } from '@/libs/seo/personSchema'
+import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
@@ -20,7 +22,7 @@ type Props = {
 
 export async function generateStaticParams() {
   try {
-    const res = await getContents<Blog>('/blog')
+    const res = await getContentHeaders<Blog>('/blog')
     return res.map((r) => ({
       slug: r.header.slug
     }))
@@ -37,14 +39,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const header = res.header
     const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
     const modifiedTime = header.updated || header.published
-    const canonical = `https://www.ahnafnafee.dev/blog/${header.slug}`
-    const seeAlso = (header.related ?? []).map((s) => `https://www.ahnafnafee.dev/blog/${s}`)
+    const canonical = `${SITE_URL}/blog/${header.slug}`
+    const seeAlso = (header.related ?? []).map((s) => `${SITE_URL}/blog/${s}`)
 
     return {
       title: header.title,
       description: header.summary,
       keywords: header.keywords,
-      authors: [{ name: header.author_name, url: 'https://www.ahnafnafee.dev/resume' }],
+      authors: [{ name: header.author_name, url: `${SITE_URL}/resume` }],
       alternates: {
         canonical,
         languages: {
@@ -56,7 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: header.title,
         description: header.summary,
         url: canonical,
-        siteName: 'Ahnaf An Nafee',
+        siteName: SITE_NAME,
         images: [
           {
             url: ogImage,
@@ -77,8 +79,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         card: 'summary_large_image',
         title: header.title,
         description: header.summary,
-        site: '@ahnaf_nafee',
-        creator: '@ahnaf_nafee',
+        site: TWITTER_HANDLE,
+        creator: TWITTER_HANDLE,
         images: [{ url: ogImage, alt: header.title }]
       },
       ...(seeAlso.length > 0 && {
@@ -95,9 +97,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPost({ params }: Props) {
   try {
     const { slug } = await params
+    // Adjacent-post nav only needs frontmatter (slug, title, published) — use
+    // getContentHeaders to skip parsing every MDX body.
     const [res, allPosts] = await Promise.all([
       getContentBySlug<Blog>('/blog', slug),
-      getContents<Blog>('/blog')
+      getContentHeaders<Blog>('/blog')
     ])
     const stats = readingTime(res.content)
     const est_read = stats.text
@@ -107,7 +111,7 @@ export default async function BlogPost({ params }: Props) {
     const keywordsList = header.keywords?.filter(Boolean) ?? []
     const adjacent = getAdjacentPosts(slug, allPosts)
 
-    const pageUrl = `https://www.ahnafnafee.dev/blog/${header.slug}`
+    const pageUrl = `${SITE_URL}/blog/${header.slug}`
     const articleId = `${pageUrl}#article`
     const webpageId = `${pageUrl}#webpage`
     const breadcrumbId = `${pageUrl}#breadcrumb`
@@ -130,8 +134,8 @@ export default async function BlogPost({ params }: Props) {
           isAccessibleForFree: true,
           wordCount: stats.words,
           timeRequired: `PT${Math.max(1, Math.round(stats.minutes))}M`,
-          author: { '@id': 'https://www.ahnafnafee.dev/#person' },
-          publisher: { '@id': 'https://www.ahnafnafee.dev/#person' },
+          author: { '@id': PERSON_ID },
+          publisher: { '@id': PERSON_ID },
           mainEntityOfPage: { '@id': webpageId },
           ...(keywordsList.length && { keywords: keywordsList.join(', ') }),
           articleSection: header.topics?.[0] || 'Technology'
@@ -145,7 +149,7 @@ export default async function BlogPost({ params }: Props) {
           inLanguage: 'en-US',
           datePublished: header.published,
           dateModified,
-          isPartOf: { '@type': 'WebSite', url: 'https://www.ahnafnafee.dev' },
+          isPartOf: { '@type': 'WebSite', url: SITE_URL },
           primaryImageOfPage: { '@type': 'ImageObject', url: ogImage, width: 1200, height: 630 },
           breadcrumb: { '@id': breadcrumbId }
         },
@@ -153,8 +157,8 @@ export default async function BlogPost({ params }: Props) {
           '@type': 'BreadcrumbList',
           '@id': breadcrumbId,
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.ahnafnafee.dev' },
-            { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.ahnafnafee.dev/blog' },
+            { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+            { '@type': 'ListItem', position: 2, name: 'Blog', item: `${SITE_URL}/blog` },
             { '@type': 'ListItem', position: 3, name: header.title, item: pageUrl }
           ]
         }

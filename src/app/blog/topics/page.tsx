@@ -4,9 +4,12 @@ import { Hero } from '@/components/UI/templates/Hero'
 import { UnstyledLink } from '@/UI/links'
 import { generateOgImage } from '@/libs/metapage'
 import { getContents } from '@/services'
+import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 
+const TOPICS_URL = `${SITE_URL}/blog/topics`
+const TOPICS_OG_ALT = `Blog Topics — ${SITE_NAME}`
 const topicsOgImage = generateOgImage({
   title: 'Blog Topics',
   subTitle: 'Browse posts by topic',
@@ -20,33 +23,25 @@ const slugifyTopic = (topic: string) =>
     .replace(/(^-|-$)/g, '')
 
 export const metadata: Metadata = {
-  title: 'Topics — Blog | Ahnaf An Nafee',
+  title: `Topics — Blog | ${SITE_NAME}`,
   description: 'Browse blog posts by topic: AI, 3D graphics, machine learning, software engineering, and more.',
-  alternates: { canonical: 'https://www.ahnafnafee.dev/blog/topics' },
+  alternates: { canonical: TOPICS_URL },
   openGraph: {
-    title: 'Topics — Blog | Ahnaf An Nafee',
+    title: `Topics — Blog | ${SITE_NAME}`,
     description: 'Browse blog posts by topic.',
-    url: 'https://www.ahnafnafee.dev/blog/topics',
-    siteName: 'Ahnaf An Nafee',
-    images: [
-      {
-        url: topicsOgImage,
-        width: 1200,
-        height: 630,
-        alt: 'Blog Topics — Ahnaf An Nafee',
-        type: 'image/png'
-      }
-    ],
+    url: TOPICS_URL,
+    siteName: SITE_NAME,
+    images: [{ url: topicsOgImage, width: 1200, height: 630, alt: TOPICS_OG_ALT, type: 'image/png' }],
     locale: 'en_US',
     type: 'website'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Topics — Blog | Ahnaf An Nafee',
+    title: `Topics — Blog | ${SITE_NAME}`,
     description: 'Browse blog posts by topic.',
-    site: '@ahnaf_nafee',
-    creator: '@ahnaf_nafee',
-    images: [{ url: topicsOgImage, alt: 'Blog Topics — Ahnaf An Nafee' }]
+    site: TWITTER_HANDLE,
+    creator: TWITTER_HANDLE,
+    images: [{ url: topicsOgImage, alt: TOPICS_OG_ALT }]
   }
 }
 
@@ -77,8 +72,8 @@ export default async function TopicsIndexPage() {
     <AppLayoutPage>
       <Breadcrumbs
         items={[
-          { name: 'Blog', href: 'https://www.ahnafnafee.dev/blog' },
-          { name: 'Topics', href: 'https://www.ahnafnafee.dev/blog/topics' }
+          { name: 'Blog', href: `${SITE_URL}/blog` },
+          { name: 'Topics', href: TOPICS_URL }
         ]}
       />
       <Hero title='Topics' description='Browse blog posts by topic.' />

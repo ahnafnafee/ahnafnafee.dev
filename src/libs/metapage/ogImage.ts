@@ -1,7 +1,11 @@
+import { SITE_URL } from '@/libs/constants/site'
 import type { genOgImagePayload } from 'me'
 
 export const generateOgImage = (payload: genOgImagePayload) => {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.ahnafnafee.dev'
+  // Read NEXT_PUBLIC_SITE_URL at call-time so per-request overrides and tests
+  // can stub the host without restarting the module. SITE_URL is the
+  // canonical fallback (resolved once at module load).
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || SITE_URL
   // Auto cache-bust per deployment: prefer explicit env, then Vercel commit SHA, then fallback
   const version =
     process.env.NEXT_PUBLIC_OG_VERSION ||

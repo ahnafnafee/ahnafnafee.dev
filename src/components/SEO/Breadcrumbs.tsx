@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { SITE_URL } from '@/libs/constants/site'
 
 export interface BreadcrumbItem {
   name: string
@@ -18,7 +19,7 @@ interface BreadcrumbsProps {
 export function Breadcrumbs({ items }: BreadcrumbsProps) {
   // Always include Home as the first item
   const allItems: BreadcrumbItem[] = [
-    { name: 'Home', href: 'https://www.ahnafnafee.dev' },
+    { name: 'Home', href: SITE_URL },
     ...items
   ]
 
@@ -75,7 +76,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
  */
 export function generateBreadcrumbJsonLd(items: BreadcrumbItem[]) {
   const allItems: BreadcrumbItem[] = [
-    { name: 'Home', href: 'https://www.ahnafnafee.dev' },
+    { name: 'Home', href: SITE_URL },
     ...items
   ]
 

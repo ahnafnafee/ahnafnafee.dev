@@ -6,7 +6,9 @@ const fs = require('fs')
 const path = require('path')
 const matter = require('gray-matter')
 
-const BASE_URL = 'https://www.ahnafnafee.dev'
+// Mirrors src/libs/constants/site.ts. Override via NEXT_PUBLIC_SITE_URL when
+// generating for a non-canonical host (preview deploys, university mirror).
+const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL || '').trim() || 'https://www.ahnafnafee.dev'
 const OUTPUT = path.join(__dirname, '..', 'public', 'llms.txt')
 
 function readMdxEntries(dir) {

@@ -2,11 +2,16 @@ import { PortfolioPageClient } from '@/components/portfolio/PortfolioPageClient'
 import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
 import { getContents } from '@/services'
 import { getNewestPortfolio } from '@/libs/sorters'
+import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import type { Portfolio } from 'me'
 import type { Metadata } from 'next'
 
+const PORTFOLIO_URL = `${SITE_URL}/portfolio`
+const PORTFOLIO_OG_IMAGE = 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-portfolio.png?tr=w-1200,h-630'
+const PORTFOLIO_OG_ALT = `Portfolio - ${SITE_NAME} - AI & 3D Graphics Projects`
+
 export const metadata: Metadata = {
-  title: 'Portfolio - Ahnaf An Nafee',
+  title: `Portfolio - ${SITE_NAME}`,
   description:
     "Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!",
   keywords: [
@@ -57,39 +62,28 @@ export const metadata: Metadata = {
     'ahnafnafee GitHub'
   ],
   alternates: {
-    canonical: 'https://www.ahnafnafee.dev/portfolio'
+    canonical: PORTFOLIO_URL
   },
   openGraph: {
-    title: 'Portfolio - Ahnaf An Nafee',
+    title: `Portfolio - ${SITE_NAME}`,
     description:
       "Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!",
-    url: 'https://www.ahnafnafee.dev/portfolio',
-    siteName: 'Ahnaf An Nafee',
+    url: PORTFOLIO_URL,
+    siteName: SITE_NAME,
     images: [
-      {
-        url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-portfolio.png?tr=w-1200,h-630',
-        width: 1200,
-        height: 630,
-        alt: 'Portfolio - Ahnaf An Nafee - AI & 3D Graphics Projects',
-        type: 'image/png'
-      }
+      { url: PORTFOLIO_OG_IMAGE, width: 1200, height: 630, alt: PORTFOLIO_OG_ALT, type: 'image/png' }
     ],
     locale: 'en_US',
     type: 'website'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Portfolio - Ahnaf An Nafee',
+    title: `Portfolio - ${SITE_NAME}`,
     description:
       "Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!",
-    site: '@ahnaf_nafee',
-    creator: '@ahnaf_nafee',
-    images: [
-      {
-        url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-portfolio.png?tr=w-1200,h-630',
-        alt: 'Portfolio - Ahnaf An Nafee - AI & 3D Graphics Projects'
-      }
-    ]
+    site: TWITTER_HANDLE,
+    creator: TWITTER_HANDLE,
+    images: [{ url: PORTFOLIO_OG_IMAGE, alt: PORTFOLIO_OG_ALT }]
   }
 }
 
@@ -123,18 +117,8 @@ export default async function PortfolioPage() {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: 'https://www.ahnafnafee.dev'
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Portfolio',
-        item: 'https://www.ahnafnafee.dev/portfolio'
-      }
+      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+      { '@type': 'ListItem', position: 2, name: 'Portfolio', item: PORTFOLIO_URL }
     ]
   }
 

@@ -80,8 +80,9 @@ module.exports = {
   generateRobotsTxt: !isStaticExport,
   robotsTxtOptions: {
     policies: [
-      { userAgent: '*', allow: '/' },
-      { userAgent: '*', disallow: ['/api/', '/_next/', '/static/'] },
+      // Single combined wildcard record so crawlers that only honor the first
+      // matching User-agent don't miss the Disallow directives.
+      { userAgent: '*', allow: '/', disallow: ['/api/', '/_next/', '/static/'] },
       // AI / LLM crawlers — explicitly allow each so they don't fall back to
       // wildcard rules and so we have a single source of truth.
       { userAgent: 'GPTBot', allow: '/' },

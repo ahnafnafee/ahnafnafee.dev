@@ -5,6 +5,7 @@ import { Hero } from '@/components/UI/templates/Hero'
 import { generateOgImage } from '@/libs/metapage'
 import { getContents } from '@/services'
 import { getNewestBlog } from '@/libs/sorters'
+import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
@@ -61,32 +62,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { topic } = await params
   const topics = await getAllTopics()
   const label = topics.get(topic) ?? titleCase(topic)
-  const url = `https://www.ahnafnafee.dev/blog/topics/${topic}`
+  const url = `${SITE_URL}/blog/topics/${topic}`
   const ogImage = generateOgImage({
     title: `${label} — Blog`,
     subTitle: `Posts tagged ${label}`,
     theme: 'dark'
   })
-  const description = `Posts tagged ${label} from Ahnaf An Nafee's blog: AI, 3D graphics, software engineering, and research.`
+  const description = `Posts tagged ${label} from ${SITE_NAME}'s blog: AI, 3D graphics, software engineering, and research.`
+  const ogTitle = `${label} — Blog Topics | ${SITE_NAME}`
 
   return {
     title: `${label} — Blog Topics`,
     description,
     alternates: { canonical: url },
     openGraph: {
-      title: `${label} — Blog Topics | Ahnaf An Nafee`,
+      title: ogTitle,
       description,
       url,
-      siteName: 'Ahnaf An Nafee',
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: `${label} — Blog Topics | Ahnaf An Nafee`,
-          type: 'image/png'
-        }
-      ],
+      siteName: SITE_NAME,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: ogTitle, type: 'image/png' }],
       locale: 'en_US',
       type: 'website'
     },
@@ -94,8 +88,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: `${label} — Blog Topics`,
       description,
-      site: '@ahnaf_nafee',
-      creator: '@ahnaf_nafee',
+      site: TWITTER_HANDLE,
+      creator: TWITTER_HANDLE,
       images: [{ url: ogImage, alt: `${label} — Blog Topics` }]
     }
   }
@@ -108,7 +102,7 @@ export default async function TopicPage({ params }: Props) {
   if (!label) notFound()
 
   const posts = await getPostsForTopic(topic)
-  const url = `https://www.ahnafnafee.dev/blog/topics/${topic}`
+  const url = `${SITE_URL}/blog/topics/${topic}`
 
   const collectionJsonLd = {
     '@context': 'https://schema.org',
@@ -116,10 +110,10 @@ export default async function TopicPage({ params }: Props) {
     '@id': `${url}#collection`,
     name: `${label} — Blog Topics`,
     url,
-    description: `Posts tagged ${label} from Ahnaf An Nafee's blog.`,
+    description: `Posts tagged ${label} from ${SITE_NAME}'s blog.`,
     isPartOf: {
       '@type': 'WebSite',
-      url: 'https://www.ahnafnafee.dev'
+      url: SITE_URL
     },
     mainEntity: {
       '@type': 'ItemList',
@@ -127,7 +121,7 @@ export default async function TopicPage({ params }: Props) {
       itemListElement: posts.map((p, i) => ({
         '@type': 'ListItem',
         position: i + 1,
-        url: `https://www.ahnafnafee.dev/blog/${p.slug}`,
+        url: `${SITE_URL}/blog/${p.slug}`,
         name: p.title
       }))
     }
@@ -138,8 +132,8 @@ export default async function TopicPage({ params }: Props) {
       <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }} />
       <Breadcrumbs
         items={[
-          { name: 'Blog', href: 'https://www.ahnafnafee.dev/blog' },
-          { name: 'Topics', href: 'https://www.ahnafnafee.dev/blog/topics' },
+          { name: 'Blog', href: `${SITE_URL}/blog` },
+          { name: 'Topics', href: `${SITE_URL}/blog/topics` },
           { name: label, href: url }
         ]}
       />

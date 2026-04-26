@@ -93,6 +93,14 @@ const config = {
 		remotePatterns: [
 			{
 				protocol: "https",
+				hostname: "www.ahnafnafee.dev",
+			},
+			{
+				protocol: "https",
+				hostname: "ahnafnafee.dev",
+			},
+			{
+				protocol: "https",
 				hostname: "cdn.sanity.io",
 			},
 			{
