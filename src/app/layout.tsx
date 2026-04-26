@@ -60,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           { '@type': 'SiteNavigationElement', name: 'Home', url: SITE_URL },
           { '@type': 'SiteNavigationElement', name: 'Blog', url: `${SITE_URL}/blog` },
           { '@type': 'SiteNavigationElement', name: 'Portfolio', url: `${SITE_URL}/portfolio` },
+          { '@type': 'SiteNavigationElement', name: 'Research', url: `${SITE_URL}/research` },
           { '@type': 'SiteNavigationElement', name: 'Resume', url: `${SITE_URL}/resume` }
         ]
       }

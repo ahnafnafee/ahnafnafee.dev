@@ -12,6 +12,10 @@ const APP_ROUTE = [
     name: 'Portfolio'
   },
   {
+    path: '/research',
+    name: 'Research'
+  },
+  {
     path: '/resume',
     name: 'Resume'
   }

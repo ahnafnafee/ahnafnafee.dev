@@ -2,15 +2,17 @@ import { Footer, SocialHome } from '@/components/UI/common'
 import { ContentImage } from '@/components/content'
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 import { BlogItem } from '@/components/content/blog/BlogItem'
+import { ResearchItem } from '@/components/content/research/ResearchItem'
 
 import { getContents } from '@/services'
-import { getNewestPortfolio, getNewestBlog } from '@/libs/sorters'
+import { getContentHeaders } from '@/services/content'
+import { getNewestPortfolio, getNewestBlog, getNewestResearch } from '@/libs/sorters'
 import { getPersonNode } from '@/libs/seo/personSchema'
 import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import readingTime from 'reading-time'
 import Link from 'next/link'
 
-import type { Portfolio, Blog } from 'me'
+import type { Portfolio, Blog, Research } from 'me'
 import type { Metadata } from 'next'
 
 const HOME_OG_IMAGE =
@@ -181,9 +183,25 @@ async function getPortfolios() {
   }
 }
 
+async function getFeaturedResearch(): Promise<Research[]> {
+  try {
+    const entries = await getContentHeaders<Research>('/research')
+    return entries
+      .map((r) => r.header)
+      .filter((r) => r.featured)
+      .sort(getNewestResearch)
+  } catch (error) {
+    console.warn('Failed to load research:', error)
+    return []
+  }
+}
+
 export default async function HomePage() {
-  const portfolios = await getPortfolios()
-  const latestBlog = await getLatestBlog()
+  const [portfolios, latestBlog, featuredResearch] = await Promise.all([
+    getPortfolios(),
+    getLatestBlog(),
+    getFeaturedResearch()
+  ])
 
   return (
     <>
@@ -283,6 +301,20 @@ export default async function HomePage() {
               Fresh thoughts on AI, graphics, and tech. <Link href="/blog" className="text-purple-600 dark:text-purple-400 hover:underline">Read all blogs</Link>
             </p>
             <BlogItem {...latestBlog} />
+          </section>
+        )}
+
+        {featuredResearch.length > 0 && (
+          <section className='pt-8 pb-4 border-t border-gray-200 dark:border-gray-800'>
+            <h3 className='mb-1 md:mb-3 font-bold text-2xl tracking-tight text-black dark:text-white'>Featured Research</h3>
+            <p className='mb-6 md:mb-8 text-gray-600 dark:text-gray-400'>
+              Papers and projects at the intersection of AI and 3D computer graphics. <Link href="/research" className="text-purple-600 dark:text-purple-400 hover:underline">View all research</Link>
+            </p>
+            <div className='flex flex-col'>
+              {featuredResearch.slice(0, 2).map((entry, i) => (
+                <ResearchItem key={entry.slug} {...entry} priority={i === 0} />
+              ))}
+            </div>
           </section>
         )}
 

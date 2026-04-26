@@ -223,6 +223,12 @@ const config = {
 			},
 
 			{
+				source: "/blog/mesh-decimation-benchmark",
+				destination: "/research/mesh-decimation-benchmark",
+				permanent: true,
+			},
+
+			{
 				source: "/tags",
 				destination: "/blog/topics",
 				permanent: true,

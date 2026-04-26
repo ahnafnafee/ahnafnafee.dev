@@ -1,27 +1,81 @@
 ---
-title: 'Mesh Decimation Benchmark: QEM vs. Vertex Clustering'
-summary: 'A rigorous statistical comparison of mesh decimation algorithms using Python and PyMeshLab. Discover which algorithm wins for speed vs. fidelity at different reduction levels.'
-featured: true
-author_name: 'Ahnaf An Nafee'
-github_username: 'ahnafnafee'
+title: 'Performance Analysis of 3D Mesh Simplification Algorithms: QEM vs. Vertex Clustering on CAD and Organic Models'
+summary: 'A 2×2×2 factorial study comparing Quadric Error Metrics and Vertex Clustering across CAD and organic meshes — Clustering is 60–80× faster, while QEM trades speed for fidelity that collapses on sparse CAD geometry at 90% reduction.'
+abstract: >-
+  High-fidelity 3D models often exceed the rendering budgets of real-time applications, necessitating
+  effective mesh simplification algorithms. However, current benchmarks often overlook the impact of
+  input mesh topology, specifically the distinction between structured CAD models and unstructured
+  organic scans. This paper presents a comparative analysis of two fundamental simplification
+  algorithms: Quadric Error Metrics (QEM) and Vertex Clustering. We evaluate these algorithms across
+  two distinct datasets (ModelNet40 for CAD and Thingi10K for Organic models) at varying levels of
+  decimation (50% and 90%). Using a rigorous factorial experimental design, we quantify Execution
+  Time and Geometric Fidelity (Hausdorff Distance). We demonstrate that Vertex Clustering is orders
+  of magnitude faster (p < 0.001) and remarkably stable across all datasets. Conversely, while QEM
+  offers superior accuracy at moderate reduction levels, we identify a significant performance
+  degradation on organic meshes and a catastrophic loss of geometric fidelity on sparse CAD models
+  at high decimation levels. Our findings establish that the optimal choice of simplification
+  strategy depends heavily on the source topology and the target decimation ratio.
+authors:
+  - name: 'Ahnaf An Nafee'
+    url: 'https://www.ahnafnafee.dev'
+    email: 'aannafee@gmu.edu'
+    affiliations: [1]
+    corresponding: true
+affiliations:
+  - name: 'George Mason University'
+    location: 'Fairfax, Virginia, USA'
+    url: 'https://www.gmu.edu'
+venue:
+  name: 'CS700 — Computer Geometry, Course Project'
+  short: 'GMU CS700'
+  year: 2025
+  status: 'tech-report'
 published: '12/08/2025'
-topics: ['3D Graphics', 'Research', 'Computer Graphics', 'Computer Geometry', 'Mesh Simplification']
-keywords: ['mesh decimation', 'QEM', 'quadric error metrics', 'vertex clustering', 'PyMeshLab', 'statistical analysis', 'ANOVA', 'Hausdorff distance', '3D mesh simplification', 'computer graphics research', 'mesh optimization', 'polygon reduction', 'ModelNet40', 'Thingi10k']
+featured: true
+category: 'graphics'
+topics: ['3D Graphics', 'Computer Graphics', 'Mesh Simplification', 'Computer Geometry', 'Statistical Analysis']
+keywords:
+  - mesh decimation
+  - QEM
+  - quadric error metrics
+  - vertex clustering
+  - PyMeshLab
+  - statistical analysis
+  - ANOVA
+  - Hausdorff distance
+  - 3D mesh simplification
+  - computer graphics research
+  - mesh optimization
+  - polygon reduction
+  - ModelNet40
+  - Thingi10k
+  - level of detail
+  - performance analysis
 thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/mesh-decimation.jpg'
+teaser: 'https://raw.githubusercontent.com/ahnafnafee/mesh-decimation-benchmark/main/Report/figures/teaser.png'
+teaserCaption: 'Visual comparison of decimation results. Top row: clean CAD models (ModelNet40). Bottom row: organic scanned meshes (Thingi10k). QEM struggles with CAD topology at 90% reduction while Clustering preserves global shape.'
+links:
+  paper: 'https://www.researchgate.net/publication/400103838_Performance_Analysis_of_3D_Mesh_Simplification_Algorithms_QEM_vs_Vertex_Clustering_on_CAD_and_Organic_Models'
+  code: 'https://github.com/ahnafnafee/mesh-decimation-benchmark'
+  researchGate: 'https://www.researchgate.net/publication/400103838_Performance_Analysis_of_3D_Mesh_Simplification_Algorithms_QEM_vs_Vertex_Clustering_on_CAD_and_Organic_Models'
+identifiers:
+  researchGateId: '400103838'
+bibtex: |
+  @misc{annafee2025meshdecimation,
+    author      = {An Nafee, Ahnaf},
+    title       = {Performance Analysis of 3D Mesh Simplification Algorithms:
+                   QEM vs. Vertex Clustering on CAD and Organic Models},
+    year        = {2025},
+    institution = {George Mason University},
+    note        = {CS700 Course Project},
+    url         = {https://github.com/ahnafnafee/mesh-decimation-benchmark}
+  }
 related: []
 ---
 
 This study provides empirical evidence that mesh simplification algorithm selection must be informed by **both** the source topology and the target decimation ratio. Given the widespread use of mesh decimation in game engines, VR/AR applications, and 3D printing pipelines, understanding when to use which algorithm is critical.
 
-<a href="https://github.com/ahnafnafee/mesh-decimation-benchmark" target="_blank" rel="noopener noreferrer">GitHub Repository</a> · <a href="https://www.researchgate.net/publication/400103838_Performance_Analysis_of_3D_Mesh_Simplification_Algorithms_QEM_vs_Vertex_Clustering_on_CAD_and_Organic_Models" target="_blank" rel="noopener noreferrer">Full Report (PDF)</a>
-
 ---
-
-<img src="https://raw.githubusercontent.com/ahnafnafee/mesh-decimation-benchmark/main/Report/figures/teaser.png" alt="Comparison of mesh decimation algorithms showing original mesh and results from QEM and Vertex Clustering at different reduction levels" className="w-full rounded-lg my-6" />
-
-<p className="text-center text-sm text-gray-500 dark:text-gray-400 -mt-4 mb-8">
-  Figure 1: Visual comparison of decimation results. Top row shows Clean CAD models (ModelNet40), bottom row shows Organic Scanned meshes (Thingi10k). QEM struggles with CAD topology at 90% reduction while Clustering maintains global shape.
-</p>
 
 ## Key Findings
 
@@ -162,22 +216,3 @@ The "one-size-fits-all" approach is suboptimal. Future pipelines should incorpor
 - **Non-normality**: Shapiro-Wilk tests revealed deviations ($W \approx 0.53$, $p < 0.001$). ANOVA is generally robust, but p-values should be interpreted with caution.
 - **Sample Size**: $N=120$ (30 models × 2 algorithms × 2 decimation levels)
 - **Single Error Metric**: Only Hausdorff Distance measured
-
----
-
-## Resources
-
-- [GitHub Repository](https://github.com/ahnafnafee/mesh-decimation-benchmark) — Full source code
-- [Full Report (PDF)](https://www.researchgate.net/publication/400103838_Performance_Analysis_of_3D_Mesh_Simplification_Algorithms_QEM_vs_Vertex_Clustering_on_CAD_and_Organic_Models) — Complete paper
-
-### Citation
-
-```text
-@misc{annafee2025meshdecimation,
-  author = {An Nafee, Ahnaf},
-  title = {Mesh Decimation Benchmark: A Statistical Comparison of QEM and Vertex Clustering},
-  year = {2025},
-  publisher = {GitHub},
-  url = {https://github.com/ahnafnafee/mesh-decimation-benchmark}
-}
-```
