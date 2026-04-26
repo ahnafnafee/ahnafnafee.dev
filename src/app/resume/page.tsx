@@ -114,6 +114,14 @@ export default function ResumePage() {
     name: `Resume — ${SITE_NAME}`,
     description:
       'PhD student researching AI-driven 3D content generation and graphics pipelines at George Mason University.',
+    inLanguage: 'en-US',
+    primaryImageOfPage: {
+      '@type': 'ImageObject',
+      url: RESUME_OG_IMAGE,
+      width: 1200,
+      height: 630,
+      caption: RESUME_OG_ALT
+    },
     mainEntity: {
       ...PERSON_REFERENCE,
       jobTitle: 'PhD Student in Computer Science',

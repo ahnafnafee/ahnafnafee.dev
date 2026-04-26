@@ -88,21 +88,61 @@ async function getBlogData() {
 export default async function BlogPage() {
   const allBlogs = await getBlogData()
 
-  // Breadcrumb structured data for search engines
-  const breadcrumbJsonLd = {
+  const webpageId = `${BLOG_URL}#webpage`
+  const breadcrumbId = `${BLOG_URL}#breadcrumb`
+
+  // Single @graph: CollectionPage + BreadcrumbList. The explicit
+  // primaryImageOfPage tells Google Images "the canonical image for /blog is
+  // this branded card, not the post thumbnails rendered in BlogItem cards" —
+  // which fixes the case where Google Images was attributing post-detail
+  // thumbnails to the /blog URL instead of the post detail.
+  const graphJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Blog', item: BLOG_URL }
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        '@id': webpageId,
+        url: BLOG_URL,
+        name: `Blog - ${SITE_NAME}`,
+        description:
+          'Thoughts on Artificial Intelligence, Computer Graphics, and Software Engineering.',
+        inLanguage: 'en-US',
+        isPartOf: { '@type': 'WebSite', url: SITE_URL },
+        primaryImageOfPage: {
+          '@type': 'ImageObject',
+          url: BLOG_OG_IMAGE,
+          width: 1200,
+          height: 630,
+          caption: BLOG_OG_ALT
+        },
+        breadcrumb: { '@id': breadcrumbId },
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: allBlogs.length,
+          itemListElement: allBlogs.slice(0, 20).map((post, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            url: `${SITE_URL}/blog/${post.slug}`,
+            name: post.title
+          }))
+        }
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': breadcrumbId,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: BLOG_URL }
+        ]
+      }
     ]
   }
 
   return (
     <AppLayoutPage>
       <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }}
       />
       <BlogPageClient allBlogs={allBlogs} />
     </AppLayoutPage>

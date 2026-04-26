@@ -62,6 +62,36 @@ function loadFrontmatterMeta() {
 const frontmatterMeta = loadFrontmatterMeta()
 const buildTime = new Date().toISOString()
 
+// Canonical image per top-level URL. Mirrors the OG images each list page
+// declares in its metadata. Emitting <image:image> entries for these URLs in
+// sitemap.xml gives Google an explicit "this is the canonical image for /blog"
+// signal — otherwise the crawler picks whichever image is most prominent on
+// the rendered page (e.g. an individual post's thumbnail) and attributes it
+// to the list URL.
+const STATIC_PAGE_IMAGES = {
+  '/': {
+    image:
+      'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747',
+    title: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ GMU'
+  },
+  '/blog': {
+    image: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-blog.png?tr=w-1200,h-630',
+    title: 'Blog - Ahnaf An Nafee - Thoughts on AI, 3D Graphics, and Technology'
+  },
+  '/portfolio': {
+    image: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-portfolio.png?tr=w-1200,h-630',
+    title: 'Portfolio - Ahnaf An Nafee - AI & 3D Graphics Projects'
+  },
+  '/research': {
+    image: `${siteUrl}/api/og?title=Research&subtitle=Ahnaf%20An%20Nafee&theme=dark`,
+    title: 'Research - Ahnaf An Nafee - AI & 3D Computer Graphics'
+  },
+  '/resume': {
+    image: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-resume.png?tr=w-1200,h-630',
+    title: 'Resume - Ahnaf An Nafee - PhD AI & 3D Graphics Researcher'
+  }
+}
+
 function priorityFor(path) {
   if (path === '/') return { priority: 1.0, changefreq: 'weekly' }
   if (path === '/resume') return { priority: 0.9, changefreq: 'monthly' }
@@ -114,18 +144,28 @@ module.exports = {
   transform: async (config, urlPath) => {
     const { priority, changefreq } = priorityFor(urlPath)
     const meta = frontmatterMeta.get(urlPath)
+    const staticImage = STATIC_PAGE_IMAGES[urlPath]
     const entry = {
       loc: urlPath,
       changefreq,
       priority,
       lastmod: (meta && meta.lastmod) || buildTime
     }
-    if (meta && meta.image) {
+    // Resolve the canonical image for this URL: frontmatter first (per-post
+    // thumbnails), then a static map for the top-level pages.
+    const imageMeta = (meta && meta.image)
+      ? { url: meta.image, title: meta.title || urlPath }
+      : staticImage
+        ? { url: staticImage.image, title: staticImage.title }
+        : null
+    if (imageMeta) {
       // next-sitemap reads `image.loc.href`, so wrap in a URL object.
       // Skip silently if the URL is malformed (don't block the build).
       try {
-        entry.images = [{ loc: new URL(meta.image), title: meta.title || urlPath }]
-      } catch {}
+        entry.images = [{ loc: new URL(imageMeta.url), title: imageMeta.title }]
+      } catch (err) {
+        console.warn(`[sitemap] image URL invalid for ${urlPath}:`, err.message)
+      }
     }
     return entry
   },

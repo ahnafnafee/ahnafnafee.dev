@@ -66,12 +66,48 @@ async function getResearchData(): Promise<Research[]> {
 export default async function ResearchPage() {
   const allResearch = await getResearchData()
 
-  const breadcrumbJsonLd = {
+  const webpageId = `${RESEARCH_URL}#webpage`
+  const breadcrumbId = `${RESEARCH_URL}#breadcrumb`
+
+  const graphJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Research', item: RESEARCH_URL }
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        '@id': webpageId,
+        url: RESEARCH_URL,
+        name: `Research - ${SITE_NAME}`,
+        description:
+          'Papers, course projects, and ongoing investigations at the intersection of AI and 3D computer graphics.',
+        inLanguage: 'en-US',
+        isPartOf: { '@type': 'WebSite', url: SITE_URL },
+        primaryImageOfPage: {
+          '@type': 'ImageObject',
+          url: RESEARCH_OG_IMAGE,
+          width: 1200,
+          height: 630,
+          caption: RESEARCH_OG_ALT
+        },
+        breadcrumb: { '@id': breadcrumbId },
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: allResearch.length,
+          itemListElement: allResearch.slice(0, 20).map((r, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            url: `${SITE_URL}/research/${r.slug}`,
+            name: r.title
+          }))
+        }
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': breadcrumbId,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Research', item: RESEARCH_URL }
+        ]
+      }
     ]
   }
 
@@ -79,7 +115,7 @@ export default async function ResearchPage() {
     <AppLayoutPage>
       <script
         type='application/ld+json'
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }}
       />
       <Hero
         title='Research'

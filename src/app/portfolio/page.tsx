@@ -112,21 +112,56 @@ async function getPortfolioData() {
 export default async function PortfolioPage() {
   const { portfolios, softwarePortfolios, gamePortfolios } = await getPortfolioData()
 
-  // Breadcrumb structured data for search engines
-  const breadcrumbJsonLd = {
+  const webpageId = `${PORTFOLIO_URL}#webpage`
+  const breadcrumbId = `${PORTFOLIO_URL}#breadcrumb`
+
+  const graphJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Portfolio', item: PORTFOLIO_URL }
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        '@id': webpageId,
+        url: PORTFOLIO_URL,
+        name: `Portfolio - ${SITE_NAME}`,
+        description:
+          "Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!",
+        inLanguage: 'en-US',
+        isPartOf: { '@type': 'WebSite', url: SITE_URL },
+        primaryImageOfPage: {
+          '@type': 'ImageObject',
+          url: PORTFOLIO_OG_IMAGE,
+          width: 1200,
+          height: 630,
+          caption: PORTFOLIO_OG_ALT
+        },
+        breadcrumb: { '@id': breadcrumbId },
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: portfolios.length,
+          itemListElement: portfolios.slice(0, 20).map((p, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            url: `${SITE_URL}/portfolio/${p.slug}`,
+            name: p.title
+          }))
+        }
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': breadcrumbId,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Portfolio', item: PORTFOLIO_URL }
+        ]
+      }
     ]
   }
 
   return (
     <AppLayoutPage>
       <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }}
       />
       <PortfolioPageClient
         portfolios={portfolios}

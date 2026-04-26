@@ -16,11 +16,12 @@ type HeadingContentProps = {
   topics: string[]
   author_name?: string
   github_username?: string
+  thumbnail?: string
 }
 
 export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (props) => {
   const [isCopied, setIsCopied] = useState(false)
-  
+
   const handleShare = () => {
     if (typeof window !== 'undefined') {
       const url = window.location.href
@@ -38,8 +39,26 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
 
   return (
     <section className='flex flex-col items-center max-w-2xl mx-auto w-full'>
+      {/* Hero thumbnail. Rendering the same image that BlogItem uses on /blog
+          gives the post detail page a strong claim as the canonical landing
+          for that image — Google Images links should resolve to the post
+          rather than the list page. */}
+      {props.thumbnail && (
+        <figure className='w-full mt-10 mb-6 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800/40'>
+          <WrappedImage
+            src={props.thumbnail}
+            alt={props.title}
+            width={1200}
+            height={630}
+            sizes='(max-width: 768px) 100vw, 768px'
+            priority
+            className='w-full h-auto object-cover'
+          />
+        </figure>
+      )}
+
       {/* Title */}
-      <h1 className={twclsx('text-center text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-gray-900 dark:text-white leading-tight mt-10')}>
+      <h1 className={twclsx('text-center text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-gray-900 dark:text-white leading-tight', !props.thumbnail && 'mt-10')}>
         {props.title}
       </h1>
 

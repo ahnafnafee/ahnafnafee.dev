@@ -23,8 +23,20 @@ const HOME_TITLE = `${SITE_NAME} - PhD Student in AI & 3D Graphics | DCXR Lab @ 
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'ProfilePage',
+  '@id': `${SITE_URL}/#webpage`,
+  url: SITE_URL,
+  name: HOME_TITLE,
+  inLanguage: 'en-US',
   dateCreated: '2022-12-08T00:00:00-05:00',
   dateModified: new Date().toISOString(),
+  isPartOf: { '@type': 'WebSite', url: SITE_URL },
+  primaryImageOfPage: {
+    '@type': 'ImageObject',
+    url: HOME_OG_IMAGE,
+    width: 1200,
+    height: 630,
+    caption: HOME_OG_ALT
+  },
   mainEntity: getPersonNode()
 }
 

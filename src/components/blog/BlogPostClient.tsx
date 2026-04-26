@@ -50,6 +50,7 @@ export function BlogPostClient({ header, children }: BlogPostClientProps) {
           title={header.title}
           author_name={header.author_name}
           github_username={header.github_username}
+          thumbnail={header.thumbnail}
         />
 
 
