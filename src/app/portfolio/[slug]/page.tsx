@@ -25,13 +25,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const res = await getContentBySlug<Portfolio>('/portfolio', slug)
   const header = res.header
+  const canonical = `https://www.ahnafnafee.dev/portfolio/${header.slug}`
 
   return {
     title: header.title,
     description: header.summary,
     keywords: header.stack,
     alternates: {
-      canonical: `https://www.ahnafnafee.dev/portfolio/${header.slug}`
+      canonical,
+      languages: {
+        'en-US': canonical,
+        'x-default': canonical
+      }
     },
     openGraph: {
       title: header.title,
@@ -45,8 +50,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             subTitle: header.summary
           }),
           width: 1200,
-          height: 600,
-          alt: `${header.title} - Ahnaf An Nafee Portfolio`
+          height: 630,
+          alt: `${header.title} - Ahnaf An Nafee Portfolio`,
+          type: 'image/png'
         }
       ],
       locale: 'en_US',
@@ -61,10 +67,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       site: '@ahnaf_nafee',
       creator: '@ahnaf_nafee',
       images: [
-        generateOgImage({
-          title: header.title,
-          subTitle: header.summary
-        })
+        {
+          url: generateOgImage({ title: header.title, subTitle: header.summary }),
+          alt: `${header.title} - Ahnaf An Nafee Portfolio`
+        }
       ]
     }
   }
@@ -74,56 +80,51 @@ export default async function PortfolioDetailPage({ params }: Props) {
   const { slug } = await params
   const res = await getContentBySlug<Portfolio>('/portfolio', slug)
   const header = res.header
-  const ogImage = generateOgImage({ title: header.title, subTitle: header.summary })
+  const pageUrl = `https://www.ahnafnafee.dev/portfolio/${header.slug}`
+  const projectId = `${pageUrl}#project`
+  const webpageId = `${pageUrl}#webpage`
+  const breadcrumbId = `${pageUrl}#breadcrumb`
 
-  // JSON-LD structured data for Google rich results
-  const jsonLd = {
+  // Single @graph: SoftwareSourceCode + WebPage + BreadcrumbList connected by @id.
+  const graphJsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'SoftwareSourceCode',
-    '@id': `https://www.ahnafnafee.dev/portfolio/${header.slug}#project`,
-    name: header.title,
-    description: header.summary,
-    image: header.image,
-    dateCreated: header.date,
-    dateModified: header.updated || header.date,
-    inLanguage: 'en-US',
-    author: {
-      '@type': 'Person',
-      '@id': 'https://www.ahnafnafee.dev/#person',
-      name: 'Ahnaf An Nafee',
-      url: 'https://www.ahnafnafee.dev'
-    },
-    programmingLanguage: header.stack,
-    ...(header.link.github && { codeRepository: header.link.github }),
-    ...(header.link.live && { url: header.link.live }),
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `https://www.ahnafnafee.dev/portfolio/${header.slug}`
-    }
-  }
-
-  // Breadcrumb structured data for navigation trails in search results
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
+    '@graph': [
       {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: 'https://www.ahnafnafee.dev'
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Portfolio',
-        item: 'https://www.ahnafnafee.dev/portfolio'
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
+        '@type': 'SoftwareSourceCode',
+        '@id': projectId,
         name: header.title,
-        item: `https://www.ahnafnafee.dev/portfolio/${header.slug}`
+        description: header.summary,
+        image: header.image,
+        dateCreated: header.date,
+        dateModified: header.updated || header.date,
+        inLanguage: 'en-US',
+        author: { '@id': 'https://www.ahnafnafee.dev/#person' },
+        programmingLanguage: header.stack,
+        ...(header.link.github && { codeRepository: header.link.github }),
+        ...(header.link.live && { url: header.link.live }),
+        mainEntityOfPage: { '@id': webpageId }
+      },
+      {
+        '@type': 'WebPage',
+        '@id': webpageId,
+        url: pageUrl,
+        name: header.title,
+        description: header.summary,
+        inLanguage: 'en-US',
+        datePublished: header.date,
+        dateModified: header.updated || header.date,
+        isPartOf: { '@type': 'WebSite', url: 'https://www.ahnafnafee.dev' },
+        primaryImageOfPage: { '@type': 'ImageObject', url: header.image },
+        breadcrumb: { '@id': breadcrumbId }
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': breadcrumbId,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.ahnafnafee.dev' },
+          { '@type': 'ListItem', position: 2, name: 'Portfolio', item: 'https://www.ahnafnafee.dev/portfolio' },
+          { '@type': 'ListItem', position: 3, name: header.title, item: pageUrl }
+        ]
       }
     ]
   }
@@ -131,12 +132,8 @@ export default async function PortfolioDetailPage({ params }: Props) {
   return (
     <AppLayoutPage>
       <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        type='application/ld+json'
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }}
       />
       <BackToTop />
 

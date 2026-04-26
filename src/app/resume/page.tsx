@@ -1,4 +1,5 @@
 import { ResumePageClient } from '@/components/resume/ResumePageClient'
+import { getPersonNode } from '@/libs/seo/personSchema'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -60,6 +61,9 @@ export const metadata: Metadata = {
     'Modern DevOps principles',
     'ahnafnafee.dev resume'
   ],
+  alternates: {
+    canonical: 'https://www.ahnafnafee.dev/resume'
+  },
   openGraph: {
     title: 'Resume - Ahnaf An Nafee | PhD AI & 3D Graphics Researcher',
     description:
@@ -70,12 +74,16 @@ export const metadata: Metadata = {
       {
         url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-resume.png?tr=w-1200,h-630',
         width: 1200,
-        height: 600,
-        alt: 'Resume - Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO'
+        height: 630,
+        alt: 'Resume - Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO',
+        type: 'image/png'
       }
     ],
     locale: 'en_US',
-    type: 'website'
+    type: 'profile',
+    firstName: 'Ahnaf',
+    lastName: 'Nafee',
+    username: 'ahnafnafee'
   },
   twitter: {
     card: 'summary_large_image',
@@ -85,11 +93,44 @@ export const metadata: Metadata = {
     site: '@ahnaf_nafee',
     creator: '@ahnaf_nafee',
     images: [
-      'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-resume.png?tr=w-1200,h-630'
+      {
+        url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-resume.png?tr=w-1200,h-630',
+        alt: 'Resume - Ahnaf An Nafee - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO'
+      }
     ]
   }
 }
 
 export default function ResumePage() {
-  return <ResumePageClient />
+  const profileJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    '@id': 'https://www.ahnafnafee.dev/resume#profile',
+    url: 'https://www.ahnafnafee.dev/resume',
+    name: 'Resume — Ahnaf An Nafee',
+    description:
+      'PhD student researching AI-driven 3D content generation and graphics pipelines at George Mason University.',
+    mainEntity: getPersonNode(),
+    isPartOf: {
+      '@type': 'WebSite',
+      url: 'https://www.ahnafnafee.dev'
+    }
+  }
+
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.ahnafnafee.dev' },
+      { '@type': 'ListItem', position: 2, name: 'Resume', item: 'https://www.ahnafnafee.dev/resume' }
+    ]
+  }
+
+  return (
+    <>
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <ResumePageClient />
+    </>
+  )
 }

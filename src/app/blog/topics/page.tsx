@@ -2,9 +2,16 @@ import { Breadcrumbs } from '@/components/SEO/Breadcrumbs'
 import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
 import { Hero } from '@/components/UI/templates/Hero'
 import { UnstyledLink } from '@/UI/links'
+import { generateOgImage } from '@/libs/metapage'
 import { getContents } from '@/services'
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
+
+const topicsOgImage = generateOgImage({
+  title: 'Blog Topics',
+  subTitle: 'Browse posts by topic',
+  theme: 'dark'
+})
 
 const slugifyTopic = (topic: string) =>
   topic
@@ -21,7 +28,25 @@ export const metadata: Metadata = {
     description: 'Browse blog posts by topic.',
     url: 'https://www.ahnafnafee.dev/blog/topics',
     siteName: 'Ahnaf An Nafee',
+    images: [
+      {
+        url: topicsOgImage,
+        width: 1200,
+        height: 630,
+        alt: 'Blog Topics — Ahnaf An Nafee',
+        type: 'image/png'
+      }
+    ],
+    locale: 'en_US',
     type: 'website'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Topics — Blog | Ahnaf An Nafee',
+    description: 'Browse blog posts by topic.',
+    site: '@ahnaf_nafee',
+    creator: '@ahnaf_nafee',
+    images: [{ url: topicsOgImage, alt: 'Blog Topics — Ahnaf An Nafee' }]
   }
 }
 

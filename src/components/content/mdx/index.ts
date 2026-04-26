@@ -3,6 +3,7 @@ import { Code } from './Code'
 import { ContentImage } from './ContentImage'
 import { FAQ } from './FAQ'
 import { HeadingFour, HeadingThree, HeadingTwo } from './Headings'
+import { HowTo } from './HowTo'
 import { KeyPoints } from './KeyPoints'
 import { MDXLink } from './MDXLink'
 import { MermaidLazy } from './MermaidLazy'
@@ -23,6 +24,7 @@ const MDXComponents = {
   ContentImage,
   Mermaid: MermaidLazy,
   FAQ,
+  HowTo,
   TLDR,
   KeyPoints,
   h2: HeadingTwo,
@@ -30,4 +32,16 @@ const MDXComponents = {
   h4: HeadingFour
 } as MDXRemoteProps['components']
 
-export { MDXComponents, Pre, Code, Blockquote, ContentImage, MermaidLazy as Mermaid, Table, FAQ, TLDR, KeyPoints }
+export {
+  MDXComponents,
+  Pre,
+  Code,
+  Blockquote,
+  ContentImage,
+  MermaidLazy as Mermaid,
+  Table,
+  FAQ,
+  HowTo,
+  TLDR,
+  KeyPoints
+}

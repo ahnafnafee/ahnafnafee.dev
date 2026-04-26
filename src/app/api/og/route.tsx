@@ -11,7 +11,6 @@ export async function GET(req: NextRequest) {
     const hasTitle = searchParams.has('title')
     const title = hasTitle ? searchParams.get('title')?.slice(0, 100) : 'Ahnaf An Nafee'
     const subtitle = searchParams.get('subtitle') || 'PhD Student in AI & 3D Graphics @ GMU | DCXR Lab'
-    const theme = searchParams.get('theme') || 'default'
 
     return new ImageResponse(
       (
@@ -175,7 +174,7 @@ export async function GET(req: NextRequest) {
       ),
       {
         width: 1200,
-        height: 600
+        height: 630
       }
     )
   } catch (err) {

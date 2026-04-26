@@ -7,6 +7,7 @@ import { getContents } from '@/services'
 import { getNewestPortfolio, getNewestBlog } from '@/libs/sorters'
 import { getPersonNode } from '@/libs/seo/personSchema'
 import readingTime from 'reading-time'
+import Link from 'next/link'
 
 import type { Portfolio, Blog } from 'me'
 import type { Metadata } from 'next'
@@ -38,6 +39,10 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: 'https://www.ahnafnafee.dev',
+    languages: {
+      'en-US': 'https://www.ahnafnafee.dev',
+      'x-default': 'https://www.ahnafnafee.dev'
+    },
     types: {
       'application/rss+xml': [
         { url: 'https://www.ahnafnafee.dev/rss.xml', title: 'Ahnaf An Nafee — Blog (RSS)' },
@@ -125,7 +130,7 @@ export const metadata: Metadata = {
       {
         url: 'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747',
         width: 1200,
-        height: 600,
+        height: 630,
         alt: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics at George Mason University | DCXR Lab',
         type: 'image/png'
       }
@@ -144,7 +149,12 @@ export const metadata: Metadata = {
       'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.',
     site: '@ahnaf_nafee',
     creator: '@ahnaf_nafee',
-    images: [`https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747`]
+    images: [
+      {
+        url: 'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747',
+        alt: 'Ahnaf An Nafee - PhD Student in AI & 3D Graphics at George Mason University | DCXR Lab'
+      }
+    ]
   }
 }
 
@@ -277,7 +287,7 @@ export default async function HomePage() {
           <section className='pt-8 pb-4 border-t border-gray-200 dark:border-gray-800'>
             <h3 className='mb-1 md:mb-3 font-bold text-2xl tracking-tight text-black dark:text-white'>Latest Blog</h3>
             <p className='mb-6 md:mb-8 text-gray-600 dark:text-gray-400'>
-              Fresh thoughts on AI, graphics, and tech. <a href="/blog" className="text-purple-600 dark:text-purple-400 hover:underline">Read all blogs</a>
+              Fresh thoughts on AI, graphics, and tech. <Link href="/blog" className="text-purple-600 dark:text-purple-400 hover:underline">Read all blogs</Link>
             </p>
             <BlogItem {...latestBlog} />
           </section>

@@ -18,13 +18,6 @@ type HeadingContentProps = {
   github_username?: string
 }
 
-const config: Intl.DateTimeFormatOptions = {
-  weekday: 'short',
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric'
-}
-
 export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (props) => {
   const [isCopied, setIsCopied] = useState(false)
   

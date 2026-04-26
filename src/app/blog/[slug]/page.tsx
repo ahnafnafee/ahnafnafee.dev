@@ -37,26 +37,33 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const header = res.header
     const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
     const modifiedTime = header.updated || header.published
+    const canonical = `https://www.ahnafnafee.dev/blog/${header.slug}`
+    const seeAlso = (header.related ?? []).map((s) => `https://www.ahnafnafee.dev/blog/${s}`)
 
     return {
       title: header.title,
       description: header.summary,
       keywords: header.keywords,
-      authors: [{ name: header.author_name }],
+      authors: [{ name: header.author_name, url: 'https://www.ahnafnafee.dev/resume' }],
       alternates: {
-        canonical: `https://www.ahnafnafee.dev/blog/${header.slug}`
+        canonical,
+        languages: {
+          'en-US': canonical,
+          'x-default': canonical
+        }
       },
       openGraph: {
         title: header.title,
         description: header.summary,
-        url: `https://www.ahnafnafee.dev/blog/${header.slug}`,
+        url: canonical,
         siteName: 'Ahnaf An Nafee',
         images: [
           {
             url: ogImage,
             width: 1200,
-            height: 600,
-            alt: header.title
+            height: 630,
+            alt: header.title,
+            type: 'image/png'
           }
         ],
         locale: 'en_US',
@@ -72,8 +79,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         description: header.summary,
         site: '@ahnaf_nafee',
         creator: '@ahnaf_nafee',
-        images: [ogImage]
-      }
+        images: [{ url: ogImage, alt: header.title }]
+      },
+      ...(seeAlso.length > 0 && {
+        other: {
+          'og:see_also': seeAlso
+        }
+      })
     }
   } catch {
     return {}
@@ -95,62 +107,56 @@ export default async function BlogPost({ params }: Props) {
     const keywordsList = header.keywords?.filter(Boolean) ?? []
     const adjacent = getAdjacentPosts(slug, allPosts)
 
-    // JSON-LD structured data for Google rich results
-    const jsonLd = {
-      '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      '@id': `https://www.ahnafnafee.dev/blog/${header.slug}#article`,
-      headline: header.title,
-      description: header.summary,
-      image: ogImage,
-      datePublished: header.published,
-      dateModified,
-      inLanguage: 'en-US',
-      isAccessibleForFree: true,
-      wordCount: stats.words,
-      timeRequired: `PT${Math.max(1, Math.round(stats.minutes))}M`,
-      author: {
-        '@type': 'Person',
-        '@id': 'https://www.ahnafnafee.dev/#person',
-        name: header.author_name,
-        url: 'https://www.ahnafnafee.dev'
-      },
-      publisher: {
-        '@type': 'Person',
-        '@id': 'https://www.ahnafnafee.dev/#person',
-        name: 'Ahnaf An Nafee',
-        url: 'https://www.ahnafnafee.dev'
-      },
-      mainEntityOfPage: {
-        '@type': 'WebPage',
-        '@id': `https://www.ahnafnafee.dev/blog/${header.slug}`
-      },
-      ...(keywordsList.length && { keywords: keywordsList.join(', ') }),
-      articleSection: header.topics?.[0] || 'Technology'
-    }
+    const pageUrl = `https://www.ahnafnafee.dev/blog/${header.slug}`
+    const articleId = `${pageUrl}#article`
+    const webpageId = `${pageUrl}#webpage`
+    const breadcrumbId = `${pageUrl}#breadcrumb`
 
-    // Breadcrumb structured data for navigation trails in search results
-    const breadcrumbJsonLd = {
+    // Single @graph emits BlogPosting + WebPage + BreadcrumbList as an
+    // interconnected entity graph (all referenced by @id). This is the pattern
+    // Google AI Mode + Perplexity prefer for source attribution.
+    const graphJsonLd = {
       '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
+      '@graph': [
         {
-          '@type': 'ListItem',
-          position: 1,
-          name: 'Home',
-          item: 'https://www.ahnafnafee.dev'
+          '@type': 'BlogPosting',
+          '@id': articleId,
+          headline: header.title,
+          description: header.summary,
+          image: ogImage,
+          datePublished: header.published,
+          dateModified,
+          inLanguage: 'en-US',
+          isAccessibleForFree: true,
+          wordCount: stats.words,
+          timeRequired: `PT${Math.max(1, Math.round(stats.minutes))}M`,
+          author: { '@id': 'https://www.ahnafnafee.dev/#person' },
+          publisher: { '@id': 'https://www.ahnafnafee.dev/#person' },
+          mainEntityOfPage: { '@id': webpageId },
+          ...(keywordsList.length && { keywords: keywordsList.join(', ') }),
+          articleSection: header.topics?.[0] || 'Technology'
         },
         {
-          '@type': 'ListItem',
-          position: 2,
-          name: 'Blog',
-          item: 'https://www.ahnafnafee.dev/blog'
-        },
-        {
-          '@type': 'ListItem',
-          position: 3,
+          '@type': 'WebPage',
+          '@id': webpageId,
+          url: pageUrl,
           name: header.title,
-          item: `https://www.ahnafnafee.dev/blog/${header.slug}`
+          description: header.summary,
+          inLanguage: 'en-US',
+          datePublished: header.published,
+          dateModified,
+          isPartOf: { '@type': 'WebSite', url: 'https://www.ahnafnafee.dev' },
+          primaryImageOfPage: { '@type': 'ImageObject', url: ogImage, width: 1200, height: 630 },
+          breadcrumb: { '@id': breadcrumbId }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          '@id': breadcrumbId,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.ahnafnafee.dev' },
+            { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.ahnafnafee.dev/blog' },
+            { '@type': 'ListItem', position: 3, name: header.title, item: pageUrl }
+          ]
         }
       ]
     }
@@ -158,12 +164,8 @@ export default async function BlogPost({ params }: Props) {
     return (
       <>
         <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }}
         />
         <main className='layout pb-4'>
           <BlogPostClient header={header}>

@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# Cancel any in-progress run for the same ref when a new commit lands.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Some MDX dates parse via toLocaleDateString — pin to UTC for deterministic output.
+  TZ: UTC
+  HUSKY: 0
+
+jobs:
+  validate:
+    name: Lint, type-check, test, build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack (required for Yarn 4)
+        run: corepack enable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Type-check
+        run: yarn type-check
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Unit + integration tests
+        run: yarn test
+
+      - name: Build (Next.js)
+        run: yarn build
+        env:
+          # Skip Vercel-specific env. The build only needs to compile + generate sitemap.
+          NEXT_PUBLIC_SITE_URL: https://www.ahnafnafee.dev
+          # PWA / service worker generation is fine on CI; no secrets required.
+          NEXT_TELEMETRY_DISABLED: '1'
+
+      - name: Validate JSON-LD on built output
+        run: yarn validate:json-ld
+
+      - name: Audit MDX alt text (warn-only)
+        run: yarn audit:alt-text
+        continue-on-error: true
+
+      - name: Upload build artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build-output
+          path: |
+            .next/
+            !.next/cache
+          retention-days: 3

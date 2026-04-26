@@ -4,7 +4,7 @@ import { UnstyledButton } from '@/UI/buttons'
 import { Mermaid } from './Mermaid'
 import { twclsx } from '@/libs/twclsx'
 
-import { useEffect, useRef, useState, isValidElement, Children, ReactNode, Suspense } from 'react'
+import { useEffect, useRef, useState, isValidElement, Children, Suspense } from 'react'
 import { HiCheck, HiClipboardCopy } from 'react-icons/hi'
 
 interface PreProps {
@@ -13,7 +13,7 @@ interface PreProps {
 }
 
 // Wrapper component that extracts mermaid content from DOM after render
-function MermaidCodeBlock({ children, language }: { children: React.ReactNode; language: string }) {
+function MermaidCodeBlock({ children }: { children: React.ReactNode }) {
   const codeRef = useRef<HTMLDivElement>(null)
   const [mermaidContent, setMermaidContent] = useState<string | null>(null)
   const [isExtracting, setIsExtracting] = useState(true)
@@ -101,9 +101,17 @@ export const Pre = ({ children, className }: PreProps) => {
   // Get language from children
   const language = getLanguageFromChildren(children)
 
+  // Hooks must always run in the same order — keep useEffect above any early
+  // return (rules-of-hooks). The effect is a no-op when isCopied stays false.
+  useEffect(() => {
+    if (!isCopied) return
+    const timer = setTimeout(() => setIsCopied(false), 1500)
+    return () => clearTimeout(timer)
+  }, [isCopied])
+
   // If it's a mermaid block, use the MermaidCodeBlock wrapper
   if (language.startsWith('mermaid')) {
-    return <MermaidCodeBlock language={language}>{children}</MermaidCodeBlock>
+    return <MermaidCodeBlock>{children}</MermaidCodeBlock>
   }
 
   const copyToClipboard = async () => {
@@ -112,12 +120,6 @@ export const Pre = ({ children, className }: PreProps) => {
       setIsCopied(true)
     }
   }
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsCopied(false), 1500)
-
-    return () => clearTimeout(timer)
-  }, [isCopied])
 
   const displayLanguage = className?.replace('language-', '').toUpperCase() || language?.toUpperCase() || ''
 

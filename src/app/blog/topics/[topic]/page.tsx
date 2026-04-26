@@ -2,6 +2,7 @@ import { Breadcrumbs } from '@/components/SEO/Breadcrumbs'
 import { BlogList } from '@/components/content/blog/BlogList'
 import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
 import { Hero } from '@/components/UI/templates/Hero'
+import { generateOgImage } from '@/libs/metapage'
 import { getContents } from '@/services'
 import { getNewestBlog } from '@/libs/sorters'
 import type { Blog } from 'me'
@@ -61,24 +62,41 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const topics = await getAllTopics()
   const label = topics.get(topic) ?? titleCase(topic)
   const url = `https://www.ahnafnafee.dev/blog/topics/${topic}`
+  const ogImage = generateOgImage({
+    title: `${label} — Blog`,
+    subTitle: `Posts tagged ${label}`,
+    theme: 'dark'
+  })
+  const description = `Posts tagged ${label} from Ahnaf An Nafee's blog: AI, 3D graphics, software engineering, and research.`
 
   return {
     title: `${label} — Blog Topics`,
-    description: `Posts tagged ${label} from Ahnaf An Nafee's blog: AI, 3D graphics, software engineering, and research.`,
+    description,
     alternates: { canonical: url },
     openGraph: {
       title: `${label} — Blog Topics | Ahnaf An Nafee`,
-      description: `Posts tagged ${label}.`,
+      description,
       url,
       siteName: 'Ahnaf An Nafee',
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `${label} — Blog Topics | Ahnaf An Nafee`,
+          type: 'image/png'
+        }
+      ],
+      locale: 'en_US',
       type: 'website'
     },
     twitter: {
-      card: 'summary',
+      card: 'summary_large_image',
       title: `${label} — Blog Topics`,
-      description: `Posts tagged ${label}.`,
+      description,
       site: '@ahnaf_nafee',
-      creator: '@ahnaf_nafee'
+      creator: '@ahnaf_nafee',
+      images: [{ url: ogImage, alt: `${label} — Blog Topics` }]
     }
   }
 }

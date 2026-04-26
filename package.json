@@ -23,6 +23,11 @@
 		"type-check": "tsc --noEmit",
 		"postbuild": "next-sitemap --config=custom-next-sitemap.js",
 		"format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,mdx,json}\"",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"validate:json-ld": "node scripts/validate-json-ld.js",
+		"audit:alt-text": "node scripts/audit-alt-text.js",
 		"commit": "cz",
 		"remove-modules": "Remove-Item -Recurse -Force node_modules"
 	},
@@ -66,11 +71,14 @@
 		"tailwind-merge": "^3.4.0"
 	},
 	"devDependencies": {
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.2",
 		"@trivago/prettier-plugin-sort-imports": "^6.0.0",
 		"@types/node": "^24.10.1",
 		"@types/react": "19.2.7",
 		"@types/react-dom": "19.2.3",
 		"@typescript-eslint/eslint-plugin": "^8.48.1",
+		"@vitejs/plugin-react": "^6.0.1",
 		"autoprefixer": "^10.4.22",
 		"commitizen": "^4.3.1",
 		"cross-env": "^10.1.0",
@@ -79,6 +87,7 @@
 		"eslint": "^9.39.1",
 		"eslint-config-next": "16.0.7",
 		"gray-matter": "^4.0.3",
+		"happy-dom": "^20.9.0",
 		"lint-staged": "^16.2.7",
 		"next-sitemap": "^4.2.3",
 		"postcss": "^8.5.6",
@@ -87,7 +96,9 @@
 		"reading-time": "^1.5.0",
 		"rehype-slug": "^6.0.0",
 		"tailwindcss": "^4.1.17",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"vite-tsconfig-paths": "^6.1.1",
+		"vitest": "^4.1.5"
 	},
 	"resolutions": {
 		"prismjs": ">=1.27.0",
@@ -127,5 +138,6 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
-	}
+	},
+	"packageManager": "yarn@4.14.1"
 }

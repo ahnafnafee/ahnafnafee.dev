@@ -1,9 +1,17 @@
 import { useTheme as useNextTheme } from 'next-themes'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState, useSyncExternalStore } from 'react'
+
+// Standard hydration-detection escape hatch: the server snapshot is `false`,
+// the client snapshot is `true`. After hydration, React swaps them and the
+// component re-renders with `mounted = true` — without ever calling setState
+// inside a useEffect (which the new react-hooks/set-state-in-effect rule flags).
+const subscribe = () => () => {}
+const getSnapshot = () => true
+const getServerSnapshot = () => false
 
 export const useTheme = () => {
   const { theme, setTheme, systemTheme } = useNextTheme()
-  const [mounted, setMounted] = useState<boolean>(false)
+  const mounted = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
   const [dropdownIsOpen, setDropdown] = useState<boolean>(false)
 
   const toggleDropdown = useCallback(() => setDropdown((prev) => (prev ? false : true)), [])
@@ -18,10 +26,6 @@ export const useTheme = () => {
     },
     [setTheme, closeDropdown]
   )
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   return {
     mounted,

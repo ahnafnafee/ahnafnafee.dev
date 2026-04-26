@@ -24,15 +24,17 @@ function toIso(value) {
   return Number.isNaN(iso.getTime()) ? null : iso.toISOString()
 }
 
-// Walk MDX content directories once at module load and build a slug → lastmod map.
-function loadFrontmatterLastmods() {
+// Walk MDX content directories once at module load.
+// Stores lastmod + thumbnail + title per route so transform() can emit
+// image sitemap entries (boosts Google Images discoverability).
+function loadFrontmatterMeta() {
   const map = new Map()
   const dataRoot = path.join(__dirname, 'src', 'data')
   const sections = [
-    { dir: path.join(dataRoot, 'blog'), prefix: '/blog' },
-    { dir: path.join(dataRoot, 'portfolio'), prefix: '/portfolio' }
+    { dir: path.join(dataRoot, 'blog'), prefix: '/blog', imageKey: 'thumbnail' },
+    { dir: path.join(dataRoot, 'portfolio'), prefix: '/portfolio', imageKey: 'image' }
   ]
-  for (const { dir, prefix } of sections) {
+  for (const { dir, prefix, imageKey } of sections) {
     if (!fs.existsSync(dir)) continue
     for (const entry of fs.readdirSync(dir)) {
       if (!entry.endsWith('.mdx')) continue
@@ -42,7 +44,12 @@ function loadFrontmatterLastmods() {
         const { data } = matter(raw)
         const candidate = data.updated || data.published || data.date
         const iso = toIso(candidate)
-        if (iso) map.set(`${prefix}/${slug}`, iso)
+        const meta = {
+          lastmod: iso || null,
+          image: data[imageKey] || null,
+          title: data.title || null
+        }
+        map.set(`${prefix}/${slug}`, meta)
       } catch (err) {
         console.warn(`[sitemap] Failed to parse ${entry}:`, err.message)
       }
@@ -51,7 +58,7 @@ function loadFrontmatterLastmods() {
   return map
 }
 
-const frontmatterLastmod = loadFrontmatterLastmods()
+const frontmatterMeta = loadFrontmatterMeta()
 const buildTime = new Date().toISOString()
 
 function priorityFor(path) {
@@ -102,12 +109,21 @@ module.exports = {
   changefreq: 'weekly',
   transform: async (config, urlPath) => {
     const { priority, changefreq } = priorityFor(urlPath)
-    return {
+    const meta = frontmatterMeta.get(urlPath)
+    const entry = {
       loc: urlPath,
       changefreq,
       priority,
-      lastmod: frontmatterLastmod.get(urlPath) || buildTime
+      lastmod: (meta && meta.lastmod) || buildTime
     }
+    if (meta && meta.image) {
+      // next-sitemap reads `image.loc.href`, so wrap in a URL object.
+      // Skip silently if the URL is malformed (don't block the build).
+      try {
+        entry.images = [{ loc: new URL(meta.image), title: meta.title || urlPath }]
+      } catch {}
+    }
+    return entry
   },
   additionalPaths: async (config) => {
     return [

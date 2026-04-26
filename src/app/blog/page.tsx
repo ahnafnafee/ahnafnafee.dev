@@ -32,8 +32,9 @@ export const metadata: Metadata = {
       {
         url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-blog.png?tr=w-1200,h-630',
         width: 1200,
-        height: 600,
-        alt: 'Blog - Ahnaf An Nafee - Thoughts on AI, 3D Graphics, and Technology'
+        height: 630,
+        alt: 'Blog - Ahnaf An Nafee - Thoughts on AI, 3D Graphics, and Technology',
+        type: 'image/png'
       }
     ],
     locale: 'en_US',
@@ -46,7 +47,10 @@ export const metadata: Metadata = {
     site: '@ahnaf_nafee',
     creator: '@ahnaf_nafee',
     images: [
-      'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-blog.png?tr=w-1200,h-630'
+      {
+        url: 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-blog.png?tr=w-1200,h-630',
+        alt: 'Blog - Ahnaf An Nafee - Thoughts on AI, 3D Graphics, and Technology'
+      }
     ]
   }
 }

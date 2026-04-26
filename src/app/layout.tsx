@@ -87,6 +87,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang='en' suppressHydrationWarning>
+      <head>
+        {/* IndieAuth / Mastodon / Bluesky identity links — verifiable backlinks
+            that cement the canonical Person entity across the federated web. */}
+        <link rel='me' href='https://github.com/ahnafnafee' />
+        <link rel='me' href='https://www.linkedin.com/in/ahnafnafee' />
+        <link rel='me' href='https://scholar.google.com/citations?user=u15DO0cAAAAJ&hl=en' />
+        <link rel='me' href='https://orcid.org/0009-0000-9363-4536' />
+        <link rel='author' href='https://www.ahnafnafee.dev/resume' />
+      </head>
       <body className={inter.className} suppressHydrationWarning>
         <script
           type="application/ld+json"
