@@ -14,7 +14,7 @@ import '@/styles/prism-themes.css'
 import 'katex/dist/katex.min.css'
 
 const GOOGLE_FONTS_HREF =
-  'https://fonts.googleapis.com/css2?family=Google+Sans+Text:ital,wght@0,400..700;1,400..700&display=swap'
+  'https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400..700;1,400..700&display=swap'
 
 export const viewport: Viewport = {
   themeColor: [

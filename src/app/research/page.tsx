@@ -1,8 +1,6 @@
 import { ResearchAreas, ResearchNews, ResearchOverview, ResearchSections } from '@/components/content/research'
 import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
 
-import { Hero } from '@/UI/templates'
-
 import { getContentHeaders } from '@/services/content'
 
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
@@ -118,10 +116,8 @@ export default async function ResearchPage() {
   return (
     <AppLayoutPage>
       <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
-      <Hero
-        title='Research'
-        description='Papers, course projects, and ongoing investigations at the intersection of AI and 3D computer graphics.'
-      />
+      {/* h1 kept for accessibility / SEO; visual title removed per design — sections below carry the page */}
+      <h1 className='sr-only'>Research</h1>
       <ResearchOverview />
       <ResearchNews />
       <ResearchAreas />
