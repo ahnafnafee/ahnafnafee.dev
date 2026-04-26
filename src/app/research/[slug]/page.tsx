@@ -1,9 +1,8 @@
 import { MDXComponents } from '@/components/content/mdx'
 import { PRButton } from '@/components/content/PRButton'
 import { HeadingResearch, ResearchAbstract, ResearchBibTeX, ResearchTeaser } from '@/components/content/research'
-import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
-
-import { BackToTop } from '@/UI/buttons'
+import { BackToTop } from '@/components/site/buttons'
+import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContentBySlug, getContentHeaders } from '@/services/content'
 

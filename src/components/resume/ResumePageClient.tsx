@@ -1,9 +1,8 @@
 'use client'
 
 import { HowToPrintDialog } from '@/components/dialog'
+import { UnderlineLink } from '@/components/site/links'
 import { Button } from '@/components/ui/button'
-
-import { UnderlineLink } from '@/UI/links'
 
 import {
   CERTIFICATIONS,

@@ -1,7 +1,7 @@
 'use client'
 
-import { WrappedImage } from '@/UI/images'
-import { UnderlineLink } from '@/UI/links'
+import { WrappedImage } from '@/components/site/images'
+import { UnderlineLink } from '@/components/site/links'
 
 import { twclsx } from '@/libs'
 import { dateFormat, dateStringToISO } from '@/libs/intl'

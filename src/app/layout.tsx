@@ -1,4 +1,4 @@
-import { Header } from '@/components/legacy-ui/common'
+import { Header } from '@/components/site/common'
 import { Toaster } from '@/components/ui/sonner'
 
 import { PERSON_ID, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/libs/constants/site'

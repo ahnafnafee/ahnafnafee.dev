@@ -1,6 +1,6 @@
-import { Footer } from '@/UI/common'
-import { WrappedImage } from '@/UI/images'
-import { UnderlineLink } from '@/UI/links'
+import { Footer } from '@/components/site/common'
+import { WrappedImage } from '@/components/site/images'
+import { UnderlineLink } from '@/components/site/links'
 
 import type { Metadata } from 'next'
 

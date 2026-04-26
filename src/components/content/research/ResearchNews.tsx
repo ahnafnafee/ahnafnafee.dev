@@ -1,4 +1,4 @@
-import { UnstyledLink } from '@/UI/links'
+import { UnstyledLink } from '@/components/site/links'
 
 type NewsItem = {
   date: string

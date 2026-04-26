@@ -1,4 +1,4 @@
-import { UnderlineLink } from '@/UI/links'
+import { UnderlineLink } from '@/components/site/links'
 
 import htmr from '@/libs/htmr-replacement'
 

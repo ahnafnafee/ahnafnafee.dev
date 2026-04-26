@@ -1,7 +1,7 @@
 'use client'
 
-import { FooterSocialHome } from '@/UI/common/FooterSocialHome'
-import { UnstyledLink } from '@/UI/links'
+import { FooterSocialHome } from '@/components/site/common/FooterSocialHome'
+import { UnstyledLink } from '@/components/site/links'
 
 import APP_ROUTE from '@/libs/constants/route'
 import { twclsx } from '@/libs/twclsx'

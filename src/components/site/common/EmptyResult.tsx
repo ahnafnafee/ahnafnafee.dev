@@ -1,6 +1,5 @@
+import { WrappedImage } from '@/components/site/images'
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia } from '@/components/ui/empty'
-
-import { WrappedImage } from '@/UI/images'
 
 export const EmptyResult: React.FunctionComponent = () => {
   return (

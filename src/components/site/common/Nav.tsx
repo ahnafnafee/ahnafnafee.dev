@@ -1,6 +1,6 @@
 'use client'
 
-import { UnstyledLink } from '@/UI/links'
+import { UnstyledLink } from '@/components/site/links'
 
 import APP_ROUTE from '@/libs/constants/route'
 import { twclsx } from '@/libs/twclsx'

@@ -1,10 +1,9 @@
 'use client'
 
 import { SnippetList } from '@/components/content/snippet'
-
-import { EmptyResult } from '@/UI/common'
-import { Searchbar } from '@/UI/inputs'
-import { Hero } from '@/UI/templates'
+import { EmptyResult } from '@/components/site/common'
+import { Searchbar } from '@/components/site/inputs'
+import { Hero } from '@/components/site/templates'
 
 import { useSearchSnippet } from '@/hooks'
 

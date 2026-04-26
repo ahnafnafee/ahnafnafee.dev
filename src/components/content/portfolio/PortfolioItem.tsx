@@ -1,6 +1,5 @@
-import { WrappedImage } from '@/components/legacy-ui/images'
-
-import { UnstyledLink } from '@/UI/links'
+import { WrappedImage } from '@/components/site/images'
+import { UnstyledLink } from '@/components/site/links'
 
 import { createUrl, twclsx } from '@/libs'
 

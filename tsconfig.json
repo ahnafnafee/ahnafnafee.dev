@@ -17,9 +17,7 @@
     "incremental": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["*"],
-      "@/UI": ["components/legacy-ui/"],
-      "@/UI/*": ["components/legacy-ui/*"]
+      "@/*": ["*"]
     },
     "plugins": [
       {

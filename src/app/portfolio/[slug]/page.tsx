@@ -1,8 +1,7 @@
 import { HeadingPortfolio, IconStack, MDXComponents, PRButton } from '@/components/content'
-import { WrappedImage } from '@/components/legacy-ui/images'
-import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
-
-import { BackToTop } from '@/UI/buttons'
+import { BackToTop } from '@/components/site/buttons'
+import { WrappedImage } from '@/components/site/images'
+import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContentBySlug, getContents } from '@/services'
 

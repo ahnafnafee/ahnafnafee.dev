@@ -1,10 +1,9 @@
 'use client'
 
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
-
-import { EmptyResult } from '@/UI/common'
-import { Searchbar } from '@/UI/inputs'
-import { Hero } from '@/UI/templates'
+import { EmptyResult } from '@/components/site/common'
+import { Searchbar } from '@/components/site/inputs'
+import { Hero } from '@/components/site/templates'
 
 import { twclsx } from '@/libs/twclsx'
 

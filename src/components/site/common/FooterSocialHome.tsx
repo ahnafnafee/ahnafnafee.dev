@@ -1,4 +1,4 @@
-import { UnstyledLink } from '@/UI/links'
+import { UnstyledLink } from '@/components/site/links'
 
 import { twclsx } from '@/libs'
 import SOCIAL from '@/libs/constants/social'

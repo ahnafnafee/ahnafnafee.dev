@@ -2,8 +2,7 @@ import { BlogPostClient } from '@/components/blog/BlogPostClient'
 import { AdjacentPosts } from '@/components/content/blog/AdjacentPosts'
 import { RelatedPosts } from '@/components/content/blog/RelatedPosts'
 import { MDXComponents } from '@/components/content/mdx'
-
-import { Footer } from '@/UI/common'
+import { Footer } from '@/components/site/common'
 
 import { getContentBySlug, getContentHeaders } from '@/services/content'
 

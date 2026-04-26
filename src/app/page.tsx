@@ -2,7 +2,7 @@ import { ContentImage } from '@/components/content'
 import { BlogItem } from '@/components/content/blog/BlogItem'
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 import { ResearchItem } from '@/components/content/research/ResearchItem'
-import { Footer, SocialHome } from '@/components/legacy-ui/common'
+import { Footer, SocialHome } from '@/components/site/common'
 
 import { getContents } from '@/services'
 import { getContentHeaders } from '@/services/content'
