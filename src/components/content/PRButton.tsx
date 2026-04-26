@@ -1,5 +1,5 @@
 // PULL Request Button in case there is a typo on some post, other people can help you
-import { UnstyledLink } from '@/UI/links'
+import { UnstyledLink } from '@/components/site/links'
 
 import { HiExternalLink } from 'react-icons/hi'
 

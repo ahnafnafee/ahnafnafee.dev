@@ -1,6 +1,6 @@
 'use client'
 
-import { WrappedImage } from '@/UI/images'
+import { WrappedImage } from '@/components/site/images'
 
 import { twclsx } from '@/libs/twclsx'
 

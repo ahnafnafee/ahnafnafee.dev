@@ -1,7 +1,7 @@
 import { BlogList } from '@/components/content/blog/BlogList'
-import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
-import { Hero } from '@/components/legacy-ui/templates/Hero'
 import { Breadcrumbs } from '@/components/SEO/Breadcrumbs'
+import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
+import { Hero } from '@/components/site/templates/Hero'
 
 import { getContents } from '@/services'
 

@@ -1,4 +1,4 @@
-import { UnstyledLink } from '@/UI/links'
+import { UnstyledLink } from '@/components/site/links'
 
 import { SITE_AUTHOR } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'

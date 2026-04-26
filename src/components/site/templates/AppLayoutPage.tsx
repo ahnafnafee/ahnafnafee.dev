@@ -1,4 +1,4 @@
-import { Footer } from '@/UI/common'
+import { Footer } from '@/components/site/common'
 
 import { twclsx } from '@/libs/twclsx'
 

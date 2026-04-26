@@ -1,4 +1,4 @@
-import { WrappedImage } from '@/components/legacy-ui/images'
+import { WrappedImage } from '@/components/site/images'
 
 import { twclsx } from '@/libs/twclsx'
 

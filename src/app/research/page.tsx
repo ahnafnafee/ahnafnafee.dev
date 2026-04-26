@@ -1,5 +1,5 @@
 import { ResearchAreas, ResearchNews, ResearchOverview, ResearchSections } from '@/components/content/research'
-import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
+import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContentHeaders } from '@/services/content'
 

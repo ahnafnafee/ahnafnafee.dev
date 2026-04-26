@@ -1,4 +1,4 @@
-import { UnstyledLink } from '@/components/legacy-ui/links'
+import { UnstyledLink } from '@/components/site/links'
 
 import { IconStack } from '../portfolio'
 

@@ -12,8 +12,6 @@ const config = {
   importOrder: [
     '^@/components(.*)$',
     '',
-    '^@/UI(.*)$',
-    '',
     '^@/services(.*)$',
     '',
     '^@/libs(.*)$',

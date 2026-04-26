@@ -1,5 +1,5 @@
-import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
 import { PortfolioPageClient } from '@/components/portfolio/PortfolioPageClient'
+import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContents } from '@/services'
 

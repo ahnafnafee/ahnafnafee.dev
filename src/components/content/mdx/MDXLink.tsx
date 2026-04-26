@@ -1,4 +1,4 @@
-import { UnstyledLink, UnstyledLinkProps } from '@/UI/links'
+import { UnstyledLink, UnstyledLinkProps } from '@/components/site/links'
 
 import { twclsx } from '@/libs/twclsx'
 

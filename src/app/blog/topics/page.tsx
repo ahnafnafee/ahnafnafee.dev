@@ -1,8 +1,7 @@
-import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
-import { Hero } from '@/components/legacy-ui/templates/Hero'
 import { Breadcrumbs } from '@/components/SEO/Breadcrumbs'
-
-import { UnstyledLink } from '@/UI/links'
+import { UnstyledLink } from '@/components/site/links'
+import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
+import { Hero } from '@/components/site/templates/Hero'
 
 import { getContents } from '@/services'
 
