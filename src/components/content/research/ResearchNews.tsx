@@ -14,7 +14,7 @@ const NEWS: NewsItem[] = [
       <>
         Joining the{' '}
         <UnstyledLink
-          href='https://cs.gmu.edu/~craigyu/'
+          href='https://craigyuyu.github.io/home/group.html'
           className='text-primary-700 dark:text-primary-400 underline-offset-2 hover:underline'
         >
           DCXR Group
