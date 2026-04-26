@@ -103,6 +103,10 @@ declare module 'me' {
     identifiers?: ResearchIdentifiers
     bibtex?: string
     category?: 'graphics' | 'ai' | 'hci' | 'systems' | 'theory'
+    /** Listing-page section. Drives grouping under section headers. */
+    section?: 'top-tier' | 'conferences' | 'journals' | 'workshops' | 'others'
+    /** Renders a "NEW" badge inline with the title on listing cards. */
+    new?: boolean
     related?: Array<string>
   }
 

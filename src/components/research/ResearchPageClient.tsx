@@ -1,6 +1,6 @@
 'use client'
 
-import { ResearchList } from '@/components/content/research'
+import { ResearchList, ResearchSections } from '@/components/content/research'
 import { EmptyResult } from '@/UI/common'
 import { Searchbar } from '@/UI/inputs'
 import { Hero } from '@/UI/templates'
@@ -34,7 +34,7 @@ export function ResearchPageClient({ allResearch }: ResearchPageClientProps) {
             <EmptyResult />
           )
         ) : (
-          <ResearchList posts={allResearch} />
+          <ResearchSections posts={allResearch} />
         )}
       </div>
     </>
