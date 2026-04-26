@@ -12,7 +12,7 @@ The personal site of Ahnaf An Nafee, plus a fork-ready starting point for develo
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org)
 [![Yarn](https://img.shields.io/badge/Yarn-4-2C8EBB?style=for-the-badge&logo=yarn&logoColor=white)](https://yarnpkg.com)
 
-[Use this template](https://github.com/ahnafnafee/ahnafnafee.dev/generate) · [Live demo](https://www.ahnafnafee.dev) · [Blog](https://www.ahnafnafee.dev/blog) · [Report bug](https://github.com/ahnafnafee/ahnafnafee.dev/issues/new)
+[Use this template](https://github.com/ahnafnafee/ahnafnafee.dev/generate) · [Live demo](https://www.ahnafnafee.dev) · [Research](https://www.ahnafnafee.dev/research) · [Blog](https://www.ahnafnafee.dev/blog) · [Report bug](https://github.com/ahnafnafee/ahnafnafee.dev/issues/new)
 
 </div>
 
@@ -47,7 +47,7 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 
 ### SEO &amp; AI search
 
-- **`@graph` JSON-LD** on blog and portfolio detail pages — `BlogPosting`/`SoftwareSourceCode` + `WebPage` + `BreadcrumbList`, all interconnected by `@id`.
+- **`@graph` JSON-LD** on blog, portfolio, and research detail pages — `BlogPosting` / `SoftwareSourceCode` / `ScholarlyArticle` + `WebPage` + `BreadcrumbList`, all interconnected by `@id`. Research entries also emit `Periodical` / `CreativeWork` for `isPartOf` (conditioned on venue status), structured `Person` author nodes with `affiliation` and ORCID `identifier`, and DOI / arXiv / ResearchGate `PropertyValue` identifiers when present.
 - **Canonical `Person` entity** (`/#person`) referenced from every author/publisher slot. Full sameAs/knowsAbout/credentials live only on `/`; everywhere else uses a slim reference.
 - **`ProfilePage` JSON-LD** on the home page and `/resume`, with `mainEntity` deduplicated via `@id`.
 - **`CollectionPage` + `ItemList`** schema on topic archives.
@@ -61,7 +61,8 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 
 ### Content
 
-- **MDX** for blog and portfolio (no CMS, no database). Frontmatter parsed by `gray-matter`.
+- **MDX** for blog, portfolio, and research (no CMS, no database). Frontmatter parsed by `gray-matter`.
+- **Academic project pages** at `/research/[slug]` — title, structured authors + affiliations, venue, action-button row (Paper / Code / Video / arXiv / ResearchGate / Dataset / BibTeX), full-bleed teaser, abstract, MDX body, copy-to-clipboard BibTeX. Listing page groups entries by section (top-tier, conferences, journals, workshops, others).
 - **Reading time + word count** via `reading-time`, fed into BlogPosting `timeRequired`/`wordCount`.
 - **Mermaid diagrams**, **KaTeX math**, **Prism syntax highlighting**.
 - **Custom MDX components**: `<TLDR>`, `<KeyPoints>`, `<FAQ>`, `<HowTo>`, `<ContentImage>` (lightbox-enabled), `<Mermaid>`.
@@ -75,7 +76,7 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 - **`next/image`** with WebP/AVIF, 5 quality tiers, 1-year `minimumCacheTTL`, responsive `sizes`.
 - **Lazy-loaded** Mermaid (~100KB), `react-image-lightbox`, Giscus comments (deferred via `IntersectionObserver` until the section enters the viewport).
 - **Pageviews batched** in a single API call instead of N+1 fetches.
-- **PWA** via `next-pwa` with offline support; **Strict CSP**, HSTS, all OWASP-aligned security headers.
+- **PWA** via `@ducanh2912/next-pwa` (the maintained next-pwa fork — Workbox 7, Next.js 16-compatible) with offline support; **Strict CSP**, HSTS, all OWASP-aligned security headers.
 
 ### Tooling
 
@@ -107,7 +108,7 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 | Logging | Axiom (next-axiom) |
 | Sitemap | next-sitemap (custom config) |
 | OG images | @vercel/og |
-| PWA | next-pwa |
+| PWA | @ducanh2912/next-pwa (Workbox 7) |
 | Testing | Vitest + happy-dom + @testing-library/react |
 | Lint | ESLint 9 (flat config) + eslint-config-next |
 | Package manager | Yarn 4 (Corepack) |
@@ -168,8 +169,11 @@ src/
 │   ├── portfolio/
 │   │   ├── page.tsx              # Portfolio list
 │   │   └── [slug]/page.tsx       # Portfolio detail (SoftwareSourceCode @graph)
+│   ├── research/
+│   │   ├── page.tsx              # Research list (grouped into top-tier / conferences / journals / workshops / others)
+│   │   └── [slug]/page.tsx       # Research detail (ScholarlyArticle @graph)
 │   ├── resume/page.tsx           # Resume / ProfilePage
-│   ├── api/                      # OG image, pageviews, revalidate, content APIs
+│   ├── api/                      # OG image, pageviews, revalidate, content APIs (incl. /api/research)
 │   ├── rss.xml/route.ts          # RSS summary feed
 │   └── rss-full.xml/route.ts     # RSS full-content feed
 ├── components/                   # UI + content components
@@ -177,7 +181,8 @@ src/
 │   └── SEO/Breadcrumbs.tsx
 ├── data/
 │   ├── blog/*.mdx                # Blog posts (slug = filename)
-│   └── portfolio/*.mdx           # Portfolio entries
+│   ├── portfolio/*.mdx           # Portfolio entries
+│   └── research/*.mdx            # Research entries (academic project pages)
 ├── libs/
 │   ├── constants/site.ts         # SITE_URL, SITE_NAME, PERSON_ID, etc. — single source of truth
 │   ├── seo/                      # personSchema, faqSchema, howToSchema
@@ -185,7 +190,7 @@ src/
 │   ├── sorters/                  # getNewestBlog, getAdjacentPosts, etc.
 │   └── intl/                     # dateFormat, dateStringToISO
 ├── services/content/             # MDX readers (getContents, getContentBySlug, getContentHeaders)
-└── types/index.d.ts              # Frontmatter types for Blog, Portfolio, Snippet
+└── types/index.d.ts              # Frontmatter types for Blog, Portfolio, Research, Snippet
 
 scripts/
 ├── generate-llms-txt.js          # Builds public/llms.txt from MDX frontmatter (prebuild)
@@ -248,7 +253,7 @@ export const PERSON_ID = `${SITE_URL}/#person`
 
 ### 7 · Content
 
-Add posts to `src/data/blog/<slug>.mdx` and projects to `src/data/portfolio/<slug>.mdx`. The filename becomes the URL slug. See [Authoring content](#authoring-content).
+Add posts to `src/data/blog/<slug>.mdx`, projects to `src/data/portfolio/<slug>.mdx`, and academic work to `src/data/research/<slug>.mdx`. The filename becomes the URL slug. See [Authoring content](#authoring-content).
 
 ### 8 · CI
 
@@ -300,6 +305,58 @@ link:
   live: 'https://bookworm-app.vercel.app'
 ---
 ```
+
+### Research entry frontmatter
+
+```yaml
+---
+title: 'Performance Analysis of 3D Mesh Simplification Algorithms'
+summary: 'A short blurb for cards / OG / SEO description.'
+abstract: >-                                 # YAML folded scalar — single paragraph
+  The verbatim paper abstract (~150-300 words). Renders in a styled
+  card above the body on the detail page.
+authors:
+  - name: 'Ahnaf An Nafee'
+    url: 'https://www.ahnafnafee.dev'
+    email: 'aannafee@gmu.edu'
+    affiliations: [1]                        # 1-based indices into the entry's affiliations array
+    corresponding: true
+affiliations:
+  - name: 'George Mason University'
+    location: 'Fairfax, Virginia, USA'
+    url: 'https://www.gmu.edu'
+venue:
+  name: 'CS700 — Computer Geometry, Course Project'
+  short: 'GMU CS700'
+  year: 2025
+  status: 'tech-report'                      # preprint | under-review | accepted | published | workshop | tech-report
+published: '12/08/2025'
+featured: true                                # surfaces on the home page
+new: true                                     # renders a "NEW" badge inline with the title on the listing card
+section: 'others'                             # top-tier | conferences | journals | workshops | others
+topics: ['3D Graphics', 'Mesh Simplification']
+keywords: ['mesh decimation', 'QEM', 'vertex clustering']
+thumbnail: 'https://ik.imagekit.io/.../mesh-decimation.jpg'
+teaser: 'https://raw.githubusercontent.com/.../teaser.png'   # high-res hero figure on detail page
+teaserCaption: 'Visual comparison of decimation results across CAD and organic meshes.'
+links:
+  paper: 'https://www.researchgate.net/publication/...'
+  code: 'https://github.com/...'
+  researchGate: 'https://www.researchgate.net/publication/...'
+  # arxiv / video / slides / dataset / supplementary / demo / project — all optional
+identifiers:
+  # doi / arxivId / researchGateId — fed into ScholarlyArticle.identifier
+  researchGateId: '400103838'
+bibtex: |
+  @misc{annafee2025meshdecimation,
+    author = {An Nafee, Ahnaf},
+    title  = {…},
+    year   = {2025}
+  }
+---
+```
+
+The detail page renders the structured fields in the hero (status chip from `venue.status`, authors with affiliation superscripts, venue line, action-button row driven by `links` and `bibtex`). Authors matching `SITE_AUTHOR.name` are bolded. The `bibtex` field renders as a copy-to-clipboard code block anchored at `#bibtex`.
 
 ### Special MDX components
 

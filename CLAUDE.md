@@ -34,22 +34,28 @@ Tests live under `__tests__` directories co-located with the code they cover (e.
 
 ## Content Pipeline (the core architecture)
 
-All blog posts and portfolio entries are MDX files on disk — there's no CMS.
+All blog, portfolio, and research entries are MDX files on disk — there's no CMS.
 
-1. **Source files** live in `src/data/blog/*.mdx` and `src/data/portfolio/*.mdx`. Filename (minus `.mdx`) becomes the URL slug.
-2. **Frontmatter** is parsed by `gray-matter` in `src/services/content/`. The shape is enforced by ambient types in `src/types/index.d.ts` (`declare module 'me'`) — `Blog`, `Portfolio`, `Snippet`, etc. Add new content fields there first, then update the MDX files.
+1. **Source files** live in `src/data/blog/*.mdx`, `src/data/portfolio/*.mdx`, and `src/data/research/*.mdx`. Filename (minus `.mdx`) becomes the URL slug.
+2. **Frontmatter** is parsed by `gray-matter` in `src/services/content/`. The shape is enforced by ambient types in `src/types/index.d.ts` (`declare module 'me'`) — `Blog`, `Portfolio`, `Research` (plus its sub-types `Author`, `Affiliation`, `Venue`, `ResearchLinks`, `ResearchIdentifiers`), `Snippet`, etc. Add new content fields there first, then update the MDX files.
 3. **Reading content**:
     - `getContents<T>('/blog')` — list all entries (used by `generateStaticParams` and listing pages).
     - `getContentBySlug<T>('/blog', slug)` — single entry.
-    - Both resolve paths through `LOCATION_DIR` in `src/services/directory/location.ts` (= `src/data`). Change content location there, not in the readers.
-4. **Rendering** uses `next-mdx-remote/rsc`'s `MDXRemote` in `src/app/blog/[slug]/page.tsx` and the portfolio equivalent. Plugin set is centralized in `src/libs/mdxConfig.ts` (remark-gfm, remark-math, rehype-prism-plus, rehype-slug, rehype-katex).
+    - `getContentHeaders<T>('/blog')` — header-only (skips MDX body parsing) — use this whenever a page only needs frontmatter.
+    - All three resolve paths through `LOCATION_DIR` in `src/services/directory/location.ts` (= `src/data`). Change content location there, not in the readers.
+4. **Rendering** uses `next-mdx-remote/rsc`'s `MDXRemote` in `src/app/blog/[slug]/page.tsx` and the portfolio / research equivalents. Plugin set is centralized in `src/libs/mdxConfig.ts` (remark-gfm, remark-math, rehype-prism-plus, rehype-slug, rehype-katex).
 5. **Custom MDX components** live in `src/components/content/mdx/` and are wired into the `MDXComponents` map in `mdx/index.ts`. Notable overrides:
     - `Pre`, `Code` — code blocks with prism syntax highlighting.
     - `Mermaid` — renders ` ```mermaid ` blocks; mermaid + stylis are transpiled and pre-bundled (see `transpilePackages` and `experimental.optimizePackageImports` in `next.config.js`).
     - `ContentImage` — explicit component for ImageKit-hosted images. The default `img` MDX mapping was intentionally removed so external images / SVGs in MDX don't break; use `<ContentImage>` (or a raw `<img>`) explicitly.
     - `MDXLink`, `Blockquote`, `Table`, `Headings` — styled overrides.
-6. **SEO** is generated per-page in `src/app/blog/[slug]/page.tsx` and the portfolio equivalent: `generateMetadata` builds Next.js Metadata (OG, Twitter, canonical, `modifiedTime`), and the page itself injects two JSON-LD blocks (BlogPosting + BreadcrumbList for blog; SoftwareSourceCode + BreadcrumbList for portfolio). The Person `@id` (`https://www.ahnafnafee.dev/#person`) is referenced from author/publisher; the full Person node is emitted only on the home page. When you add a new content type, mirror this pattern.
-7. **OG image fallback**: if a post has no `thumbnail`, `generateOgImage` from `src/libs/metapage` constructs one via `/api/og`.
+6. **Research-specific components** live in `src/components/content/research/`: `HeadingResearch` (status chip, title, structured authors + affiliations, venue, action-button row, hr), `ResearchTeaser` (full-bleed figure + caption, lives outside `prose` so it can breathe), `ResearchAbstract` (purple-accented `not-prose` card), `ResearchBibTeX` (anchored at `#bibtex`, copy-to-clipboard, mirrors `Pre.tsx` chrome), `ResearchItem` + `ResearchSections` (listing card + section grouping). The detail page composition is in `src/app/research/[slug]/page.tsx`.
+7. **SEO** is generated per-page in `src/app/blog/[slug]/page.tsx` and the portfolio / research equivalents: `generateMetadata` builds Next.js Metadata (OG, Twitter, canonical, `modifiedTime`), and the page itself injects a single `@graph` JSON-LD block:
+    - Blog: `BlogPosting` + `WebPage` + `BreadcrumbList`
+    - Portfolio: `SoftwareSourceCode` + `WebPage` + `BreadcrumbList`
+    - Research: `ScholarlyArticle` + `WebPage` + `BreadcrumbList`. The first author (matching `SITE_AUTHOR.name`) maps to `{'@id': PERSON_ID}`; coauthors emit inline `Person` nodes with `affiliation` and ORCID `identifier`. `isPartOf` resolves to `Periodical` for `published`/`accepted`/`workshop` venues and `CreativeWork` otherwise. DOI / arXiv / ResearchGate IDs from `identifiers` become `PropertyValue` entries on `identifier`.
+   The Person `@id` (`https://www.ahnafnafee.dev/#person`) is referenced from author/publisher; the full Person node is emitted only on the home page. When you add a new content type, mirror this pattern.
+8. **OG image fallback**: if a post has no `thumbnail`, `generateOgImage` from `src/libs/metapage` constructs one via `/api/og`. For research listing cards, the resolution order is `thumbnail > teaser > generated OG`; ImageKit URLs without an explicit `?tr=` get `?tr=w-600` appended so retina displays render sharp on the 176px max slot. The `isImagekitUrl` check parses `new URL(...).hostname` (CodeQL flagged the substring form as bypassable).
 
 ## Path Aliases
 
@@ -81,7 +87,7 @@ ISR endpoint at `GET /api/revalidate?secret=<SECRET>&slug=/blog/<slug>`. Secret 
 
 ## next.config.js Quirks
 
-- Wrapped in both `withAxiom` (logs) and `withPWA` (next-pwa, disabled in dev).
+- Wrapped in both `withAxiom` (logs) and `withPWA` (`@ducanh2912/next-pwa` — the maintained next-pwa fork, Workbox 7, disabled in dev). Options nest under `workboxOptions` (skipWaiting, buildExcludes); `extendDefaultRuntimeCaching: true` preserves the legacy next-pwa@5 cache strategies. Note: `@serwist/next` was evaluated but doesn't generate `sw.js` under Next 16's Turbopack-default build (tracking [serwist#54](https://github.com/serwist/serwist/issues/54)) — revisit when stable.
 - Strict CSP including `*.youtube.com`, `giscus.app`, `*.googletagmanager.com`, `cdn.jsdelivr.net`.
 - Image `remotePatterns` allowlist — when adding a new external image host, register it here or `next/image` will reject it.
 - `transpilePackages: ['mermaid', 'stylis']` — leave it; mermaid ships ESM that Next can't consume otherwise.
@@ -91,8 +97,9 @@ ISR endpoint at `GET /api/revalidate?secret=<SECRET>&slug=/blog/<slug>`. Secret 
 
 - Prettier: no semicolons, 2-space indent, single quotes, 120-col print width, `trailingComma: 'none'`. ESLint extends `next/core-web-vitals` + `@typescript-eslint/recommended`; `no-explicit-any` is intentionally off.
 - Commits go through `commitizen` with `cz-conventional-changelog` — run `yarn commit` for the prompt. `lint-staged` runs Prettier on staged `js/jsx/ts/tsx/mdx/md/css` files.
-- Frontmatter `published` for blog posts is `MM/DD/YYYY`. `featured: true` surfaces an entry on the home page. Optional `updated: "MM/DD/YYYY"` overrides `published` as the freshness signal — it flows into `dateModified` (BlogPosting JSON-LD), `<meta property="article:modified_time">`, and the sitemap `lastmod`. Set it whenever you make a substantive content edit; leave it off for typo fixes.
+- Frontmatter `published` for blog and research is `MM/DD/YYYY` (portfolio uses `date`). `featured: true` surfaces an entry on the home page. Optional `updated: "MM/DD/YYYY"` overrides `published` as the freshness signal — it flows into `dateModified` (BlogPosting / ScholarlyArticle JSON-LD), `<meta property="article:modified_time">`, and the sitemap `lastmod`. Set it whenever you make a substantive content edit; leave it off for typo fixes.
 - Authoring convention: open every blog post with a 60–120 word TL;DR paragraph immediately under the H1. LLM crawlers (ChatGPT, Perplexity, AI Overviews) draw ~44% of their citations from the first 30% of an article, so front-loading the answer compounds visibility.
+- **Research authoring**: use the YAML folded scalar (`abstract: >-`) — block scalar (`|`) preserves newlines and the abstract renders with broken lines. Authors use a structured array; `affiliations` indices are 1-based and reference the entry's `affiliations` array. `section` drives listing-page grouping (`top-tier` / `conferences` / `journals` / `workshops` / `others`). `new: true` renders a NEW badge inline with the title on the listing card. Authors matching `SITE_AUTHOR.name` are auto-bolded across `HeadingResearch` and `ResearchItem`.
 
 ## Indexing Helper
 
