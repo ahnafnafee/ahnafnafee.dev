@@ -4,6 +4,7 @@ import { ThemeProvider } from 'next-themes'
 import { Inter } from 'next/font/google'
 import { Toaster } from 'react-hot-toast'
 import Script from 'next/script'
+import type { Viewport } from 'next'
 import { Header } from '@/components/UI/common'
 
 import '@/styles/globals.css'
@@ -16,6 +17,16 @@ const inter = Inter({
   preload: true,
   variable: '--font-inter'
 })
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#171717' }
+  ],
+  width: 'device-width',
+  initialScale: 1,
+  colorScheme: 'light dark'
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // WebSite schema with SearchAction for sitelinks search box

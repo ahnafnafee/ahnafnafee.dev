@@ -43,7 +43,7 @@ All blog posts and portfolio entries are MDX files on disk — there's no CMS.
     - `Mermaid` — renders ` ```mermaid ` blocks; mermaid + stylis are transpiled and pre-bundled (see `transpilePackages` and `experimental.optimizePackageImports` in `next.config.js`).
     - `ContentImage` — explicit component for ImageKit-hosted images. The default `img` MDX mapping was intentionally removed so external images / SVGs in MDX don't break; use `<ContentImage>` (or a raw `<img>`) explicitly.
     - `MDXLink`, `Blockquote`, `Table`, `Headings` — styled overrides.
-6. **SEO** is generated per-page in `src/app/blog/[slug]/page.tsx` and the portfolio equivalent: `generateMetadata` builds Next.js Metadata (OG, Twitter, canonical), and the page itself injects two JSON-LD blocks (Article + BreadcrumbList). When you add a new content type, mirror this pattern.
+6. **SEO** is generated per-page in `src/app/blog/[slug]/page.tsx` and the portfolio equivalent: `generateMetadata` builds Next.js Metadata (OG, Twitter, canonical, `modifiedTime`), and the page itself injects two JSON-LD blocks (BlogPosting + BreadcrumbList for blog; SoftwareSourceCode + BreadcrumbList for portfolio). The Person `@id` (`https://www.ahnafnafee.dev/#person`) is referenced from author/publisher; the full Person node is emitted only on the home page. When you add a new content type, mirror this pattern.
 7. **OG image fallback**: if a post has no `thumbnail`, `generateOgImage` from `src/libs/metapage` constructs one via `/api/og`.
 
 ## Path Aliases
@@ -86,7 +86,8 @@ ISR endpoint at `GET /api/revalidate?secret=<SECRET>&slug=/blog/<slug>`. Secret 
 
 - Prettier: no semicolons, 2-space indent, single quotes, 120-col print width, `trailingComma: 'none'`. ESLint extends `next/core-web-vitals` + `@typescript-eslint/recommended`; `no-explicit-any` is intentionally off.
 - Commits go through `commitizen` with `cz-conventional-changelog` — run `yarn commit` for the prompt. `lint-staged` runs Prettier on staged `js/jsx/ts/tsx/mdx/md/css` files.
-- Frontmatter `published` for blog posts is `MM/DD/YYYY`. `featured: true` surfaces an entry on the home page.
+- Frontmatter `published` for blog posts is `MM/DD/YYYY`. `featured: true` surfaces an entry on the home page. Optional `updated: "MM/DD/YYYY"` overrides `published` as the freshness signal — it flows into `dateModified` (BlogPosting JSON-LD), `<meta property="article:modified_time">`, and the sitemap `lastmod`. Set it whenever you make a substantive content edit; leave it off for typo fixes.
+- Authoring convention: open every blog post with a 60–120 word TL;DR paragraph immediately under the H1. LLM crawlers (ChatGPT, Perplexity, AI Overviews) draw ~44% of their citations from the first 30% of an article, so front-loading the answer compounds visibility.
 
 ## Indexing Helper
 

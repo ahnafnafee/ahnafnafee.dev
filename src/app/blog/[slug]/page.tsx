@@ -1,9 +1,12 @@
 import { BlogPostClient } from '@/components/blog/BlogPostClient'
 import { notFound } from 'next/navigation'
 import { MDXComponents } from '@/components/content/mdx'
+import { AdjacentPosts } from '@/components/content/blog/AdjacentPosts'
+import { RelatedPosts } from '@/components/content/blog/RelatedPosts'
 import { Footer } from '@/UI/common'
 import { getContentBySlug, getContents } from '@/services/content'
 import { generateOgImage } from '@/libs/metapage'
+import { getAdjacentPosts } from '@/libs/sorters/getAdjacentPosts'
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
@@ -33,6 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const res = await getContentBySlug<Blog>('/blog', slug)
     const header = res.header
     const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
+    const modifiedTime = header.updated || header.published
 
     return {
       title: header.title,
@@ -58,6 +62,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         locale: 'en_US',
         type: 'article',
         publishedTime: header.published,
+        modifiedTime,
         authors: [header.author_name],
         tags: header.topics
       },
@@ -78,26 +83,41 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPost({ params }: Props) {
   try {
     const { slug } = await params
-    const res = await getContentBySlug<Blog>('/blog', slug)
-    const est_read = readingTime(res.content).text
+    const [res, allPosts] = await Promise.all([
+      getContentBySlug<Blog>('/blog', slug),
+      getContents<Blog>('/blog')
+    ])
+    const stats = readingTime(res.content)
+    const est_read = stats.text
     const header = { est_read, ...res.header }
     const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
+    const dateModified = header.updated || header.published
+    const keywordsList = header.keywords?.filter(Boolean) ?? []
+    const adjacent = getAdjacentPosts(slug, allPosts)
 
     // JSON-LD structured data for Google rich results
     const jsonLd = {
       '@context': 'https://schema.org',
-      '@type': 'Article',
+      '@type': 'BlogPosting',
+      '@id': `https://www.ahnafnafee.dev/blog/${header.slug}#article`,
       headline: header.title,
       description: header.summary,
       image: ogImage,
       datePublished: header.published,
+      dateModified,
+      inLanguage: 'en-US',
+      isAccessibleForFree: true,
+      wordCount: stats.words,
+      timeRequired: `PT${Math.max(1, Math.round(stats.minutes))}M`,
       author: {
         '@type': 'Person',
+        '@id': 'https://www.ahnafnafee.dev/#person',
         name: header.author_name,
         url: 'https://www.ahnafnafee.dev'
       },
       publisher: {
         '@type': 'Person',
+        '@id': 'https://www.ahnafnafee.dev/#person',
         name: 'Ahnaf An Nafee',
         url: 'https://www.ahnafnafee.dev'
       },
@@ -105,7 +125,7 @@ export default async function BlogPost({ params }: Props) {
         '@type': 'WebPage',
         '@id': `https://www.ahnafnafee.dev/blog/${header.slug}`
       },
-      keywords: header.keywords?.join(', '),
+      ...(keywordsList.length && { keywords: keywordsList.join(', ') }),
       articleSection: header.topics?.[0] || 'Technology'
     }
 
@@ -153,6 +173,10 @@ export default async function BlogPost({ params }: Props) {
               options={commonMDXOptions}
             />
           </BlogPostClient>
+          <AdjacentPosts {...adjacent} />
+          {header.related && header.related.length > 0 && (
+            <RelatedPosts slugs={header.related} />
+          )}
         </main>
         <Footer />
       </>

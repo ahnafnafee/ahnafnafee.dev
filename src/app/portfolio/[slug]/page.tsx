@@ -50,7 +50,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         }
       ],
       locale: 'en_US',
-      type: 'website'
+      type: 'article',
+      publishedTime: header.date,
+      modifiedTime: header.updated || header.date
     },
     twitter: {
       card: 'summary_large_image',
@@ -78,12 +80,16 @@ export default async function PortfolioDetailPage({ params }: Props) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SoftwareSourceCode',
+    '@id': `https://www.ahnafnafee.dev/portfolio/${header.slug}#project`,
     name: header.title,
     description: header.summary,
     image: header.image,
     dateCreated: header.date,
+    dateModified: header.updated || header.date,
+    inLanguage: 'en-US',
     author: {
       '@type': 'Person',
+      '@id': 'https://www.ahnafnafee.dev/#person',
       name: 'Ahnaf An Nafee',
       url: 'https://www.ahnafnafee.dev'
     },

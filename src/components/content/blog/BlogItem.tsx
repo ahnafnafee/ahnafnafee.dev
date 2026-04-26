@@ -1,22 +1,21 @@
 import { UnstyledLink } from '@/UI/links'
-import { numberToCompact } from '@/libs/intl'
-import { LabelBlog } from './LabelBlog'
 import type { Blog } from 'me'
 import { HiOutlineClock } from 'react-icons/hi'
 import { generateOgImage } from '@/libs/metapage'
-import { WrappedImage } from '@/UI/images'
+import NextImage from 'next/image'
 
-export const BlogItem: React.FunctionComponent<Blog> = (props) => {
+type BlogItemProps = Blog & { priority?: boolean }
+
+export const BlogItem: React.FunctionComponent<BlogItemProps> = (props) => {
   const urlPost = `/blog/${props.slug}`
-  
+
   // Use the thumbnail from props, or fallback to generated OG image
-  // (Assuming generateOgImage handles this correctly on client, or we reconstruct the URL pattern)
   const ogImageUrl = props.thumbnail || generateOgImage({ title: props.title, theme: 'dark' })
 
   return (
     <div className='w-full py-8 border-b border-gray-100 dark:border-gray-800 last:border-0 group'>
       <div className='flex flex-col-reverse md:flex-row md:items-start md:justify-between gap-6 md:gap-8'>
-        
+
         {/* Left Content */}
         <div className='flex flex-col flex-1 min-w-0'>
           {/* Metadata Top */}
@@ -45,7 +44,7 @@ export const BlogItem: React.FunctionComponent<Blog> = (props) => {
                 ))}
               </div>
             )}
-            
+
             <div className='flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500 font-medium'>
                <HiOutlineClock className='w-3.5 h-3.5' />
                <span>{props.est_read ?? '0 min'}</span>
@@ -54,13 +53,18 @@ export const BlogItem: React.FunctionComponent<Blog> = (props) => {
         </div>
 
         {/* Right Thumbnail */}
-        <UnstyledLink href={urlPost} className='w-full md:w-48 aspect-[1.91/1] md:aspect-square flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 block'>
-           <img 
-             src={ogImageUrl} 
-             alt={props.title}
-             className="w-full h-full cursor-pointer object-cover transition-transform duration-300 group-hover:scale-105"
-             loading="lazy"
-           />
+        <UnstyledLink
+          href={urlPost}
+          className='relative w-full md:w-48 aspect-[1.91/1] md:aspect-square flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 block'
+        >
+          <NextImage
+            src={ogImageUrl}
+            alt={props.title}
+            fill
+            sizes='(max-width: 768px) 100vw, 192px'
+            className='cursor-pointer object-cover transition-transform duration-300 group-hover:scale-105'
+            priority={props.priority ?? false}
+          />
         </UnstyledLink>
 
       </div>

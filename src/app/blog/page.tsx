@@ -3,7 +3,7 @@ import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
 import { getContents } from '@/services'
 import { isDev } from '@/libs/constants/environmentState'
 import { getNewestBlog } from '@/libs/sorters'
-import type { Blog, PageViewResponse } from 'me'
+import type { Blog } from 'me'
 import type { Metadata } from 'next'
 import readingTime from 'reading-time'
 
@@ -64,32 +64,30 @@ async function getBlogData() {
   }
 
   const baseURL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev'
-  const blogs: Blog[] = []
+  const slugs = response.map((r) => r.header.slug)
 
-  const requests = response.map(async (r) => {
+  // Single batched fetch instead of one request per post.
+  let views: Record<string, number> = {}
+  if (slugs.length > 0) {
     try {
-      const res = await fetch(`${baseURL}/api/pageviews?slug=${r.header.slug}`)
-      const data: PageViewResponse = await res.json()
-      const est_read = readingTime(r.content).text
-      const views = data.view ?? 0
-
-      return { ...r.header, views, est_read } as Blog
+      const res = await fetch(`${baseURL}/api/pageviews/batch?slugs=${encodeURIComponent(slugs.join(','))}`, {
+        next: { revalidate: 300 }
+      })
+      if (res.ok) {
+        views = (await res.json()) as Record<string, number>
+      }
     } catch {
-      // Fallback if pageviews API fails
-      const est_read = readingTime(r.content).text
-      return { ...r.header, views: 0, est_read } as Blog
+      // Fallback: leave views empty; per-post entries default to 0 below.
     }
-  })
+  }
 
-  const settles = await Promise.allSettled(requests)
-
-  settles.forEach((settle) => {
-    if (settle.status === 'fulfilled') {
-      blogs.push(settle.value)
-    }
-  })
-
-  return blogs.sort(getNewestBlog)
+  return response
+    .map((r) => ({
+      ...r.header,
+      est_read: readingTime(r.content).text,
+      views: views[r.header.slug] ?? 0
+    }) as Blog)
+    .sort(getNewestBlog)
 }
 
 export default async function BlogPage() {

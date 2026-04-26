@@ -1,13 +1,13 @@
 # llms.txt - Information for AI assistants and LLMs
 # Learn more: https://llmstxt.org/
 
-> Ahnaf An Nafee - Software Engineer & Game Developer. Building scalable applications and immersive experiences.
+> Ahnaf An Nafee — PhD student at GMU researching the intersection of AI and 3D computer graphics. Building scalable applications and immersive experiences.
 
 # Site Information
 - Name: Ahnaf An Nafee
 - URL: https://www.ahnafnafee.dev
-- Description: Personal portfolio and blog showcasing software engineering, game development, and technical articles.
-- Topics: Software Development, Game Development, React, Next.js, TypeScript, Unity, Python, Automation
+- Description: Personal portfolio and blog covering AI-driven 3D content generation, machine learning for graphics, software engineering, and game development.
+- Topics: Artificial Intelligence, 3D Computer Graphics, Machine Learning, Generative AI, Software Engineering, Game Development, React, Next.js, TypeScript, Unity, Unreal Engine, Python
 
 # Content Access
 
@@ -27,6 +27,74 @@
 
 ## Discovery
 - Sitemap: /sitemap.xml
+
+# Blog Posts
+
+- [Building a Local LLM-Powered Hybrid OCR Engine](https://www.ahnafnafee.dev/blog/local-llm-pdf-ocr) — published 2026-04-26
+  Summary: How I built a privacy-first, fully offline OCR pipeline that pairs Surya's layout detection with local Vision Language Models (OlmOCR, GLM-OCR, Qwen3-VL) and a Needleman-Wunsch aligner — turning handwriting, forms, and scanned PDFs into pixel-perfect searchable documents on your own laptop.
+  Topics: OCR, LLM, Vision Language Models, AI Engineering, Python, PDF
+
+- [From DOI to Markdown: A Two-Repo Pipeline for Faster Research](https://www.ahnafnafee.dev/blog/doi-paper-scraper) — published 2026-02-25
+  Summary: How DOI Paper Scraper and Papers-to-Markdown work together to convert academic papers into structured Markdown for better reading, search, and research productivity.
+  Topics: Research Productivity, Web Scraping, OCR, Python, Markdown, Automation
+
+- [Scaling Education: A Strategy Pattern Approach to Grading at Scale](https://www.ahnafnafee.dev/blog/autograder-architecture) — published 2025-12-11
+  Summary: Deep dive into building a scalable autograder using Python, Java, and the Strategy Pattern. Learn how we can automate grading for hundreds of students using "Frankenstein" code stitching, dynamic rubrics, and local LLMs.
+  Topics: Education Technology, Software Architecture, Python, Java, Automation, LLM
+
+- [Mesh Decimation Benchmark: QEM vs. Vertex Clustering](https://www.ahnafnafee.dev/blog/mesh-decimation-benchmark) — published 2025-12-08
+  Summary: A rigorous statistical comparison of mesh decimation algorithms using Python and PyMeshLab. Discover which algorithm wins for speed vs. fidelity at different reduction levels.
+  Topics: 3D Graphics, Research, Computer Graphics, Computer Geometry, Mesh Simplification
+
+# Portfolio
+
+- [Player 2](https://www.ahnafnafee.dev/portfolio/player2) — 2022-12-01
+  Summary: Player 2 - The Gamer's Companion
+  Stack: react-native, react, expo, next.js, typescript, aws, java, spring-boot, postgresql, android, ios
+
+- [Action Upload GoFile](https://www.ahnafnafee.dev/portfolio/action-upload-gofile) — 2022-10-01
+  Summary: 📦 GitHub Action for uploading Files to Gofile.io 
+  Stack: android, ios, cloud, github-action, aws
+
+- [EAS Build Webhook Notification](https://www.ahnafnafee.dev/portfolio/eas-build-discord) — 2022-07-01
+  Summary: 🔔 Build/Submit Notification EAS Webhook using Discord
+  Stack: aws, serverless, cloud, javascript, discord, expo, webhook
+
+- [Bookworm](https://www.ahnafnafee.dev/portfolio/bookworm) — 2022-05-01
+  Summary: 📚 Bookworm is a mobile-targeted website where book lovers can search and store books they have read in their library
+  Stack: react, next.js, typescript, javascript, Tailwindcss, supabase, chakraui, postgresql
+
+- [PostScript Preview](https://www.ahnafnafee.dev/portfolio/postscript-preview) — 2021-11-01
+  Summary: 💻 PostScript Preview is an extension that helps to preview EPS and PS files in Visual Studio Code
+  Stack: typescript, vscode, javascript, node.js, bash
+
+- [The Void Above](https://www.ahnafnafee.dev/portfolio/the-void-above) — 2021-04-01
+  Summary: 🚀 The Void Above is a new action/adventure game from the developers, Void Gaming.
+  Stack: unity, csharp, photoshop, figma, illustrator, maya, perforce
+
+- [Checkers Party](https://www.ahnafnafee.dev/portfolio/checkers-party) — 2020-12-01
+  Summary: ⚪ Checkers Party is a two-player game designed to be played remotely ⚫
+  Stack: unity, csharp, photoshop, figma, illustrator, maya
+
+- [TimeKour](https://www.ahnafnafee.dev/portfolio/timekour) — 2020-09-01
+  Summary: Synthwave-styled parkour game
+  Stack: unity, csharp, photoshop, figma, illustrator
+
+- [Sky Pirates](https://www.ahnafnafee.dev/portfolio/sky-pirates) — 2020-06-01
+  Summary: Sky Pirates is a single player, arcade style bullet hell
+  Stack: unity, csharp, photoshop, figma, illustrator
+
+- [Need for ABC](https://www.ahnafnafee.dev/portfolio/need-for-abc) — 2020-05-01
+  Summary: 🎮🚗 An Alphabet Game for kids
+  Stack: unity, csharp, photoshop, figma, illustrator
+
+- [Icebreaker](https://www.ahnafnafee.dev/portfolio/icebreaker) — 2020-03-01
+  Summary: 💗 Dating app for matching personality
+  Stack: css, node.js, html, javascript, mysql, jquery
+
+- [Roomie](https://www.ahnafnafee.dev/portfolio/roomie) — 2019-06-01
+  Summary: 📱🏫 Tinder Style Roommate Finder App. 🔎🃏 An app that can say goodbye to all the hassles of a college student and present them with simplicity and connectivity
+  Stack: firebase, java, kotlin, adobe-xd, android-studio, trello
 
 # How to Use This Site
 1. Fetch /api/blog for a list of all published blog posts

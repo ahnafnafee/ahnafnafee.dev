@@ -8,6 +8,7 @@ declare module 'me' {
     author_name: string
     github_username: string
     published: string
+    updated?: string
     topics: Array<string>
     keywords: Array<string>
     related: Array<string>
@@ -23,6 +24,7 @@ declare module 'me' {
   export type Portfolio = {
     title: string
     date: string
+    updated?: string
     featured: boolean
     summary: string
     slug: string

@@ -12,8 +12,8 @@ export const BlogList: React.FunctionComponent<BlogListProps> = ({ displayViews,
     <section className='py-8'>
       {props.posts.length > 0 && (
         <div className='flex flex-col'>
-          {props.posts.map((post) => {
-            return <BlogItem key={post.slug} {...post} displayViews={displayViews} />
+          {props.posts.map((post, index) => {
+            return <BlogItem key={post.slug} {...post} displayViews={displayViews} priority={index === 0} />
           })}
         </div>
       )}
