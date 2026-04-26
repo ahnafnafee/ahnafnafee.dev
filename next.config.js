@@ -1,6 +1,5 @@
 const { withAxiom } = require("next-axiom");
 
-const runtimeCaching = require("next-pwa/cache");
 const isDev = process.env.NODE_ENV === "development";
 
 // https://nextjs.org/docs/advanced-features/security-headers
@@ -54,22 +53,23 @@ const securityHeaders = [
 	},
 ];
 
-const withPWA = require("next-pwa")({
+// @ducanh2912/next-pwa v10 ships v10 workbox defaults that mirror the legacy
+// next-pwa@5 cache.js (Google fonts, static assets, _next/image, _next/data,
+// same-origin /api/*, cross-origin). `extendDefaultRuntimeCaching: true`
+// preserves that behavior; v5 keys (skipWaiting, buildExcludes) move under
+// `workboxOptions`.
+const withPWA = require("@ducanh2912/next-pwa").default({
 	dest: "public",
-	skipWaiting: true, // installs new SW when available without a prompt, we only need to send a reload request to user.
 	register: true,
 	disable: isDev,
-	runtimeCaching,
-	buildExcludes: [
-		/chunks\/images\/.*$/, // Don't precache files under .next/static/chunks/images this improves next-optimized-images behaviour
-		/chunks\/pages\/api\/.*/, // Dont cache the API it needs fresh serverinfo
-	],
-	// exclude: [
-	//   /middleware-manifest\.json$/, // exclude middleware to fix error @see https://github.com/shadowwalker/next-pwa/issues/288#issuecomment-955777098,
-	//   /build-manifest\.json$/,
-	//   /\.map$/, // dont cache map files
-	//   /^.*ts.*$/ // Dont let serviceworker touch the TS streams
-	// ],
+	extendDefaultRuntimeCaching: true,
+	workboxOptions: {
+		skipWaiting: true,
+		buildExcludes: [
+			/chunks\/images\/.*$/,
+			/chunks\/pages\/api\/.*/,
+		],
+	},
 });
 
 const isStaticExport = process.env.STATIC_EXPORT === "true";
