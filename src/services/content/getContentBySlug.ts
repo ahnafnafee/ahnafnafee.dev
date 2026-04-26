@@ -1,8 +1,9 @@
+import { readFile } from 'fs/promises'
+import { join } from 'path'
+
 import { LOCATION_DIR } from '@/services'
 
-import { readFile } from 'fs/promises'
 import matter from 'gray-matter'
-import { join } from 'path'
 
 type GetContentBySlug<T> = { content: string; header: { slug: string } & T }
 

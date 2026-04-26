@@ -7,10 +7,10 @@ export const metadata: Metadata = {
 
 export default function OfflinePage() {
   return (
-    <div className='flex flex-col items-center justify-center gap-4 min-h-screen -mt-36'>
+    <div className='-mt-36 flex min-h-screen flex-col items-center justify-center gap-4'>
       <section className='text-center'>
         <h1 className='text-center'>503 - Offline</h1>
-        <p className='my-2 md:my-4 max-w-prose'>
+        <p className='my-2 max-w-prose md:my-4'>
           It looks like you are offline, please connect to your internet connection and try refreshing this page.
         </p>
       </section>

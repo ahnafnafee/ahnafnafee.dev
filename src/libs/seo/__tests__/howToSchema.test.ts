@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest'
 import { buildHowToJsonLd } from '../howToSchema'
+
+import { describe, expect, it } from 'vitest'
 
 describe('buildHowToJsonLd', () => {
   const baseInput = {

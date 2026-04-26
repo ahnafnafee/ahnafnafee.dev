@@ -153,14 +153,14 @@ Vertex Clustering is a fast, low-memory technique using spatial hashing:
 
 ### Summary Statistics
 
-| Algorithm | Mesh Type | Time (s) | Hausdorff Dist. |
-| :--- | :--- | :--- | :--- |
-| **Clustering** | Clean CAD (ModelNet40) | 0.005 ± 0.004 | 0.006 ± 0.006 |
-| **Clustering** | Organic (Thingi10k) | 0.032 ± 0.062 | 0.013 ± 0.012 |
-| **QEM** | Clean CAD (ModelNet40) | 0.259 ± 0.178 | 0.034 ± 0.061 |
-| **QEM** | Organic (Thingi10k) | 1.290 ± 1.718 | 0.006 ± 0.007 |
+| Algorithm      | Mesh Type              | Time (s)      | Hausdorff Dist. |
+| :------------- | :--------------------- | :------------ | :-------------- |
+| **Clustering** | Clean CAD (ModelNet40) | 0.005 ± 0.004 | 0.006 ± 0.006   |
+| **Clustering** | Organic (Thingi10k)    | 0.032 ± 0.062 | 0.013 ± 0.012   |
+| **QEM**        | Clean CAD (ModelNet40) | 0.259 ± 0.178 | 0.034 ± 0.061   |
+| **QEM**        | Organic (Thingi10k)    | 1.290 ± 1.718 | 0.006 ± 0.007   |
 
-<p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-8">
+<p className='mb-8 text-center text-sm text-gray-500 dark:text-gray-400'>
   Table 1: Mean ± SD across all decimation levels. Lower Hausdorff Distance indicates better geometric preservation.
 </p>
 
@@ -171,6 +171,7 @@ The three-way ANOVA revealed a statistically significant main effect for Algorit
 $$F(1,112) \approx 22.89, \quad p < 0.001$$
 
 The **Algorithm × Mesh Type interaction** was also significant ($F(1,112) \approx 10.09$, $p = 0.002$):
+
 - Clustering: under 0.05s regardless of input complexity
 - QEM: 0.26s (CAD) → 1.29s (Organic) — a **~40× performance gap**
 
@@ -183,6 +184,7 @@ Significant effects for Algorithm ($p=0.008$), Mesh Type ($p=0.011$), and Decima
 **Critical finding**: QEM catastrophically fails on CAD models at 90% decimation.
 
 Failure case analysis:
+
 - **Wing Collapse (Airplane Model)**: QEM eliminates thin planar surfaces defining wings—quadric error cannot distinguish "safe" interior edges from silhouette-critical boundaries
 - **Leg Detachment (Chair Model)**: Supporting columns with 200–300 vertices disappear as QEM prioritizes the larger seat surface
 
@@ -193,11 +195,13 @@ Clustering's voxelization maintains coarse volumetric approximation—appearing 
 Cohen's $d$ confirms practical significance:
 
 **Execution Time:**
+
 - Algorithm effect: $d = 0.81$ (large)
 - Mesh Type effect: $d = 0.54$ (medium)
 - Algorithm × Type interaction: $d = 1.04$ (very large)
 
 **Hausdorff Distance:**
+
 - QEM on CAD vs. Clustering on CAD at 90%: $d = 0.98$ (very large)
 
 ---

@@ -31,7 +31,7 @@ export const ResearchSections: React.FunctionComponent<ResearchSectionsProps> = 
     <div className='flex flex-col gap-12 pb-12'>
       {grouped.map((group, groupIdx) => (
         <section key={group.key}>
-          <h2 className='text-sm md:text-base font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 pb-2 mb-2 border-b border-gray-200 dark:border-gray-800'>
+          <h2 className='mb-2 border-b border-gray-200 pb-2 text-sm font-semibold tracking-wider text-gray-500 uppercase md:text-base dark:border-gray-800 dark:text-gray-400'>
             {group.label}
           </h2>
           <div className='flex flex-col divide-y divide-gray-100 dark:divide-gray-800'>

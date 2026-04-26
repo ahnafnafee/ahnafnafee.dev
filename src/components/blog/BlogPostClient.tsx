@@ -1,10 +1,12 @@
 'use client'
 
-import { UnstyledButton } from '@/components/UI/buttons'
 import { PRButton } from '@/components/content'
 import { GiscusComment, HeadingContent } from '@/components/content/blog'
+import { Button } from '@/components/ui/button'
+
 import { isDev } from '@/libs/constants/environmentState'
 import { twclsx } from '@/libs/twclsx'
+
 import type { Blog, PageViewResponse } from 'me'
 import { useCallback, useEffect, useState } from 'react'
 import { HiArrowUp } from 'react-icons/hi'
@@ -53,8 +55,6 @@ export function BlogPostClient({ header, children }: BlogPostClientProps) {
           thumbnail={header.thumbnail}
         />
 
-
-
         <div
           className={twclsx('prose dark:prose-invert', 'md:prose-lg', 'prose-headings:scroll-mt-24', 'prose-img:my-4')}
         >
@@ -64,16 +64,18 @@ export function BlogPostClient({ header, children }: BlogPostClientProps) {
 
       <GiscusComment />
 
-      <div className='flex flex-col space-y-2.5 md:space-y-0 md:flex-row md:items-center md:justify-between mt-2'>
+      <div className='mt-2 flex flex-col space-y-2.5 md:flex-row md:items-center md:justify-between md:space-y-0'>
         <PRButton path={`/blog/${header.slug}.mdx`} />
 
-        <UnstyledButton
+        <Button
+          variant='ghost'
+          size='sm'
           onClick={toTop}
-          className='justify-start space-x-1.5 py-1 max-w-max border-b-2 border-dashed border-theme-500'
+          className='border-theme-500 max-w-max justify-start gap-1.5 rounded-none border-b-2 border-dashed px-0 py-1 hover:bg-transparent'
         >
-          <HiArrowUp className='w-4 h-4' />
+          <HiArrowUp data-icon='inline-start' />
           <span>Back to top</span>
-        </UnstyledButton>
+        </Button>
       </div>
     </>
   )

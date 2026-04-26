@@ -1,23 +1,22 @@
-import { notFound } from 'next/navigation'
 import { MDXComponents } from '@/components/content/mdx'
-import {
-  HeadingResearch,
-  ResearchAbstract,
-  ResearchBibTeX,
-  ResearchTeaser
-} from '@/components/content/research'
 import { PRButton } from '@/components/content/PRButton'
+import { HeadingResearch, ResearchAbstract, ResearchBibTeX, ResearchTeaser } from '@/components/content/research'
+import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
+
 import { BackToTop } from '@/UI/buttons'
-import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
+
 import { getContentBySlug, getContentHeaders } from '@/services/content'
-import { generateOgImage } from '@/libs/metapage'
-import { commonMDXOptions } from '@/libs/mdxConfig'
-import { twclsx } from '@/libs/twclsx'
-import { PERSON_ID } from '@/libs/seo/personSchema'
+
 import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { commonMDXOptions } from '@/libs/mdxConfig'
+import { generateOgImage } from '@/libs/metapage'
+import { PERSON_ID } from '@/libs/seo/personSchema'
+import { twclsx } from '@/libs/twclsx'
+
 import type { Affiliation, Author, Research } from 'me'
 import type { Metadata } from 'next'
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import { notFound } from 'next/navigation'
 
 type Props = {
   params: { slug: string }
@@ -229,10 +228,7 @@ export default async function ResearchEntryPage({ params }: Props) {
 
     return (
       <AppLayoutPage>
-        <script
-          type='application/ld+json'
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }}
-        />
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
         <BackToTop />
 
         <article className={twclsx('flex flex-col', 'gap-8')}>

@@ -5,11 +5,11 @@ export const Code = (props: { children: React.ReactNode; className?: string }) =
   if (props.className?.includes('language-')) {
     return <code className={props.className}>{props.children}</code>
   }
-  
+
   return (
     <code
       className={twclsx(
-        'py-0.5 px-1.5 font-mono text-sm rounded',
+        'rounded px-1.5 py-0.5 font-mono text-sm',
         'bg-gray-100 dark:bg-gray-800',
         'text-pink-600 dark:text-pink-400'
       )}

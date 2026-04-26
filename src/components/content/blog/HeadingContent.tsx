@@ -1,9 +1,11 @@
 'use client'
 
-import { twclsx } from '@/libs'
-import { dateFormat, dateStringToISO } from '@/libs/intl'
 import { WrappedImage } from '@/UI/images'
 import { UnderlineLink } from '@/UI/links'
+
+import { twclsx } from '@/libs'
+import { dateFormat, dateStringToISO } from '@/libs/intl'
+
 import { useState } from 'react'
 import { HiOutlineShare } from 'react-icons/hi'
 
@@ -38,13 +40,13 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
   const authorProfile = `https://github.com/${githubUsername}`
 
   return (
-    <section className='flex flex-col items-center max-w-2xl mx-auto w-full'>
+    <section className='mx-auto flex w-full max-w-2xl flex-col items-center'>
       {/* Hero thumbnail. Rendering the same image that BlogItem uses on /blog
           gives the post detail page a strong claim as the canonical landing
           for that image — Google Images links should resolve to the post
           rather than the list page. */}
       {props.thumbnail && (
-        <figure className='w-full mt-10 mb-6 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800/40'>
+        <figure className='mt-10 mb-6 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800/40'>
           <WrappedImage
             src={props.thumbnail}
             alt={props.title}
@@ -52,25 +54,33 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
             height={630}
             sizes='(max-width: 768px) 100vw, 768px'
             priority
-            className='w-full h-auto object-cover'
+            className='h-auto w-full object-cover'
           />
         </figure>
       )}
 
       {/* Title */}
-      <h1 className={twclsx('text-center text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-gray-900 dark:text-white leading-tight', !props.thumbnail && 'mt-10')}>
+      <h1
+        className={twclsx(
+          'mb-4 text-center text-4xl leading-tight font-extrabold tracking-tight text-gray-900 md:text-5xl dark:text-white',
+          !props.thumbnail && 'mt-10'
+        )}
+      >
         {props.title}
       </h1>
 
       {/* Summary/Subtitle */}
-      <p className='text-center text-xl text-gray-500 dark:text-gray-400 mb-8 leading-relaxed max-w-prose'>
+      <p className='mb-8 max-w-prose text-center text-xl leading-relaxed text-gray-500 dark:text-gray-400'>
         {props.summary}
       </p>
 
       {props.topics && props.topics.length > 0 && (
-        <div className='flex flex-wrap items-center gap-2 mb-8 w-full justify-center'>
+        <div className='mb-8 flex w-full flex-wrap items-center justify-center gap-2'>
           {props.topics.map((topic) => (
-            <span key={topic} className="px-2 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-sm whitespace-nowrap">
+            <span
+              key={topic}
+              className='rounded-sm bg-gray-200 px-2 py-1 text-[10px] font-bold tracking-wider whitespace-nowrap text-gray-700 uppercase dark:bg-gray-800 dark:text-gray-300'
+            >
               {topic}
             </span>
           ))}
@@ -79,7 +89,7 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
 
       {/* Author Block */}
       {/* Author & Action Bar Combined */}
-      <div className='flex items-center justify-between w-full border-t border-b border-gray-200 dark:border-gray-800 py-4 mb-8'>
+      <div className='mb-8 flex w-full items-center justify-between border-t border-b border-gray-200 py-4 dark:border-gray-800'>
         {/* Author Info */}
         <div className='flex items-center gap-3'>
           <WrappedImage
@@ -92,12 +102,12 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
             priority
           />
           <div className='flex flex-col'>
-            <span className='font-bold text-sm text-purple-600 dark:text-purple-400 uppercase tracking-wide'>
+            <span className='text-sm font-bold tracking-wide text-purple-600 uppercase dark:text-purple-400'>
               <UnderlineLink href={authorProfile} title={authorName} className='text-purple-600 dark:text-purple-400'>
                 {authorName}
               </UnderlineLink>
             </span>
-            <div className='flex items-center gap-2 text-xs text-gray-500 uppercase font-medium'>
+            <div className='flex items-center gap-2 text-xs font-medium text-gray-500 uppercase'>
               <time dateTime={dateStringToISO(props.published)}>
                 {dateFormat(props.published, undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
               </time>
@@ -106,17 +116,14 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
         </div>
 
         {/* Share Button */}
-        <button 
+        <button
           onClick={handleShare}
-          className='flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400'
+          className='flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-1.5 text-gray-500 transition-colors hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-800'
         >
           <HiOutlineShare className='text-lg' />
           <span className='text-sm font-medium'>{isCopied ? 'Copied!' : 'Share'}</span>
         </button>
       </div>
-
-      
-
     </section>
   )
 }

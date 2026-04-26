@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest'
-import type { Blog } from 'me'
 import { getMostPopularBlog, getNewestBlog } from '../sortBlog'
+
+import type { Blog } from 'me'
+import { describe, expect, it } from 'vitest'
 
 const mk = (overrides: Partial<Blog>): Blog => ({
   title: 't',
@@ -43,11 +44,7 @@ describe('getNewestBlog', () => {
 
 describe('getMostPopularBlog', () => {
   it('puts higher view counts first', () => {
-    const posts = [
-      mk({ slug: 'low', views: 10 }),
-      mk({ slug: 'high', views: 1000 }),
-      mk({ slug: 'mid', views: 100 })
-    ]
+    const posts = [mk({ slug: 'low', views: 10 }), mk({ slug: 'high', views: 1000 }), mk({ slug: 'mid', views: 100 })]
     posts.sort(getMostPopularBlog)
     expect(posts.map((p) => p.slug)).toEqual(['high', 'mid', 'low'])
   })

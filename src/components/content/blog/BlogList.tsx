@@ -20,4 +20,3 @@ export const BlogList: React.FunctionComponent<BlogListProps> = ({ displayViews,
     </section>
   )
 }
-

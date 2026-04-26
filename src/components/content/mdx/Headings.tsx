@@ -41,7 +41,7 @@ export const HeadingTwo: React.FunctionComponent<HeadingProps> = ({ id, ...props
           'no-underline transition',
           'border-b border-dashed',
           'border-transparent hover:border-gray-500',
-          'font-bold text-2xl tracking-tight mb-4 mt-16 text-black dark:text-white',
+          'mt-16 mb-4 text-2xl font-bold tracking-tight text-black dark:text-white',
           hashPath && 'border-gray-500'
         )}
       >

@@ -1,8 +1,8 @@
-import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
+import rehypePrismPlus from 'rehype-prism-plus'
 import rehypeSlug from 'rehype-slug'
 import remarkGfm from 'remark-gfm'
-import rehypePrismPlus from 'rehype-prism-plus'
+import remarkMath from 'remark-math'
 
 export const commonMDXOptions = {
   mdxOptions: {

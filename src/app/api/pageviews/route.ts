@@ -9,10 +9,7 @@ export async function GET(req: NextRequest) {
   const slug = searchParams.get('slug')
 
   if (!slug) {
-    return NextResponse.json(
-      { message: 'query parameter is required', view: null },
-      { status: 400 }
-    )
+    return NextResponse.json({ message: 'query parameter is required', view: null }, { status: 400 })
   }
 
   return NextResponse.json({ message: 'Retrieved successfully', view: 0 })

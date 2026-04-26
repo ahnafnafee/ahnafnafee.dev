@@ -106,7 +106,8 @@ const lines = [
 for (const post of blogs) {
   const published = fmtDate(post.published)
   const updated = fmtDate(post.updated)
-  const stamp = updated && updated !== published ? `published ${published}, updated ${updated}` : `published ${published}`
+  const stamp =
+    updated && updated !== published ? `published ${published}, updated ${updated}` : `published ${published}`
   lines.push(`- [${post.title}](${BASE_URL}/blog/${post.slug}) — ${stamp}`)
   if (post.summary) lines.push(`  Summary: ${post.summary}`)
   if (Array.isArray(post.topics) && post.topics.length) lines.push(`  Topics: ${post.topics.join(', ')}`)
@@ -119,7 +120,8 @@ lines.push('')
 for (const r of research) {
   const published = fmtDate(r.published)
   const updated = fmtDate(r.updated)
-  const stamp = updated && updated !== published ? `published ${published}, updated ${updated}` : `published ${published}`
+  const stamp =
+    updated && updated !== published ? `published ${published}, updated ${updated}` : `published ${published}`
   lines.push(`- [${r.title}](${BASE_URL}/research/${r.slug}) — ${stamp}`)
   if (r.summary) lines.push(`  Summary: ${r.summary}`)
   if (Array.isArray(r.topics) && r.topics.length) lines.push(`  Topics: ${r.topics.join(', ')}`)
@@ -163,4 +165,6 @@ lines.push('- Twitter: https://twitter.com/ahnaf_nafee')
 lines.push('')
 
 fs.writeFileSync(OUTPUT, lines.join('\n'), 'utf8')
-console.log(`[llms.txt] Wrote ${blogs.length} posts + ${portfolio.length} projects + ${research.length} research entries to ${OUTPUT}`)
+console.log(
+  `[llms.txt] Wrote ${blogs.length} posts + ${portfolio.length} projects + ${research.length} research entries to ${OUTPUT}`
+)

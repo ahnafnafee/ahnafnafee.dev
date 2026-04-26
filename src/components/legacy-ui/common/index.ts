@@ -1,0 +1,6 @@
+export * from './Header'
+export * from './Nav'
+export * from './Footer'
+export * from './EmptyResult'
+export * from './SocialHome'
+export * from './FooterSocialHome'

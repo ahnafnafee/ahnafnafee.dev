@@ -1,6 +1,8 @@
 import { ResumePageClient } from '@/components/resume/ResumePageClient'
-import { PERSON_REFERENCE } from '@/libs/seo/personSchema'
+
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { PERSON_REFERENCE } from '@/libs/seo/personSchema'
+
 import type { Metadata } from 'next'
 
 const RESUME_URL = `${SITE_URL}/resume`

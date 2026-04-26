@@ -17,7 +17,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
         <span
           className={twclsx(
             baseClass,
-            'text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800',
+            'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200',
             props.className
           )}
         >
@@ -28,7 +28,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
     case 'react':
       return (
         <span
-          className={twclsx(baseClass, 'text-sky-700 bg-sky-100 dark:text-sky-100 dark:bg-sky-900', props.className)}
+          className={twclsx(baseClass, 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-100', props.className)}
         >
           {props.type}
         </span>
@@ -39,7 +39,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
         <span
           className={twclsx(
             baseClass,
-            'text-neutral-800 dark:text-neutral-300 bg-neutral-300 dark:bg-neutral-700',
+            'bg-neutral-300 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-300',
             props.className
           )}
         >
@@ -52,7 +52,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
         <span
           className={twclsx(
             baseClass,
-            'text-amber-700 bg-amber-100 dark:text-amber-100 dark:bg-amber-800',
+            'bg-amber-100 text-amber-700 dark:bg-amber-800 dark:text-amber-100',
             props.className
           )}
         >
@@ -66,7 +66,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
         <span
           className={twclsx(
             baseClass,
-            'text-cyan-700 bg-cyan-100 dark:text-cyan-100 dark:bg-cyan-800',
+            'bg-cyan-100 text-cyan-700 dark:bg-cyan-800 dark:text-cyan-100',
             props.className
           )}
         >
@@ -80,7 +80,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
         <span
           className={twclsx(
             baseClass,
-            'text-fuchsia-700 bg-fuchsia-100 dark:text-fuchsia-100 dark:bg-fuchsia-800',
+            'bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-800 dark:text-fuchsia-100',
             props.className
           )}
         >
@@ -93,7 +93,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
         <span
           className={twclsx(
             baseClass,
-            'text-emerald-700 bg-emerald-100 dark:text-emerald-100 dark:bg-emerald-800',
+            'bg-emerald-100 text-emerald-700 dark:bg-emerald-800 dark:text-emerald-100',
             props.className
           )}
         >
@@ -106,7 +106,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
         <span
           className={twclsx(
             baseClass,
-            'text-blue-700 bg-blue-100 dark:text-blue-100 dark:bg-blue-800',
+            'bg-blue-100 text-blue-700 dark:bg-blue-800 dark:text-blue-100',
             props.className
           )}
         >
@@ -117,7 +117,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
     case 'state management':
       return (
         <span
-          className={twclsx(baseClass, 'text-rose-700 bg-rose-100 dark:text-rose-50 dark:bg-rose-800', props.className)}
+          className={twclsx(baseClass, 'bg-rose-100 text-rose-700 dark:bg-rose-800 dark:text-rose-50', props.className)}
         >
           {props.type}
         </span>
@@ -153,7 +153,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
         <span
           className={twclsx(
             baseClass,
-            'text-orange-700 dark:text-orange-200 bg-orange-100 dark:bg-orange-800',
+            'bg-orange-100 text-orange-700 dark:bg-orange-800 dark:text-orange-200',
             props.className
           )}
         >
@@ -166,7 +166,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
         <span
           className={twclsx(
             baseClass,
-            'text-violet-700 dark:text-violet-200 bg-violet-100 dark:bg-violet-800',
+            'bg-violet-100 text-violet-700 dark:bg-violet-800 dark:text-violet-200',
             props.className
           )}
         >
@@ -179,7 +179,7 @@ export const LabelBlog: React.FunctionComponent<LabelProps> = (props) => {
         <span
           className={twclsx(
             baseClass,
-            'text-neutral-700 dark:text-neutral-200 bg-neutral-100 dark:bg-neutral-800',
+            'bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-200',
             props.className
           )}
         >

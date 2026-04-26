@@ -1,8 +1,11 @@
+import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
 import { PortfolioPageClient } from '@/components/portfolio/PortfolioPageClient'
-import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
+
 import { getContents } from '@/services'
-import { getNewestPortfolio } from '@/libs/sorters'
+
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { getNewestPortfolio } from '@/libs/sorters'
+
 import type { Portfolio } from 'me'
 import type { Metadata } from 'next'
 
@@ -70,9 +73,7 @@ export const metadata: Metadata = {
       "Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!",
     url: PORTFOLIO_URL,
     siteName: SITE_NAME,
-    images: [
-      { url: PORTFOLIO_OG_IMAGE, width: 1200, height: 630, alt: PORTFOLIO_OG_ALT, type: 'image/png' }
-    ],
+    images: [{ url: PORTFOLIO_OG_IMAGE, width: 1200, height: 630, alt: PORTFOLIO_OG_ALT, type: 'image/png' }],
     locale: 'en_US',
     type: 'website'
   },
@@ -159,10 +160,7 @@ export default async function PortfolioPage() {
 
   return (
     <AppLayoutPage>
-      <script
-        type='application/ld+json'
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }}
-      />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
       <PortfolioPageClient
         portfolios={portfolios}
         softwarePortfolios={softwarePortfolios}

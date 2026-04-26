@@ -1,5 +1,6 @@
-import type { Blog } from 'me'
 import { getNewestBlog } from './sortBlog'
+
+import type { Blog } from 'me'
 
 export type AdjacentPosts = {
   prev: Pick<Blog, 'slug' | 'title'> | null

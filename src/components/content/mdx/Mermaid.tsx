@@ -1,11 +1,12 @@
 'use client'
 
 import { twclsx } from '@/libs/twclsx'
+
 import { useTheme } from 'next-themes'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { HiExclamationTriangle } from 'react-icons/hi2'
 import { HiArrowsExpand, HiX } from 'react-icons/hi'
+import { HiExclamationTriangle } from 'react-icons/hi2'
 
 interface MermaidProps {
   content: string
@@ -64,7 +65,7 @@ export function Mermaid({ content }: MermaidProps) {
     const renderMermaid = async () => {
       try {
         const mermaid = await loadMermaidFromCDN()
-        
+
         if (!mounted || !mermaidRef.current || !mermaid) {
           return
         }
@@ -74,14 +75,11 @@ export function Mermaid({ content }: MermaidProps) {
         mermaid.initialize({
           startOnLoad: false,
           theme: isDark ? 'dark' : 'default',
-          securityLevel: 'loose',
+          securityLevel: 'loose'
         })
 
         // Normalize line endings
-        const processedContent = content
-          .replace(/\r\n/g, '\n')
-          .replace(/\r/g, '\n')
-          .trim()
+        const processedContent = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim()
 
         // Create a unique ID for this diagram
         const id = `mermaid-${Math.random().toString(36).substring(7)}`
@@ -151,37 +149,33 @@ export function Mermaid({ content }: MermaidProps) {
 
   if (error) {
     return (
-      <div className="mermaid-wrapper my-8">
+      <div className='mermaid-wrapper my-8'>
         <div
           className={twclsx(
-            'flex flex-col items-center justify-center py-12 px-6 text-center',
+            'flex flex-col items-center justify-center px-6 py-12 text-center',
             'bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20',
-            'border-2 border-dashed border-red-300 dark:border-red-700 rounded-lg'
+            'rounded-lg border-2 border-dashed border-red-300 dark:border-red-700'
           )}
         >
           <div
             className={twclsx(
-              'w-16 h-16 mb-4 flex items-center justify-center',
-              'bg-red-100 dark:bg-red-900/30 rounded-full'
+              'mb-4 flex h-16 w-16 items-center justify-center',
+              'rounded-full bg-red-100 dark:bg-red-900/30'
             )}
           >
-            <HiExclamationTriangle className="w-8 h-8 text-red-500" />
+            <HiExclamationTriangle className='h-8 w-8 text-red-500' />
           </div>
-          <h3 className="text-lg font-semibold text-red-700 dark:text-red-300 mb-2">
-            Diagram Syntax Error
-          </h3>
-          <p className="text-red-600 dark:text-red-400 mb-4 max-w-md">
+          <h3 className='mb-2 text-lg font-semibold text-red-700 dark:text-red-300'>Diagram Syntax Error</h3>
+          <p className='mb-4 max-w-md text-red-600 dark:text-red-400'>
             The Mermaid diagram contains invalid syntax and cannot be rendered.
           </p>
           <div
             className={twclsx(
               'bg-red-50 dark:bg-red-900/30',
-              'border border-red-200 dark:border-red-800 rounded-md p-3 max-w-md'
+              'max-w-md rounded-md border border-red-200 p-3 dark:border-red-800'
             )}
           >
-            <p className="text-sm text-red-700 dark:text-red-300 font-mono break-all">
-              {error}
-            </p>
+            <p className='font-mono text-sm break-all text-red-700 dark:text-red-300'>{error}</p>
           </div>
         </div>
       </div>
@@ -191,65 +185,71 @@ export function Mermaid({ content }: MermaidProps) {
   return (
     <>
       {/* Fullscreen modal overlay - using React Portal to render at body level */}
-      {isFullscreen && typeof document !== 'undefined' && createPortal(
-        <div 
-          className="fixed inset-0 z-[9999] overflow-auto backdrop-blur-sm bg-white/90 dark:bg-black/90"
-          onClick={closeFullscreen}
-        >
-          {/* Close button */}
-          <button
+      {isFullscreen &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className='fixed inset-0 z-[9999] overflow-auto bg-white/90 backdrop-blur-sm dark:bg-black/90'
             onClick={closeFullscreen}
-            className="fixed top-6 right-6 z-[10000] p-2 rounded-full bg-black/10 hover:bg-black/20 dark:bg-white/10 dark:hover:bg-white/20 transition-colors border border-black/20 dark:border-white/20"
-            aria-label="Close fullscreen (Esc)"
           >
-            <HiX className="w-5 h-5 text-black dark:text-white " />
-          </button>
+            {/* Close button */}
+            <button
+              onClick={closeFullscreen}
+              className='fixed top-6 right-6 z-[10000] rounded-full border border-black/20 bg-black/10 p-2 transition-colors hover:bg-black/20 dark:border-white/20 dark:bg-white/10 dark:hover:bg-white/20'
+              aria-label='Close fullscreen (Esc)'
+            >
+              <HiX className='h-5 w-5 text-black dark:text-white' />
+            </button>
 
-          {/* Modal content - vertically centered with table approach */}
-          <div style={{ 
-            display: 'table', 
-            width: '100%', 
-            height: '100vh',
-            tableLayout: 'fixed'
-          }}>
-            <div style={{ 
-              display: 'table-cell', 
-              verticalAlign: 'middle',
-              padding: '48px 16px',
-            }}>
+            {/* Modal content - vertically centered with table approach */}
+            <div
+              style={{
+                display: 'table',
+                width: '100%',
+                height: '100vh',
+                tableLayout: 'fixed'
+              }}
+            >
               <div
                 style={{
-                  display: 'block',
-                  maxWidth: '95vw',
-                  maxHeight: 'calc(100vh - 96px)',
-                  margin: '0 auto',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  overflow: 'auto',
+                  display: 'table-cell',
+                  verticalAlign: 'middle',
+                  padding: '48px 16px'
                 }}
-                onClick={(e) => e.stopPropagation()}
               >
-                <div 
-                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                  dangerouslySetInnerHTML={{ __html: svgContent }}
-                />
+                <div
+                  style={{
+                    display: 'block',
+                    maxWidth: '95vw',
+                    maxHeight: 'calc(100vh - 96px)',
+                    margin: '0 auto',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    overflow: 'auto'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    dangerouslySetInnerHTML={{ __html: svgContent }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </div>,
-        document.body
-      )}
+          </div>,
+          document.body
+        )}
 
       {/* Inline diagram with hover effects */}
-      <figure className="mermaid my-8 not-prose">
+      <figure className='mermaid not-prose my-8'>
         <div
           className={twclsx(
             'group relative cursor-pointer overflow-x-auto rounded-lg p-4 transition-colors select-none',
             'bg-gray-50 hover:bg-gray-100 dark:bg-gray-800/50 dark:hover:bg-gray-800'
           )}
           onClick={openFullscreen}
-          role="button"
-          aria-haspopup="dialog"
+          role='button'
+          aria-haspopup='dialog'
           aria-expanded={isFullscreen}
           tabIndex={0}
           onKeyDown={(e) => {
@@ -261,9 +261,9 @@ export function Mermaid({ content }: MermaidProps) {
         >
           {/* Loading state */}
           {!isLoaded && (
-            <div className="flex items-center justify-center py-8 text-gray-400">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
-              <span className="ml-2">Loading diagram...</span>
+            <div className='flex items-center justify-center py-8 text-gray-400'>
+              <div className='border-primary-500 h-8 w-8 animate-spin rounded-full border-b-2'></div>
+              <span className='ml-2'>Loading diagram...</span>
             </div>
           )}
 
@@ -272,7 +272,7 @@ export function Mermaid({ content }: MermaidProps) {
             ref={mermaidRef}
             className={twclsx(
               'flex w-full items-center justify-center [&>svg]:max-h-[50vh]',
-              !isLoaded && 'opacity-0 h-0',
+              !isLoaded && 'h-0 opacity-0',
               isLoaded && 'opacity-100'
             )}
           />
@@ -281,12 +281,12 @@ export function Mermaid({ content }: MermaidProps) {
           {isLoaded && (
             <div
               className={twclsx(
-                'absolute top-2 right-2 p-1.5 rounded-md',
+                'absolute top-2 right-2 rounded-md p-1.5',
                 'bg-gray-200/80 dark:bg-gray-700/80',
-                'opacity-0 group-hover:opacity-100 transition-opacity'
+                'opacity-0 transition-opacity group-hover:opacity-100'
               )}
             >
-              <HiArrowsExpand className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+              <HiArrowsExpand className='h-4 w-4 text-gray-600 dark:text-gray-300' />
             </div>
           )}
         </div>

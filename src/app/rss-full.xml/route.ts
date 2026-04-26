@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server'
 import { getContents } from '@/services/content'
+
 import type { Blog } from 'me'
+import { NextResponse } from 'next/server'
 
 const SITE_URL = 'https://www.ahnafnafee.dev'
 const SITE_TITLE = 'Ahnaf An Nafee'

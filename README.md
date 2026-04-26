@@ -92,27 +92,27 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 
 ## Tech stack
 
-| Layer | Choice |
-| --- | --- |
-| Framework | Next.js 16 (App Router) + React 19 |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4 (with `@tailwindcss/typography`) |
-| Content | MDX (`next-mdx-remote/rsc`) + `gray-matter` |
+| Layer            | Choice                                                                |
+| ---------------- | --------------------------------------------------------------------- |
+| Framework        | Next.js 16 (App Router) + React 19                                    |
+| Language         | TypeScript                                                            |
+| Styling          | Tailwind CSS v4 (with `@tailwindcss/typography`)                      |
+| Content          | MDX (`next-mdx-remote/rsc`) + `gray-matter`                           |
 | Markdown plugins | remark-gfm, remark-math, rehype-prism-plus, rehype-slug, rehype-katex |
-| Animation | framer-motion |
-| Comments | Giscus (deferred) |
-| Diagrams | Mermaid (lazy) |
-| Math | KaTeX |
-| Image CDN | ImageKit |
-| Analytics | Vercel Analytics + Speed Insights |
-| Logging | Axiom (next-axiom) |
-| Sitemap | next-sitemap (custom config) |
-| OG images | @vercel/og |
-| PWA | @ducanh2912/next-pwa (Workbox 7) |
-| Testing | Vitest + happy-dom + @testing-library/react |
-| Lint | ESLint 9 (flat config) + eslint-config-next |
-| Package manager | Yarn 4 (Corepack) |
-| Hosting | Vercel (primary) + static export for any CDN |
+| Animation        | framer-motion                                                         |
+| Comments         | Giscus (deferred)                                                     |
+| Diagrams         | Mermaid (lazy)                                                        |
+| Math             | KaTeX                                                                 |
+| Image CDN        | ImageKit                                                              |
+| Analytics        | Vercel Analytics + Speed Insights                                     |
+| Logging          | Axiom (next-axiom)                                                    |
+| Sitemap          | next-sitemap (custom config)                                          |
+| OG images        | @vercel/og                                                            |
+| PWA              | @ducanh2912/next-pwa (Workbox 7)                                      |
+| Testing          | Vitest + happy-dom + @testing-library/react                           |
+| Lint             | ESLint 9 (flat config) + eslint-config-next                           |
+| Package manager  | Yarn 4 (Corepack)                                                     |
+| Hosting          | Vercel (primary) + static export for any CDN                          |
 
 ---
 
@@ -268,19 +268,18 @@ Add posts to `src/data/blog/<slug>.mdx`, projects to `src/data/portfolio/<slug>.
 ```yaml
 ---
 title: 'How I built a privacy-first OCR pipeline'
-slug: 'local-llm-pdf-ocr'             # optional — filename wins
+slug: 'local-llm-pdf-ocr' # optional — filename wins
 summary: 'Pairing Surya layout detection with local VLMs and a Needleman-Wunsch aligner.'
-featured: true                         # surfaces on the home page
+featured: true # surfaces on the home page
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
-published: '04/26/2026'                # MM/DD/YYYY
-updated: '05/02/2026'                  # optional, drives dateModified + sitemap lastmod
+published: '04/26/2026' # MM/DD/YYYY
+updated: '05/02/2026' # optional, drives dateModified + sitemap lastmod
 topics: ['OCR', 'LLM', 'Vision Language Models']
 keywords: ['ocr', 'local llm', 'vlm', 'pdf']
 related: ['mesh-decimation-benchmark'] # other slugs for "related posts"
-thumbnail: 'https://ik.imagekit.io/.../cover.jpg'  # optional, OG image fallback
+thumbnail: 'https://ik.imagekit.io/.../cover.jpg' # optional, OG image fallback
 ---
-
 ## TL;DR
 
 A 60–120 word summary at the top — front-loaded for AI search citations.
@@ -294,9 +293,9 @@ A 60–120 word summary at the top — front-loaded for AI search citations.
 ---
 title: 'Bookworm'
 date: '05/01/2022'
-updated: '02/01/2024'                 # optional
+updated: '02/01/2024' # optional
 featured: true
-category: 'software'                   # 'software' | 'game'
+category: 'software' # 'software' | 'game'
 summary: 'Mobile-first website for tracking books you have read.'
 image: 'https://ik.imagekit.io/.../bookworm_og.png'
 stack: ['react', 'next.js', 'typescript', 'tailwindcss', 'supabase']
@@ -312,14 +311,14 @@ link:
 ---
 title: 'Performance Analysis of 3D Mesh Simplification Algorithms'
 summary: 'A short blurb for cards / OG / SEO description.'
-abstract: >-                                 # YAML folded scalar — single paragraph
+abstract: >- # YAML folded scalar — single paragraph
   The verbatim paper abstract (~150-300 words). Renders in a styled
   card above the body on the detail page.
 authors:
   - name: 'Ahnaf An Nafee'
     url: 'https://www.ahnafnafee.dev'
     email: 'aannafee@gmu.edu'
-    affiliations: [1]                        # 1-based indices into the entry's affiliations array
+    affiliations: [1] # 1-based indices into the entry's affiliations array
     corresponding: true
 affiliations:
   - name: 'George Mason University'
@@ -329,15 +328,15 @@ venue:
   name: 'CS700 — Computer Geometry, Course Project'
   short: 'GMU CS700'
   year: 2025
-  status: 'tech-report'                      # preprint | under-review | accepted | published | workshop | tech-report
+  status: 'tech-report' # preprint | under-review | accepted | published | workshop | tech-report
 published: '12/08/2025'
-featured: true                                # surfaces on the home page
-new: true                                     # renders a "NEW" badge inline with the title on the listing card
-section: 'others'                             # top-tier | conferences | journals | workshops | others
+featured: true # surfaces on the home page
+new: true # renders a "NEW" badge inline with the title on the listing card
+section: 'others' # top-tier | conferences | journals | workshops | others
 topics: ['3D Graphics', 'Mesh Simplification']
 keywords: ['mesh decimation', 'QEM', 'vertex clustering']
 thumbnail: 'https://ik.imagekit.io/.../mesh-decimation.jpg'
-teaser: 'https://raw.githubusercontent.com/.../teaser.png'   # high-res hero figure on detail page
+teaser: 'https://raw.githubusercontent.com/.../teaser.png' # high-res hero figure on detail page
 teaserCaption: 'Visual comparison of decimation results across CAD and organic meshes.'
 links:
   paper: 'https://www.researchgate.net/publication/...'
@@ -361,27 +360,27 @@ The detail page renders the structured fields in the hero (status chip from `ven
 ### Special MDX components
 
 ```mdx
-<TLDR>
-  Three sentences distilling the post — what LLMs cite first.
-</TLDR>
+<TLDR>Three sentences distilling the post — what LLMs cite first.</TLDR>
 
 <KeyPoints items={['First', 'Second', 'Third']} />
 
-<FAQ items={[
-  { q: 'How fast is it?', a: '~30 ms per page on a 4090.' },
-  { q: 'Does it run offline?', a: 'Yes — no network calls in the default config.' }
-]} />
+<FAQ
+  items={[
+    { q: 'How fast is it?', a: '~30 ms per page on a 4090.' },
+    { q: 'Does it run offline?', a: 'Yes — no network calls in the default config.' }
+  ]}
+/>
 
 <HowTo
-  name="Set up local OCR"
-  totalTime="PT15M"
+  name='Set up local OCR'
+  totalTime='PT15M'
   steps={[
     { name: 'Install dependencies', text: 'pip install surya-ocr olmocr' },
     { name: 'Run the pipeline', text: 'python ocr.py path/to/file.pdf' }
   ]}
 />
 
-<ContentImage src="https://ik.imagekit.io/.../diagram.png" alt="Architecture diagram" />
+<ContentImage src='https://ik.imagekit.io/.../diagram.png' alt='Architecture diagram' />
 ```
 
 ```mermaid
@@ -397,23 +396,23 @@ y = \sigma(Wx + b)
 
 ## Scripts
 
-| Command | What it does |
-| --- | --- |
-| `yarn dev` | Dev server with Turbopack |
-| `yarn dev:webpack` | Dev server forced to webpack (fallback for Mermaid hot reload edge cases) |
-| `yarn build` | Production build (also runs `prebuild` → `generate-llms-txt.js` and `postbuild` → sitemap) |
-| `yarn export` | Static export to `./out` — temporarily moves `src/app/api/` aside so Next can `output: 'export'` |
-| `yarn export:university` | Static export with a `BASE_PATH` (used for the GMU university mirror) |
-| `yarn start` | Serve the production build on `:5000` |
-| `yarn lint` / `yarn lint:fix` | ESLint flat config |
-| `yarn type-check` | `tsc --noEmit` |
-| `yarn test` / `yarn test:watch` / `yarn test:coverage` | Vitest |
-| `yarn validate:json-ld` | Walk built HTML, verify every JSON-LD block parses + has `@context` and `@type`/`@graph` |
-| `yarn audit:alt-text` | Report weak `alt` attributes in MDX |
-| `yarn analyze` | `@next/bundle-analyzer` build report |
-| `yarn format` | Prettier on `**/*.{js,jsx,ts,tsx,md,mdx,json}` |
-| `yarn commit` | Commitizen prompt (conventional commits) |
-| `npx tsx indexing/sendIndexingRequest.ts` | Submit URLs to the Google Indexing API (requires `indexing/service_account.json`) |
+| Command                                                | What it does                                                                                     |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `yarn dev`                                             | Dev server with Turbopack                                                                        |
+| `yarn dev:webpack`                                     | Dev server forced to webpack (fallback for Mermaid hot reload edge cases)                        |
+| `yarn build`                                           | Production build (also runs `prebuild` → `generate-llms-txt.js` and `postbuild` → sitemap)       |
+| `yarn export`                                          | Static export to `./out` — temporarily moves `src/app/api/` aside so Next can `output: 'export'` |
+| `yarn export:university`                               | Static export with a `BASE_PATH` (used for the GMU university mirror)                            |
+| `yarn start`                                           | Serve the production build on `:5000`                                                            |
+| `yarn lint` / `yarn lint:fix`                          | ESLint flat config                                                                               |
+| `yarn type-check`                                      | `tsc --noEmit`                                                                                   |
+| `yarn test` / `yarn test:watch` / `yarn test:coverage` | Vitest                                                                                           |
+| `yarn validate:json-ld`                                | Walk built HTML, verify every JSON-LD block parses + has `@context` and `@type`/`@graph`         |
+| `yarn audit:alt-text`                                  | Report weak `alt` attributes in MDX                                                              |
+| `yarn analyze`                                         | `@next/bundle-analyzer` build report                                                             |
+| `yarn format`                                          | Prettier on `**/*.{js,jsx,ts,tsx,md,mdx,json}`                                                   |
+| `yarn commit`                                          | Commitizen prompt (conventional commits)                                                         |
+| `npx tsx indexing/sendIndexingRequest.ts`              | Submit URLs to the Google Indexing API (requires `indexing/service_account.json`)                |
 
 ---
 

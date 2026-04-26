@@ -1,12 +1,14 @@
+import { Header } from '@/components/legacy-ui/common'
+import { Toaster } from '@/components/ui/sonner'
+
+import { PERSON_ID, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/libs/constants/site'
+
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import type { Viewport } from 'next'
 import { ThemeProvider } from 'next-themes'
 import { Inter } from 'next/font/google'
-import { Toaster } from 'react-hot-toast'
 import Script from 'next/script'
-import type { Viewport } from 'next'
-import { Header } from '@/components/UI/common'
-import { PERSON_ID, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/libs/constants/site'
 
 import '@/styles/globals.css'
 import '@/styles/prism-themes.css'
@@ -68,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang='en' suppressHydrationWarning className={inter.variable}>
       <head>
         {/* IndieAuth / Mastodon / Bluesky identity links — verifiable backlinks
             that cement the canonical Person entity across the federated web. */}
@@ -79,23 +81,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel='author' href={`${SITE_URL}/resume`} />
       </head>
       <body className={inter.className} suppressHydrationWarning>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(navigationJsonLd) }}
-        />
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(navigationJsonLd) }} />
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           <Header />
           {children}
-          <Toaster position='bottom-center' />
+          <Toaster position='bottom-center' richColors />
           <Analytics />
           <SpeedInsights />
-          <Script src="https://www.googletagmanager.com/gtag/js?id=G-7S76865HNX" strategy="afterInteractive" />
-          <Script id="google-analytics" strategy="afterInteractive">
-          {`
+          <Script src='https://www.googletagmanager.com/gtag/js?id=G-7S76865HNX' strategy='afterInteractive' />
+          <Script id='google-analytics' strategy='afterInteractive'>
+            {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());

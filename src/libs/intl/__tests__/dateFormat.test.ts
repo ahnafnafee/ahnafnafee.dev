@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
 import { dateFormat, dateStringToISO } from '../dateFormat'
+
+import { describe, expect, it } from 'vitest'
 
 describe('dateFormat', () => {
   it('formats with the en-GB default (DD Month YYYY)', () => {

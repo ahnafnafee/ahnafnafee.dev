@@ -20,19 +20,14 @@ export const ResearchAbstract: React.FunctionComponent<ResearchAbstractProps> = 
       <h2
         id='abstract-heading'
         className={twclsx(
-          'text-lg md:text-xl font-extrabold uppercase tracking-wider text-center',
+          'text-center text-lg font-extrabold tracking-wider uppercase md:text-xl',
           'text-purple-600 dark:text-purple-400',
           'mb-4'
         )}
       >
         Abstract
       </h2>
-      <p
-        className={twclsx(
-          'text-sm md:text-base leading-relaxed',
-          'text-gray-700 dark:text-gray-300'
-        )}
-      >
+      <p className={twclsx('text-sm leading-relaxed md:text-base', 'text-gray-700 dark:text-gray-300')}>
         {abstract.trim()}
       </p>
     </section>

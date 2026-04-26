@@ -13,10 +13,10 @@ export const KeyPoints: React.FC<KeyPointsProps> = ({ items, title = 'Key Takeaw
     <aside
       role='note'
       aria-label={title}
-      className='not-prose my-8 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/40 px-5 py-4'
+      className='not-prose my-8 rounded-lg border border-gray-200 bg-gray-50 px-5 py-4 dark:border-gray-800 dark:bg-gray-900/40'
     >
-      <p className='mb-3 text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300'>{title}</p>
-      <ul className='space-y-2 list-disc list-inside text-gray-800 dark:text-gray-200 leading-relaxed'>
+      <p className='mb-3 text-xs font-bold tracking-wider text-gray-700 uppercase dark:text-gray-300'>{title}</p>
+      <ul className='list-inside list-disc space-y-2 leading-relaxed text-gray-800 dark:text-gray-200'>
         {items.map((item, idx) => (
           <li key={idx}>{item}</li>
         ))}

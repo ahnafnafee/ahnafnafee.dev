@@ -1,9 +1,12 @@
 import { BlogPageClient } from '@/components/blog/BlogPageClient'
-import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
+import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
+
 import { getContents } from '@/services'
+
 import { isDev } from '@/libs/constants/environmentState'
-import { getNewestBlog } from '@/libs/sorters'
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { getNewestBlog } from '@/libs/sorters'
+
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 import readingTime from 'reading-time'
@@ -77,11 +80,14 @@ async function getBlogData() {
   }
 
   return response
-    .map((r) => ({
-      ...r.header,
-      est_read: readingTime(r.content).text,
-      views: views[r.header.slug] ?? 0
-    }) as Blog)
+    .map(
+      (r) =>
+        ({
+          ...r.header,
+          est_read: readingTime(r.content).text,
+          views: views[r.header.slug] ?? 0
+        }) as Blog
+    )
     .sort(getNewestBlog)
 }
 
@@ -104,8 +110,7 @@ export default async function BlogPage() {
         '@id': webpageId,
         url: BLOG_URL,
         name: `Blog - ${SITE_NAME}`,
-        description:
-          'Thoughts on Artificial Intelligence, Computer Graphics, and Software Engineering.',
+        description: 'Thoughts on Artificial Intelligence, Computer Graphics, and Software Engineering.',
         inLanguage: 'en-US',
         isPartOf: { '@type': 'WebSite', url: SITE_URL },
         primaryImageOfPage: {
@@ -140,10 +145,7 @@ export default async function BlogPage() {
 
   return (
     <AppLayoutPage>
-      <script
-        type='application/ld+json'
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }}
-      />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
       <BlogPageClient allBlogs={allBlogs} />
     </AppLayoutPage>
   )

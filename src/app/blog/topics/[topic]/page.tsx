@@ -1,11 +1,14 @@
-import { Breadcrumbs } from '@/components/SEO/Breadcrumbs'
 import { BlogList } from '@/components/content/blog/BlogList'
-import { AppLayoutPage } from '@/components/UI/templates/AppLayoutPage'
-import { Hero } from '@/components/UI/templates/Hero'
-import { generateOgImage } from '@/libs/metapage'
+import { AppLayoutPage } from '@/components/legacy-ui/templates/AppLayoutPage'
+import { Hero } from '@/components/legacy-ui/templates/Hero'
+import { Breadcrumbs } from '@/components/SEO/Breadcrumbs'
+
 import { getContents } from '@/services'
-import { getNewestBlog } from '@/libs/sorters'
+
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { generateOgImage } from '@/libs/metapage'
+import { getNewestBlog } from '@/libs/sorters'
+
 import type { Blog } from 'me'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'

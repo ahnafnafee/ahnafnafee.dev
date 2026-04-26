@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest'
 import { buildFaqJsonLd } from '../faqSchema'
+
+import { describe, expect, it } from 'vitest'
 
 describe('buildFaqJsonLd', () => {
   it('builds a FAQPage with the supplied questions', () => {

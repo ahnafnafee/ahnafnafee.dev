@@ -1,8 +1,9 @@
 import { UnderlineLink } from '@/UI/links'
 
+import htmr from '@/libs/htmr-replacement'
+
 import { PortfolioItem } from './PortfolioItem'
 
-import htmr from '@/libs/htmr-replacement'
 import { Portfolio } from 'me'
 
 type PortfolioListProps = {
@@ -14,8 +15,8 @@ type PortfolioListProps = {
 export const PortfolioList: React.FunctionComponent<PortfolioListProps> = (props) => {
   return (
     <section className='pt-8 pb-4'>
-      <h3 className='mb-1 md:mb-3 font-bold text-2xl tracking-tight text-black dark:text-white'>{props.title}</h3>
-      <p className='mb-6 md:mb-8 text-gray-600 dark:text-gray-400'>
+      <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>{props.title}</h3>
+      <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
         {htmr(props.description, {
           transform: {
             a: (linkProps: any) => (
@@ -28,7 +29,7 @@ export const PortfolioList: React.FunctionComponent<PortfolioListProps> = (props
       </p>
 
       {(props.portfolios.length ?? 0) > 0 && (
-        <div className='grid md:grid-cols-2 gap-5'>
+        <div className='grid gap-5 md:grid-cols-2'>
           {props.portfolios.map((item) => {
             return <PortfolioItem key={item.slug} {...item} />
           })}
