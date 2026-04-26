@@ -4,6 +4,8 @@ import { SITE_AUTHOR } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
 import { twclsx } from '@/libs/twclsx'
 
+import { ComingSoonImage } from './ComingSoonImage'
+
 import type { Research } from 'me'
 import NextImage from 'next/image'
 import { Fragment } from 'react'
@@ -62,15 +64,19 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
           href={urlPost}
           className='relative block aspect-[5/4] w-32 flex-shrink-0 overflow-hidden rounded-md bg-gray-100 shadow-sm ring-1 ring-gray-200 sm:w-36 md:w-44 dark:bg-gray-800 dark:ring-gray-800'
         >
-          <NextImage
-            src={imageSrc}
-            alt={props.title}
-            fill
-            sizes='(max-width: 640px) 128px, (max-width: 768px) 144px, 176px'
-            quality={90}
-            className='object-cover transition-transform duration-300 group-hover:scale-[1.03]'
-            priority={props.priority ?? false}
-          />
+          {props.comingSoon ? (
+            <ComingSoonImage className='transition-transform duration-300 group-hover:scale-[1.03]' />
+          ) : (
+            <NextImage
+              src={imageSrc}
+              alt={props.title}
+              fill
+              sizes='(max-width: 640px) 128px, (max-width: 768px) 144px, 176px'
+              quality={90}
+              className='object-cover transition-transform duration-300 group-hover:scale-[1.03]'
+              priority={props.priority ?? false}
+            />
+          )}
         </UnstyledLink>
 
         <div className='flex min-w-0 flex-1 flex-col pt-0.5'>

@@ -43,7 +43,16 @@ declare module 'me' {
     name: string
     url?: string
     affiliations?: Array<number>
+    /** Renders a `*` superscript next to the name + a "*Corresponding author" caption.
+     * Suppressed on single-author papers (the marker has nothing to disambiguate). */
     corresponding?: boolean
+    /** Marks shared first-authorship. Renders a `†` superscript on every author with the
+     * flag set + a "†Equal contribution" caption. Requires at least 2 authors flagged
+     * (the concept of "equal" is meaningless with one). */
+    equalContribution?: boolean
+    /** Marks the senior / PI author. Renders a `‡` superscript + a "‡Principal
+     * investigator" caption. Suppressed on single-author papers. */
+    principalInvestigator?: boolean
     email?: string
     orcid?: string
   }
@@ -107,6 +116,9 @@ declare module 'me' {
     section?: 'top-tier' | 'conferences' | 'journals' | 'workshops' | 'others'
     /** Renders a "NEW" badge inline with the title on listing cards. */
     new?: boolean
+    /** Renders a "Coming soon!" placeholder in place of the listing thumbnail
+     * when no thumbnail/teaser exists yet (e.g. conditionally accepted papers). */
+    comingSoon?: boolean
     related?: Array<string>
   }
 

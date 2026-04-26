@@ -70,6 +70,14 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 - **Topic archive pages** auto-generated from frontmatter `topics`.
 - **RSS** at `/rss.xml` (summaries) and `/rss-full.xml` (full content) with `<link rel="alternate">` discovery in `<head>`.
 
+### Design system
+
+- **shadcn/ui** (radix-nova style) as the single primitive layer. Components live under `src/components/ui/` and are managed by the shadcn CLI (`npx shadcn@latest add <name>`); rerun with `--diff` to merge upstream updates without losing local edits.
+- **Theme bridge** in `src/styles/globals.css` `@theme inline` — shadcn semantic tokens (`--primary`, `--background`, `--foreground`, `--muted`, `--border`, `--ring`) map onto the legacy blue-primary / neutral-theme palette in OKLCH so legacy classes (`bg-primary-500`, `text-theme-700`) and shadcn classes (`bg-primary`, `text-foreground`) render identically across light/dark.
+- **Site composition components** under `src/components/site/` (Header, Footer, Nav, Hero, Searchbar, BackToTop, MobileNav, ThemeMenu, link/image wrappers, AppLayoutPage) — bespoke pieces that compose shadcn primitives + project state.
+- **Single primitive ecosystem** — `radix-ui` (shadcn's base), `lucide-react` (icons inside shadcn), `sonner` (toasts), `tw-animate-css` (animations), `class-variance-authority` (variants), `tailwind-merge` (className merging).
+- **Typography** — Google Sans loaded from Google Fonts with a system-font fallback chain (`system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, …`). Local Inter `@font-face` is kept as a deeper fallback so the page never FOUCs.
+
 ### Performance
 
 - **Core Web Vitals attribution** for CLS, LCP, **INP**, FCP, TTFB via Vercel Speed Insights.
@@ -80,13 +88,15 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 
 ### Tooling
 
-- **TypeScript** strict-mode, `@/*` path aliases.
+- **TypeScript** strict-mode, `@/*` path alias.
 - **ESLint flat config** (`eslint.config.mjs`, replacing the deprecated `next lint`).
-- **Vitest** suite (48 tests, ~1.7s) covering schema generators, sorters, content readers.
+- **Prettier** with `@ianvs/prettier-plugin-sort-imports` (actively maintained successor to `@trivago`) + `prettier-plugin-tailwindcss`.
+- **shadcn CLI** for primitive sync — `npx shadcn@latest add`, `--diff`, `--dry-run`.
+- **Vitest** suite (48 tests, ~1.7s) covering schema generators, sorters, content readers. Vite resolves `@/*` paths via the native `resolve.tsconfigPaths: true` (no plugin).
 - **JSON-LD validator** (`yarn validate:json-ld`) walks the build output and verifies every `<script type="application/ld+json">` block.
 - **Alt-text auditor** (`yarn audit:alt-text`) flags weak `alt` attributes in MDX.
 - **GitHub Actions CI**: type-check + lint + test + build + JSON-LD validation on every push/PR.
-- **Yarn 4** via Corepack, with a `vercel.json` `installCommand` so deploy hosts honour the lockfile.
+- **Yarn 4** via Corepack, with a `vercel.json` `installCommand` (`corepack enable && corepack prepare yarn@4.14.1 --activate && yarn install --immutable`) so deploy hosts actually run Yarn 4 and honour the lockfile.
 
 ---
 
@@ -97,9 +107,12 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 | Framework        | Next.js 16 (App Router) + React 19                                    |
 | Language         | TypeScript                                                            |
 | Styling          | Tailwind CSS v4 (with `@tailwindcss/typography`)                      |
+| Design system    | shadcn/ui (radix-nova) on `radix-ui`                                  |
+| Icons            | `lucide-react` (shadcn) + `react-icons` (legacy site components)      |
+| Toasts           | `sonner`                                                              |
+| Fonts            | Google Sans (Google Fonts) + Inter (local @font-face fallback)        |
 | Content          | MDX (`next-mdx-remote/rsc`) + `gray-matter`                           |
 | Markdown plugins | remark-gfm, remark-math, rehype-prism-plus, rehype-slug, rehype-katex |
-| Animation        | framer-motion                                                         |
 | Comments         | Giscus (deferred)                                                     |
 | Diagrams         | Mermaid (lazy)                                                        |
 | Math             | KaTeX                                                                 |
@@ -111,6 +124,7 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 | PWA              | @ducanh2912/next-pwa (Workbox 7)                                      |
 | Testing          | Vitest + happy-dom + @testing-library/react                           |
 | Lint             | ESLint 9 (flat config) + eslint-config-next                           |
+| Format           | Prettier 3 + `@ianvs/prettier-plugin-sort-imports`                    |
 | Package manager  | Yarn 4 (Corepack)                                                     |
 | Hosting          | Vercel (primary) + static export for any CDN                          |
 
@@ -177,7 +191,10 @@ src/
 │   ├── rss.xml/route.ts          # RSS summary feed
 │   └── rss-full.xml/route.ts     # RSS full-content feed
 ├── components/                   # UI + content components
+│   ├── ui/                       # shadcn/ui primitives (managed by `npx shadcn@latest add`)
+│   ├── site/                     # Bespoke composition components (Header, Footer, Nav, AppLayoutPage, Hero, Searchbar, BackToTop, …)
 │   ├── content/mdx/              # MDX overrides (Pre, Code, ContentImage, TLDR, FAQ, HowTo, …)
+│   ├── content/research/         # Research-page sections (HeadingResearch, ResearchOverview, ResearchNews, ResearchAreas, ResearchSections, ComingSoonImage, SectionHeading, …)
 │   └── SEO/Breadcrumbs.tsx
 ├── data/
 │   ├── blog/*.mdx                # Blog posts (slug = filename)
@@ -320,18 +337,21 @@ authors:
     email: 'aannafee@gmu.edu'
     affiliations: [1] # 1-based indices into the entry's affiliations array
     corresponding: true
+    # equalContribution: true       # OPTIONAL: → † on each flagged author + a "†Equal contribution" caption
+    # principalInvestigator: true   # OPTIONAL: → ‡ on PI + a "‡Principal investigator" caption
 affiliations:
   - name: 'George Mason University'
     location: 'Fairfax, Virginia, USA'
     url: 'https://www.gmu.edu'
 venue:
-  name: 'CS700 — Computer Geometry, Course Project'
+  name: 'CS700 — Research Methodology in Computer Science, Course Project'
   short: 'GMU CS700'
   year: 2025
   status: 'tech-report' # preprint | under-review | accepted | published | workshop | tech-report
 published: '12/08/2025'
 featured: true # surfaces on the home page
 new: true # renders a "NEW" badge inline with the title on the listing card
+comingSoon: true # OPTIONAL: renders a "Coming soon!" pastel placeholder in place of the listing thumbnail (for conditionally accepted / pre-publication entries that don't have a teaser yet)
 section: 'others' # top-tier | conferences | journals | workshops | others
 topics: ['3D Graphics', 'Mesh Simplification']
 keywords: ['mesh decimation', 'QEM', 'vertex clustering']
@@ -356,6 +376,19 @@ bibtex: |
 ```
 
 The detail page renders the structured fields in the hero (status chip from `venue.status`, authors with affiliation superscripts, venue line, action-button row driven by `links` and `bibtex`). Authors matching `SITE_AUTHOR.name` are bolded. The `bibtex` field renders as a copy-to-clipboard code block anchored at `#bibtex`.
+
+**Author / affiliation superscripts are conditional** — each marker only renders when it actually disambiguates something:
+
+| Flag on `Author`              | Glyph   | Caption                 | Renders when                    |
+| ----------------------------- | ------- | ----------------------- | ------------------------------- |
+| `corresponding: true`         | `*`     | \*Corresponding author  | 2+ authors AND ≥1 corresponding |
+| `equalContribution: true`     | `†`     | †Equal contribution     | 2+ authors AND ≥2 flagged equal |
+| `principalInvestigator: true` | `‡`     | ‡Principal investigator | 2+ authors AND ≥1 PI            |
+| `affiliations: [n]`           | `¹ ² ³` | _(legend below)_        | 2+ affiliations on the entry    |
+
+Marker order on each author: `*†‡` then numeric affiliation indices (academic convention). Single-author / single-affiliation entries skip everything — no orphan markers. When markers do show, each `<sup>` carries a native `title` tooltip (affiliation index sups resolve to the full affiliation name; symbol sups resolve to their caption). A combined caption line — e.g. `*Corresponding author · †Equal contribution · ‡Principal investigator` — auto-renders below the affiliation row.
+
+The research listing page (`/research`) renders an Overview paragraph, a date-column News timeline, and a colored chip row of Research Areas above the section-grouped listings. Section headings across the page (Overview / News / Research Areas / Top-Tier Venues / Conferences / Journals / Workshops / Others) share a single `<SectionHeading>` component (`text-lg md:text-xl`, `font-bold`, `text-black dark:text-white`, bordered bottom).
 
 ### Special MDX components
 
@@ -420,7 +453,7 @@ y = \sigma(Wx + b)
 
 ### Vercel (recommended)
 
-Zero-config — Vercel detects Next.js and uses the `installCommand` from `vercel.json` (`corepack enable && yarn install --immutable`) so Yarn 4 is honoured. Set `NEXT_PUBLIC_SITE_URL` to your production domain in the Vercel project settings.
+Zero-config — Vercel detects Next.js and uses the `installCommand` from `vercel.json` (`corepack enable && corepack prepare yarn@4.14.1 --activate && yarn install --immutable`) so Yarn 4 actually runs (the explicit `corepack prepare` step is required because `corepack enable` alone doesn't reliably switch the active yarn binary on Vercel's image — without it, Vercel falls back to Yarn 1.22 and silently rewrites the lockfile). Set `NEXT_PUBLIC_SITE_URL` to your production domain in the Vercel project settings.
 
 ### Static export
 
