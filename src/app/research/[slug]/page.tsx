@@ -226,7 +226,7 @@ export default async function ResearchEntryPage({ params }: Props) {
     }
 
     return (
-      <AppLayoutPage>
+      <AppLayoutPage className='pt-6 md:pt-10'>
         <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
         <BackToTop />
 

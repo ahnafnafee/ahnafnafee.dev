@@ -21,7 +21,7 @@ const Component: React.FunctionComponent<SearchbarProps> = ({
   className
 }) => {
   return (
-    <InputGroup className={cn('mb-10 h-11', className)}>
+    <InputGroup className={cn('mb-6 h-11', className)}>
       <InputGroupAddon align='inline-start'>
         <HiOutlineSearch className='text-muted-foreground' />
       </InputGroupAddon>

@@ -84,7 +84,7 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
       </h1>
 
       {props.topics && props.topics.length > 0 && (
-        <div className={twclsx('mb-6 flex w-full flex-wrap items-center justify-center gap-2')}>
+        <div className={twclsx('mb-6 flex w-full flex-wrap items-center justify-center gap-2.5')}>
           {props.topics.map((topic) => (
             <span
               key={topic}
@@ -100,60 +100,78 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
         </div>
       )}
 
-      <div
-        className={twclsx(
-          'flex flex-wrap items-center justify-center gap-x-2 gap-y-1',
-          'text-base text-gray-700 dark:text-gray-300'
-        )}
-      >
-        {props.authors.map((author, i) => {
-          const indices = author.affiliations ?? []
-          const supText = indices.join(',')
-          const isLast = i === props.authors.length - 1
-          const isOwner = author.name === SITE_AUTHOR.name
-          const nameClass = isOwner ? twclsx('font-semibold text-purple-700 dark:text-purple-300') : undefined
+      {/* Suppress meaningless markers: only show affiliation superscripts when there are 2+ affiliations,
+          and only show the corresponding-author asterisk when there are 2+ authors. Otherwise the markers
+          are noise on a single-author / single-affiliation paper. */}
+      {(() => {
+        const showAffSup = (props.affiliations?.length ?? 0) > 1
+        const showCorrespondingSup = props.authors.length > 1 && props.authors.some((a) => a.corresponding)
 
-          const nameNode = author.url ? (
-            <UnstyledLink href={author.url} className={twclsx('hover:underline', nameClass)}>
-              {author.name}
-            </UnstyledLink>
-          ) : (
-            <span className={nameClass}>{author.name}</span>
-          )
+        return (
+          <>
+            <div
+              className={twclsx(
+                'flex flex-wrap items-center justify-center gap-x-2 gap-y-1',
+                'text-base text-gray-700 dark:text-gray-300'
+              )}
+            >
+              {props.authors.map((author, i) => {
+                const indices = author.affiliations ?? []
+                const supText = indices.join(',')
+                const isLast = i === props.authors.length - 1
+                const isOwner = author.name === SITE_AUTHOR.name
+                const nameClass = isOwner ? twclsx('font-semibold text-purple-700 dark:text-purple-300') : undefined
 
-          return (
-            <span key={`${author.name}-${i}`} className={twclsx('inline-flex items-baseline')}>
-              {nameNode}
-              {author.corresponding && <sup className={nameClass}>*</sup>}
-              {supText && <sup className={nameClass}>{supText}</sup>}
-              {!isLast && <span>,&nbsp;</span>}
-            </span>
-          )
-        })}
-      </div>
-
-      {props.affiliations && props.affiliations.length > 0 && (
-        <p className={twclsx('text-center text-sm text-gray-500 dark:text-gray-400', 'mx-auto mt-2 max-w-2xl')}>
-          {props.affiliations.map((aff, i) => {
-            const idx = i + 1
-            const text = aff.location ? `${aff.name}, ${aff.location}` : aff.name
-            const isLast = i === (props.affiliations as Affiliation[]).length - 1
-            return (
-              <span key={`${aff.name}-${i}`}>
-                <sup>{idx}</sup>
-                {aff.url ? (
-                  <UnstyledLink href={aff.url} className={twclsx('hover:underline')}>
-                    {text}
+                const nameNode = author.url ? (
+                  <UnstyledLink href={author.url} className={twclsx('hover:underline', nameClass)}>
+                    {author.name}
                   </UnstyledLink>
                 ) : (
-                  text
-                )}
-                {!isLast && ', '}
-              </span>
-            )
-          })}
-        </p>
-      )}
+                  <span className={nameClass}>{author.name}</span>
+                )
+
+                return (
+                  <span key={`${author.name}-${i}`} className={twclsx('inline-flex items-baseline')}>
+                    {nameNode}
+                    {author.corresponding && showCorrespondingSup && <sup className={nameClass}>*</sup>}
+                    {supText && showAffSup && <sup className={nameClass}>{supText}</sup>}
+                    {!isLast && <span>,&nbsp;</span>}
+                  </span>
+                )
+              })}
+            </div>
+
+            {props.affiliations && props.affiliations.length > 0 && (
+              <p className={twclsx('text-center text-sm text-gray-500 dark:text-gray-400', 'mx-auto mt-2 max-w-2xl')}>
+                {props.affiliations.map((aff, i) => {
+                  const idx = i + 1
+                  const text = aff.location ? `${aff.name}, ${aff.location}` : aff.name
+                  const isLast = i === (props.affiliations as Affiliation[]).length - 1
+                  return (
+                    <span key={`${aff.name}-${i}`}>
+                      {showAffSup && <sup>{idx}</sup>}
+                      {aff.url ? (
+                        <UnstyledLink href={aff.url} className={twclsx('hover:underline')}>
+                          {text}
+                        </UnstyledLink>
+                      ) : (
+                        text
+                      )}
+                      {!isLast && ', '}
+                    </span>
+                  )
+                })}
+              </p>
+            )}
+
+            {showCorrespondingSup && (
+              <p className={twclsx('mt-1 text-center text-xs text-gray-500 dark:text-gray-400')}>
+                <sup>*</sup>Corresponding author
+              </p>
+            )}
+          </>
+        )
+      })()}
 
       {venueParts.length > 0 && (
         <p className={twclsx('mt-2 text-center text-sm italic', 'text-gray-500 dark:text-gray-400')}>

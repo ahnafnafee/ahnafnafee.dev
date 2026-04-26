@@ -114,7 +114,7 @@ export default async function ResearchPage() {
   }
 
   return (
-    <AppLayoutPage>
+    <AppLayoutPage className='pt-6 md:pt-10'>
       <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
       {/* h1 kept for accessibility / SEO; visual title removed per design — sections below carry the page */}
       <h1 className='sr-only'>Research</h1>

@@ -1,5 +1,7 @@
 import { UnstyledLink } from '@/components/site/links'
 
+import { SectionHeading } from './SectionHeading'
+
 type NewsItem = {
   date: string
   emoji?: string
@@ -28,9 +30,7 @@ const NEWS: NewsItem[] = [
 export const ResearchNews: React.FunctionComponent = () => {
   return (
     <section className='mb-10 md:mb-12'>
-      <h2 className='mb-3 border-b border-gray-200 pb-2 text-sm font-semibold tracking-wider text-gray-500 uppercase md:text-base dark:border-gray-800 dark:text-gray-400'>
-        News
-      </h2>
+      <SectionHeading>News</SectionHeading>
       <ul className='flex flex-col gap-3'>
         {NEWS.map((item, i) => (
           <li

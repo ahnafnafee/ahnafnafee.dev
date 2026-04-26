@@ -1,4 +1,5 @@
 import { ResearchItem } from './ResearchItem'
+import { SectionHeading } from './SectionHeading'
 
 import type { Research } from 'me'
 
@@ -31,9 +32,7 @@ export const ResearchSections: React.FunctionComponent<ResearchSectionsProps> = 
     <div className='flex flex-col gap-12 pb-12'>
       {grouped.map((group, groupIdx) => (
         <section key={group.key}>
-          <h2 className='mb-2 border-b border-gray-200 pb-2 text-sm font-semibold tracking-wider text-gray-500 uppercase md:text-base dark:border-gray-800 dark:text-gray-400'>
-            {group.label}
-          </h2>
+          <SectionHeading className='mb-2'>{group.label}</SectionHeading>
           <div className='flex flex-col divide-y divide-gray-100 dark:divide-gray-800'>
             {group.items.map((post, i) => (
               <ResearchItem key={post.slug} {...post} priority={groupIdx === 0 && i === 0} />
