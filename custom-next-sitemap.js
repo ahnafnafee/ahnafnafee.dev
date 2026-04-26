@@ -32,7 +32,8 @@ function loadFrontmatterMeta() {
   const dataRoot = path.join(__dirname, 'src', 'data')
   const sections = [
     { dir: path.join(dataRoot, 'blog'), prefix: '/blog', imageKey: 'thumbnail' },
-    { dir: path.join(dataRoot, 'portfolio'), prefix: '/portfolio', imageKey: 'image' }
+    { dir: path.join(dataRoot, 'portfolio'), prefix: '/portfolio', imageKey: 'image' },
+    { dir: path.join(dataRoot, 'research'), prefix: '/research', imageKey: 'teaser' }
   ]
   for (const { dir, prefix, imageKey } of sections) {
     if (!fs.existsSync(dir)) continue
@@ -65,7 +66,9 @@ function priorityFor(path) {
   if (path === '/') return { priority: 1.0, changefreq: 'weekly' }
   if (path === '/resume') return { priority: 0.9, changefreq: 'monthly' }
   if (path === '/portfolio' || path === '/blog') return { priority: 0.8, changefreq: 'weekly' }
+  if (path === '/research') return { priority: 0.8, changefreq: 'weekly' }
   if (path.startsWith('/portfolio/')) return { priority: 0.7, changefreq: 'monthly' }
+  if (path.startsWith('/research/')) return { priority: 0.75, changefreq: 'monthly' }
   if (path.startsWith('/blog/')) return { priority: 0.6, changefreq: 'monthly' }
   if (path.startsWith('/snippet/')) return { priority: 0.5, changefreq: 'monthly' }
   return { priority: 0.7, changefreq: 'monthly' }
@@ -132,6 +135,7 @@ module.exports = {
       await config.transform(config, '/resume'),
       await config.transform(config, '/portfolio'),
       await config.transform(config, '/blog'),
+      await config.transform(config, '/research'),
     ]
   }
 }

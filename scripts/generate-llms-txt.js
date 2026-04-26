@@ -43,6 +43,7 @@ function fmtDate(value) {
 
 const blogs = readMdxEntries(path.join(__dirname, '..', 'src', 'data', 'blog'))
 const portfolio = readMdxEntries(path.join(__dirname, '..', 'src', 'data', 'portfolio'))
+const research = readMdxEntries(path.join(__dirname, '..', 'src', 'data', 'research'))
 
 // Sort blogs newest-first by published.
 blogs.sort((a, b) => {
@@ -53,6 +54,11 @@ blogs.sort((a, b) => {
 portfolio.sort((a, b) => {
   const da = new Date(a.date || 0).getTime()
   const db = new Date(b.date || 0).getTime()
+  return db - da
+})
+research.sort((a, b) => {
+  const da = new Date(a.published || 0).getTime()
+  const db = new Date(b.published || 0).getTime()
   return db - da
 })
 
@@ -84,6 +90,12 @@ const lines = [
   '- Single Project Markdown: /api/portfolio?slug={slug}&format=md',
   '- Open Graph Meta: /meta/portfolio?slug={slug}',
   '',
+  '## Research',
+  '- JSON API: /api/research (list of all research entries)',
+  '- Single Entry JSON: /api/research?slug={slug}',
+  '- Single Entry Markdown: /api/research?slug={slug}&format=md',
+  '- Open Graph Meta: /meta/research?slug={slug}',
+  '',
   '## Discovery',
   '- Sitemap: /sitemap.xml',
   '',
@@ -98,6 +110,25 @@ for (const post of blogs) {
   lines.push(`- [${post.title}](${BASE_URL}/blog/${post.slug}) — ${stamp}`)
   if (post.summary) lines.push(`  Summary: ${post.summary}`)
   if (Array.isArray(post.topics) && post.topics.length) lines.push(`  Topics: ${post.topics.join(', ')}`)
+  lines.push('')
+}
+
+lines.push('# Research')
+lines.push('')
+
+for (const r of research) {
+  const published = fmtDate(r.published)
+  const updated = fmtDate(r.updated)
+  const stamp = updated && updated !== published ? `published ${published}, updated ${updated}` : `published ${published}`
+  lines.push(`- [${r.title}](${BASE_URL}/research/${r.slug}) — ${stamp}`)
+  if (r.summary) lines.push(`  Summary: ${r.summary}`)
+  if (Array.isArray(r.topics) && r.topics.length) lines.push(`  Topics: ${r.topics.join(', ')}`)
+  if (r.venue && (r.venue.name || r.venue.short)) {
+    const v = r.venue.short || r.venue.name
+    lines.push(`  Venue: ${v}${r.venue.year ? ` (${r.venue.year})` : ''}`)
+  }
+  if (r.links && r.links.paper) lines.push(`  Paper: ${r.links.paper}`)
+  if (r.links && r.links.code) lines.push(`  Code: ${r.links.code}`)
   lines.push('')
 }
 
@@ -132,4 +163,4 @@ lines.push('- Twitter: https://twitter.com/ahnaf_nafee')
 lines.push('')
 
 fs.writeFileSync(OUTPUT, lines.join('\n'), 'utf8')
-console.log(`[llms.txt] Wrote ${blogs.length} posts + ${portfolio.length} projects to ${OUTPUT}`)
+console.log(`[llms.txt] Wrote ${blogs.length} posts + ${portfolio.length} projects + ${research.length} research entries to ${OUTPUT}`)

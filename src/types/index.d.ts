@@ -38,6 +38,78 @@ declare module 'me' {
     }
     category?: CategoryTypes
   }
+  /** Author of a research entry. `affiliations` indices are 1-based and reference the entry's top-level `affiliations` array. */
+  export type Author = {
+    name: string
+    url?: string
+    affiliations?: Array<number>
+    corresponding?: boolean
+    email?: string
+    orcid?: string
+  }
+
+  export type Affiliation = {
+    name: string
+    location?: string
+    url?: string
+  }
+
+  export type Venue = {
+    name?: string
+    short?: string
+    year?: number
+    status?: 'preprint' | 'under-review' | 'accepted' | 'published' | 'workshop' | 'tech-report'
+    url?: string
+  }
+
+  export type ResearchLinks = {
+    paper?: string
+    code?: string
+    video?: string
+    slides?: string
+    dataset?: string
+    arxiv?: string
+    researchGate?: string
+    supplementary?: string
+    demo?: string
+    project?: string
+  }
+
+  export type ResearchIdentifiers = {
+    doi?: string
+    arxivId?: string
+    researchGateId?: string
+  }
+
+  /** Type used for a research entry — academic project pages with abstract + structured authors. */
+  export type Research = {
+    title: string
+    slug: string
+    summary: string
+    abstract: string
+    authors: Array<Author>
+    affiliations?: Array<Affiliation>
+    venue?: Venue
+    published: string
+    updated?: string
+    featured?: boolean
+    topics: Array<string>
+    keywords: Array<string>
+    thumbnail?: string
+    teaser?: string
+    teaserCaption?: string
+    ogImage?: string
+    links?: ResearchLinks
+    identifiers?: ResearchIdentifiers
+    bibtex?: string
+    category?: 'graphics' | 'ai' | 'hci' | 'systems' | 'theory'
+    /** Listing-page section. Drives grouping under section headers. */
+    section?: 'top-tier' | 'conferences' | 'journals' | 'workshops' | 'others'
+    /** Renders a "NEW" badge inline with the title on listing cards. */
+    new?: boolean
+    related?: Array<string>
+  }
+
   /** Type used for snippet or meta data for snippet */
   export type Snippet = {
     title: string

@@ -1,0 +1,6 @@
+export * from './HeadingResearch'
+export * from './ResearchAbstract'
+export * from './ResearchBibTeX'
+export * from './ResearchItem'
+export * from './ResearchSections'
+export * from './ResearchTeaser'

@@ -6,7 +6,7 @@ import APP_ROUTE from '@/libs/constants/route'
 import { Menu, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { CgFileDocument } from 'react-icons/cg'
-import { HiMenuAlt4 } from 'react-icons/hi'
+import { HiOutlineBeaker, HiMenuAlt4 } from 'react-icons/hi'
 import type { IconType } from 'react-icons/lib'
 import { RiContactsBookLine, RiHome6Line, RiPenNibLine, RiReactjsLine } from 'react-icons/ri'
 
@@ -16,6 +16,7 @@ const icon = {
   home: RiHome6Line,
   portfolio: RiReactjsLine,
   blog: RiPenNibLine,
+  research: HiOutlineBeaker,
   guestbook: RiContactsBookLine,
   resume: CgFileDocument
 } as Record<string, IconType>

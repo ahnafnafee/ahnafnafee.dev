@@ -11,6 +11,11 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Minimal token scope. CI only reads the repo + uploads artifacts scoped to the
+# run; neither needs write access to repo contents, issues, PRs, or actions.
+permissions:
+  contents: read
+
 env:
   # Some MDX dates parse via toLocaleDateString — pin to UTC for deterministic output.
   TZ: UTC

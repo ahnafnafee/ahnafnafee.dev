@@ -32,6 +32,7 @@
 		"remove-modules": "Remove-Item -Recurse -Force node_modules"
 	},
 	"dependencies": {
+		"@ducanh2912/next-pwa": "^10.2.9",
 		"@giscus/react": "^3.1.0",
 		"@headlessui/react": "^2.2.9",
 		"@supabase/supabase-js": "^2.86.2",
@@ -49,10 +50,9 @@
 		"isomorphic-fetch": "^3.0.0",
 		"jotai": "^2.15.2",
 		"mdx-prism": "^0.3.4",
-		"next": "16.0.7",
+		"next": "16.0.11",
 		"next-axiom": "^1.9.3",
 		"next-mdx-remote": "^6.0.0",
-		"next-pwa": "^5.6.0",
 		"next-themes": "^0.4.6",
 		"prism-themes": "^1.9.0",
 		"prismjs": ">=1.30.0",
@@ -84,7 +84,7 @@
 		"cz-conventional-changelog": "3.3.0",
 		"env-cmd": "^11.0.0",
 		"eslint": "^9.39.1",
-		"eslint-config-next": "16.0.7",
+		"eslint-config-next": "16.0.11",
 		"gray-matter": "^4.0.3",
 		"happy-dom": "^20.9.0",
 		"lint-staged": "^16.2.7",
