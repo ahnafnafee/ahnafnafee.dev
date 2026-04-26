@@ -28,9 +28,11 @@ const buildVenueLine = (props: ResearchItemProps): string | null => {
   return v.year ? `${name} ${v.year}` : name
 }
 
-// Prefer the high-resolution teaser figure (academic visual). Fall back to the
-// blog-style square thumbnail, then to a generated OG image. ImageKit URLs get
-// a width transform so we don't upscale a small original.
+// Prefer the curated thumbnail. Fall back to the teaser figure, then to a
+// generated OG image. ImageKit URLs get a width transform so we request the
+// right size for the listing card (max ~176px @ 3x DPR ≈ 528px) instead of
+// the unsized original. ImageKit caps at the source resolution, so requesting
+// w-600 is safe even when the original is smaller.
 const isImagekitUrl = (s: string): boolean => {
   try {
     return new URL(s).hostname === 'ik.imagekit.io'
@@ -39,9 +41,9 @@ const isImagekitUrl = (s: string): boolean => {
   }
 }
 const resolveListingImage = (props: ResearchItemProps): string => {
-  const withWidth = (s: string) => (isImagekitUrl(s) && !s.includes('?tr=') ? `${s}?tr=w-500` : s)
-  if (props.teaser) return withWidth(props.teaser)
+  const withWidth = (s: string) => (isImagekitUrl(s) && !s.includes('?tr=') ? `${s}?tr=w-600` : s)
   if (props.thumbnail) return withWidth(props.thumbnail)
+  if (props.teaser) return withWidth(props.teaser)
   return generateOgImage({ title: props.title, theme: 'dark' })
 }
 
