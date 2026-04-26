@@ -77,7 +77,7 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
           <h3 className='mb-1.5 text-base leading-snug font-bold text-purple-700 decoration-purple-400 underline-offset-2 hover:underline md:text-lg dark:text-purple-300'>
             <UnstyledLink href={urlPost}>{props.title}</UnstyledLink>
             {props.new && (
-              <span className='ml-2 align-middle text-[10px] font-bold tracking-wider text-orange-500 uppercase dark:text-orange-400'>
+              <span className='ml-2 inline-flex items-center rounded-sm bg-orange-100 px-1.5 py-0.5 align-middle text-[10px] font-bold tracking-wider text-orange-700 uppercase dark:bg-orange-500/15 dark:text-orange-300'>
                 NEW
               </span>
             )}
