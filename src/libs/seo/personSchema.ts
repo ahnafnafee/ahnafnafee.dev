@@ -43,6 +43,9 @@ export const getPersonNode = () => ({
     contentUrl: PROFILE_IMAGE
   },
   sameAs: [
+    // Wikidata first — it's the strongest entity-graph signal Google has,
+    // and is what surfaces a Knowledge Panel when someone searches the name.
+    'https://www.wikidata.org/wiki/Q139567752',
     'https://www.linkedin.com/in/ahnafnafee',
     'https://github.com/ahnafnafee',
     'https://scholar.google.com/citations?user=u15DO0cAAAAJ&hl=en',
@@ -50,6 +53,16 @@ export const getPersonNode = () => ({
     'https://ahnafnafee.itch.io',
     'https://www.artstation.com/ahnafnafee',
     'https://www.behance.net/ahnafannafee'
+  ],
+  // identifier lets Google directly bind this Person node to the Wikidata
+  // entity by Q-id, in addition to the sameAs URL above.
+  identifier: [
+    {
+      '@type': 'PropertyValue',
+      propertyID: 'wikidata',
+      value: 'Q139567752',
+      url: 'https://www.wikidata.org/wiki/Q139567752'
+    }
   ],
   email: SITE_AUTHOR.email,
   jobTitle: 'PhD Student in Computer Science',
