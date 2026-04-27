@@ -152,6 +152,11 @@ const config = {
   // Transpile mermaid and its dependencies to fix bundling issues
   transpilePackages: ['mermaid', 'stylis'],
 
+  // Ensure /api/og bundles its TTF fonts into the function output on Vercel
+  outputFileTracingIncludes: {
+    '/api/og': ['./src/app/api/og/fonts/*.ttf']
+  },
+
   turbopack: {},
   experimental: {
     optimizePackageImports: [
