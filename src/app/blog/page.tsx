@@ -5,6 +5,7 @@ import { getContents } from '@/services'
 
 import { isDev } from '@/libs/constants/environmentState'
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { generateOgImage } from '@/libs/metapage'
 import { getNewestBlog } from '@/libs/sorters'
 
 import type { Blog } from 'me'
@@ -12,7 +13,7 @@ import type { Metadata } from 'next'
 import readingTime from 'reading-time'
 
 const BLOG_URL = `${SITE_URL}/blog`
-const BLOG_OG_IMAGE = 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-blog.png?tr=w-1200,h-630'
+const BLOG_OG_IMAGE = generateOgImage({ title: 'blog' })
 const BLOG_OG_ALT = `Blog - ${SITE_NAME} - Thoughts on AI, 3D Graphics, and Technology`
 
 export const metadata: Metadata = {

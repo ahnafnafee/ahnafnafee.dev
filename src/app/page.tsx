@@ -8,6 +8,7 @@ import { getContents } from '@/services'
 import { getContentHeaders } from '@/services/content'
 
 import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { generateOgImage } from '@/libs/metapage'
 import { getPersonNode } from '@/libs/seo/personSchema'
 import { getNewestBlog, getNewestPortfolio, getNewestResearch } from '@/libs/sorters'
 
@@ -16,8 +17,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import readingTime from 'reading-time'
 
-const HOME_OG_IMAGE =
-  'https://ik.imagekit.io/8ieg70pvks/site_og?ik-sdk-version=javascript-1.4.3&updatedAt=1670978636747'
+const HOME_OG_IMAGE = generateOgImage({ title: 'home' })
 const HOME_OG_ALT = `${SITE_NAME} - PhD Student in AI & 3D Graphics at George Mason University | DCXR Lab`
 const HOME_TITLE = `${SITE_NAME} - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU`
 
