@@ -7,6 +7,7 @@ import { twclsx } from '@/libs/twclsx'
 import { ComingSoonImage } from './ComingSoonImage'
 
 import type { Research } from 'me'
+import NextImage from 'next/image'
 import { Fragment } from 'react'
 
 type ResearchItemProps = Research & { priority?: boolean }
@@ -61,29 +62,19 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
       <div className='flex flex-col gap-5 md:flex-row md:items-start md:gap-7'>
         <UnstyledLink
           href={urlPost}
-          className={twclsx(
-            'relative block w-full flex-shrink-0 overflow-hidden rounded-md bg-gray-100 shadow-sm ring-1 ring-gray-200 md:w-44 dark:bg-gray-800 dark:ring-gray-800',
-            // ComingSoon needs an explicit aspect-ratio (the placeholder is a
-            // styled div with no intrinsic dimensions). Real images render at
-            // their natural ratio so the card height tracks the image.
-            props.comingSoon && 'aspect-[5/4]'
-          )}
+          className='relative block aspect-[5/4] w-full flex-shrink-0 overflow-hidden rounded-md bg-gray-100 shadow-sm ring-1 ring-gray-200 md:w-44 dark:bg-gray-800 dark:ring-gray-800'
         >
           {props.comingSoon ? (
             <ComingSoonImage className='transition-transform duration-300 group-hover:scale-[1.03]' />
           ) : (
-            // Native <img> instead of next/image: next/image with `fill`
-            // requires a fixed-aspect parent and would either crop
-            // (object-cover) or letterbox (object-contain) — neither matches
-            // "card adopts the image's natural aspect ratio". ImageKit URLs
-            // already include the right width transform via resolveListingImage.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <NextImage
               src={imageSrc}
               alt={props.title}
-              loading={props.priority ? 'eager' : 'lazy'}
-              decoding='async'
-              className='block h-auto w-full transition-transform duration-300 group-hover:scale-[1.03]'
+              fill
+              sizes='(max-width: 768px) 100vw, 176px'
+              quality={90}
+              className='object-cover transition-transform duration-300 group-hover:scale-[1.03]'
+              priority={props.priority ?? false}
             />
           )}
         </UnstyledLink>
