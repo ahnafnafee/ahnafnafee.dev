@@ -1,12 +1,13 @@
 import { ResumePageClient } from '@/components/resume/ResumePageClient'
 
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { generateOgImage } from '@/libs/metapage'
 import { PERSON_REFERENCE } from '@/libs/seo/personSchema'
 
 import type { Metadata } from 'next'
 
 const RESUME_URL = `${SITE_URL}/resume`
-const RESUME_OG_IMAGE = 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-resume.png?tr=w-1200,h-630'
+const RESUME_OG_IMAGE = generateOgImage({ title: 'resume' })
 const RESUME_OG_ALT = `Resume - ${SITE_NAME} - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO`
 
 export const metadata: Metadata = {

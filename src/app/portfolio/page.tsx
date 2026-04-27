@@ -4,13 +4,14 @@ import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 import { getContents } from '@/services'
 
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { generateOgImage } from '@/libs/metapage'
 import { getNewestPortfolio } from '@/libs/sorters'
 
 import type { Portfolio } from 'me'
 import type { Metadata } from 'next'
 
 const PORTFOLIO_URL = `${SITE_URL}/portfolio`
-const PORTFOLIO_OG_IMAGE = 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-portfolio.png?tr=w-1200,h-630'
+const PORTFOLIO_OG_IMAGE = generateOgImage({ title: 'portfolio' })
 const PORTFOLIO_OG_ALT = `Portfolio - ${SITE_NAME} - AI & 3D Graphics Projects`
 
 export const metadata: Metadata = {

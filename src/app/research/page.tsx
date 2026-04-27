@@ -4,13 +4,14 @@ import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 import { getContentHeaders } from '@/services/content'
 
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { generateOgImage } from '@/libs/metapage'
 import { getNewestResearch } from '@/libs/sorters'
 
 import type { Research } from 'me'
 import type { Metadata } from 'next'
 
 const RESEARCH_URL = `${SITE_URL}/research`
-const RESEARCH_OG_IMAGE = 'https://ik.imagekit.io/8ieg70pvks/ahnafnafee-research.png?tr=w-1200,h-630'
+const RESEARCH_OG_IMAGE = generateOgImage({ title: 'research' })
 const RESEARCH_OG_ALT = `Research - ${SITE_NAME} - Papers and projects on AI & 3D Computer Graphics`
 
 export const metadata: Metadata = {

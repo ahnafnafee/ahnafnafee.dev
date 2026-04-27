@@ -56,3 +56,6 @@ temp
 
 # Google Indexing
 indexing/service_account.json
+
+# Banner OG preview output (renders + cached fonts/profile)
+scripts/og-output/
