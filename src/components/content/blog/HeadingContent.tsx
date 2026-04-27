@@ -41,29 +41,14 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
 
   return (
     <section className='mx-auto flex w-full max-w-2xl flex-col items-center'>
-      {/* Hero thumbnail. Rendering the same image that BlogItem uses on /blog
-          gives the post detail page a strong claim as the canonical landing
-          for that image — Google Images links should resolve to the post
-          rather than the list page. */}
-      {props.thumbnail && (
-        <figure className='mt-10 mb-6 w-full overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-800/40'>
-          <WrappedImage
-            src={props.thumbnail}
-            alt={props.title}
-            width={1200}
-            height={630}
-            sizes='(max-width: 768px) 100vw, 768px'
-            priority
-            className='h-auto w-full object-cover'
-          />
-        </figure>
-      )}
-
-      {/* Title */}
+      {/* Title — the thumbnail in frontmatter feeds Open Graph + Twitter cards
+          (social previews) and BlogItem listing thumbnails. Intentionally NOT
+          rendered as an in-page hero: on narrow viewports it dominated the
+          fold and pushed the headline below the scroll, and the post detail
+          page already has a strong canonical claim via JSON-LD primaryImage. */}
       <h1
         className={twclsx(
-          'mb-4 text-center text-4xl leading-tight font-extrabold tracking-tight text-gray-900 md:text-5xl dark:text-white',
-          !props.thumbnail && 'mt-10'
+          'mt-10 mb-4 text-center text-4xl leading-tight font-extrabold tracking-tight text-gray-900 md:text-5xl dark:text-white'
         )}
       >
         {props.title}

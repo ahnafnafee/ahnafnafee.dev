@@ -17,8 +17,11 @@ export const UnstyledLink = forwardRef<HTMLAnchorElement, UnstyledLinkProps>(({ 
     )
   }
 
+  // Default Next.js scroll behavior: scroll-to-top on a new path, hash-aware
+  // for in-page anchors. The previous `scroll={false}` blocked both, leaving
+  // readers stranded mid-page when navigating between posts.
   return (
-    <NextLink href={href} scroll={false} {...props} ref={ref}>
+    <NextLink href={href} {...props} ref={ref}>
       {children}
     </NextLink>
   )

@@ -134,7 +134,7 @@ ISR endpoint at `GET /api/revalidate?secret=<SECRET>&slug=/blog/<slug>`. Secret 
   - `‡` (principal investigator) — `principalInvestigator: true` on the author. Shows when **2+ authors** AND at least one is PI.
   - `¹ ² ³` (affiliation indices) — derived from `affiliations: [...]` on each author. Shows when **2+ affiliations** exist on the entry.
 
-  Marker order on each author follows academic convention: `*†‡` then numeric indices. The affiliation legend below the author line drops its leading `<sup>` under the same `showAffSup` rule. Single-author / single-affiliation entries collapse to clean text — no orphan markers. Each `<sup>` has `cursor-help` + a native `title` tooltip (affiliation index sups resolve to the full affiliation name; symbol sups resolve to their caption text). A combined caption line appears below the affiliation row when any symbol marker is shown — e.g. `*Corresponding author · †Equal contribution · ‡Principal investigator` — joined by ` · `.
+  Marker order on each author follows academic convention: `*†‡` then numeric indices. The affiliation legend below the author line drops its leading `<sup>` under the same `showAffSup` rule. Single-author / single-affiliation entries collapse to clean text — no orphan markers. Each `<sup>` has `cursor-help` + a native `title` tooltip (affiliation index sups resolve to the full affiliation name; symbol sups resolve to their caption text). A combined caption line appears below the affiliation row when any symbol marker is shown — e.g. `*Corresponding author · †Equal contribution · ‡Principal investigator` — joined by `·`.
 
 ## Indexing Helper
 
