@@ -73,7 +73,7 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
               fill
               sizes='(max-width: 768px) 100vw, 176px'
               quality={90}
-              className='object-cover transition-transform duration-300 group-hover:scale-[1.03]'
+              className='object-contain transition-transform duration-300 group-hover:scale-[1.03]'
               priority={props.priority ?? false}
             />
           )}
