@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
     const [monoRegularData, monoBoldData, pixelData] = await Promise.all([monoRegular, monoBold, pixel])
 
-    return new ImageResponse(<Banner name={command} profileSrc={PROFILE_URL} />, {
+    const img = new ImageResponse(<Banner name={command} profileSrc={PROFILE_URL} />, {
       width: BANNER_SIZE.width,
       height: BANNER_SIZE.height,
       emoji: 'twemoji',
@@ -34,8 +34,17 @@ export async function GET(req: NextRequest) {
         { name: BANNER_FONT_FAMILY.mono, data: monoRegularData, weight: 400, style: 'normal' },
         { name: BANNER_FONT_FAMILY.mono, data: monoBoldData, weight: 700, style: 'normal' },
         { name: BANNER_FONT_FAMILY.pixel, data: pixelData, weight: 400, style: 'normal' }
-      ],
+      ]
+    })
+
+    // Buffer the response body — the streaming ImageResponse can land as a
+    // 0-byte response under Vercel's Node runtime, so materialize the bytes
+    // and return a fresh Response with explicit Content-Type / Cache-Control.
+    const body = await img.arrayBuffer()
+    return new Response(body, {
+      status: 200,
       headers: {
+        'Content-Type': 'image/png',
         'Cache-Control': 'public, max-age=31536000, immutable'
       }
     })
