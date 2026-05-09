@@ -34,7 +34,13 @@ export function ResumePageClient() {
       <section className='mb-4 w-full'>
         <h1 className='text-center'>{HEADLINE.name}</h1>
 
-        <div className='mt-1.5 space-x-4 text-center'>
+        {HEADLINE.title && (
+          <p className='mt-1 text-center text-sm font-medium text-gray-600 dark:text-gray-400 print:text-gray-700'>
+            {HEADLINE.title}
+          </p>
+        )}
+
+        <div className='mt-2 space-x-4 text-center'>
           {LINKS.map((s) => (
             <UnderlineLink className='print:text-primary-500' key={s.href} href={s.href}>
               {s.title}
@@ -86,7 +92,7 @@ export function ResumePageClient() {
           </div>
         </section>
         <section>
-          <h3 className='border-b-theme-700 mb-4 border-b-2 pb-2.5'>Techinal Skills</h3>
+          <h3 className='border-b-theme-700 mb-4 border-b-2 pb-2.5'>Technical Skills</h3>
 
           {SKILLS.map((skill) => (
             <p className='[&:not(:first-of-type)]:mt-2.5' key={skill.name}>
