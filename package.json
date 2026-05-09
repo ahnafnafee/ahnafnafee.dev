@@ -28,6 +28,11 @@
     "test:coverage": "vitest run --coverage",
     "validate:json-ld": "node scripts/validate-json-ld.js",
     "audit:alt-text": "node scripts/audit-alt-text.js",
+    "indexing:notify": "node scripts/notify-search-engines.js",
+    "indexing:indexnow": "node scripts/indexnow-submit.js",
+    "indexing:google": "node scripts/google-index-urls.js",
+    "indexing:baidu": "node scripts/baidu-push.js",
+    "indexing:sitemap": "cross-env SITEMAP_MODE=true node scripts/notify-search-engines.js",
     "commit": "cz",
     "remove-modules": "Remove-Item -Recurse -Force node_modules"
   },
