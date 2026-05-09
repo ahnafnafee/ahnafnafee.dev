@@ -33,7 +33,7 @@ export async function RelatedPosts({ slugs, limit = 3 }: RelatedPostsProps) {
             <p className='mb-2 text-xs font-bold tracking-wide text-purple-600 uppercase dark:text-purple-400'>
               {new Date(post.published).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
             </p>
-            <h3 className='mb-2 line-clamp-2 text-base leading-snug font-semibold text-gray-900 transition-colors group-hover:text-indigo-600 dark:text-gray-100 dark:group-hover:text-indigo-300'>
+            <h3 className='mb-2 line-clamp-2 text-base leading-snug font-semibold text-gray-900 transition-colors group-hover:text-primary-700 dark:text-gray-100 dark:group-hover:text-primary-400'>
               {post.title}
             </h3>
             <p className='line-clamp-3 text-sm leading-relaxed text-gray-600 dark:text-gray-400'>{post.summary}</p>

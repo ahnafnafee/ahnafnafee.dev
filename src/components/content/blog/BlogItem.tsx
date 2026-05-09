@@ -25,7 +25,7 @@ export const BlogItem: React.FunctionComponent<BlogItemProps> = (props) => {
             {new Date(props.published).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
           </div>
 
-          <h3 className='mb-3 text-xl leading-tight font-bold text-gray-900 transition-colors group-hover:text-indigo-600 md:text-2xl dark:text-gray-100 dark:group-hover:text-indigo-300'>
+          <h3 className='mb-3 text-xl leading-tight font-bold text-gray-900 transition-colors group-hover:text-primary-700 md:text-2xl dark:text-gray-100 dark:group-hover:text-primary-400'>
             <UnstyledLink href={urlPost}>{props.title}</UnstyledLink>
           </h3>
 
