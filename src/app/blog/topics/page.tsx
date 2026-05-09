@@ -16,6 +16,7 @@ const TOPICS_OG_ALT = `Blog Topics — ${SITE_NAME}`
 const topicsOgImage = generateOgImage({
   title: 'Blog Topics',
   subTitle: 'Browse posts by topic',
+  type: 'blog',
   theme: 'dark'
 })
 

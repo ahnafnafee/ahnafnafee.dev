@@ -32,6 +32,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const header = res.header
   const canonical = `${SITE_URL}/portfolio/${header.slug}`
   const ogAlt = `${header.title} - ${SITE_NAME} Portfolio`
+  const ogImage = generateOgImage({
+    title: header.title,
+    subTitle: header.summary,
+    type: 'portfolio-post',
+    topics: header.stack,
+    category: header.category
+  })
 
   return {
     title: header.title,
@@ -51,10 +58,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       siteName: SITE_NAME,
       images: [
         {
-          url: generateOgImage({
-            title: header.title,
-            subTitle: header.summary
-          }),
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: ogAlt,
@@ -72,12 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: header.summary,
       site: TWITTER_HANDLE,
       creator: TWITTER_HANDLE,
-      images: [
-        {
-          url: generateOgImage({ title: header.title, subTitle: header.summary }),
-          alt: ogAlt
-        }
-      ]
+      images: [{ url: ogImage, alt: ogAlt }]
     }
   }
 }

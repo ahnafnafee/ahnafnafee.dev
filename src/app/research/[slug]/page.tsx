@@ -37,11 +37,27 @@ export async function generateStaticParams() {
   }
 }
 
+const formatVenue = (venue: Research['venue']): string | undefined => {
+  if (!venue) return undefined
+  const label = venue.short || venue.name
+  if (label && venue.year) return `${label} · ${venue.year}`
+  return label || (venue.year ? String(venue.year) : undefined)
+}
+
 const resolveOgImage = (header: Research): string => {
   if (header.ogImage) return header.ogImage
   if (header.teaser) return header.teaser
   if (header.thumbnail) return header.thumbnail
-  return generateOgImage({ title: header.title, subTitle: header.summary, theme: 'dark' })
+  return generateOgImage({
+    title: header.title,
+    subTitle: header.summary,
+    type: 'research-post',
+    topics: header.topics,
+    category: header.category,
+    section: header.section,
+    venue: formatVenue(header.venue),
+    theme: 'dark'
+  })
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

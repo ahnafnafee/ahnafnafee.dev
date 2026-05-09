@@ -69,6 +69,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const ogImage = generateOgImage({
     title: `${label} — Blog`,
     subTitle: `Posts tagged ${label}`,
+    type: 'blog',
+    topics: [label],
     theme: 'dark'
   })
   const description = `Posts tagged ${label} from ${SITE_NAME}'s blog: AI, 3D graphics, software engineering, and research.`

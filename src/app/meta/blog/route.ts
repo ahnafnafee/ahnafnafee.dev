@@ -24,9 +24,18 @@ function generateMetaHtml(post: {
   published: string
   author_name: string
   thumbnail?: string
+  topics?: string[]
 }): string {
   const canonicalUrl = `${SITE_URL}/blog/${post.slug}`
-  const ogImage = post.thumbnail || generateOgImage({ title: post.title, theme: 'dark' })
+  const ogImage =
+    post.thumbnail ||
+    generateOgImage({
+      title: post.title,
+      subTitle: post.summary,
+      type: 'blog-post',
+      topics: post.topics,
+      theme: 'dark'
+    })
 
   const safeTitle = escapeHtml(post.title)
   const safeSummary = escapeHtml(post.summary)
@@ -95,7 +104,8 @@ export async function GET(request: NextRequest) {
       slug: post.header.slug,
       published: post.header.published,
       author_name: post.header.author_name,
-      thumbnail: post.header.thumbnail
+      thumbnail: post.header.thumbnail,
+      topics: post.header.topics
     })
 
     return new NextResponse(html, {

@@ -39,7 +39,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const res = await getContentBySlug<Blog>('/blog', slug)
     const header = res.header
-    const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
+    const ogImage =
+      header.thumbnail ||
+      generateOgImage({
+        title: header.title,
+        subTitle: header.summary,
+        type: 'blog-post',
+        topics: header.topics,
+        theme: 'dark'
+      })
     const modifiedTime = header.updated || header.published
     const canonical = `${SITE_URL}/blog/${header.slug}`
     const seeAlso = (header.related ?? []).map((s) => `${SITE_URL}/blog/${s}`)
@@ -105,7 +113,15 @@ export default async function BlogPost({ params }: Props) {
     const stats = readingTime(res.content)
     const est_read = stats.text
     const header = { est_read, ...res.header }
-    const ogImage = header.thumbnail || generateOgImage({ title: header.title, theme: 'dark' })
+    const ogImage =
+      header.thumbnail ||
+      generateOgImage({
+        title: header.title,
+        subTitle: header.summary,
+        type: 'blog-post',
+        topics: header.topics,
+        theme: 'dark'
+      })
     const dateModified = header.updated || header.published
     const keywordsList = header.keywords?.filter(Boolean) ?? []
     const adjacent = getAdjacentPosts(slug, allPosts)

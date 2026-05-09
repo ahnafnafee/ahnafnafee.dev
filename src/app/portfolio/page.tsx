@@ -12,7 +12,11 @@ import type { Portfolio } from 'me'
 import type { Metadata } from 'next'
 
 const PORTFOLIO_URL = `${SITE_URL}/portfolio`
-const PORTFOLIO_OG_IMAGE = generateOgImage({ title: 'portfolio' })
+const PORTFOLIO_OG_IMAGE = generateOgImage({
+  title: 'Portfolio',
+  subTitle: 'Selected projects across software, games, and graphics',
+  type: 'portfolio'
+})
 const PORTFOLIO_OG_ALT = `Portfolio - ${SITE_NAME} - AI & 3D Graphics Projects`
 
 export const metadata: Metadata = {

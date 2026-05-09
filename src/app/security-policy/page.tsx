@@ -2,6 +2,12 @@ import { generateOgImage } from '@/libs/metapage'
 
 import type { Metadata } from 'next'
 
+const SECURITY_OG_IMAGE = generateOgImage({
+  title: 'Security Policy',
+  subTitle: 'Responsible Disclosure Guidelines',
+  type: 'page'
+})
+
 export const metadata: Metadata = {
   title: 'Security Policy - Ahnaf An Nafee',
   description: 'Security policy and responsible disclosure guidelines for ahnafnafee.dev',
@@ -13,10 +19,7 @@ export const metadata: Metadata = {
     siteName: 'Ahnaf An Nafee',
     images: [
       {
-        url: generateOgImage({
-          title: 'Security Policy',
-          subTitle: 'Responsible Disclosure Guidelines'
-        }),
+        url: SECURITY_OG_IMAGE,
         width: 1200,
         height: 600,
         alt: 'Security Policy - Ahnaf An Nafee'
@@ -31,12 +34,7 @@ export const metadata: Metadata = {
     description: 'Security policy and responsible disclosure guidelines for ahnafnafee.dev',
     site: '@ahnaf_nafee',
     creator: '@ahnaf_nafee',
-    images: [
-      generateOgImage({
-        title: 'Security Policy',
-        subTitle: 'Responsible Disclosure Guidelines'
-      })
-    ]
+    images: [SECURITY_OG_IMAGE]
   }
 }
 

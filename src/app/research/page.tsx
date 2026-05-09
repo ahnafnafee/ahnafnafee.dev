@@ -12,7 +12,11 @@ import type { Research } from 'me'
 import type { Metadata } from 'next'
 
 const RESEARCH_URL = `${SITE_URL}/research`
-const RESEARCH_OG_IMAGE = generateOgImage({ title: 'research' })
+const RESEARCH_OG_IMAGE = generateOgImage({
+  title: 'Research',
+  subTitle: 'Papers and projects at the intersection of AI and 3D computer graphics',
+  type: 'research'
+})
 const RESEARCH_OG_ALT = `Research - ${SITE_NAME} - Papers and projects on AI & 3D Computer Graphics`
 
 export const metadata: Metadata = {

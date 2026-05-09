@@ -65,4 +65,47 @@ describe('generateOgImage', () => {
     const params = new URL(url).searchParams
     expect(params.get('title')).toBe('Ahnaf An Nafee')
   })
+
+  it('emits a type param when provided', () => {
+    const url = generateOgImage({ title: 'Hello', type: 'research-post' })
+    expect(new URL(url).searchParams.get('type')).toBe('research-post')
+  })
+
+  it('serializes a topics array as a comma-separated query value', () => {
+    const url = generateOgImage({ title: 'Hello', topics: ['A', 'B', 'C'] })
+    expect(new URL(url).searchParams.get('topics')).toBe('A,B,C')
+  })
+
+  it('round-trips category, section, and venue', () => {
+    const url = generateOgImage({
+      title: 'Hello',
+      category: 'graphics',
+      section: 'top-tier',
+      venue: 'GMU CS700 · 2025'
+    })
+    const params = new URL(url).searchParams
+    expect(params.get('category')).toBe('graphics')
+    expect(params.get('section')).toBe('top-tier')
+    expect(params.get('venue')).toBe('GMU CS700 · 2025')
+  })
+
+  it('caps the topics array at 5 entries', () => {
+    const url = generateOgImage({ title: 'Hello', topics: ['t1', 't2', 't3', 't4', 't5', 't6', 't7'] })
+    expect(new URL(url).searchParams.get('topics')).toBe('t1,t2,t3,t4,t5')
+  })
+
+  it('strips commas inside topic strings to keep the csv shape', () => {
+    const url = generateOgImage({ title: 'Hello', topics: ['A, B', 'C'] })
+    expect(new URL(url).searchParams.get('topics')).toBe('A  B,C')
+  })
+
+  it('omits new params when not provided (backwards-compat regression guard)', () => {
+    const url = generateOgImage({ title: 'Hello' })
+    const params = new URL(url).searchParams
+    expect(params.has('type')).toBe(false)
+    expect(params.has('topics')).toBe(false)
+    expect(params.has('category')).toBe(false)
+    expect(params.has('section')).toBe(false)
+    expect(params.has('venue')).toBe(false)
+  })
 })
