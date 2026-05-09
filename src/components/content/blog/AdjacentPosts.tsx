@@ -18,7 +18,7 @@ export const AdjacentPosts: React.FC<AdjacentPostsData> = ({ prev, next }) => {
             <HiArrowLeft className='h-3.5 w-3.5' />
             Previous
           </span>
-          <span className='line-clamp-2 block text-base leading-snug font-semibold text-gray-900 transition-colors group-hover:text-primary-700 dark:text-gray-100 dark:group-hover:text-primary-400'>
+          <span className='line-clamp-2 block text-base leading-snug font-semibold text-gray-900 transition-colors group-hover:text-indigo-600 dark:text-gray-100 dark:group-hover:text-indigo-300'>
             {prev.title}
           </span>
         </UnstyledLink>
@@ -34,7 +34,7 @@ export const AdjacentPosts: React.FC<AdjacentPostsData> = ({ prev, next }) => {
             Next
             <HiArrowRight className='h-3.5 w-3.5' />
           </span>
-          <span className='line-clamp-2 block text-base leading-snug font-semibold text-gray-900 transition-colors group-hover:text-primary-700 dark:text-gray-100 dark:group-hover:text-primary-400'>
+          <span className='line-clamp-2 block text-base leading-snug font-semibold text-gray-900 transition-colors group-hover:text-indigo-600 dark:text-gray-100 dark:group-hover:text-indigo-300'>
             {next.title}
           </span>
         </UnstyledLink>

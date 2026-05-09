@@ -54,7 +54,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
                 'gap-2 py-1',
                 'text-theme-700 dark:text-theme-200',
                 'relative inline-flex items-center',
-                'text-primary-700 dark:text-primary-400 font-semibold'
+                'text-indigo-600 dark:text-indigo-300 font-semibold'
               )}
             >
               <SiApple className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
@@ -70,7 +70,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
                 'gap-2 py-1',
                 'text-theme-700 dark:text-theme-200',
                 'relative inline-flex items-center',
-                'text-primary-700 dark:text-primary-400 font-semibold'
+                'text-indigo-600 dark:text-indigo-300 font-semibold'
               )}
             >
               <SiGoogleplay className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
@@ -86,7 +86,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
                 'gap-2 py-1',
                 'text-theme-700 dark:text-theme-200',
                 'relative inline-flex items-center',
-                'text-primary-700 dark:text-primary-400 font-semibold'
+                'text-indigo-600 dark:text-indigo-300 font-semibold'
               )}
             >
               <HiGlobeAlt className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />
@@ -102,7 +102,7 @@ export const HeadingPortfolio: React.FunctionComponent<HeadingPortfolioProps> = 
                 'gap-2 py-1',
                 'text-theme-700 dark:text-theme-200',
                 'relative inline-flex items-center',
-                'text-primary-700 dark:text-primary-400 font-semibold'
+                'text-indigo-600 dark:text-indigo-300 font-semibold'
               )}
             >
               <SiGithub className={twclsx('text-lg md:text-xl', 'text-theme-800 dark:text-theme-200')} />

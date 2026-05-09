@@ -305,7 +305,7 @@ export default async function HomePage() {
         </section>
 
         {NEWS.length > 0 && (
-          <section className='border-t-[3px] border-double border-gray-300 pt-8 pb-0 dark:border-gray-700'>
+          <section className='border-t border-gray-200 pt-8 pb-0 dark:border-gray-800'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>News</h3>
             <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
               Recent updates from the lab and the rest of the trail.{' '}
@@ -318,7 +318,7 @@ export default async function HomePage() {
         )}
 
         {latestBlogWithViews && (
-          <section className='border-t-[3px] border-double border-gray-300 pt-8 pb-4 dark:border-gray-700'>
+          <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>Latest Blog</h3>
             <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
               Fresh thoughts on AI, graphics, and tech.{' '}
@@ -331,7 +331,7 @@ export default async function HomePage() {
         )}
 
         {featuredResearchWithViews.length > 0 && (
-          <section className='border-t-[3px] border-double border-gray-300 pt-8 pb-4 dark:border-gray-700'>
+          <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>
               Featured Research
             </h3>

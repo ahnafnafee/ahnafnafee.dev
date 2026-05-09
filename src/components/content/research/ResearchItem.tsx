@@ -81,7 +81,7 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
         </UnstyledLink>
 
         <div className='flex min-w-0 flex-1 flex-col pt-0.5'>
-          <h3 className='mb-1.5 text-base leading-snug font-bold text-primary-700 decoration-primary-400 underline-offset-2 hover:underline md:text-lg dark:text-primary-400'>
+          <h3 className='mb-1.5 text-base leading-snug font-bold text-indigo-700 decoration-indigo-400 underline-offset-2 hover:underline md:text-lg dark:text-indigo-300'>
             <UnstyledLink href={urlPost}>{props.title}</UnstyledLink>
             {props.new && (
               <span className='ml-2 inline-flex items-center rounded-sm bg-orange-100 px-1.5 py-0.5 align-middle text-[10px] font-bold tracking-wider text-orange-700 uppercase dark:bg-orange-500/15 dark:text-orange-300'>
@@ -112,7 +112,7 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
           )}
 
           {actions.length > 0 && (
-            <div className='flex flex-wrap items-center gap-x-2 text-xs text-primary-700 md:text-sm dark:text-primary-400'>
+            <div className='flex flex-wrap items-center gap-x-2 text-xs text-indigo-600 md:text-sm dark:text-indigo-300'>
               {actions.map((action, i) => (
                 <Fragment key={action.label}>
                   <UnstyledLink href={action.href} className='hover:underline'>

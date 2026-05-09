@@ -80,7 +80,7 @@ export const TeachingSection: React.FunctionComponent<Props> = ({ className }) =
   const groups = groupTeaching(TEACHING)
 
   return (
-    <section className={twclsx('border-t-[3px] border-double border-gray-300 pt-8 pb-4 dark:border-gray-700', className)}>
+    <section className={twclsx('border-t border-gray-200 pt-8 pb-12 dark:border-gray-800', className)}>
       <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>Teaching</h3>
       <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>Courses I&apos;ve helped run as a TA / GTA.</p>
 
