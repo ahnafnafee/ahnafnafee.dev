@@ -3,6 +3,7 @@ import { BlogItem } from '@/components/content/blog/BlogItem'
 import { NewsTimeline } from '@/components/content/news'
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 import { ResearchItem } from '@/components/content/research/ResearchItem'
+import { TeachingSection } from '@/components/content/teaching'
 import { Footer, SocialHome } from '@/components/site/common'
 
 import { getContents } from '@/services'
@@ -322,6 +323,8 @@ export default async function HomePage() {
             <NewsTimeline items={NEWS} showHeading={false} className='mb-0' />
           </section>
         )}
+
+        <TeachingSection />
 
         {latestBlog && (
           <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>

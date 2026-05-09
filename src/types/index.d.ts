@@ -161,6 +161,21 @@ declare module 'me' {
     }
     lists: string[]
   }
+
+  /** A single course/term that the author has TA'd or GTA'd. One record per (course, term) — the renderer groups by (institution, course) and lists terms inline. */
+  export type Teaching = {
+    institution: string
+    institutionUrl?: string
+    role: 'GTA' | 'TA'
+    courseCode: string
+    courseTitle: string
+    /** Display label, e.g. 'Fall 2025' or 'Winter 2021–22'. */
+    term: string
+    /** YYYYMM key (start month of the term). Used for descending sort. */
+    termSort: number
+    /** Optional one-line course-content blurb. */
+    description?: string
+  }
   // a section for resume - end
 
   /** a type used for social like facebook, provide text to displayed to view and an for the URL*/

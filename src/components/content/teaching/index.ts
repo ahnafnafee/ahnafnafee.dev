@@ -1,0 +1,1 @@
+export { TeachingSection } from './TeachingSection'
