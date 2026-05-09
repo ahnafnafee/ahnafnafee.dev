@@ -250,7 +250,7 @@ export default async function HomePage() {
                 <span aria-hidden='true' className='h-1.5 w-1.5 rounded-full bg-purple-500' />
               </div>
               <h1
-                className='mb-3 bg-gradient-to-br from-primary-600 via-purple-600 to-pink-500 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent md:text-7xl dark:from-primary-300 dark:via-purple-300 dark:to-pink-300'
+                className='name-aberration mb-3 bg-gradient-to-br from-primary-600 via-purple-600 to-pink-500 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent md:text-7xl dark:from-primary-300 dark:via-purple-300 dark:to-pink-300'
                 itemProp='name'
               >
                 Ahnaf <span className='whitespace-nowrap'>An Nafee</span>
@@ -305,7 +305,7 @@ export default async function HomePage() {
         </section>
 
         {NEWS.length > 0 && (
-          <section className='border-t border-gray-200 pt-8 pb-0 dark:border-gray-800'>
+          <section className='border-t-[3px] border-double border-gray-300 pt-8 pb-0 dark:border-gray-700'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>News</h3>
             <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
               Recent updates from the lab and the rest of the trail.{' '}
@@ -318,7 +318,7 @@ export default async function HomePage() {
         )}
 
         {latestBlogWithViews && (
-          <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
+          <section className='border-t-[3px] border-double border-gray-300 pt-8 pb-4 dark:border-gray-700'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>Latest Blog</h3>
             <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
               Fresh thoughts on AI, graphics, and tech.{' '}
@@ -331,7 +331,7 @@ export default async function HomePage() {
         )}
 
         {featuredResearchWithViews.length > 0 && (
-          <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
+          <section className='border-t-[3px] border-double border-gray-300 pt-8 pb-4 dark:border-gray-700'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>
               Featured Research
             </h3>
