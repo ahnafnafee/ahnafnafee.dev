@@ -106,7 +106,7 @@ export const EXPERIENCE: Experience[] = [
     companyName: `<a href='https://gmu.edu'>George Mason University</a>`,
     role: 'Graduate Teaching Assistant',
     period: {
-      start: 'Aug 2024',
+      start: 'Aug 2025',
       end: 'Present'
     },
     lists: [
@@ -114,11 +114,11 @@ export const EXPERIENCE: Experience[] = [
     ]
   },
   {
-    companyName: `<a href='https://paychex.com'>Paychex</a>`,
+    companyName: `<a href='https://www.mindex.com'>Mindex</a>`,
     role: 'Software Engineer',
     period: {
       start: 'Feb 2023',
-      end: 'Aug 2024'
+      end: 'Jul 2025'
     },
     lists: [
       `As a Software Engineer, I was part of a collaborative effort to upgrade observability infrastructure, automate key processes, and enhance CI/CD pipeline efficiency for enterprise-level applications`,
@@ -201,7 +201,7 @@ export const EDUCATION: Education = [
   {
     school: 'PhD in Computer Science, George Mason University',
     period: {
-      start: '2024',
+      start: '2025',
       end: 'Present'
     },
     paragraphs: [
