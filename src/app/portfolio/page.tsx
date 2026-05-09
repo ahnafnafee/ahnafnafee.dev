@@ -92,17 +92,27 @@ export const metadata: Metadata = {
 async function getPortfolioData() {
   const response = await getContents<Portfolio>('/portfolio')
 
-  const portfolios = response.map((d) => d.header).sort(getNewestPortfolio)
+  const allHeaders = response.map((d) => d.header)
 
-  const softwarePortfolios = response
-    .map((p) => p.header)
-    .filter((f) => f.category === 'software')
-    .sort(getNewestPortfolio)
+  // Single batch fetch for view counts; one network round-trip for the whole
+  // portfolio listing. Falls back to 0 silently if the route is unreachable.
+  const slugs = allHeaders.map((h) => h.slug)
+  let views: Record<string, number> = {}
+  if (slugs.length > 0) {
+    try {
+      const res = await fetch(`${SITE_URL}/api/pageviews/batch?slugs=${encodeURIComponent(slugs.join(','))}`, {
+        next: { revalidate: 300 }
+      })
+      if (res.ok) views = (await res.json()) as Record<string, number>
+    } catch {
+      // Silent fallback.
+    }
+  }
+  const withViews = allHeaders.map((h) => ({ ...h, views: views[h.slug] ?? 0 }))
 
-  const gamePortfolios = response
-    .map((p) => p.header)
-    .filter((f) => f.category !== 'software')
-    .sort(getNewestPortfolio)
+  const portfolios = [...withViews].sort(getNewestPortfolio)
+  const softwarePortfolios = withViews.filter((f) => f.category === 'software').sort(getNewestPortfolio)
+  const gamePortfolios = withViews.filter((f) => f.category !== 'software').sort(getNewestPortfolio)
 
   return {
     portfolios,

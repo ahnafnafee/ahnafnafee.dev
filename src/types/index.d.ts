@@ -37,6 +37,8 @@ declare module 'me' {
       playStore?: string
     }
     category?: CategoryTypes
+    /** Populated server-side from /api/pageviews/batch. Optional — falls back to 0. */
+    views?: number
   }
   /** Author of a research entry. `affiliations` indices are 1-based and reference the entry's top-level `affiliations` array. */
   export type Author = {
@@ -120,6 +122,8 @@ declare module 'me' {
      * when no thumbnail/teaser exists yet (e.g. conditionally accepted papers). */
     comingSoon?: boolean
     related?: Array<string>
+    /** Populated server-side from /api/pageviews/batch. Optional — falls back to 0. */
+    views?: number
   }
 
   /** Type used for snippet or meta data for snippet */

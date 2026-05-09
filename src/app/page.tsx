@@ -220,6 +220,29 @@ export default async function HomePage() {
     getFeaturedResearch()
   ])
 
+  // One batch fetch for view counts across every slug rendered on the home
+  // page. Server-side, cached at the route layer for 5 minutes — no flash on
+  // the client and no N+1 fetch.
+  const homeSlugs = [
+    ...(latestBlog ? [latestBlog.slug] : []),
+    ...featuredResearch.slice(0, 2).map((r) => r.slug),
+    ...portfolios.map((p) => p.slug)
+  ]
+  let homeViews: Record<string, number> = {}
+  if (homeSlugs.length > 0) {
+    try {
+      const res = await fetch(`${SITE_URL}/api/pageviews/batch?slugs=${encodeURIComponent(homeSlugs.join(','))}`, {
+        next: { revalidate: 300 }
+      })
+      if (res.ok) homeViews = (await res.json()) as Record<string, number>
+    } catch {
+      // Silent fallback — items render with views: 0.
+    }
+  }
+  const latestBlogWithViews = latestBlog ? { ...latestBlog, views: homeViews[latestBlog.slug] ?? 0 } : null
+  const featuredResearchWithViews = featuredResearch.map((r) => ({ ...r, views: homeViews[r.slug] ?? 0 }))
+  const portfoliosWithViews = portfolios.map((p) => ({ ...p, views: homeViews[p.slug] ?? 0 }))
+
   return (
     <>
       <main className='layout' itemScope itemType='https://schema.org/ProfilePage'>
@@ -303,7 +326,7 @@ export default async function HomePage() {
           </section>
         )}
 
-        {latestBlog && (
+        {latestBlogWithViews && (
           <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>Latest Blog</h3>
             <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
@@ -312,11 +335,11 @@ export default async function HomePage() {
                 Read all blogs
               </Link>
             </p>
-            <BlogItem {...latestBlog} />
+            <BlogItem {...latestBlogWithViews} displayViews />
           </section>
         )}
 
-        {featuredResearch.length > 0 && (
+        {featuredResearchWithViews.length > 0 && (
           <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>
               Featured Research
@@ -328,7 +351,7 @@ export default async function HomePage() {
               </Link>
             </p>
             <div className='flex flex-col'>
-              {featuredResearch.slice(0, 2).map((entry, i) => (
+              {featuredResearchWithViews.slice(0, 2).map((entry, i) => (
                 <ResearchItem key={entry.slug} {...entry} priority={i === 0} />
               ))}
             </div>
@@ -338,7 +361,7 @@ export default async function HomePage() {
         <PortfolioList
           description={`Check out my featured portfolio. View all my works <a href="/portfolio">here</a>!`}
           title='Featured Portfolio'
-          portfolios={portfolios}
+          portfolios={portfoliosWithViews}
         />
 
         <TeachingSection />

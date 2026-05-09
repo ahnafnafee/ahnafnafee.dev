@@ -21,23 +21,25 @@ export function BlogPostClient({ header, children }: BlogPostClientProps) {
   const toTop = useCallback(() => window.scrollTo({ top: 0, behavior: 'smooth' }), [])
 
   useEffect(() => {
-    // run only on client side
-    if (typeof window !== 'undefined') {
-      if (isDev) return
-      ;(async () => {
-        try {
-          const baseURL = isDev
-            ? 'http://localhost:3000'
-            : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev')
-          const res = await fetch(`${baseURL}/api/pageviews?slug=${header.slug}`)
-          const data: PageViewResponse = await res.json()
-          const view = data.view ?? 0
-          setPostViews(view)
-        } catch {
-          console.info('Could not retrieve page views')
-        }
-      })()
-    }
+    if (typeof window === 'undefined') return
+    const baseURL = isDev ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev')
+    // Per-tab dedup so a page reload doesn't double-count. Production-only —
+    // local dev never increments to keep the counter clean.
+    const sessionKey = `pv-seen-${header.slug}`
+    const shouldIncrement = !isDev && typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(sessionKey)
+    ;(async () => {
+      try {
+        const res = await fetch(
+          `${baseURL}/api/pageviews?slug=${encodeURIComponent(header.slug)}`,
+          shouldIncrement ? { method: 'POST' } : undefined
+        )
+        const data: PageViewResponse = await res.json()
+        setPostViews(data.view ?? 0)
+        if (shouldIncrement) sessionStorage.setItem(sessionKey, '1')
+      } catch {
+        console.info('Could not retrieve page views')
+      }
+    })()
   }, [header.slug])
 
   return (

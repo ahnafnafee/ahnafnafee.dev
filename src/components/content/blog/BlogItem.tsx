@@ -1,3 +1,4 @@
+import { ViewBadge } from '@/components/site/common/ViewBadge'
 import { UnstyledLink } from '@/components/site/links'
 
 import { generateOgImage } from '@/libs/metapage'
@@ -51,6 +52,8 @@ export const BlogItem: React.FunctionComponent<BlogItemProps> = (props) => {
               <HiOutlineClock className='h-3.5 w-3.5' />
               <span>{props.est_read ?? '0 min'}</span>
             </div>
+
+            {props.displayViews && <ViewBadge count={props.views} />}
           </div>
         </div>
 

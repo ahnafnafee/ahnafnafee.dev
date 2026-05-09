@@ -1,3 +1,4 @@
+import { ViewBadge } from '@/components/site/common/ViewBadge'
 import { UnstyledLink } from '@/components/site/links'
 
 import { SITE_AUTHOR } from '@/libs/constants/site'
@@ -124,6 +125,12 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
                   )}
                 </Fragment>
               ))}
+              {(props.views ?? 0) > 0 && (
+                <span className='text-gray-300 dark:text-gray-700' aria-hidden='true'>
+                  |
+                </span>
+              )}
+              <ViewBadge count={props.views} />
             </div>
           )}
         </div>
