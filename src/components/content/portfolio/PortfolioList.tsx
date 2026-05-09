@@ -14,7 +14,7 @@ type PortfolioListProps = {
 
 export const PortfolioList: React.FunctionComponent<PortfolioListProps> = (props) => {
   return (
-    <section className='pt-8 pb-4'>
+    <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
       <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>{props.title}</h3>
       <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
         {htmr(props.description, {
