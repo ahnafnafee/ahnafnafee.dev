@@ -12,6 +12,11 @@ import type { OgPageType } from '@/libs/og/og-types'
 export const runtime = 'nodejs'
 
 const PROFILE_URL = 'https://ik.imagekit.io/8ieg70pvks/profile?tr=w-560,h-560'
+// Hard cap on the profile fetch at module-load. Without this, a slow
+// ImageKit response would stall every concurrent request for the lifetime
+// of the stall (the existing .catch() only handles hard rejections, not
+// hung connections).
+const PROFILE_FETCH_TIMEOUT_MS = 3000
 
 const MONO_REGULAR_PATH = fileURLToPath(new URL('./fonts/JetBrainsMono-Regular.ttf', import.meta.url))
 const MONO_BOLD_PATH = fileURLToPath(new URL('./fonts/JetBrainsMono-Bold.ttf', import.meta.url))
@@ -31,7 +36,10 @@ function detectMime(bytes: Uint8Array): string {
 // shows an "AN" initials fallback when profileSrc is empty).
 const profileDataUrl: Promise<string> = (async () => {
   try {
-    const res = await fetch(PROFILE_URL, { redirect: 'follow' })
+    const res = await fetch(PROFILE_URL, {
+      redirect: 'follow',
+      signal: AbortSignal.timeout(PROFILE_FETCH_TIMEOUT_MS)
+    })
     if (!res.ok) return ''
     const buf = Buffer.from(await res.arrayBuffer())
     return `data:${detectMime(buf)};base64,${buf.toString('base64')}`

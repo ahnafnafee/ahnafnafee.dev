@@ -27,15 +27,13 @@ function generateMetaHtml(post: {
   topics?: string[]
 }): string {
   const canonicalUrl = `${SITE_URL}/blog/${post.slug}`
-  const ogImage =
-    post.thumbnail ||
-    generateOgImage({
-      title: post.title,
-      subTitle: post.summary,
-      type: 'blog-post',
-      topics: post.topics,
-      theme: 'dark'
-    })
+  const ogImage = generateOgImage({
+    title: post.title,
+    subTitle: post.summary,
+    type: 'blog-post',
+    topics: post.topics,
+    theme: 'dark'
+  })
 
   const safeTitle = escapeHtml(post.title)
   const safeSummary = escapeHtml(post.summary)
