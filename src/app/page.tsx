@@ -222,10 +222,6 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Soft atmospheric gradient — fixed full-viewport, sits behind everything.
-          aria-hidden + pointer-events-none so it never traps focus or clicks. */}
-      <div aria-hidden='true' className='home-bg pointer-events-none fixed inset-0 -z-10' />
-
       <main className='layout' itemScope itemType='https://schema.org/ProfilePage'>
         <section className='flex flex-col' itemScope itemType='https://schema.org/Person' itemProp='mainEntity'>
           <div className='mt-3 flex flex-col-reverse items-start sm:flex-row md:mt-6'>
@@ -243,7 +239,7 @@ export default async function HomePage() {
                 className='mb-3 bg-gradient-to-br from-primary-600 via-purple-600 to-pink-500 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent md:text-7xl dark:from-primary-300 dark:via-purple-300 dark:to-pink-300'
                 itemProp='name'
               >
-                Ahnaf An Nafee
+                Ahnaf <span className='whitespace-nowrap'>An Nafee</span>
               </h1>
               <h2 className='mb-4 text-base text-gray-700 md:text-lg dark:text-gray-200' itemProp='jobTitle'>
                 PhD Student @{' '}
@@ -307,8 +303,6 @@ export default async function HomePage() {
           </section>
         )}
 
-        <TeachingSection />
-
         {latestBlog && (
           <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>Latest Blog</h3>
@@ -346,6 +340,8 @@ export default async function HomePage() {
           title='Featured Portfolio'
           portfolios={portfolios}
         />
+
+        <TeachingSection />
       </main>
 
       <Footer />
