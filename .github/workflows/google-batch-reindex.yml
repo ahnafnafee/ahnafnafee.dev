@@ -35,7 +35,10 @@ jobs:
       - name: Install runtime deps
         # tsx to execute the .ts directly (the indexing/ dir is excluded from
         # the project's tsc build), googleapis as the Google client.
-        run: npm install --no-save tsx@4 googleapis@168
+        # --legacy-peer-deps: react-image-lightbox declares peer react@16||17
+        # while the project uses react@19; npm's strict resolver bails. yarn
+        # treats this as a soft warning during normal installs.
+        run: npm install --no-save --legacy-peer-deps tsx@4 googleapis@168
 
       - name: Run batch reindex
         env:

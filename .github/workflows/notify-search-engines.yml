@@ -45,7 +45,11 @@ jobs:
         # Skip the full yarn install — this job only needs googleapis at runtime,
         # and only if the GOOGLE_SERVICE_ACCOUNT_JSON secret is set. IndexNow
         # and Baidu use built-in fetch.
-        run: npm install --no-save googleapis@168
+        # --legacy-peer-deps: react-image-lightbox declares peer react@16||17 while
+        # the project uses react@19, so npm's strict resolver bails. yarn ignores
+        # this in normal installs because it's a non-blocking peer warning, not a
+        # real conflict.
+        run: npm install --no-save --legacy-peer-deps googleapis@168
 
       - name: Compute changed content files
         id: diff
