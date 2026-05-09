@@ -1,0 +1,43 @@
+name: Google Batch Reindex
+
+# Weekly catch-up: scan the live sitemap, ask Search Console which URLs are
+# unindexed, and re-submit them via the Google Indexing API. Complements the
+# on-publish notify-search-engines workflow (which fires per-URL on push).
+#
+# Daily Indexing API quota is 200 URLs/project; the script shuffles + caps at
+# 200 so every page gets a chance over time without us tracking history.
+
+on:
+  schedule:
+    # Mondays 06:00 UTC. Off-peak; leaves the rest of the day's quota free
+    # for the on-publish hook to fire at the natural cadence of new posts.
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: google-batch-reindex
+  cancel-in-progress: false
+
+jobs:
+  reindex:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install runtime deps
+        # tsx to execute the .ts directly (the indexing/ dir is excluded from
+        # the project's tsc build), googleapis as the Google client.
+        run: npm install --no-save tsx@4 googleapis@168
+
+      - name: Run batch reindex
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: npx tsx indexing/sendIndexingRequest.ts

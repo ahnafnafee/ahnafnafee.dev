@@ -1,6 +1,22 @@
-import key from './service_account.json'
+import * as fs from 'fs'
+import * as path from 'path'
 
 import { google } from 'googleapis'
+
+// Resolve credentials from env (CI) or local file (dev). The committed file
+// is gitignored; CI passes the same JSON via GOOGLE_SERVICE_ACCOUNT_JSON.
+function loadCredentials(): { client_email: string; private_key: string } {
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+    return JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON)
+  }
+  const file = path.join(__dirname, 'service_account.json')
+  if (!fs.existsSync(file)) {
+    throw new Error('No credentials: set GOOGLE_SERVICE_ACCOUNT_JSON or place indexing/service_account.json')
+  }
+  return JSON.parse(fs.readFileSync(file, 'utf8'))
+}
+
+const key = loadCredentials()
 
 const auth = new google.auth.GoogleAuth({
   credentials: {
