@@ -38,7 +38,15 @@ export const NEWS: NewsItem[] = [
     date: 'Feb 2023',
     iso: '2023-02-01',
     emoji: '💼',
-    body: <>Joined Mindex as a Software Engineer.</>
+    body: (
+      <>
+        Joined{' '}
+        <UnstyledLink href='https://www.paychex.com' className='text-link'>
+          Paychex
+        </UnstyledLink>{' '}
+        as a DevOps Engineer.
+      </>
+    )
   },
   {
     date: 'Jun 2022',
