@@ -2,6 +2,7 @@ import { ResearchAreas, ResearchNews, ResearchOverview, ResearchSections } from 
 import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContentHeaders } from '@/services/content'
+import { getViewsBatch } from '@/services/pageviews'
 
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
@@ -59,21 +60,11 @@ async function getResearchData(): Promise<Research[]> {
   try {
     const response = await getContentHeaders<Research>('/research')
     const headers = response.map((r) => r.header).sort(getNewestResearch)
+    if (headers.length === 0) return headers
 
-    // Mirror the /blog server-side batch fetch so listing cards can render
-    // view counts without a client-side N+1. The batch route caches for 5 min.
-    const slugs = headers.map((h) => h.slug)
-    if (slugs.length === 0) return headers
-
-    let views: Record<string, number> = {}
-    try {
-      const res = await fetch(`${SITE_URL}/api/pageviews/batch?slugs=${encodeURIComponent(slugs.join(','))}`, {
-        next: { revalidate: 300 }
-      })
-      if (res.ok) views = (await res.json()) as Record<string, number>
-    } catch {
-      // Silent fallback — items render with views: 0.
-    }
+    // Direct service call (no HTTP round-trip) — works in dev without
+    // depending on SITE_URL pointing at the running server.
+    const views = await getViewsBatch(headers.map((h) => h.slug))
     return headers.map((h) => ({ ...h, views: views[h.slug] ?? 0 }))
   } catch (error) {
     console.warn('Failed to load research:', error)

@@ -2,6 +2,7 @@ import { PortfolioPageClient } from '@/components/portfolio/PortfolioPageClient'
 import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContents } from '@/services'
+import { getViewsBatch } from '@/services/pageviews'
 
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
@@ -94,20 +95,8 @@ async function getPortfolioData() {
 
   const allHeaders = response.map((d) => d.header)
 
-  // Single batch fetch for view counts; one network round-trip for the whole
-  // portfolio listing. Falls back to 0 silently if the route is unreachable.
-  const slugs = allHeaders.map((h) => h.slug)
-  let views: Record<string, number> = {}
-  if (slugs.length > 0) {
-    try {
-      const res = await fetch(`${SITE_URL}/api/pageviews/batch?slugs=${encodeURIComponent(slugs.join(','))}`, {
-        next: { revalidate: 300 }
-      })
-      if (res.ok) views = (await res.json()) as Record<string, number>
-    } catch {
-      // Silent fallback.
-    }
-  }
+  // Direct DB read instead of an HTTP hop through the batch route.
+  const views = await getViewsBatch(allHeaders.map((h) => h.slug))
   const withViews = allHeaders.map((h) => ({ ...h, views: views[h.slug] ?? 0 }))
 
   const portfolios = [...withViews].sort(getNewestPortfolio)

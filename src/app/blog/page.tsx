@@ -2,8 +2,8 @@ import { BlogPageClient } from '@/components/blog/BlogPageClient'
 import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContents } from '@/services'
+import { getViewsBatch } from '@/services/pageviews'
 
-import { isDev } from '@/libs/constants/environmentState'
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
 import { getNewestBlog } from '@/libs/sorters'
@@ -54,31 +54,9 @@ export const metadata: Metadata = {
 async function getBlogData() {
   const response = await getContents<Blog>('/blog')
 
-  if (isDev) {
-    return response
-      .map((r) => ({
-        ...r.header,
-        est_read: readingTime(r.content).text
-      }))
-      .sort(getNewestBlog)
-  }
-
-  const slugs = response.map((r) => r.header.slug)
-
-  // Single batched fetch instead of one request per post.
-  let views: Record<string, number> = {}
-  if (slugs.length > 0) {
-    try {
-      const res = await fetch(`${SITE_URL}/api/pageviews/batch?slugs=${encodeURIComponent(slugs.join(','))}`, {
-        next: { revalidate: 300 }
-      })
-      if (res.ok) {
-        views = (await res.json()) as Record<string, number>
-      }
-    } catch {
-      // Fallback: leave views empty; per-post entries default to 0 below.
-    }
-  }
+  // Direct DB read — works in dev too. The previous isDev short-circuit
+  // existed because the HTTP-hop fallback couldn't reach SITE_URL locally.
+  const views = await getViewsBatch(response.map((r) => r.header.slug))
 
   return response
     .map(

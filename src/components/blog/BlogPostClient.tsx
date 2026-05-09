@@ -4,7 +4,6 @@ import { PRButton } from '@/components/content'
 import { GiscusComment, HeadingContent } from '@/components/content/blog'
 import { Button } from '@/components/ui/button'
 
-import { isDev } from '@/libs/constants/environmentState'
 import { twclsx } from '@/libs/twclsx'
 
 import type { Blog, PageViewResponse } from 'me'
@@ -22,15 +21,14 @@ export function BlogPostClient({ header, children }: BlogPostClientProps) {
 
   useEffect(() => {
     if (typeof window === 'undefined') return
-    const baseURL = isDev ? 'http://localhost:3000' : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev')
-    // Per-tab dedup so a page reload doesn't double-count. Production-only —
-    // local dev never increments to keep the counter clean.
+    // Same-origin relative path so dev (localhost) and prod both hit their
+    // own API route — no NEXT_PUBLIC_SITE_URL dependency.
     const sessionKey = `pv-seen-${header.slug}`
-    const shouldIncrement = !isDev && typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(sessionKey)
+    const shouldIncrement = typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(sessionKey)
     ;(async () => {
       try {
         const res = await fetch(
-          `${baseURL}/api/pageviews?slug=${encodeURIComponent(header.slug)}`,
+          `/api/pageviews?slug=${encodeURIComponent(header.slug)}`,
           shouldIncrement ? { method: 'POST' } : undefined
         )
         const data: PageViewResponse = await res.json()

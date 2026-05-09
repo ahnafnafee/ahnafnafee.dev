@@ -8,6 +8,7 @@ import { Footer, SocialHome } from '@/components/site/common'
 
 import { getContents } from '@/services'
 import { getContentHeaders } from '@/services/content'
+import { getViewsBatch } from '@/services/pageviews'
 
 import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
@@ -220,25 +221,15 @@ export default async function HomePage() {
     getFeaturedResearch()
   ])
 
-  // One batch fetch for view counts across every slug rendered on the home
-  // page. Server-side, cached at the route layer for 5 minutes — no flash on
-  // the client and no N+1 fetch.
+  // One batch DB read for every slug rendered on the home page. Direct
+  // service call (no HTTP round-trip) so it works in dev without a public
+  // SITE_URL and skips the JSON serialization overhead.
   const homeSlugs = [
     ...(latestBlog ? [latestBlog.slug] : []),
     ...featuredResearch.slice(0, 2).map((r) => r.slug),
     ...portfolios.map((p) => p.slug)
   ]
-  let homeViews: Record<string, number> = {}
-  if (homeSlugs.length > 0) {
-    try {
-      const res = await fetch(`${SITE_URL}/api/pageviews/batch?slugs=${encodeURIComponent(homeSlugs.join(','))}`, {
-        next: { revalidate: 300 }
-      })
-      if (res.ok) homeViews = (await res.json()) as Record<string, number>
-    } catch {
-      // Silent fallback — items render with views: 0.
-    }
-  }
+  const homeViews = await getViewsBatch(homeSlugs)
   const latestBlogWithViews = latestBlog ? { ...latestBlog, views: homeViews[latestBlog.slug] ?? 0 } : null
   const featuredResearchWithViews = featuredResearch.map((r) => ({ ...r, views: homeViews[r.slug] ?? 0 }))
   const portfoliosWithViews = portfolios.map((p) => ({ ...p, views: homeViews[p.slug] ?? 0 }))
