@@ -58,6 +58,8 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 - **`llms.txt`** auto-generated on every build with a per-post manifest (title, summary, topics, dates) so AI search engines see a curated map of the site.
 - **Sitemap** with frontmatter-driven `lastmod`, `<image:image>` entries, and explicit AI-crawler allowlists in `robots.txt` (GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot, Bytespider, CCBot, …).
 - **WebSite `SearchAction`** wired to `/blog?q=` (the search box honours the URL param so the schema is truthful).
+- **On-publish search-engine ping** — every push to `main` that touches an MDX content file fans out to IndexNow (Bing, Yahoo, DuckDuckGo, Yandex), Google's Indexing API, and Baidu Push (when configured) within a minute of deploy. See [`docs/INDEXING.md`](docs/INDEXING.md).
+- **Weekly Google catch-up** — scheduled GitHub Action scans `sitemap.xml`, asks Search Console which URLs are unindexed, and re-submits the stragglers within Google's daily 200-URL quota.
 
 ### Content
 
@@ -276,6 +278,10 @@ Add posts to `src/data/blog/<slug>.mdx`, projects to `src/data/portfolio/<slug>.
 
 `.github/workflows/ci.yml` runs on every push/PR. No secrets required for the default pipeline.
 
+### 9 · Search-engine indexing
+
+Optional but recommended. The on-publish ping and weekly Google catch-up workflows need a few one-time secrets (IndexNow key, Google service account JSON). Full setup in [`docs/INDEXING.md`](docs/INDEXING.md). Without these, the workflows degrade gracefully — IndexNow falls back to a default key, Google submission is skipped, and the rest of the site continues to deploy normally.
+
 ---
 
 ## Authoring content
@@ -445,7 +451,11 @@ y = \sigma(Wx + b)
 | `yarn analyze`                                         | `@next/bundle-analyzer` build report                                                             |
 | `yarn format`                                          | Prettier on `**/*.{js,jsx,ts,tsx,md,mdx,json}`                                                   |
 | `yarn commit`                                          | Commitizen prompt (conventional commits)                                                         |
-| `npx tsx indexing/sendIndexingRequest.ts`              | Submit URLs to the Google Indexing API (requires `indexing/service_account.json`)                |
+| `yarn indexing:notify <url>...`                        | Submit URLs to IndexNow + Google + Baidu in parallel — see [`docs/INDEXING.md`](docs/INDEXING.md) |
+| `yarn indexing:indexnow <url>...`                      | IndexNow only (Bing, Yahoo, DuckDuckGo, Yandex)                                                  |
+| `yarn indexing:google <url>...`                        | Google Indexing API only                                                                         |
+| `yarn indexing:sitemap`                                | Submit every URL in `sitemap.xml` to all engines (manual catch-up)                               |
+| `npx tsx indexing/sendIndexingRequest.ts`              | Google batch with Search Console pre-check; also runs weekly via GitHub Action                   |
 
 ---
 
@@ -488,6 +498,11 @@ checkout → corepack enable → setup-node 22 → yarn install --immutable
 ```
 
 Build artifacts are uploaded on failure for debugging.
+
+Two additional workflows ship with the template, both documented in [`docs/INDEXING.md`](docs/INDEXING.md):
+
+- **`notify-search-engines.yml`** — fires when an MDX content file lands on `main`; pings IndexNow + Google + Baidu (when configured) for the changed URLs.
+- **`google-batch-reindex.yml`** — Mondays 06:00 UTC; re-submits unindexed URLs to Google with Search Console pre-check.
 
 ---
 
