@@ -49,7 +49,15 @@ const resolveListingImage = (props: ResearchItemProps): string => {
   const withWidth = (s: string) => (isImagekitUrl(s) && !s.includes('?tr=') ? `${s}?tr=w-600` : s)
   if (props.thumbnail) return withWidth(props.thumbnail)
   if (props.teaser) return withWidth(props.teaser)
-  return generateOgImage({ title: props.title, theme: 'dark' })
+  return generateOgImage({
+    title: props.title,
+    subTitle: props.summary,
+    type: 'research-post',
+    topics: props.topics,
+    category: props.category,
+    section: props.section,
+    theme: 'dark'
+  })
 }
 
 export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) => {

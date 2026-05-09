@@ -7,7 +7,11 @@ import { PERSON_REFERENCE } from '@/libs/seo/personSchema'
 import type { Metadata } from 'next'
 
 const RESUME_URL = `${SITE_URL}/resume`
-const RESUME_OG_IMAGE = generateOgImage({ title: 'resume' })
+const RESUME_OG_IMAGE = generateOgImage({
+  title: 'Resume',
+  subTitle: 'PhD student in AI & 3D Graphics @ GMU · Ex-CTO',
+  type: 'resume'
+})
 const RESUME_OG_ALT = `Resume - ${SITE_NAME} - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO`
 
 export const metadata: Metadata = {

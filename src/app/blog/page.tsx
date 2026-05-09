@@ -13,7 +13,11 @@ import type { Metadata } from 'next'
 import readingTime from 'reading-time'
 
 const BLOG_URL = `${SITE_URL}/blog`
-const BLOG_OG_IMAGE = generateOgImage({ title: 'blog' })
+const BLOG_OG_IMAGE = generateOgImage({
+  title: 'Blog',
+  subTitle: 'Notes on AI, 3D graphics, machine learning, and software engineering',
+  type: 'blog'
+})
 const BLOG_OG_ALT = `Blog - ${SITE_NAME} - Thoughts on AI, 3D Graphics, and Technology`
 
 export const metadata: Metadata = {

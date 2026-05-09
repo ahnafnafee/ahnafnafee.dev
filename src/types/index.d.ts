@@ -136,11 +136,38 @@ declare module 'me' {
     author: string
     github_username: string
   }
-  /** Payload for utils to generate og image, return value will be a string from https://og-image.vercel.app */
+  /** Page-type label that the OG card uses to pick its accent palette and chip
+   * label. Defaults to `'page'` (muted slate fallback) when callers don't pass
+   * an explicit type. */
+  export type OgPageType =
+    | 'home'
+    | 'blog'
+    | 'blog-post'
+    | 'portfolio'
+    | 'portfolio-post'
+    | 'research'
+    | 'research-post'
+    | 'resume'
+    | 'page'
+
+  /** Payload for `generateOgImage`. The OG route consumes the same query
+   * parameters and renders the corresponding page-typed card. Topics are
+   * comma-serialized and capped at 5 (24 chars each) to stay under URL-length
+   * limits. */
   export type genOgImagePayload = {
     title: string
     subTitle?: string
     theme?: 'light' | 'dark'
+    /** Drives accent color + chip label. Defaults to `'page'` if absent. */
+    type?: OgPageType
+    /** Topic / tag chips shown under the title. Capped at 5 entries. */
+    topics?: ReadonlyArray<string>
+    /** Free-form category label (research category, portfolio category). */
+    category?: string
+    /** Research listing section (`top-tier` / `conferences` / etc.). */
+    section?: string
+    /** Pre-formatted venue line for research posts (e.g. `'GMU CS700 · 2025'`). */
+    venue?: string
   }
 
   // a section for resume - start

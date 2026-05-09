@@ -13,7 +13,15 @@ export const BlogItem: React.FunctionComponent<BlogItemProps> = (props) => {
   const urlPost = `/blog/${props.slug}`
 
   // Use the thumbnail from props, or fallback to generated OG image
-  const ogImageUrl = props.thumbnail || generateOgImage({ title: props.title, theme: 'dark' })
+  const ogImageUrl =
+    props.thumbnail ||
+    generateOgImage({
+      title: props.title,
+      subTitle: props.summary,
+      type: 'blog-post',
+      topics: props.topics,
+      theme: 'dark'
+    })
 
   return (
     <div className='group w-full border-b border-gray-100 py-8 last:border-0 dark:border-gray-800'>
