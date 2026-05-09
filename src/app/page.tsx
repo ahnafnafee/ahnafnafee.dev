@@ -1,5 +1,6 @@
 import { ContentImage } from '@/components/content'
 import { BlogItem } from '@/components/content/blog/BlogItem'
+import { NewsTimeline } from '@/components/content/news'
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 import { ResearchItem } from '@/components/content/research/ResearchItem'
 import { Footer, SocialHome } from '@/components/site/common'
@@ -11,6 +12,8 @@ import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constan
 import { generateOgImage } from '@/libs/metapage'
 import { getPersonNode } from '@/libs/seo/personSchema'
 import { getNewestBlog, getNewestPortfolio, getNewestResearch } from '@/libs/sorters'
+
+import { NEWS } from '@/data/news'
 
 import type { Blog, Portfolio, Research } from 'me'
 import type { Metadata } from 'next'
@@ -306,6 +309,19 @@ export default async function HomePage() {
 
           <SocialHome className='mt-6 mb-8 flex-shrink flex-wrap gap-3 self-start' />
         </section>
+
+        {NEWS.length > 0 && (
+          <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
+            <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>News</h3>
+            <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
+              Recent updates from the lab and the rest of the trail.{' '}
+              <Link href='/research#news' className='text-purple-600 hover:underline dark:text-purple-400'>
+                See full timeline
+              </Link>
+            </p>
+            <NewsTimeline items={NEWS} showHeading={false} className='mb-0' />
+          </section>
+        )}
 
         {latestBlog && (
           <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
