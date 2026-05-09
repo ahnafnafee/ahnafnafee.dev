@@ -293,7 +293,7 @@ export default async function HomePage() {
               href='https://craigyuyu.github.io/home/group.html'
               target='_blank'
               rel='noopener noreferrer'
-              className='font-semibold text-purple-600 hover:underline dark:text-purple-400'
+              className='font-semibold text-link'
             >
               DCXR Lab
             </a>{' '}
@@ -309,7 +309,7 @@ export default async function HomePage() {
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>News</h3>
             <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
               Recent updates from the lab and the rest of the trail.{' '}
-              <Link href='/research#news' className='text-purple-600 hover:underline dark:text-purple-400'>
+              <Link href='/research#news' className='text-link'>
                 See full timeline
               </Link>
             </p>
@@ -322,7 +322,7 @@ export default async function HomePage() {
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>Latest Blog</h3>
             <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
               Fresh thoughts on AI, graphics, and tech.{' '}
-              <Link href='/blog' className='text-purple-600 hover:underline dark:text-purple-400'>
+              <Link href='/blog' className='text-link'>
                 Read all blogs
               </Link>
             </p>
@@ -337,7 +337,7 @@ export default async function HomePage() {
             </h3>
             <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
               Papers and projects at the intersection of AI and 3D computer graphics.{' '}
-              <Link href='/research' className='text-purple-600 hover:underline dark:text-purple-400'>
+              <Link href='/research' className='text-link'>
                 View all research
               </Link>
             </p>

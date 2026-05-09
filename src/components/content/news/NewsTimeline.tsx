@@ -57,7 +57,7 @@ export const NewsTimeline: React.FunctionComponent<Props> = ({
           type='button'
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          className='mt-5 text-xs font-medium tracking-wide text-purple-600 uppercase hover:underline md:mt-6 md:text-sm dark:text-purple-400'
+          className='text-link mt-5 text-xs font-medium tracking-wide uppercase md:mt-6 md:text-sm'
         >
           {expanded ? 'Show less' : `Show older news (${hiddenCount} more)`}
         </button>

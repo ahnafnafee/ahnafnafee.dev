@@ -21,10 +21,7 @@ export const NEWS: NewsItem[] = [
     body: (
       <>
         Joined the{' '}
-        <UnstyledLink
-          href='https://craigyuyu.github.io/home/group.html'
-          className='text-primary-700 underline-offset-2 hover:underline dark:text-primary-400'
-        >
+        <UnstyledLink href='https://craigyuyu.github.io/home/group.html' className='text-link'>
           DCXR Lab
         </UnstyledLink>{' '}
         at George Mason University, advised by Dr. Craig Yu.

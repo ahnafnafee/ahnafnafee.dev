@@ -27,7 +27,7 @@ export const HowTo: React.FC<HowToProps> = ({ name, description, totalTime, imag
             {step.url && (
               <a
                 href={step.url}
-                className='mt-1 ml-6 inline-block text-sm text-purple-600 hover:underline dark:text-purple-400'
+                className='text-link mt-1 ml-6 inline-block text-sm'
               >
                 Reference →
               </a>

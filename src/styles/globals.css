@@ -77,6 +77,24 @@
     content-visibility: auto;
   }
 
+  /* Site-wide in-text link palette. Indigo (cooler than the purple gradient
+   * name) so links read as their own interactive layer instead of blending
+   * with the brand color. Hover brightens both the text and the underline.
+   * Apply to anchors and link-styled buttons; non-interactive purple accents
+   * (kicker dots, date chips, brand icons) keep their existing palette. */
+  .text-link {
+    @apply text-indigo-600 underline-offset-2 transition-colors;
+  }
+  .text-link:hover {
+    @apply text-indigo-700 underline;
+  }
+  .dark .text-link {
+    @apply text-indigo-300;
+  }
+  .dark .text-link:hover {
+    @apply text-indigo-200;
+  }
+
   /* Subtle chromatic-aberration offset on the home-page name. Two text-shadows
    * (cyan +1 to the right, magenta -1 to the left) sit underneath the gradient
    * text fill — barely perceptible but adds a hint of comic-book character.
