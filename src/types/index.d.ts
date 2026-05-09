@@ -37,6 +37,8 @@ declare module 'me' {
       playStore?: string
     }
     category?: CategoryTypes
+    /** Populated server-side from /api/pageviews/batch. Optional — falls back to 0. */
+    views?: number
   }
   /** Author of a research entry. `affiliations` indices are 1-based and reference the entry's top-level `affiliations` array. */
   export type Author = {
@@ -120,6 +122,8 @@ declare module 'me' {
      * when no thumbnail/teaser exists yet (e.g. conditionally accepted papers). */
     comingSoon?: boolean
     related?: Array<string>
+    /** Populated server-side from /api/pageviews/batch. Optional — falls back to 0. */
+    views?: number
   }
 
   /** Type used for snippet or meta data for snippet */
@@ -160,6 +164,21 @@ declare module 'me' {
       end: string
     }
     lists: string[]
+  }
+
+  /** A single course/term that the author has TA'd or GTA'd. One record per (course, term) — the renderer groups by (institution, course) and lists terms inline. */
+  export type Teaching = {
+    institution: string
+    institutionUrl?: string
+    role: 'GTA' | 'TA'
+    courseCode: string
+    courseTitle: string
+    /** Display label, e.g. 'Fall 2025' or 'Winter 2021–22'. */
+    term: string
+    /** YYYYMM key (start month of the term). Used for descending sort. */
+    termSort: number
+    /** Optional one-line course-content blurb. */
+    description?: string
   }
   // a section for resume - end
 

@@ -2,6 +2,7 @@
 
 import { WrappedImage } from '@/components/site/images'
 import { UnderlineLink } from '@/components/site/links'
+import { ViewBadge } from '@/components/site/common/ViewBadge'
 
 import { twclsx } from '@/libs'
 import { dateFormat, dateStringToISO } from '@/libs/intl'
@@ -92,10 +93,18 @@ export const HeadingContent: React.FunctionComponent<HeadingContentProps> = (pro
                 {authorName}
               </UnderlineLink>
             </span>
-            <div className='flex items-center gap-2 text-xs font-medium text-gray-500 uppercase'>
+            <div className='flex items-center gap-2 text-xs font-medium text-gray-500 uppercase dark:text-gray-400'>
               <time dateTime={dateStringToISO(props.published)}>
                 {dateFormat(props.published, undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
               </time>
+              {props.postViews > 0 && (
+                <>
+                  <span aria-hidden='true' className='text-gray-300 dark:text-gray-600'>
+                    ·
+                  </span>
+                  <ViewBadge count={props.postViews} className='normal-case' />
+                </>
+              )}
             </div>
           </div>
         </div>

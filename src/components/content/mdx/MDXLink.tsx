@@ -9,10 +9,10 @@ export const MDXLink: React.FunctionComponent<UnstyledLinkProps> = ({ href, chil
         'relative items-center',
         'border-b border-dashed no-underline',
         'border-theme-900 dark:border-theme-200',
-        'text-primary-700 dark:text-primary-400 font-semibold',
+        'text-indigo-600 dark:text-indigo-300 font-semibold',
         'after:absolute after:-bottom-0.5 after:left-0',
         'after:h-0.5 after:w-0 after:transition-all after:duration-300 hover:after:w-full',
-        'after:from-primary-500 after:to-ternary-500 after:bg-gradient-to-r',
+        'after:from-indigo-500 after:to-violet-500 after:bg-gradient-to-r',
         className
       )}
       href={href}

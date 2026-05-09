@@ -1,3 +1,4 @@
+import { ViewBadge } from '@/components/site/common/ViewBadge'
 import { WrappedImage } from '@/components/site/images'
 import { UnstyledLink } from '@/components/site/links'
 
@@ -41,10 +42,11 @@ export const PortfolioItem: React.FunctionComponent<Portfolio> = (props) => {
         </h3>
 
         {(props.stack.length ?? 0) > 0 && (
-          <div className='mt-1.5 mb-3 flex flex-shrink flex-wrap items-center space-x-2.5'>
+          <div className='mt-1.5 mb-3 flex flex-shrink flex-wrap items-center gap-x-2.5'>
             {props.stack.map((stack) => (
               <IconStack type={stack} key={stack} />
             ))}
+            <ViewBadge count={props.views} className='ml-auto' />
           </div>
         )}
         <p className='max-w-prose text-gray-600 dark:text-gray-300'>{props.summary}</p>

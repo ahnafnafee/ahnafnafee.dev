@@ -1,6 +1,9 @@
+import { getViewsBatch } from '@/services/pageviews'
+
 import { NextRequest, NextResponse } from 'next/server'
 
-// Cache batch results for 5 minutes — list-page pageviews are stale-tolerant.
+// Cache batch results for 5 minutes — list-page pageviews are stale-tolerant
+// and we'd rather absorb traffic spikes than hammer Neon for every visitor.
 export const revalidate = 300
 
 export async function GET(req: NextRequest) {
@@ -16,13 +19,13 @@ export async function GET(req: NextRequest) {
     .map((s) => s.trim())
     .filter(Boolean)
 
-  // The upstream analytics integration is currently stubbed (see ./route.ts).
-  // Returning zeros keeps the listing page rendering correctly until it's restored;
-  // when it is, plug the batch fetch in here and avoid re-introducing the N+1.
-  const result: Record<string, number> = {}
-  for (const slug of slugs) {
-    result[slug] = 0
+  if (slugs.length === 0) {
+    return NextResponse.json({})
   }
 
+  // Cap the batch to avoid an unbounded SQL `ANY($1)` if a caller passes
+  // an enormous slug list (paranoia — listing pages currently send <30).
+  const capped = slugs.slice(0, 100)
+  const result = await getViewsBatch(capped)
   return NextResponse.json(result)
 }

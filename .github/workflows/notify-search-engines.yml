@@ -1,0 +1,99 @@
+name: Notify Search Engines
+
+# Triggered when content lands on main. Vercel deploys in parallel; we wait a
+# bit so the new URL is live before pinging IndexNow / Google / Baidu.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/data/blog/**.mdx'
+      - 'src/data/portfolio/**.mdx'
+      - 'src/data/research/**.mdx'
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: 'Space-separated URLs to submit (overrides path-diff detection)'
+        required: false
+        type: string
+      sitemap_mode:
+        description: 'Submit every URL in sitemap.xml instead of diff'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notify-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # need HEAD~1 for the diff
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install runtime deps (googleapis only)
+        # Skip the full yarn install — this job only needs googleapis at runtime,
+        # and only if the GOOGLE_SERVICE_ACCOUNT_JSON secret is set. IndexNow
+        # and Baidu use built-in fetch.
+        run: npm install --no-save googleapis@168
+
+      - name: Compute changed content files
+        id: diff
+        if: github.event_name == 'push'
+        run: |
+          # List MDX content files added/modified in this push.
+          changed=$(git diff --name-only --diff-filter=AM ${{ github.event.before }} ${{ github.sha }} -- 'src/data/blog/**.mdx' 'src/data/portfolio/**.mdx' 'src/data/research/**.mdx' || true)
+          {
+            echo 'changed<<EOF'
+            echo "$changed"
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+          echo "Changed files:"
+          echo "$changed"
+
+      - name: Wait for Vercel deploy to be live
+        # Crude but effective: poll the sitemap until lastmod reflects this commit
+        # window, with a hard 5-min ceiling. Avoids submitting URLs that 404.
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsSL https://www.ahnafnafee.dev/sitemap.xml > /dev/null; then
+              echo "sitemap reachable on attempt $i"
+              break
+            fi
+            sleep 10
+          done
+          # Extra grace period for ISR / edge cache propagation.
+          sleep 30
+
+      - name: Submit URLs (push event)
+        if: github.event_name == 'push' && steps.diff.outputs.changed != ''
+        env:
+          CHANGED_FILES: ${{ steps.diff.outputs.changed }}
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          BAIDU_PUSH_TOKEN: ${{ secrets.BAIDU_PUSH_TOKEN }}
+        run: node scripts/notify-search-engines.js
+
+      - name: Submit URLs (manual dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          BAIDU_PUSH_TOKEN: ${{ secrets.BAIDU_PUSH_TOKEN }}
+          SITEMAP_MODE: ${{ inputs.sitemap_mode }}
+        run: |
+          if [ -n "${{ inputs.urls }}" ]; then
+            node scripts/notify-search-engines.js ${{ inputs.urls }}
+          else
+            node scripts/notify-search-engines.js
+          fi

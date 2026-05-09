@@ -1,3 +1,4 @@
+import { ViewBadge } from '@/components/site/common/ViewBadge'
 import { UnstyledLink } from '@/components/site/links'
 
 import { generateOgImage } from '@/libs/metapage'
@@ -24,7 +25,7 @@ export const BlogItem: React.FunctionComponent<BlogItemProps> = (props) => {
             {new Date(props.published).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
           </div>
 
-          <h3 className='mb-3 text-xl leading-tight font-bold text-gray-900 transition-colors group-hover:text-purple-600 md:text-2xl dark:text-gray-100'>
+          <h3 className='mb-3 text-xl leading-tight font-bold text-gray-900 transition-colors group-hover:text-indigo-600 md:text-2xl dark:text-gray-100 dark:group-hover:text-indigo-300'>
             <UnstyledLink href={urlPost}>{props.title}</UnstyledLink>
           </h3>
 
@@ -51,6 +52,8 @@ export const BlogItem: React.FunctionComponent<BlogItemProps> = (props) => {
               <HiOutlineClock className='h-3.5 w-3.5' />
               <span>{props.est_read ?? '0 min'}</span>
             </div>
+
+            {props.displayViews && <ViewBadge count={props.views} />}
           </div>
         </div>
 

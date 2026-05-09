@@ -3,9 +3,13 @@ import SOCIAL from './social'
 import { Experience } from 'me'
 
 export const HEADLINE = {
-  name: 'Ahnaf An Nafee'
+  name: 'Ahnaf An Nafee',
+  title: 'Software Engineer · AI Researcher · DevOps & Cloud Infrastructure'
 }
 
+// Mirrors the canonical resume in github.com/ahnafnafee/ahnafnafee. The PDF
+// link points at the raw file in that repo so the resume page always tracks
+// the source of truth without re-uploading the binary into this repo.
 export const LINKS: typeof SOCIAL = [
   ...SOCIAL.filter((s) => s.title !== 'Telegram'),
   {
@@ -13,119 +17,120 @@ export const LINKS: typeof SOCIAL = [
     title: 'Website'
   },
   {
-    href: '/AhnafAnNafeeResume.pdf',
+    href: 'https://raw.githubusercontent.com/ahnafnafee/ahnafnafee/main/resume.pdf',
     title: 'PDF'
   }
 ]
 
+// Skills mirror the categorized blocks in resume.tex. Stays in roughly the
+// same on-page rendering order (Languages first, spoken languages last).
 export const SKILLS = [
   {
-    name: 'Top Skills',
-    list: ['OpenShift', 'Go', 'Kubernetes']
+    name: 'Languages',
+    list: ['Python', 'Go', 'Java', 'C++', 'TypeScript', 'JavaScript', 'SQL', 'GLSL', 'Bash']
   },
   {
-    name: 'Programming',
+    name: 'AI / ML',
     list: [
-      'Python',
-      'Kotlin',
-      'Java',
-      'Groovy',
-      'GoLang',
-      'PostgreSQL',
-      'MySQL',
-      'WebGL',
-      'C#',
-      'C',
-      'C++',
-      'Haskell',
-      'SQLite',
-      'JavaScript',
-      'TypeScript',
-      'Bash',
-      'GLSL',
-      'HLSL'
+      'PyTorch',
+      'TensorFlow',
+      'Generative AI',
+      'Deep Learning',
+      'Computer Vision',
+      'Diffusion Models',
+      'LLMs',
+      'Reinforcement Learning',
+      'MLOps'
     ]
   },
   {
-    name: 'Tools & Frameworks',
+    name: 'Graphics & XR',
     list: [
+      '3D Computer Graphics',
+      'Real-Time Rendering',
+      'Shader Programming',
       'Unity',
       'Unreal Engine',
-      'Maya',
-      'FMOD',
-      'Wwise',
-      'Blender',
-      '3D Modeling',
-      'Game Testing',
-      '3D Animation',
-      'Prototyping',
-      'Adobe CS',
-      'Figma',
-      'Perforce',
-      'Plastic SCM',
-      'React Native',
-      'SpringBoot',
-      'Node.js',
-      'React',
-      'JIRA',
-      'AI',
-      'ML',
+      'WebGL',
+      'Procedural Generation'
+    ]
+  },
+  {
+    name: 'Cloud & DevOps',
+    list: [
       'AWS',
-      'PostgreSQL',
-      'Docker',
       'Kubernetes',
       'OpenShift',
+      'Docker',
       'Terraform',
-      'Hashicorp Vault',
+      'CI/CD',
+      'GitHub Actions',
       'Jenkins',
-      'AWS ECS',
-      'AWS AKS',
-      'GCP',
       'Gradle',
-      'Puppet',
-      'Ansible',
       'Maven',
-      'Kong Mesh',
-      'KEDA'
+      'Helm',
+      'Observability'
+    ]
+  },
+  {
+    name: 'Backend & Systems',
+    list: [
+      'Distributed Systems',
+      'Microservices',
+      'REST',
+      'gRPC',
+      'WebSockets',
+      'OAuth',
+      'RBAC',
+      'System Design',
+      'High Availability'
+    ]
+  },
+  {
+    name: 'Frontend',
+    list: ['React', 'Node.js', 'Next.js', 'Redux', 'HTML5', 'CSS3']
+  },
+  {
+    name: 'Methods',
+    list: [
+      'Agile',
+      'Scrum',
+      'Test-Driven Development',
+      'Code Review',
+      'Technical Leadership',
+      'Cross-Functional Collaboration'
     ]
   }
 ]
 
-export const KEY_SKILLS = [
-  // 'Continuous Integration & Continuous Deployment',
-  // 'Design Thinking Process',
-  // 'Critical Thinking & Problem Solving',
-  // 'Accessible Frontend Application',
-  // 'Adaptability',
-  // 'Team Player',
-  // 'Creativity'
-]
+export const KEY_SKILLS = []
 
 export const EXPERIENCE: Experience[] = [
   {
-    companyName: `<a href='https://gmu.edu'>George Mason University</a>`,
+    companyName: `<a href='https://gmu.edu'>George Mason University — DCXR Lab</a>`,
     role: 'Graduate Teaching Assistant',
     period: {
-      start: 'Aug 2024',
+      start: 'Aug 2025',
       end: 'Present'
     },
     lists: [
-      `Serving as a Graduate Teaching Assistant for the Computer Science department, supporting students through hands-on learning and mentorship in complex technical concepts`
+      `Mentor 60+ graduate and undergraduate students in algorithms, systems, and applied machine learning, driving measurable improvements in lab completion and conceptual mastery`,
+      `Design coursework, lab exercises, and evaluation rubrics aligned with modern software engineering best practices`
     ]
   },
   {
-    companyName: `<a href='https://paychex.com'>Paychex</a>`,
-    role: 'Software Engineer',
+    companyName: `<a href='https://www.paychex.com'>Paychex</a>`,
+    role: 'DevOps Engineer',
     period: {
       start: 'Feb 2023',
-      end: 'Aug 2024'
+      end: 'Aug 2025'
     },
     lists: [
-      `As a Software Engineer, I was part of a collaborative effort to upgrade observability infrastructure, automate key processes, and enhance CI/CD pipeline efficiency for enterprise-level applications`,
-      `Led a cross-team initiative to standardize deployment dictionaries, facilitating discussions and building consensus to create conflict-free configurations that improved developer workflow`,
-      `Partnered with infrastructure teams to design and implement role-based access control in OpenShift, effectively translating developer needs into security requirements to streamline operations`,
-      `Automated certificate management, eliminating manual renewals and reducing downtime related to certificate expirations by 100%`,
-      `Innovated CI/CD processes by introducing a gradle plugin for image certification, which reduced build congestion and lowered operational expenses by 10% annually`
+      `Architected and led a cross-team standardization of Kubernetes/OpenShift deployment dictionaries across 10+ service teams, eliminating configuration conflicts and accelerating developer velocity`,
+      `Designed and rolled out Role-Based Access Control (RBAC) policies in OpenShift in partnership with security and infrastructure teams, hardening the platform against privilege-escalation risks`,
+      `Automated end-to-end TLS certificate lifecycle management, eliminating manual renewals and reducing certificate-expiration-related downtime by 100%`,
+      `Built a Gradle plugin for container image certification that streamlined CI/CD workflows, reduced build-pipeline congestion, and lowered operational expenses by 10% annually`,
+      `Championed infrastructure-as-code and observability best practices; partnered with SREs to improve deployment reliability and mean time to recovery (MTTR)`
     ]
   },
   {
@@ -136,11 +141,11 @@ export const EXPERIENCE: Experience[] = [
       end: 'Feb 2023'
     },
     lists: [
-      `As CTO, I directed the company's technical vision, led engineering teams, and managed the full project lifecycle from architecture to deployment to improve application efficiency, scalability, and reliability`,
-      `As CTO, mentored and led multiple student engineering teams to spearhead the design and implementation of several new microservices across the application`,
-      `Spearheaded a critical backend migration to AWS, leading the project from conception to completion and coordinating with multiple teams to achieve an 80% reduction in application load and costs`,
-      `Automated the build and deployment process with GitHub Actions and Maven, leading to an 85% reduction in manual work and improved team efficiency`,
-      `Acted as a key liaison between stakeholders and the project team, facilitating weekly meetings to ensure clear communication, manage expectations, and drive successful project execution`
+      `Owned end-to-end technical strategy, architecture, and execution as CTO; led engineering across backend, frontend, and cloud teams shipping a consumer-facing matchmaking platform`,
+      `Spearheaded migration of monolithic backend to a microservices architecture on AWS, cutting application load and cloud spend by 80% through right-sizing, autoscaling, and serverless adoption`,
+      `Introduced CI/CD with GitHub Actions and Maven, automating builds, tests, and deployments; reduced manual release effort by 85% and eliminated deploy-day toil`,
+      `Recruited, mentored, and led multiple student engineering pods through full microservice design, implementation, and production rollout`,
+      `Drove weekly stakeholder syncs, aligning product, design, and engineering on roadmap, scope, and delivery milestones`
     ]
   },
   {
@@ -151,23 +156,22 @@ export const EXPERIENCE: Experience[] = [
       end: 'Jun 2022'
     },
     lists: [
-      `Engineered Java service integration for STOMP WebSockets to enable in-app chat functionality, enhancing user engagement and communication within the application`,
-      `Integrated Third-Party services and OAuth services with over 20 RESTful endpoints to create a scalable, user-facing application and increase user engagement`,
-      `Reduced performance bottlenecks in the custom chat service using Redux state management by 80%, improving the overall efficiency of the application`,
-      `Designed and integrated APIs that processed match data to power matchmaking recommendations for thousands of users, improving the personalization and effectiveness of the application`,
-      `Collaborated in weekly meetings with stakeholders and the project team to ensure streamlined communication and the successful execution of projects`
+      `Engineered a real-time chat subsystem using STOMP over WebSockets in Java, supporting thousands of concurrent users with low-latency delivery`,
+      `Integrated 20+ REST endpoints across third-party and OAuth-based identity providers, enabling secure, scalable authentication and data exchange`,
+      `Optimized client-side state management with Redux, cutting chat-service performance bottlenecks by 80%`,
+      `Designed data pipelines and APIs powering the matchmaking recommendation engine serving thousands of active users`
     ]
   },
   {
-    companyName: `<a href='https://drexel.edu'>Drexel University College of Computing & Informatics</a>`,
+    companyName: `<a href='https://drexel.edu'>Drexel University — College of Computing & Informatics</a>`,
     role: 'Teaching Assistant',
     period: {
       start: 'Sep 2021',
       end: 'Jun 2022'
     },
     lists: [
-      `Assisted with multiple undergraduate and graduate courses covering systems engineering, programming, and management`,
-      `Mentored undergraduate and graduate students, enhancing their comprehension of abstract concepts by developing and leading hands-on demonstrations and facilitating weekly labs`
+      `Facilitated weekly labs and mentored students in systems engineering, programming fundamentals, and technical project management`,
+      `Developed hands-on demonstrations translating abstract computer-science concepts into practical, assessable skills`
     ]
   },
   {
@@ -178,11 +182,10 @@ export const EXPERIENCE: Experience[] = [
       end: 'Sep 2021'
     },
     lists: [
-      `Integrated and scripted versatile game managers to streamline future design processes and improve efficiency, resulting in a more efficient and effective workflow for the development team`,
-      `Developed parameterized shaders with multiple variants for general stylized usage for DC's Justice League: Cosmic Chaos, enhancing visual aesthetics and appeal`,
-      `Worked closely with the Art team to improve workflows and create simpler, customizable shaders, improving collaboration and productivity`,
-      `Conducted integration and stress testing on WIP games, identifying and reporting any issues in a developer-friendly format using Mantis`,
-      `Coordinated closely with the design team to identify problematic areas and created relevant test cases, ensuring the quality and functionality of the final product`
+      `Shipped gameplay systems and parameterized shaders for <i>DC's Justice League: Cosmic Chaos</i> (multi-platform console/PC release)`,
+      `Built modular game-manager scripts that streamlined designer workflows and accelerated feature iteration`,
+      `Partnered with technical artists to create customizable, performance-tuned shaders optimized for runtime rendering`,
+      `Executed integration and stress testing via Mantis, delivering actionable, developer-ready bug reports`
     ]
   }
 ]
@@ -199,65 +202,46 @@ type Education = Array<{
 
 export const EDUCATION: Education = [
   {
-    school: 'PhD in Computer Science, George Mason University',
+    school: 'Ph.D. in Computer Science, George Mason University — DCXR Lab',
     period: {
-      start: '2024',
-      end: 'Present'
+      start: '2025',
+      end: 'Expected 2030'
     },
     paragraphs: [
-      'Research Focus: AI and 3D Computer Graphics',
-      `<strong>Lab:</strong> DCXR (Design Computing and eXtended Reality) Lab`,
       `<strong>Advisor:</strong> Dr. Craig Yu`,
-      `<strong>Research Areas:</strong> Human-Computer Interaction, Immersive Digital Environments, AI-Driven Creative Workflows`
-    ],
-    list: {
-      title: 'Current Research',
-      listItem: [
-        'Developing novel AI approaches for intuitive human-computer interaction in 3D environments',
-        'Creating machine learning models to automate and optimize 3D modeling pipelines, including UV mapping and NPR techniques',
-        'Exploring scalable cloud infrastructure for deploying AI-powered graphics applications'
-      ]
-    }
+      `<strong>Research focus:</strong> generative AI for 3D content creation, machine-learning-driven graphics pipelines (UV mapping, non-photorealistic rendering), and human–computer interaction in immersive XR environments`
+    ]
   },
   {
-    school: 'BS in Computer Science, Drexel University',
+    school: 'B.S. in Computer Science, Drexel University',
     period: {
       start: '2018',
       end: '2022'
     },
     paragraphs: [
-      'Concentration in AI and Game Programming',
-      `<strong>Honors:</strong> Magna Cum Laude, Winner of Senior Project Showcase with the 'Player 2' app, Dean's List`
-    ],
-    list: {
-      title: 'Notable Achievements',
-      listItem: [
-        'Senior Project Showcase Winner with innovative mobile application development',
-        "Consistent Dean's List recognition for academic excellence",
-        'Strong foundation in AI, machine learning, and game development technologies'
-      ]
-    }
+      `<strong>Honors:</strong> Dean's List; Founder's Scholarship`,
+      `<strong>Relevant coursework:</strong> Algorithms, Operating Systems, Distributed Computing, Computer Graphics, Machine Learning, Software Engineering`
+    ]
   }
 ]
 
 export const SUMMARY = {
-  intro: `PhD student at GMU's DCXR Lab, advised by Dr. Craig Yu. Researching the intersection of AI and 3D graphics to transform immersive experiences.`,
-  experience: `Ex-CTO of a tech startup with a focus on building scalable, production-ready systems. I build systems that work, not just papers that publish.`,
+  intro: `Computer Science PhD candidate and full-stack engineer with 4+ years of industry experience spanning distributed systems, cloud-native infrastructure, and applied AI/ML research.`,
+  experience: `Proven track record delivering production-grade platforms at scale: reduced infrastructure cost by 80%, automated release pipelines cutting manual effort by 85%, and eliminated certificate-related downtime by 100%. Former CTO leading cross-functional engineering teams; now advancing research at the intersection of generative AI, 3D computer graphics, and human–computer interaction.`,
   researchFocus: [
-    `AI-driven creative workflows for 3D content generation`,
-    `Machine learning for graphics pipelines - automating UV mapping, NPR techniques, and modeling workflows`,
-    `Human-computer interaction in immersive environments`
+    `Generative models (diffusion, neural fields) for automated, controllable 3D asset creation in production-grade graphics pipelines`,
+    `Learning-based approaches to UV mapping, stylization, and non-photorealistic rendering (NPR) for real-time applications`,
+    `Human–computer interaction in immersive XR environments and AI-driven creative workflows`
   ],
-  technicalSkills: `Python, C++, PyTorch, TensorFlow, Unity, Unreal Engine, OpenGL, GLSL, Kubernetes, AWS`,
-  outro: `Open to collaborations pushing the boundaries of AI and graphics.`
+  technicalSkills: `Python, Go, Java, C++, PyTorch, TensorFlow, Unity, Unreal Engine, WebGL, GLSL, Kubernetes, OpenShift, AWS, Docker, Terraform`,
+  outro: `Seeking software engineering, machine learning, and research-engineering roles where systems thinking meets scientific rigor.`
 }
 
+// Keeping the section so the page rendering doesn't break, but the canonical
+// resume doesn't list separate "certifications" — it folds them into Education
+// and Honors. List Python 3 here as a residual; remove the Bachelor of Science
+// "certification" since it's already represented in EDUCATION.
 export const CERTIFICATIONS = [
-  {
-    title: 'Bachelor of Science',
-    issuer: 'Drexel University',
-    date: '2022'
-  },
   {
     title: 'Python 3',
     issuer: 'Programming Certification',
@@ -273,18 +257,18 @@ export const HONORS_AWARDS = [
   },
   {
     title: "Founder's Scholarship",
-    issuer: 'Academic Excellence',
+    issuer: 'Drexel University',
     date: '2018-2022'
   }
 ]
 
 export const LANGUAGES = [
   {
-    title: 'Bangla',
+    title: 'English',
     level: 'Full Professional'
   },
   {
-    title: 'English',
-    level: 'Full Professional'
+    title: 'Bangla',
+    level: 'Native'
   }
 ]

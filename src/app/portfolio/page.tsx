@@ -2,6 +2,7 @@ import { PortfolioPageClient } from '@/components/portfolio/PortfolioPageClient'
 import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContents } from '@/services'
+import { getViewsBatch } from '@/services/pageviews'
 
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
@@ -92,17 +93,15 @@ export const metadata: Metadata = {
 async function getPortfolioData() {
   const response = await getContents<Portfolio>('/portfolio')
 
-  const portfolios = response.map((d) => d.header).sort(getNewestPortfolio)
+  const allHeaders = response.map((d) => d.header)
 
-  const softwarePortfolios = response
-    .map((p) => p.header)
-    .filter((f) => f.category === 'software')
-    .sort(getNewestPortfolio)
+  // Direct DB read instead of an HTTP hop through the batch route.
+  const views = await getViewsBatch(allHeaders.map((h) => h.slug))
+  const withViews = allHeaders.map((h) => ({ ...h, views: views[h.slug] ?? 0 }))
 
-  const gamePortfolios = response
-    .map((p) => p.header)
-    .filter((f) => f.category !== 'software')
-    .sort(getNewestPortfolio)
+  const portfolios = [...withViews].sort(getNewestPortfolio)
+  const softwarePortfolios = withViews.filter((f) => f.category === 'software').sort(getNewestPortfolio)
+  const gamePortfolios = withViews.filter((f) => f.category !== 'software').sort(getNewestPortfolio)
 
   return {
     portfolios,

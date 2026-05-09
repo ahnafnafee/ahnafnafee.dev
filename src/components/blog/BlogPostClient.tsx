@@ -4,7 +4,6 @@ import { PRButton } from '@/components/content'
 import { GiscusComment, HeadingContent } from '@/components/content/blog'
 import { Button } from '@/components/ui/button'
 
-import { isDev } from '@/libs/constants/environmentState'
 import { twclsx } from '@/libs/twclsx'
 
 import type { Blog, PageViewResponse } from 'me'
@@ -21,23 +20,24 @@ export function BlogPostClient({ header, children }: BlogPostClientProps) {
   const toTop = useCallback(() => window.scrollTo({ top: 0, behavior: 'smooth' }), [])
 
   useEffect(() => {
-    // run only on client side
-    if (typeof window !== 'undefined') {
-      if (isDev) return
-      ;(async () => {
-        try {
-          const baseURL = isDev
-            ? 'http://localhost:3000'
-            : (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ahnafnafee.dev')
-          const res = await fetch(`${baseURL}/api/pageviews?slug=${header.slug}`)
-          const data: PageViewResponse = await res.json()
-          const view = data.view ?? 0
-          setPostViews(view)
-        } catch {
-          console.info('Could not retrieve page views')
-        }
-      })()
-    }
+    if (typeof window === 'undefined') return
+    // Same-origin relative path so dev (localhost) and prod both hit their
+    // own API route — no NEXT_PUBLIC_SITE_URL dependency.
+    const sessionKey = `pv-seen-${header.slug}`
+    const shouldIncrement = typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(sessionKey)
+    ;(async () => {
+      try {
+        const res = await fetch(
+          `/api/pageviews?slug=${encodeURIComponent(header.slug)}`,
+          shouldIncrement ? { method: 'POST' } : undefined
+        )
+        const data: PageViewResponse = await res.json()
+        setPostViews(data.view ?? 0)
+        if (shouldIncrement) sessionStorage.setItem(sessionKey, '1')
+      } catch {
+        console.info('Could not retrieve page views')
+      }
+    })()
   }, [header.slug])
 
   return (

@@ -1,16 +1,21 @@
 import { ContentImage } from '@/components/content'
 import { BlogItem } from '@/components/content/blog/BlogItem'
+import { NewsTimeline } from '@/components/content/news'
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 import { ResearchItem } from '@/components/content/research/ResearchItem'
+import { TeachingSection } from '@/components/content/teaching'
 import { Footer, SocialHome } from '@/components/site/common'
 
 import { getContents } from '@/services'
 import { getContentHeaders } from '@/services/content'
+import { getViewsBatch } from '@/services/pageviews'
 
 import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
 import { getPersonNode } from '@/libs/seo/personSchema'
 import { getNewestBlog, getNewestPortfolio, getNewestResearch } from '@/libs/sorters'
+
+import { NEWS } from '@/data/news'
 
 import type { Blog, Portfolio, Research } from 'me'
 import type { Metadata } from 'next'
@@ -216,30 +221,51 @@ export default async function HomePage() {
     getFeaturedResearch()
   ])
 
+  // One batch DB read for every slug rendered on the home page. Direct
+  // service call (no HTTP round-trip) so it works in dev without a public
+  // SITE_URL and skips the JSON serialization overhead.
+  const homeSlugs = [
+    ...(latestBlog ? [latestBlog.slug] : []),
+    ...featuredResearch.slice(0, 2).map((r) => r.slug),
+    ...portfolios.map((p) => p.slug)
+  ]
+  const homeViews = await getViewsBatch(homeSlugs)
+  const latestBlogWithViews = latestBlog ? { ...latestBlog, views: homeViews[latestBlog.slug] ?? 0 } : null
+  const featuredResearchWithViews = featuredResearch.map((r) => ({ ...r, views: homeViews[r.slug] ?? 0 }))
+  const portfoliosWithViews = portfolios.map((p) => ({ ...p, views: homeViews[p.slug] ?? 0 }))
+
   return (
     <>
       <main className='layout' itemScope itemType='https://schema.org/ProfilePage'>
         <section className='flex flex-col' itemScope itemType='https://schema.org/Person' itemProp='mainEntity'>
           <div className='mt-3 flex flex-col-reverse items-start sm:flex-row md:mt-6'>
             <div className='flex flex-1 flex-col sm:pr-8'>
+              <div className='mb-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] font-semibold tracking-[0.22em] text-gray-500 uppercase md:text-xs dark:text-gray-400'>
+                <span aria-hidden='true' className='h-1.5 w-1.5 rounded-full bg-purple-500' />
+                <span>PhD Student</span>
+                <span aria-hidden='true' className='text-gray-300 dark:text-gray-600'>
+                  ·
+                </span>
+                <span>AI &amp; 3D Graphics</span>
+                <span aria-hidden='true' className='h-1.5 w-1.5 rounded-full bg-purple-500' />
+              </div>
               <h1
-                className='mb-1 text-3xl font-bold tracking-tight text-black md:text-5xl dark:text-white'
+                className='name-aberration mb-3 bg-gradient-to-br from-primary-600 via-purple-600 to-pink-500 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent md:text-7xl dark:from-primary-300 dark:via-purple-300 dark:to-pink-300'
                 itemProp='name'
               >
-                Ahnaf An Nafee
+                Ahnaf <span className='whitespace-nowrap'>An Nafee</span>
               </h1>
-              <br />
-              <h2 className='mb-4 text-base text-gray-700 dark:text-gray-200' itemProp='jobTitle'>
-                PhD Student in AI & 3D Graphics @{' '}
+              <h2 className='mb-4 text-base text-gray-700 md:text-lg dark:text-gray-200' itemProp='jobTitle'>
+                PhD Student @{' '}
                 <span
                   className='font-semibold'
                   itemProp='affiliation'
                   itemScope
                   itemType='https://schema.org/Organization'
                 >
-                  <span itemProp='name'>GMU</span>
+                  <span itemProp='name'>GMU DCXR Lab</span>
                 </span>{' '}
-                | DCXR Lab | Ex-CTO
+                · Ex-CTO
               </h2>
             </div>
             <div className='mb-8 flex-shrink-0 sm:mb-0 sm:ml-8'>
@@ -260,89 +286,75 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className='mt-4 space-y-4 text-gray-600 dark:text-gray-400'>
-            <p className='text-lg text-gray-700 dark:text-gray-300'>
-              I&apos;m a PhD student at George Mason University&apos;s{' '}
-              <a
-                href='https://craigyuyu.github.io/home/group.html'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='font-semibold text-purple-600 hover:underline dark:text-purple-400'
-              >
-                DCXR Lab
-              </a>
-              , advised by Dr. Craig Yu. My research sits at the intersection of{' '}
-              <strong>AI and 3D computer graphics</strong> - exploring how machine learning can transform how we create,
-              interact with, and experience immersive digital worlds.
-            </p>
-
-            <p>
-              Before diving into research, I co-founded a tech startup as CTO, where I learned that the best ideas mean
-              nothing without execution. That experience shapes how I approach research: I build systems that work, not
-              just papers that publish.
-            </p>
-
-            <div className='rounded-lg border-l-4 border-purple-500 bg-gradient-to-r from-purple-50 to-blue-50 p-4 dark:from-gray-800 dark:to-gray-800'>
-              <p className='mb-2 font-semibold text-gray-800 dark:text-gray-200'>Research Focus:</p>
-              <ul className='space-y-1 text-sm text-gray-700 dark:text-gray-300'>
-                <li>
-                  <strong>AI-driven creative workflows</strong> for 3D content generation
-                </li>
-                <li>
-                  <strong>Machine learning for graphics pipelines</strong> - automating UV mapping, NPR techniques, and
-                  modeling workflows
-                </li>
-                <li>
-                  <strong>Human-computer interaction</strong> in immersive environments
-                </li>
-              </ul>
-            </div>
-
-            <p className='text-sm italic'>
-              Always open to collaborations with researchers and industry partners pushing the boundaries of AI and
-              graphics.
-            </p>
-          </div>
+          <p className='mt-2 max-w-2xl text-base leading-7 text-gray-700 md:text-lg md:leading-8 dark:text-gray-300'>
+            I work at the intersection of{' '}
+            <strong className='text-gray-900 dark:text-gray-100'>AI and 3D computer graphics</strong> in the{' '}
+            <a
+              href='https://craigyuyu.github.io/home/group.html'
+              target='_blank'
+              rel='noopener noreferrer'
+              className='font-semibold text-link'
+            >
+              DCXR Lab
+            </a>{' '}
+            with Dr. Craig Yu — building systems that change how we create and inhabit immersive digital worlds. Before
+            grad school, I led engineering as CTO of a tech startup.
+          </p>
 
           <SocialHome className='mt-6 mb-8 flex-shrink flex-wrap gap-3 self-start' />
         </section>
 
-        {latestBlog && (
+        {NEWS.length > 0 && (
+          <section className='border-t border-gray-200 pt-8 pb-0 dark:border-gray-800'>
+            <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>News</h3>
+            <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
+              Recent updates from the lab and the rest of the trail.{' '}
+              <Link href='/research#news' className='text-link'>
+                See full timeline
+              </Link>
+            </p>
+            <NewsTimeline items={NEWS} showHeading={false} className='mb-2' />
+          </section>
+        )}
+
+        {latestBlogWithViews && (
           <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>Latest Blog</h3>
             <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
               Fresh thoughts on AI, graphics, and tech.{' '}
-              <Link href='/blog' className='text-purple-600 hover:underline dark:text-purple-400'>
+              <Link href='/blog' className='text-link'>
                 Read all blogs
               </Link>
             </p>
-            <BlogItem {...latestBlog} />
+            <BlogItem {...latestBlogWithViews} displayViews />
           </section>
         )}
 
-        {featuredResearch.length > 0 && (
+        {featuredResearchWithViews.length > 0 && (
           <section className='border-t border-gray-200 pt-8 pb-4 dark:border-gray-800'>
             <h3 className='mb-1 text-2xl font-bold tracking-tight text-black md:mb-3 dark:text-white'>
               Featured Research
             </h3>
             <p className='mb-6 text-gray-600 md:mb-8 dark:text-gray-400'>
               Papers and projects at the intersection of AI and 3D computer graphics.{' '}
-              <Link href='/research' className='text-purple-600 hover:underline dark:text-purple-400'>
+              <Link href='/research' className='text-link'>
                 View all research
               </Link>
             </p>
             <div className='flex flex-col'>
-              {featuredResearch.slice(0, 2).map((entry, i) => (
+              {featuredResearchWithViews.slice(0, 2).map((entry, i) => (
                 <ResearchItem key={entry.slug} {...entry} priority={i === 0} />
               ))}
             </div>
           </section>
         )}
 
+        <TeachingSection />
+
         <PortfolioList
           description={`Check out my featured portfolio. View all my works <a href="/portfolio">here</a>!`}
           title='Featured Portfolio'
-          portfolios={portfolios}
+          portfolios={portfoliosWithViews}
         />
       </main>
 

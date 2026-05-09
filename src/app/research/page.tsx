@@ -2,6 +2,7 @@ import { ResearchAreas, ResearchNews, ResearchOverview, ResearchSections } from 
 import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContentHeaders } from '@/services/content'
+import { getViewsBatch } from '@/services/pageviews'
 
 import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
@@ -58,7 +59,13 @@ export const metadata: Metadata = {
 async function getResearchData(): Promise<Research[]> {
   try {
     const response = await getContentHeaders<Research>('/research')
-    return response.map((r) => r.header).sort(getNewestResearch)
+    const headers = response.map((r) => r.header).sort(getNewestResearch)
+    if (headers.length === 0) return headers
+
+    // Direct service call (no HTTP round-trip) — works in dev without
+    // depending on SITE_URL pointing at the running server.
+    const views = await getViewsBatch(headers.map((h) => h.slug))
+    return headers.map((h) => ({ ...h, views: views[h.slug] ?? 0 }))
   } catch (error) {
     console.warn('Failed to load research:', error)
     return []

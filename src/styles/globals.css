@@ -77,6 +77,40 @@
     content-visibility: auto;
   }
 
+  /* Site-wide in-text link palette. Indigo — distinct from the body text,
+   * cooler than the primary brand blue, harmonizes with the home-page name
+   * gradient. UnderlineLink, MDXLink, and HeadingPortfolio also pull from
+   * this same family so every link surface reads consistently. */
+  .text-link {
+    @apply text-indigo-600 underline-offset-2 transition-colors;
+  }
+  .text-link:hover {
+    @apply text-indigo-700 underline;
+  }
+  .dark .text-link {
+    @apply text-indigo-300;
+  }
+  .dark .text-link:hover {
+    @apply text-indigo-200;
+  }
+
+  /* Subtle chromatic-aberration offset on the home-page name. Two text-shadows
+   * (cyan +1 to the right, magenta -1 to the left) sit underneath the gradient
+   * text fill — barely perceptible but adds a hint of comic-book character.
+   * Both light and dark modes use the same offsets; the alphas are tuned so
+   * the effect is visible without dominating the gradient. */
+  .name-aberration {
+    text-shadow:
+      1px 0 0 rgba(0, 200, 255, 0.35),
+      -1px 0 0 rgba(255, 80, 160, 0.3);
+  }
+
+  .dark .name-aberration {
+    text-shadow:
+      2px 0 0 rgba(0, 234, 255, 0.4),
+      -2px 0 0 rgba(255, 100, 200, 0.32);
+  }
+
   .pattern {
     background-color: #ffffff;
     opacity: 1;
