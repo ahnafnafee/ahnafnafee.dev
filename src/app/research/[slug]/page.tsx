@@ -44,10 +44,12 @@ const formatVenue = (venue: Research['venue']): string | undefined => {
   return label || (venue.year ? String(venue.year) : undefined)
 }
 
+// og:image always uses the dynamic mesh-hero card so social-share previews
+// stay cohesive across every research entry. `header.thumbnail` and
+// `header.teaser` continue to drive the in-site listing card and the
+// detail-page hero figure (via ResearchItem / ResearchTeaser), so the raw
+// images still appear where they actually fit the layout.
 const resolveOgImage = (header: Research): string => {
-  if (header.ogImage) return header.ogImage
-  if (header.teaser) return header.teaser
-  if (header.thumbnail) return header.thumbnail
   return generateOgImage({
     title: header.title,
     subTitle: header.summary,

@@ -39,15 +39,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const res = await getContentBySlug<Blog>('/blog', slug)
     const header = res.header
-    const ogImage =
-      header.thumbnail ||
-      generateOgImage({
-        title: header.title,
-        subTitle: header.summary,
-        type: 'blog-post',
-        topics: header.topics,
-        theme: 'dark'
-      })
+    // Always render the dynamic mesh-hero card for og:image — the in-site
+    // listing card on /blog continues to use header.thumbnail directly via
+    // BlogItem.tsx, so the raw thumbnail still appears where it makes sense
+    // (1:1 / 5:4 listing slots) without competing with the OG card chrome.
+    const ogImage = generateOgImage({
+      title: header.title,
+      subTitle: header.summary,
+      type: 'blog-post',
+      topics: header.topics,
+      theme: 'dark'
+    })
     const modifiedTime = header.updated || header.published
     const canonical = `${SITE_URL}/blog/${header.slug}`
     const seeAlso = (header.related ?? []).map((s) => `${SITE_URL}/blog/${s}`)
@@ -113,15 +115,13 @@ export default async function BlogPost({ params }: Props) {
     const stats = readingTime(res.content)
     const est_read = stats.text
     const header = { est_read, ...res.header }
-    const ogImage =
-      header.thumbnail ||
-      generateOgImage({
-        title: header.title,
-        subTitle: header.summary,
-        type: 'blog-post',
-        topics: header.topics,
-        theme: 'dark'
-      })
+    const ogImage = generateOgImage({
+      title: header.title,
+      subTitle: header.summary,
+      type: 'blog-post',
+      topics: header.topics,
+      theme: 'dark'
+    })
     const dateModified = header.updated || header.published
     const keywordsList = header.keywords?.filter(Boolean) ?? []
     const adjacent = getAdjacentPosts(slug, allPosts)
