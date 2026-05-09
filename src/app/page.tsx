@@ -358,13 +358,13 @@ export default async function HomePage() {
           </section>
         )}
 
+        <TeachingSection />
+
         <PortfolioList
           description={`Check out my featured portfolio. View all my works <a href="/portfolio">here</a>!`}
           title='Featured Portfolio'
           portfolios={portfoliosWithViews}
         />
-
-        <TeachingSection />
       </main>
 
       <Footer />
