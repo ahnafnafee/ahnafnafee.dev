@@ -19,9 +19,9 @@ import {
   OG_SIZE,
   OG_TYPE_LABEL
 } from './og-tokens'
-import { AuthorLine, GradientTitle, MetaText, Subtitle, TopicChip, TypeChip } from './og-typography'
+import { AuthorLine, GradientTitle, MetaText, Subtitle, TITLE_HIDE_TOPICS_THRESHOLD, TopicChip, TypeChip } from './og-typography'
 
-import type { OgAccent, OgCardProps } from './og-types'
+import type { OgAccent, OgCardProps, OgPageType } from './og-types'
 
 const MESH_LAYOUT = {
   width: 820,
@@ -29,6 +29,16 @@ const MESH_LAYOUT = {
   top: -90,
   left: -140,
   opacity: 0.2
+}
+
+// Article (*-post) cards are intentionally minimal — title is hero, no
+// summary paragraph, fewer topic chips. Listing / index pages keep the
+// summary because their titles are short and the canvas would feel empty.
+const ARTICLE_TOPIC_CAP = 3
+const LISTING_TOPIC_CAP = 5
+
+function isArticleType(type: OgPageType): boolean {
+  return type === 'blog-post' || type === 'portfolio-post' || type === 'research-post'
 }
 
 function Avatar({ src, accent }: { src: string; accent: OgAccent }) {
@@ -116,7 +126,20 @@ function VenueLine({ accent, venue }: { accent: OgAccent; venue: string }) {
 export function OgCard(props: OgCardProps) {
   const accent = OG_ACCENTS[props.type]
   const typeLabel = OG_TYPE_LABEL[props.type]
-  const topics = (props.topics ?? []).slice(0, 5).filter((t) => t && t.trim().length > 0)
+  const isArticle = isArticleType(props.type)
+  const topicCap = isArticle ? ARTICLE_TOPIC_CAP : LISTING_TOPIC_CAP
+  // Drop topics on article cards whose title falls into the 50px (long-tail)
+  // bucket — the title alone fills the center band at that tier, and a
+  // topics row would push the last title line off-canvas.
+  const titleIsLongTier = isArticle && (props.title?.length ?? 0) > TITLE_HIDE_TOPICS_THRESHOLD
+  const topics = titleIsLongTier
+    ? []
+    : (props.topics ?? []).filter((t) => t && t.trim().length > 0).slice(0, topicCap)
+  // Article cards drop the subtitle entirely — at OG scan distance, a
+  // 200-char abstract paragraph is unreadable and just steals space from
+  // the title (which is the actual hook). The <meta name="description">
+  // still carries the full summary for SEO consumers.
+  const showSubtitle = !isArticle && Boolean(props.subtitle)
 
   return (
     <div
@@ -199,13 +222,13 @@ export function OgCard(props: OgCardProps) {
               height: 4,
               width: 96,
               backgroundColor: accent.rule,
-              marginTop: 22,
-              marginBottom: props.subtitle ? 22 : 18,
+              marginTop: 24,
+              marginBottom: showSubtitle ? 22 : 26,
               borderRadius: 2
             }}
           />
 
-          {props.subtitle ? <Subtitle>{props.subtitle}</Subtitle> : null}
+          {showSubtitle ? <Subtitle>{props.subtitle!}</Subtitle> : null}
 
           {topics.length > 0 ? (
             <div
@@ -213,7 +236,7 @@ export function OgCard(props: OgCardProps) {
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: 10,
-                marginTop: props.subtitle ? 22 : 8
+                marginTop: showSubtitle ? 22 : 0
               }}
             >
               {topics.map((topic) => (
