@@ -98,8 +98,22 @@
    * (cyan +1 to the right, magenta -1 to the left) sit underneath the gradient
    * text fill — barely perceptible but adds a hint of comic-book character.
    * Both light and dark modes use the same offsets; the alphas are tuned so
-   * the effect is visible without dominating the gradient. */
+   * the effect is visible without dominating the gradient.
+   *
+   * Spider-Verse glitch: a ~1 s burst fires every 8 s on top of the calm
+   * baseline. The keyframes use `steps(1, end)` so each frame holds — hard
+   * cuts read like a glitched film cell, not a smooth tween. Three layers
+   * play simultaneously during the burst:
+   *   1. The main h1 — chromatic text-shadow (up to ±12 px) plus skew,
+   *      jitter, and a brief hue-rotate filter.
+   *   2. `::before` — cyan top-half slice that flashes in and tracks
+   *      horizontally opposite to `::after`.
+   *   3. `::after` — magenta bottom-half slice mirroring `::before`.
+   * Wrapped in `prefers-reduced-motion: no-preference` so motion-sensitive
+   * users get the static chromatic baseline only (declarations outside the
+   * media query stay as the fallback). */
   .name-aberration {
+    position: relative;
     text-shadow:
       1px 0 0 rgba(0, 200, 255, 0.35),
       -1px 0 0 rgba(255, 80, 160, 0.3);
@@ -109,6 +123,239 @@
     text-shadow:
       2px 0 0 rgba(0, 234, 255, 0.4),
       -2px 0 0 rgba(255, 100, 200, 0.32);
+  }
+
+  /* Pseudo-element slices for the Spider-Verse character split. They are
+   * absolutely positioned over the h1, take their text from `data-text`,
+   * and use a solid color (no bg-clip-text) so the slice reads as a
+   * comic-book "ghost" pass. Opacity 0 by default; only the keyframes
+   * inside the prefers-reduced-motion guard make them visible. */
+  .name-aberration::before,
+  .name-aberration::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    font: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+
+  .name-aberration::before {
+    color: rgba(0, 234, 255, 0.9);
+    clip-path: polygon(0 0, 100% 0, 100% 48%, 0 48%);
+  }
+
+  .name-aberration::after {
+    color: rgba(255, 80, 200, 0.9);
+    clip-path: polygon(0 52%, 100% 52%, 100% 100%, 0 100%);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .name-aberration {
+      animation: name-glitch-light 8s steps(1, end) infinite;
+      /* translate3d on the keyframes promotes the element to its own
+       * compositor layer, keeping the burst on the GPU. */
+      will-change: transform, text-shadow, filter;
+    }
+
+    .dark .name-aberration {
+      animation: name-glitch-dark 8s steps(1, end) infinite;
+    }
+
+    .name-aberration::before {
+      animation: name-slice-top 8s steps(1, end) infinite;
+    }
+
+    .name-aberration::after {
+      animation: name-slice-bottom 8s steps(1, end) infinite;
+    }
+
+    @keyframes name-glitch-light {
+      0%,
+      85%,
+      99%,
+      100% {
+        text-shadow:
+          1px 0 0 rgba(0, 200, 255, 0.35),
+          -1px 0 0 rgba(255, 80, 160, 0.3);
+        transform: translate3d(0, 0, 0);
+        filter: none;
+      }
+      86% {
+        text-shadow:
+          10px 0 0 rgba(0, 234, 255, 0.95),
+          -10px 0 0 rgba(255, 80, 200, 0.9),
+          0 4px 0 rgba(255, 240, 100, 0.6),
+          0 -4px 0 rgba(120, 255, 100, 0.4);
+        transform: translate3d(-3px, 1px, 0) skewX(1deg);
+        filter: contrast(1.1) saturate(1.2);
+      }
+      88% {
+        text-shadow:
+          -12px 0 0 rgba(0, 234, 255, 0.95),
+          12px 0 0 rgba(255, 80, 200, 0.9),
+          0 -3px 0 rgba(255, 240, 100, 0.5);
+        transform: translate3d(3px, -1px, 0) skewX(-1.5deg);
+        filter: hue-rotate(18deg) contrast(1.15);
+      }
+      90% {
+        text-shadow:
+          8px 0 0 rgba(0, 234, 255, 0.85),
+          -8px 0 0 rgba(255, 80, 200, 0.85);
+        transform: translate3d(-2px, 0, 0) skewX(0.5deg);
+        filter: hue-rotate(-12deg);
+      }
+      92% {
+        text-shadow:
+          -6px 0 0 rgba(0, 234, 255, 0.75),
+          6px 0 0 rgba(255, 80, 200, 0.75),
+          0 2px 0 rgba(255, 240, 100, 0.4);
+        transform: translate3d(2px, 0, 0);
+        filter: none;
+      }
+      94% {
+        text-shadow:
+          4px 0 0 rgba(0, 234, 255, 0.6),
+          -4px 0 0 rgba(255, 80, 200, 0.6);
+        transform: translate3d(-1px, 0, 0);
+      }
+      96% {
+        text-shadow:
+          2px 0 0 rgba(0, 234, 255, 0.45),
+          -2px 0 0 rgba(255, 80, 200, 0.45);
+        transform: translate3d(1px, 0, 0);
+      }
+    }
+
+    @keyframes name-glitch-dark {
+      0%,
+      85%,
+      99%,
+      100% {
+        text-shadow:
+          2px 0 0 rgba(0, 234, 255, 0.4),
+          -2px 0 0 rgba(255, 100, 200, 0.32);
+        transform: translate3d(0, 0, 0);
+        filter: none;
+      }
+      86% {
+        text-shadow:
+          12px 0 0 rgba(0, 234, 255, 1),
+          -12px 0 0 rgba(255, 100, 220, 0.95),
+          0 4px 0 rgba(255, 240, 100, 0.65),
+          0 -4px 0 rgba(140, 255, 120, 0.45);
+        transform: translate3d(-3px, 1px, 0) skewX(1.2deg);
+        filter: contrast(1.15) saturate(1.25);
+      }
+      88% {
+        text-shadow:
+          -14px 0 0 rgba(0, 234, 255, 1),
+          14px 0 0 rgba(255, 100, 220, 0.95),
+          0 -3px 0 rgba(255, 240, 100, 0.55);
+        transform: translate3d(3px, -1px, 0) skewX(-1.8deg);
+        filter: hue-rotate(20deg) contrast(1.2);
+      }
+      90% {
+        text-shadow:
+          10px 0 0 rgba(0, 234, 255, 0.9),
+          -10px 0 0 rgba(255, 100, 220, 0.9);
+        transform: translate3d(-2px, 0, 0) skewX(0.6deg);
+        filter: hue-rotate(-14deg);
+      }
+      92% {
+        text-shadow:
+          -7px 0 0 rgba(0, 234, 255, 0.8),
+          7px 0 0 rgba(255, 100, 220, 0.8),
+          0 2px 0 rgba(255, 240, 100, 0.45);
+        transform: translate3d(2px, 0, 0);
+        filter: none;
+      }
+      94% {
+        text-shadow:
+          5px 0 0 rgba(0, 234, 255, 0.65),
+          -5px 0 0 rgba(255, 100, 220, 0.65);
+        transform: translate3d(-1px, 0, 0);
+      }
+      96% {
+        text-shadow:
+          3px 0 0 rgba(0, 234, 255, 0.5),
+          -3px 0 0 rgba(255, 100, 220, 0.5);
+        transform: translate3d(1px, 0, 0);
+      }
+    }
+
+    @keyframes name-slice-top {
+      0%,
+      85%,
+      99%,
+      100% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0);
+      }
+      86% {
+        opacity: 1;
+        transform: translate3d(10px, -1px, 0);
+      }
+      88% {
+        opacity: 0.95;
+        transform: translate3d(-8px, 1px, 0);
+      }
+      90% {
+        opacity: 0.85;
+        transform: translate3d(6px, 0, 0);
+      }
+      92% {
+        opacity: 0.6;
+        transform: translate3d(-4px, 0, 0);
+      }
+      94% {
+        opacity: 0.35;
+        transform: translate3d(2px, 0, 0);
+      }
+      96% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+
+    @keyframes name-slice-bottom {
+      0%,
+      85%,
+      99%,
+      100% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0);
+      }
+      86% {
+        opacity: 1;
+        transform: translate3d(-10px, 1px, 0);
+      }
+      88% {
+        opacity: 0.95;
+        transform: translate3d(8px, -1px, 0);
+      }
+      90% {
+        opacity: 0.85;
+        transform: translate3d(-6px, 0, 0);
+      }
+      92% {
+        opacity: 0.6;
+        transform: translate3d(4px, 0, 0);
+      }
+      94% {
+        opacity: 0.35;
+        transform: translate3d(-2px, 0, 0);
+      }
+      96% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0);
+      }
+    }
   }
 
   .pattern {
