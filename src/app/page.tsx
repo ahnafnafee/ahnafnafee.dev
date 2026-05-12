@@ -256,6 +256,7 @@ export default async function HomePage() {
               <h1
                 className='name-aberration mb-3 bg-gradient-to-br from-primary-600 via-purple-600 to-pink-500 bg-clip-text text-5xl font-extrabold tracking-tight text-transparent md:text-7xl dark:from-primary-300 dark:via-purple-300 dark:to-pink-300'
                 itemProp='name'
+                data-text={'Ahnaf An Nafee'}
               >
                 Ahnaf <span className='whitespace-nowrap'>An Nafee</span>
               </h1>
