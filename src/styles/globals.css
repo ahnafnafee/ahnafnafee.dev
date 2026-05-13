@@ -100,7 +100,7 @@
    * Both light and dark modes use the same offsets; the alphas are tuned so
    * the effect is visible without dominating the gradient.
    *
-   * Spider-Verse glitch: a ~1 s burst fires every 8 s on top of the calm
+   * Spider-Verse glitch: a ~1 s burst fires every 3 s on top of the calm
    * baseline. The keyframes use `steps(1, end)` so each frame holds — hard
    * cuts read like a glitched film cell, not a smooth tween. Three layers
    * play simultaneously during the burst:
@@ -157,22 +157,22 @@
 
   @media (prefers-reduced-motion: no-preference) {
     .name-aberration {
-      animation: name-glitch-light 8s steps(1, end) infinite;
+      animation: name-glitch-light 3s steps(1, end) infinite;
       /* translate3d on the keyframes promotes the element to its own
        * compositor layer, keeping the burst on the GPU. */
       will-change: transform, text-shadow, filter;
     }
 
     .dark .name-aberration {
-      animation: name-glitch-dark 8s steps(1, end) infinite;
+      animation: name-glitch-dark 3s steps(1, end) infinite;
     }
 
     .name-aberration::before {
-      animation: name-slice-top 8s steps(1, end) infinite;
+      animation: name-slice-top 3s steps(1, end) infinite;
     }
 
     .name-aberration::after {
-      animation: name-slice-bottom 8s steps(1, end) infinite;
+      animation: name-slice-bottom 3s steps(1, end) infinite;
     }
 
     @keyframes name-glitch-light {
