@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { ImageResponse } from 'next/og'
 import { NextRequest } from 'next/server'
 
+import { HomeOgCard } from '@/libs/og/og-home'
 import { OgCard } from '@/libs/og/og-shell'
 import { OG_FONT_FAMILY, OG_SIZE, resolvePageType } from '@/libs/og/og-tokens'
 
@@ -93,8 +94,21 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    const img = new ImageResponse(
-      (
+    // The home card has its own composition (terminal-style printout, dual
+    // mesh, corner brackets). Every other type uses the shared OgCard shell.
+    const card =
+      type === 'home' ? (
+        <HomeOgCard
+          type={type}
+          title={title}
+          subtitle={subtitle}
+          topics={topics}
+          category={category}
+          section={section}
+          venue={venue}
+          profileSrc={profileSrc}
+        />
+      ) : (
         <OgCard
           type={type}
           title={title}
@@ -105,14 +119,14 @@ export async function GET(req: NextRequest) {
           venue={venue}
           profileSrc={profileSrc}
         />
-      ),
-      {
-        width: OG_SIZE.width,
-        height: OG_SIZE.height,
-        emoji: 'twemoji',
-        fonts: fonts as never
-      }
-    )
+      )
+
+    const img = new ImageResponse(card, {
+      width: OG_SIZE.width,
+      height: OG_SIZE.height,
+      emoji: 'twemoji',
+      fonts: fonts as never
+    })
 
     // Buffer the response body — the streaming ImageResponse can land as a
     // 0-byte response under Vercel's Node runtime, so materialize the bytes
