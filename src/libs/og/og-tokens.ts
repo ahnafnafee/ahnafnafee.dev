@@ -25,6 +25,15 @@ export const OG_AUTHOR_LINE = 'Ahnaf An Nafee'
 export const OG_AUTHOR_ROLE = 'PhD · AI & 3D Graphics · DCXR Lab @ GMU'
 export const OG_DOMAIN = 'ahnafnafee.dev'
 
+// Multi-line printout rendered on the home OG card in place of a flat
+// subtitle. Each line reads as `> {label} · {value}` in a monospace
+// stack — encodes role / focus / lab in a scannable terminal-style block.
+export const HOME_PROMPT_LINES: ReadonlyArray<{ label: string; value: string }> = [
+  { label: 'role', value: 'PhD Student' },
+  { label: 'focus', value: 'AI × 3D Graphics' },
+  { label: 'lab', value: 'DCXR Lab @ GMU' }
+] as const
+
 const HOME_ACCENT: OgAccent = {
   mesh: '#a855f7',
   titleStops: ['#3b82f6', '#a855f7', '#ec4899'],

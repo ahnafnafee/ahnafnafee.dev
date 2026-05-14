@@ -22,10 +22,13 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import readingTime from 'reading-time'
 
+// HomeOgCard renders its own multi-line `> role · …` printout in place of a
+// flat subtitle, so we no longer pass subTitle here. Topics drive the chip
+// row under the printout and surface research areas to OG previews.
 const HOME_OG_IMAGE = generateOgImage({
   title: 'Ahnaf An Nafee',
-  subTitle: 'PhD Student exploring AI for 3D content creation and immersive experiences',
-  type: 'home'
+  type: 'home',
+  topics: ['Generative AI', '3D Graphics', 'Immersive XR']
 })
 const HOME_OG_ALT = `${SITE_NAME} - PhD Student in AI & 3D Graphics at George Mason University | DCXR Lab`
 const HOME_TITLE = `${SITE_NAME} - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU`
