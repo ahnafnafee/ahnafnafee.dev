@@ -1,13 +1,11 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-
 import { twclsx } from '@/libs/twclsx'
 
+import { CodeBlockShell } from './CodeBlockShell'
 import { Mermaid } from './Mermaid'
 
 import { Children, isValidElement, Suspense, useEffect, useRef, useState } from 'react'
-import { HiCheck, HiClipboardCopy } from 'react-icons/hi'
 
 interface PreProps {
   children: React.ReactNode
@@ -105,92 +103,27 @@ function getLanguageFromChildren(children: React.ReactNode): string {
 }
 
 export const Pre = ({ children, className }: PreProps) => {
-  const [isCopied, setIsCopied] = useState<boolean>(false)
-  const preRef = useRef<HTMLPreElement>(null)
-
   const language = getLanguageFromChildren(children) || extractLanguage(className)
 
-  // Hooks must always run in the same order — keep useEffect above any early
-  // return (rules-of-hooks). The effect is a no-op when isCopied stays false.
-  useEffect(() => {
-    if (!isCopied) return
-    const timer = setTimeout(() => setIsCopied(false), 1500)
-    return () => clearTimeout(timer)
-  }, [isCopied])
-
-  // If it's a mermaid block, use the MermaidCodeBlock wrapper
+  // If it's a mermaid block, defer to the dedicated wrapper.
   if (language.startsWith('mermaid')) {
     return <MermaidCodeBlock>{children}</MermaidCodeBlock>
   }
 
-  const copyToClipboard = async () => {
-    if (preRef.current && !isCopied) {
-      await navigator.clipboard.writeText(preRef.current.textContent as string)
-      setIsCopied(true)
-    }
-  }
-
-  const displayLanguage = language || 'text'
-
   return (
-    <div
-      className={twclsx(
-        'not-prose group relative my-6',
-        'overflow-hidden rounded-lg',
-        'border border-neutral-200 dark:border-neutral-800',
-        'bg-[var(--prism-bg)]'
-      )}
-    >
-      <div
-        className={twclsx(
-          'flex items-center justify-between',
-          'border-b border-neutral-200/70 dark:border-neutral-800',
-          'bg-neutral-50/60 dark:bg-neutral-900/40',
-          'px-4 py-1.5'
-        )}
-      >
-        <span
-          className={twclsx(
-            'font-mono text-[0.7rem] tracking-[0.08em] lowercase',
-            'text-neutral-500 dark:text-neutral-400',
-            'select-none'
-          )}
-        >
-          {displayLanguage}
-        </span>
-        <Button
-          variant='ghost'
-          size='icon-sm'
-          onClick={copyToClipboard}
-          aria-label='Copy code to clipboard'
-          className={twclsx(
-            'h-7 w-7',
-            'text-neutral-500 hover:text-neutral-900',
-            'dark:text-neutral-400 dark:hover:text-neutral-100',
-            'hover:bg-neutral-200/60 dark:hover:bg-neutral-700/40'
-          )}
-        >
-          {isCopied ? (
-            <HiCheck className='h-3.5 w-3.5 text-emerald-500' />
-          ) : (
-            <HiClipboardCopy className='h-3.5 w-3.5' />
-          )}
-        </Button>
-      </div>
-
+    <CodeBlockShell language={language}>
       <pre
-        ref={preRef}
         className={twclsx(
-          'overflow-x-auto',
+          'overflow-x-auto px-4 py-3 text-sm leading-relaxed',
           // Override prism-themes.css baseline so the inner <pre> defers to
-          // the wrapper's surface, radius, and outer spacing.
-          '[margin:0!important] [border-radius:0!important]',
+          // the shell's surface and outer spacing.
+          '[margin:0!important] [border-radius:0!important] [padding:0.75rem_1rem!important]',
           '[&>code]:border-none [&>code]:[background:transparent!important]',
           className
         )}
       >
         {children}
       </pre>
-    </div>
+    </CodeBlockShell>
   )
 }

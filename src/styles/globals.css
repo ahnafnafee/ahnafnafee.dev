@@ -377,19 +377,6 @@
       linear-gradient(315deg, rgba(59, 30, 246, 1) 25%, rgb(30 58 138) 25%);
   }
 
-  /* @tailwindcss/typography ships `content: "\``";` on `prose code::before` /
-   * `::after`, which renders literal backticks around every inline code span
-   * (e.g. <code>FROM</code> → <code>`FROM`</code>). The prose layer's pill
-   * styling already signals "inline code" — we don't need quote characters
-   * doing it a second time. Strip them across every `.prose` container
-   * (blog, portfolio, research). The plugin uses zero-specificity
-   * `:where(code)`, so dropping `:where` here yields higher specificity and
-   * wins regardless of cascade order. */
-  .prose code::before,
-  .prose code::after {
-    content: none;
-  }
-
   .img-center {
     display: flex;
     justify-content: center;
@@ -405,6 +392,20 @@
 
   * {
     @apply border-border outline-ring/50;
+  }
+}
+
+/* @tailwindcss/typography emits `content: "\``";` on `prose code::before` /
+ * `::after`, rendering literal backticks around every inline code span
+ * (e.g. <code>FROM</code> → <code>`FROM`</code>). The Code.tsx pill already
+ * signals "inline code"; the quote characters are redundant. The plugin
+ * registers its rules in `@layer utilities`, so the override must live in
+ * the same layer to win the cascade — dropping `:where()` then secures
+ * the specificity tiebreak. */
+@layer utilities {
+  .prose code::before,
+  .prose code::after {
+    content: none;
   }
 }
 
