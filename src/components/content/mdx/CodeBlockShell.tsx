@@ -52,21 +52,31 @@ export const CodeBlockShell = ({ language, children, className }: CodeBlockShell
     >
       <div
         className={twclsx(
-          'flex items-center justify-between',
+          'flex items-center justify-between gap-3',
           'border-b border-neutral-200/70 dark:border-neutral-800',
-          'bg-neutral-50/60 dark:bg-neutral-900/40',
-          'px-4 py-1.5'
+          'bg-neutral-100 dark:bg-neutral-900/60',
+          'px-3 py-2'
         )}
       >
-        <span
-          className={twclsx(
-            'font-mono text-[0.7rem] tracking-[0.08em] lowercase',
-            'text-neutral-500 dark:text-neutral-400',
-            'select-none'
-          )}
-        >
-          {language || 'text'}
-        </span>
+        <div className='flex items-center gap-2'>
+          {/* macOS-style window controls — purely decorative; the canonical
+            * close/minimize/zoom palette signals "this is a terminal-style
+            * surface" without taking the visual weight of an interactive UI. */}
+          <div className='flex items-center gap-1.5' aria-hidden='true'>
+            <span className='block size-3 rounded-full bg-[#ff5f57] ring-1 ring-black/10 dark:ring-white/5' />
+            <span className='block size-3 rounded-full bg-[#febc2e] ring-1 ring-black/10 dark:ring-white/5' />
+            <span className='block size-3 rounded-full bg-[#28c840] ring-1 ring-black/10 dark:ring-white/5' />
+          </div>
+          <span
+            className={twclsx(
+              'ml-1 font-mono text-[0.7rem] tracking-[0.08em] lowercase',
+              'text-neutral-500 dark:text-neutral-400',
+              'select-none'
+            )}
+          >
+            {language || 'text'}
+          </span>
+        </div>
         <Button
           variant='ghost'
           size='icon-sm'

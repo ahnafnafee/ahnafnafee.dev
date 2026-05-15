@@ -11,11 +11,6 @@ type ResearchBibTeXProps = {
 export const ResearchBibTeX: React.FC<ResearchBibTeXProps> = ({ bibtex }) => {
   return (
     <section id='bibtex' className={twclsx('not-prose mt-2 scroll-mt-24')}>
-      <h2
-        className={twclsx('text-xs font-bold tracking-wider uppercase', 'text-purple-600 dark:text-purple-400', 'mb-3')}
-      >
-        Citation
-      </h2>
       <CodeBlockShell language='bibtex'>
         <pre
           className={twclsx(
