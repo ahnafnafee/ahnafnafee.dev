@@ -395,6 +395,20 @@
   }
 }
 
+/* @tailwindcss/typography emits `content: "\``";` on `prose code::before` /
+ * `::after`, rendering literal backticks around every inline code span
+ * (e.g. <code>FROM</code> → <code>`FROM`</code>). The Code.tsx pill already
+ * signals "inline code"; the quote characters are redundant. The plugin
+ * registers its rules in `@layer utilities`, so the override must live in
+ * the same layer to win the cascade — dropping `:where()` then secures
+ * the specificity tiebreak. */
+@layer utilities {
+  .prose code::before,
+  .prose code::after {
+    content: none;
+  }
+}
+
 /*
  * Shadcn semantic tokens mapped to the existing palette so that every shadcn
  * primitive renders in the project's blue-primary / neutral-theme look-and-feel.
