@@ -5110,6 +5110,7 @@ __metadata:
     react-icons: "npm:5.5.0"
     react-image-lightbox: "npm:^5.1.4"
     reading-time: "npm:^1.5.0"
+    refractor: "npm:^4.8.0"
     rehype-katex: "npm:^7.0.1"
     rehype-prism-plus: "npm:^2.0.1"
     rehype-slug: "npm:^6.0.0"

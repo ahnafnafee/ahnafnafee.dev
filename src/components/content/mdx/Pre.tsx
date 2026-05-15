@@ -79,14 +79,24 @@ function MermaidCodeBlock({ children }: { children: React.ReactNode }) {
   )
 }
 
-// Helper to detect language from children
+// rehype-prism-plus emits something like `language-modelfile code-highlight`.
+// Naive `.replace('language-', '')` leaks the second class into the label
+// (yielding "MODELFILE CODE-HIGHLIGHT"); match the `language-*` token instead.
+function extractLanguage(...candidates: (string | undefined | null)[]): string {
+  for (const cn of candidates) {
+    if (!cn) continue
+    const match = cn.match(/(?:^|\s)language-([\w-]+)/)
+    if (match) return match[1]
+  }
+  return ''
+}
+
 function getLanguageFromChildren(children: React.ReactNode): string {
   try {
     const child = Children.only(children)
     if (isValidElement(child) && child.props) {
       const childProps = child.props as { className?: string }
-      const childClassName = childProps.className || ''
-      return childClassName.replace('language-', '').toLowerCase()
+      return extractLanguage(childProps.className)
     }
   } catch {
     // Multiple children or no children
@@ -98,8 +108,7 @@ export const Pre = ({ children, className }: PreProps) => {
   const [isCopied, setIsCopied] = useState<boolean>(false)
   const preRef = useRef<HTMLPreElement>(null)
 
-  // Get language from children
-  const language = getLanguageFromChildren(children)
+  const language = getLanguageFromChildren(children) || extractLanguage(className)
 
   // Hooks must always run in the same order — keep useEffect above any early
   // return (rules-of-hooks). The effect is a no-op when isCopied stays false.
@@ -121,49 +130,65 @@ export const Pre = ({ children, className }: PreProps) => {
     }
   }
 
-  const displayLanguage = className?.replace('language-', '').toUpperCase() || language?.toUpperCase() || ''
+  const displayLanguage = language || 'text'
 
   return (
-    <div className={twclsx('relative')}>
+    <div
+      className={twclsx(
+        'not-prose group relative my-6',
+        'overflow-hidden rounded-lg',
+        'border border-neutral-200 dark:border-neutral-800',
+        'bg-[var(--prism-bg)]'
+      )}
+    >
       <div
         className={twclsx(
-          'absolute right-12 left-0',
-          'h-11 rounded-tl rounded-br',
-          'text-sm font-semibold',
-          'text-main-1.5 bg-slate-700'
+          'flex items-center justify-between',
+          'border-b border-neutral-200/70 dark:border-neutral-800',
+          'bg-neutral-50/60 dark:bg-neutral-900/40',
+          'px-4 py-1.5'
         )}
       >
-        <div
+        <span
           className={twclsx(
-            'inline-flex items-center justify-start',
-            'h-full rounded-tl px-4 md:px-8',
-            'text-theme-100 bg-primary-600'
+            'font-mono text-[0.7rem] tracking-[0.08em] lowercase',
+            'text-neutral-500 dark:text-neutral-400',
+            'select-none'
           )}
         >
           {displayLanguage}
-        </div>
-      </div>
-
-      <div
-        className={twclsx(
-          'absolute top-0 right-0',
-          'flex items-center justify-center',
-          'h-11 w-11 rounded-tr rounded-bl',
-          'bg-slate-700'
-        )}
-      >
+        </span>
         <Button
           variant='ghost'
           size='icon-sm'
           onClick={copyToClipboard}
-          aria-label='Copy to clipboard'
-          className='hover:bg-slate-600'
+          aria-label='Copy code to clipboard'
+          className={twclsx(
+            'h-7 w-7',
+            'text-neutral-500 hover:text-neutral-900',
+            'dark:text-neutral-400 dark:hover:text-neutral-100',
+            'hover:bg-neutral-200/60 dark:hover:bg-neutral-700/40'
+          )}
         >
-          {isCopied ? <HiCheck className='text-emerald-500' /> : <HiClipboardCopy className='text-theme-100' />}
+          {isCopied ? (
+            <HiCheck className='h-3.5 w-3.5 text-emerald-500' />
+          ) : (
+            <HiClipboardCopy className='h-3.5 w-3.5' />
+          )}
         </Button>
       </div>
 
-      <pre ref={preRef} className={twclsx('pt-[3.5rem!important] [&>code]:border-none', className)}>
+      <pre
+        ref={preRef}
+        className={twclsx(
+          'overflow-x-auto',
+          // Override prism-themes.css baseline so the inner <pre> defers to
+          // the wrapper's surface, radius, and outer spacing.
+          '[margin:0!important] [border-radius:0!important]',
+          '[&>code]:border-none [&>code]:[background:transparent!important]',
+          className
+        )}
+      >
         {children}
       </pre>
     </div>
