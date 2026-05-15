@@ -136,6 +136,70 @@ ISR endpoint at `GET /api/revalidate?secret=<SECRET>&slug=/blog/<slug>`. Secret 
 
   Marker order on each author follows academic convention: `*†‡` then numeric indices. The affiliation legend below the author line drops its leading `<sup>` under the same `showAffSup` rule. Single-author / single-affiliation entries collapse to clean text — no orphan markers. Each `<sup>` has `cursor-help` + a native `title` tooltip (affiliation index sups resolve to the full affiliation name; symbol sups resolve to their caption text). A combined caption line appears below the affiliation row when any symbol marker is shown — e.g. `*Corresponding author · †Equal contribution · ‡Principal investigator` — joined by `·`.
 
+## Content Authoring Workflow
+
+How to write a new blog / portfolio / research entry without re-deriving conventions from scratch. **Read this before any "write me a blog post about X" task.**
+
+1. **File locations.** Blog → `src/data/blog/*.mdx`. Portfolio → `src/data/portfolio/*.mdx`. Research → `src/data/research/*.mdx`. Filename (minus `.mdx`) becomes the URL slug — kebab-case, short, topical (3–4 words max, no date prefix).
+
+2. **Tone anchors.** First-person, conversational-technical, title-case headings, 850–1,400 words. Before drafting, **read 1–2 thematically adjacent posts in full** to calibrate voice. Reference posts: `local-llm-pdf-ocr.mdx` (deep technical, ~1,400w), `autograder-architecture.mdx` (architecture, ~850w), `doi-paper-scraper.mdx` (tooling), `modelfile-syntax-extension.mdx` (developer tool launch).
+
+3. **TL;DR rule.** Open every blog post with a 60–120 word TL;DR paragraph **immediately under the frontmatter** (no `# Title` markdown — the page template renders frontmatter `title` as H1). LLM crawlers pull ~44% of citations from the first 30%, so front-loading the punch is non-negotiable.
+
+4. **Frontmatter shape** (Blog). Mirror existing posts:
+
+   ```yaml
+   title: 'Bold sentence-case title'
+   summary: "Single-sentence summary, doubles as meta description."
+   featured: true                          # surfaces on home page
+   author_name: 'Ahnaf An Nafee'
+   github_username: 'ahnafnafee'
+   published: 'MM/DD/YYYY'                 # today's date
+   topics: ['Topic 1', 'Topic 2', ...]     # 4–6 broad categories
+   keywords: ['kw1', 'kw2', ...]           # 30–40 lowercase entries
+   thumbnail: null                         # or ImageKit URL — see #7
+   related: []                             # other slugs to cross-link
+   ```
+
+   Research entries are richer (`authors[]`, `affiliations[]`, `venue`, `links`, `identifiers`, structured author flags) — see `Research` in `src/types/index.d.ts` and existing entries in `src/data/research/`. Research abstracts MUST use the YAML folded scalar `abstract: >-` (block scalar `|` preserves newlines and renders broken).
+
+5. **Body structure.** Title-case headings. One Mermaid diagram per major architectural section is on-brand (use ```` ```mermaid ```` fences — handled by `Mermaid.tsx`). Code blocks framed by prose, not by intro text ("Here's an example:" — avoid). Tables fine for reference data. Raw `<img src=... className='w-full rounded-lg' />` for in-body images — the default `<img>` MDX mapping was intentionally removed.
+
+6. **MDX components available.** From `src/components/content/mdx/`: `Pre`, `Code`, `Mermaid`, `ContentImage`, `MDXLink`, `Blockquote`, `Table`, `Headings`. Plugin set: remark-gfm, remark-math + rehype-katex (`$...$` and `$$...$$`), rehype-prism-plus, rehype-slug. Prism languages include js/ts/tsx/jsx/py/bash/json/yaml/css/html/sql/rust/go/java/c/cpp — unknown languages render as plain text.
+
+7. **Thumbnail image generation (canonical theme).** The `thumbnail:` field is either an ImageKit URL at `https://ik.imagekit.io/8ieg70pvks/blog/<slug>.{jpg|jpeg|png}` or `null` to fall back to `/api/og`. For AI-generated thumbnails (ChatGPT Images 2.0 / GPT Image / DALL·E 3), use the **"Editorial Tech Illustration"** theme:
+
+   - **Style anchor**: Flat editorial tech illustration — Stripe blog / Vercel changelog / Linear docs feel. Geometric, clean, modern. **No** hand-drawn squiggles, **no** sticker / doodle aesthetic, **no** 3D renders, **no** photorealism, **no** whiteboard textures.
+   - **Background**: Warm off-white `#FAF9F6` with a barely-visible dotted grid for subtle texture.
+   - **Composition**: Title top-left in bold sans-serif (`#1F2937`, ≤ 2 lines, 8% padding from edges); byline `Ahnaf An Nafee` directly below in regular weight (`#6B7280`, 70% title size); hero illustration occupying the center 60% horizontally centered; bottom 10% breathing room.
+   - **Palette (strict)**: only these colors —
+     | Hex | Role |
+     | --- | --- |
+     | `#FAF9F6` | Background |
+     | `#3B82F6` | Blue primary (main brand accent) |
+     | `#8B5CF6` | Purple accent |
+     | `#F59E0B` | Orange accent |
+     | `#10B981` | Green accent (optional — "growth" / "success" themes) |
+     | `#EF4444` | Warning red (sparingly — error / warning semantics only) |
+     | `#1F2937` | Dark text |
+     | `#6B7280` | Muted text / connector lines |
+     | `#FFFFFF` | Card surfaces |
+     | `#E5E7EB` | Card borders |
+   - **Draw style**: Flat shapes, no gradients, no glow, subtle drop shadows (max 8% opacity), 1.5–2px line weights, 8px rounded corners, generous whitespace.
+   - **Aspect ratio**: landscape, matching the existing post thumbnails (the listing card shape — roughly 4:3 / 3:2). **NOT** the 16:9 OG card ratio. Thumbnails and OG cards are separate concerns: the OG image is generated programmatically via `/api/og` when no thumbnail is set (see `src/libs/metapage` `generateOgImage`), while the thumbnail appears on the blog listing card and the post detail header.
+   - **Universal template prompt** (fill in `{TITLE}` and `{HERO}`):
+
+     > Create a landscape thumbnail image (roughly 4:3 / 3:2 aspect, NOT 16:9 OG ratio) for a developer blog post titled "{TITLE}" by Ahnaf An Nafee. Style: flat editorial tech illustration in the spirit of Stripe blog, Vercel changelog, or Linear docs — geometric, clean, modern. Background: warm off-white #FAF9F6 with a faint dotted-grid texture. Title text in bold sans-serif (#1F2937), top-left aligned with 8% padding, 2 lines maximum. Byline "Ahnaf An Nafee" directly below the title in regular-weight sans-serif (#6B7280), 70% the title size. Hero illustration in the center 60% of the canvas: {HERO}. Strict palette — only these colors: #FAF9F6 (bg), #3B82F6 (blue), #8B5CF6 (purple), #F59E0B (orange), #10B981 (green, only for growth themes), #EF4444 (red, only for warning semantics), #1F2937 (dark text), #6B7280 (muted/lines), #FFFFFF with #E5E7EB borders (cards). Flat shapes only — no gradients, no glow, subtle drop shadows (max 8% opacity), 1.5–2px line weights, 8px rounded corners, generous whitespace. Avoid: hand-drawn squiggles, sticker / doodle style, 3D depth, photorealism, real readable code, whiteboard textures, brand logos other than abstract representations.
+   - **Retroactive application**: The earlier thumbnails (`local-llm-pdf-ocr`, `doi-paper-scraper`, `autograder-architecture`) are in an older hand-drawn whiteboard style and should be re-generated under this theme when bandwidth allows. Workflow: generate the new image → upload to ImageKit at `blog/<slug>.{jpg|png}` → update the post's `thumbnail:` field with the new URL (include `?updatedAt=<unix-ms>` for cache-bust) → optionally set `updated: 'MM/DD/YYYY'` to bump the freshness signal in the sitemap and `dateModified` JSON-LD.
+
+8. **Related posts.** `related: []` is the default. When adding a new post, optionally scan for natural backlinks and update older posts' `related:` arrays — polish step, don't gate on it.
+
+9. **Pre-write checklist.** `Glob src/data/blog/*.mdx` → read closest anchor post → confirm `Blog` type in `src/types/index.d.ts` → fetch repo README if applicable (`gh api repos/<owner>/<repo>/readme --jq '.content' | base64 -d`) → confirm today's date for `published`.
+
+10. **Verify checklist.** `yarn type-check` → `yarn lint` → `yarn dev` → visit `/blog/<slug>` → confirm TL;DR renders under H1, headings have anchors, Mermaid renders, code blocks colored → `yarn build` → `yarn validate:json-ld` → `yarn audit:alt-text` if any `<img>` / `<ContentImage>` → word count in 850–1,400 range → TL;DR is 60–120 words (count it).
+
+11. **What NOT to do.** No `# Title` markdown (page template handles H1). No "In this post, I'll explain..." filler — open with the punch. No keyword stuffing without body coverage. No fabricated stats / version numbers / model names — verify against linked sources. No paragraph-length comments inside code blocks — let prose do the work.
+
 ## Indexing Helper
 
 `indexing/sendIndexingRequest.ts` reads URLs from the live sitemap, checks Search Console for index status, and submits unindexed URLs to the Google Indexing API. Requires `indexing/service_account.json` (gitignored) with Indexing API + Search Console API enabled and the service account added as an Owner in Search Console. The `indexing/` directory is excluded from the TypeScript build (`tsconfig.json`).
