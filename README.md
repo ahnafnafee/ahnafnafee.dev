@@ -16,12 +16,17 @@ The personal site of Ahnaf An Nafee, plus a fork-ready starting point for develo
 
 </div>
 
+<p align="center">
+  <img src="public/images/screenshot-desktop-dark.png" alt="Home page hero in dark mode — terminal-themed intro panel, navigation, and content cards." width="900" />
+</p>
+
 ---
 
 ## Table of contents
 
 - [Why this repo](#why-this-repo)
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Tech stack](#tech-stack)
 - [Quick start](#quick-start)
 - [Project structure](#project-structure)
@@ -99,6 +104,22 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 - **Alt-text auditor** (`yarn audit:alt-text`) flags weak `alt` attributes in MDX.
 - **GitHub Actions CI**: type-check + lint + test + build + JSON-LD validation on every push/PR.
 - **Yarn 4** via Corepack, with a `vercel.json` `installCommand` (`corepack enable && corepack prepare yarn@4.14.1 --activate && yarn install --immutable`) so deploy hosts actually run Yarn 4 and honour the lockfile.
+
+---
+
+## Screenshots
+
+The default theme is **dark mode**. Light mode mirrors it via the `@theme inline` token bridge in `src/styles/globals.css` — shadcn semantic tokens (`--background`, `--foreground`, `--primary`) and the legacy `gray-*` / `primary-*` scales resolve to the same OKLCH values, so no `dark:` overrides are written by hand.
+
+> **Forking?** The images below capture the live deployment at [ahnafnafee.dev](https://www.ahnafnafee.dev) as a reference for the out-of-the-box theme. After you've customised the site, replace the four PNGs at `public/images/screenshot-*.png` with captures of your own deployment — or drop the Screenshots section entirely. See [Branding assets](#5--branding-assets) for the rest of the swap-list.
+
+|                                  Desktop — light                                  |                                  Desktop — dark                                  |
+| :-------------------------------------------------------------------------------: | :------------------------------------------------------------------------------: |
+| ![Home page in light mode at a desktop viewport.](public/images/screenshot-desktop-light.png) | ![Home page in dark mode at a desktop viewport.](public/images/screenshot-desktop-dark.png) |
+
+|                                  Mobile — light                                 |                                  Mobile — dark                                 |
+| :-----------------------------------------------------------------------------: | :----------------------------------------------------------------------------: |
+| ![Home page in light mode at a mobile viewport.](public/images/screenshot-mobile-light.png) | ![Home page in dark mode at a mobile viewport.](public/images/screenshot-mobile-dark.png) |
 
 ---
 
@@ -263,6 +284,7 @@ export const PERSON_ID = `${SITE_URL}/#person`
 - Update `public/manifest.json` (`name`, `short_name`, `theme_color`, icons).
 - Replace ImageKit OG image URLs in page metadata (or repoint them at your own CDN).
 - The dynamic OG renderer at `src/app/api/og/route.tsx` is style-customisable.
+- Replace the four README screenshots in `public/images/` — `screenshot-desktop-light.png`, `screenshot-desktop-dark.png`, `screenshot-mobile-light.png`, `screenshot-mobile-dark.png` — with captures of your own deployment. The teaser at the top of the README reuses `screenshot-desktop-dark.png`, so swapping that one file updates both spots. If you don't plan to maintain screenshots, delete the `## Screenshots` section and the teaser `<p align="center">` block in `README.md`.
 
 ### 6 · Domain &amp; canonical URL
 
