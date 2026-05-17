@@ -195,6 +195,19 @@ const config = {
             value: 'public, max-age=31536000, immutable'
           }
         ]
+      },
+      {
+        source: '/sitemap.xml',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/xml; charset=utf-8'
+          },
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400'
+          }
+        ]
       }
     ]
   },

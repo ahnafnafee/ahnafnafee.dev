@@ -66,4 +66,3 @@ Host: https://www.ahnafnafee.dev
 
 # Sitemaps
 Sitemap: https://www.ahnafnafee.dev/sitemap.xml
-Sitemap: https://www.ahnafnafee.dev/server-sitemap.xml
