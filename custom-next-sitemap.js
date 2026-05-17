@@ -159,10 +159,14 @@ module.exports = {
           ? { url: staticImage.image, title: staticImage.title }
           : null
     if (imageMeta) {
-      // next-sitemap reads `image.loc.href`, so wrap in a URL object.
-      // Skip silently if the URL is malformed (don't block the build).
+      // next-sitemap reads `image.loc.href` and writes it into <image:loc>
+      // WITHOUT XML-escaping. Wrap in a URL object to validate, then expose
+      // a pre-escaped href so `&` in query strings becomes `&amp;`.
       try {
-        entry.images = [{ loc: new URL(imageMeta.url), title: imageMeta.title }]
+        const validated = new URL(imageMeta.url)
+        entry.images = [
+          { loc: { href: validated.href.replace(/&/g, '&amp;') }, title: imageMeta.title }
+        ]
       } catch (err) {
         console.warn(`[sitemap] image URL invalid for ${urlPath}:`, err.message)
       }
