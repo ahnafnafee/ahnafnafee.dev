@@ -132,11 +132,11 @@ module.exports = {
       { userAgent: 'cohere-ai', allow: '/' },
       { userAgent: 'meta-externalagent', allow: '/' }
     ],
-    additionalSitemaps: [`${siteUrl}/sitemap.xml`, `${siteUrl}/server-sitemap.xml`],
+    additionalSitemaps: [`${siteUrl}/sitemap.xml`],
     crawlDelay: 1
   },
   priority: 1.0,
-  exclude: ['/server-sitemap.xml', '/api/*', '/_next/*', '/static/*', '/.well-known/*'],
+  exclude: ['/api/*', '/_next/*', '/static/*', '/.well-known/*'],
   generateIndexSitemap: false,
   sitemapSize: 10000,
   changefreq: 'weekly',
