@@ -8,6 +8,7 @@ import { KeyPoints } from './KeyPoints'
 import { MDXLink } from './MDXLink'
 import { MermaidLazy } from './MermaidLazy'
 import { Pre } from './Pre'
+import { ProjectLinks } from './ProjectLinks'
 import { Table } from './Table'
 import { TLDR } from './TLDR'
 
@@ -27,6 +28,7 @@ const MDXComponents = {
   HowTo,
   TLDR,
   KeyPoints,
+  ProjectLinks,
   h2: HeadingTwo,
   h3: HeadingThree,
   h4: HeadingFour
@@ -43,5 +45,6 @@ export {
   FAQ,
   HowTo,
   TLDR,
-  KeyPoints
+  KeyPoints,
+  ProjectLinks
 }

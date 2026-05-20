@@ -1,20 +1,62 @@
 ---
-title: 'Action Upload GoFile'
+title: 'Upload Files to GoFile.io — GitHub Action'
 date: '10/01/2022'
-featured: false
+updated: '05/20/2026'
+featured: true
 category: 'software'
-summary: '📦 GitHub Action for uploading Files to Gofile.io '
+summary: 'A GitHub Action that uploads any file from your CI/CD workflow to GoFile.io and returns a public URL plus QR code — no S3 bucket, no auth dance, one step in your YAML.'
 image: 'https://ik.imagekit.io/8ieg70pvks/portfolio/gh-gofile_og.png?ik-sdk-version=javascript-1.4.3&updatedAt=1670981729993'
-stack: ['android', 'ios', 'cloud', 'github-action', 'aws']
-link: { github: 'https://github.com/ahnafnafee/action-upload-gofile' }
+stack: ['github-actions', 'ci-cd', 'node-js', 'javascript', 'rest-api']
+link: { github: 'https://github.com/ahnafnafee/action-upload-gofile', live: 'https://github.com/marketplace/actions/upload-to-gofile-io' }
 ---
 
 ## Overview
 
-`Action Upload GoFile` is a GitHub action that can upload any file to GoFile.io using the
-[GoFile.io API](https://gofile.io/api).
+`action-upload-gofile` is a JavaScript-based GitHub Action that uploads any file from a CI/CD workflow to [GoFile.io](https://gofile.io) and returns a public URL plus a QR code as workflow outputs. It's built for the boring-but-common need to share a build artifact — an APK, an IPA, a debug log, a screenshot bundle — without standing up an S3 bucket, configuring an IAM policy, or asking the recipient to authenticate against GitHub just to download a file.
+
+The action runs on the standard `node16` runtime that ships with every GitHub-hosted runner, so there's no Docker pull and no cold-start tax. Drop two lines into your workflow YAML, pipe an optional GoFile API token through `secrets`, and the next step gets a public URL it can post to Slack, email, or a PR comment.
+
+## Features
+
+- One-step upload — `uses: ahnafnafee/action-upload-gofile@v3.0.0` with `file:` and you're done.
+- Returns a public `url` and `qrcode` as workflow outputs, consumable by any downstream step.
+- Optional `token` input for higher rate limits and access to private buckets.
+- Anonymous mode for quick artifact shares — no GoFile account required.
+- File-agnostic: APKs, IPAs, ZIPs, build logs, screenshots, JSON dumps — anything under GoFile's size cap.
+- Updated for the v3.0.0 GoFile API (Dec 2025); the `@v3` tag tracks GoFile's current API contract.
+
+## Built With
+
+- **[Node.js 16](https://nodejs.org/)** — The default GitHub-hosted runner runtime. No additional setup, no Docker pull.
+- **[GoFile REST API](https://gofile.io/api)** — A single `POST /uploadFile` call carries the multipart body; GoFile's response includes the public URL and a server-generated QR code.
+- **[@actions/core](https://github.com/actions/toolkit/tree/main/packages/core)** — The GitHub Actions Toolkit primitive for reading inputs and setting workflow outputs.
+
+## Use Cases
+
+- **Mobile build distribution** — Push an APK or IPA on every merge to `main` and post the public link to a QA Slack channel.
+- **PR-comment artifact previews** — A follow-up `actions/github-script` step can attach the URL as a PR comment so reviewers download the build with one click.
+- **Debug log handoff** — Failing CI jobs that produce hundreds of MB of logs can publish them ephemerally instead of bloating Actions artifact storage.
+- **Screenshot bundles from visual-regression runs** — Upload the diff folder and share the URL with the designer instead of zipping and emailing.
 
 ## Usage
+
+### Basic upload (anonymous)
+
+```yaml
+steps:
+  - name: Upload File
+    id: gofile
+    uses: ahnafnafee/action-upload-gofile@v3.0.0
+    with:
+      file: ./example.webp
+
+  - name: View URL and QR Code
+    run: |
+      echo "GoFile URL = ${{ steps.gofile.outputs.url }}"
+      echo "GoFile QR Code = ${{ steps.gofile.outputs.qrcode }}"
+```
+
+### With a GoFile API token
 
 ```yaml
 steps:
@@ -23,9 +65,19 @@ steps:
     uses: ahnafnafee/action-upload-gofile@v3.0.0
     with:
       token: ${{ secrets.GOFILE_TOKEN }}
-      file: ./example.webp
-  - name: View URL and QR Code
-    run: |
-      echo "Gofile URL = ${{ steps.gofile.outputs.url }}"
-      echo "Gofile QR Code = ${{ steps.gofile.outputs.qrcode }}"
+      file: ./build/app-release.apk
 ```
+
+The token lifts rate limits and lets you upload into a private bucket. Store it as a repository secret — never inline it.
+
+## Version History
+
+- **v3.0.0** (Dec 2025) — Rewritten to match the new GoFile API.
+- **v2.1.0** (Oct 2022) — Added `serverName` input for specifying a GoFile server bucket.
+- **v2.0.1** (Aug 2022) — Initial stable release.
+
+Pin to a major tag (`@v3`) to receive patch updates automatically; pin to a full version (`@v3.0.0`) if you'd rather opt in manually.
+
+## Credits
+
+Extends [@rnkdsh/action-upload-diawi](https://github.com/rnkdsh/action-upload-diawi). The Diawi action's clean approach to multipart upload and output wiring was the starting point — GoFile's API specifics, the QR code output, and the v3 rewrite are this project's contributions.
