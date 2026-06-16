@@ -1,7 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": false,
-  "public": true,
   "alias": "ahnafnafee.dev",
   "installCommand": "corepack enable && corepack prepare yarn@4.14.1 --activate && yarn install --immutable",
   "redirects": [
