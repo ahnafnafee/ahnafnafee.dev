@@ -15,6 +15,31 @@ export type NewsItem = {
 // so reordering or appending out-of-order is safe.
 export const NEWS: NewsItem[] = [
   {
+    date: 'Jun 2026',
+    iso: '2026-06-14',
+    emoji: '📊',
+    body: (
+      <>
+        Attended the{' '}
+        <UnstyledLink href='https://symposium2026.icsa.org/' className='text-link'>
+          2026 ICSA Applied Statistics Symposium
+        </UnstyledLink>{' '}
+        at George Mason University.
+      </>
+    )
+  },
+  {
+    date: 'Jun 2026',
+    iso: '2026-06-10',
+    emoji: '🧠',
+    body: (
+      <>
+        Attended <em>Capitol Illumination: Shedding Light on the Working Brain with fNIRS</em>, networking with
+        researchers to learn about functional near-infrared spectroscopy (fNIRS) and its applications.
+      </>
+    )
+  },
+  {
     date: 'Jan 2026',
     iso: '2026-01-15',
     emoji: '🎉',
