@@ -15,7 +15,7 @@ const DEPTH = 1600
 const SPREAD = 1100
 
 type Palette = {
-  clear: number // renderer + warp-trail fade color (matches the theme's --background)
+  clear: number // fallback bg color only — the live --background token is resolved at runtime
   additive: boolean // additive blending for bright stars on dark; normal for dark stars on light
   base: string // GLSL expression for the star's base color
   alphaScale: number // per-theme star-opacity multiplier — light needs a lift to read on near-white
@@ -23,11 +23,11 @@ type Palette = {
   vignette: string // GLSL statement applied to `col` in the post pass
 }
 
-// Clear colors mirror the site's --background tokens so the canvas blends
-// seamlessly into the home page bg: neutral-50 (#fafafa) / custom #111111.
+// `clear` is a fallback only — at runtime the canvas reads the live --background
+// token so it matches exactly (neutral-50 #fafafa / dark oklch(0.181) = #121212).
 const PALETTES: Record<'dark' | 'light', Palette> = {
   dark: {
-    clear: 0x111111,
+    clear: 0x121212,
     additive: true,
     base: 'mix(vec3(0.78,0.86,1.0), vec3(1.0), 0.5)',
     alphaScale: 1,
@@ -58,6 +58,22 @@ const SCRIM_GRADIENT =
   ' color-mix(in srgb, var(--background) 55%, transparent) calc(50% + 336px),' +
   ' transparent)'
 
+// Resolve a CSS color (the --background token, declared in oklch) to a 0xRRGGBB
+// int by painting it on a 1x1 canvas and reading the bytes back — so the WebGL
+// clear + warp-fade colors EXACTLY equal what the page paints in each theme,
+// instead of a hand-picked hex that can drift from the token. Falls back when the
+// browser can't parse the value.
+function resolveCssColor(css: string, fallback: number): number {
+  if (typeof document === 'undefined' || !css) return fallback
+  const ctx = document.createElement('canvas').getContext('2d')
+  if (!ctx) return fallback
+  ctx.fillStyle = `#${(fallback >>> 0).toString(16).padStart(6, '0')}`
+  ctx.fillStyle = css // ignored if unparseable, leaving the fallback in place
+  ctx.fillRect(0, 0, 1, 1)
+  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data
+  return (r << 16) | (g << 8) | b
+}
+
 export const StarfieldBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { resolvedTheme } = useTheme()
@@ -85,7 +101,10 @@ export const StarfieldBackground: React.FC = () => {
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
       renderer.setPixelRatio(dpr)
       renderer.setSize(w, h, false)
-      renderer.setClearColor(pal.clear, 1)
+      // match the live --background token exactly (pal.clear is just the fallback)
+      const bgToken = getComputedStyle(document.documentElement).getPropertyValue('--background').trim()
+      const clearColor = resolveCssColor(bgToken, pal.clear)
+      renderer.setClearColor(clearColor, 1)
 
       const scene = new THREE.Scene()
       const camera = new THREE.PerspectiveCamera(72, w / h, 1, 4000)
@@ -207,7 +226,7 @@ export const StarfieldBackground: React.FC = () => {
 
       // warp trails: a translucent fade quad smears the previous frame each tick
       const fadeMat = new THREE.MeshBasicMaterial({
-        color: pal.clear,
+        color: clearColor,
         transparent: true,
         opacity: 0.3,
         depthTest: false,
