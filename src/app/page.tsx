@@ -5,6 +5,7 @@ import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 import { ResearchItem } from '@/components/content/research/ResearchItem'
 import { TeachingSection } from '@/components/content/teaching'
 import { Footer, SocialHome } from '@/components/site/common'
+import { StarfieldBackground } from '@/components/site/StarfieldBackground'
 
 import { getContents } from '@/services'
 import { getContentHeaders } from '@/services/content'
@@ -243,6 +244,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <StarfieldBackground />
       <main className='layout' itemScope itemType='https://schema.org/ProfilePage'>
         <section className='flex flex-col' itemScope itemType='https://schema.org/Person' itemProp='mainEntity'>
           <div className='mt-3 flex flex-col-reverse items-start sm:flex-row md:mt-6'>
