@@ -63,6 +63,9 @@ jobs:
       - name: Validate JSON-LD on built output
         run: yarn validate:json-ld
 
+      - name: Validate missing icons
+        run: yarn validate:icons
+
       - name: Audit MDX alt text (warn-only)
         run: yarn audit:alt-text
         continue-on-error: true

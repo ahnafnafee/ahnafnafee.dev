@@ -51,7 +51,7 @@ import {
   SiVite,
   SiXcode
 } from 'react-icons/si'
-import { TbBrandReactNative, TbWebhook } from 'react-icons/tb'
+import { TbApi, TbBrandReactNative, TbInfinity, TbWebhook } from 'react-icons/tb'
 import { VscVscode } from 'react-icons/vsc'
 
 type IconStackProps = {
@@ -72,6 +72,7 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
       return <SiNextdotjs className={twclsx('text-theme-800 dark:text-theme-200', className)} />
     case 'nodejs':
     case 'node.js':
+    case 'node-js':
       return <SiNodedotjs className={twclsx('text-emerald-500', className)} />
 
     case 'vite':
@@ -191,6 +192,14 @@ export const IconStack: React.FunctionComponent<IconStackProps> = ({ type, class
     case 'github-action':
     case 'github-actions':
       return <SiGithubactions className={twclsx('text-gray-800 dark:text-white', className)} />
+
+    case 'ci-cd':
+    case 'ci/cd':
+      return <TbInfinity className={twclsx('text-blue-500', className)} />
+
+    case 'rest-api':
+    case 'api':
+      return <TbApi className={twclsx('text-green-500', className)} />
 
     case 'serverless':
       return <SiServerless className={twclsx('text-orange-500', className)} />
