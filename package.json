@@ -27,6 +27,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "validate:json-ld": "node scripts/validate-json-ld.js",
+    "validate:icons": "node scripts/validate-icons.js",
     "audit:alt-text": "node scripts/audit-alt-text.js",
     "indexing:notify": "node scripts/notify-search-engines.js",
     "indexing:indexnow": "node scripts/indexnow-submit.js",
