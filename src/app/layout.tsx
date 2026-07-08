@@ -79,6 +79,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel='me' href='https://scholar.google.com/citations?user=u15DO0cAAAAJ&hl=en' />
         <link rel='me' href='https://orcid.org/0009-0000-9363-4536' />
         <link rel='author' href={`${SITE_URL}/resume`} />
+
+        {/* Google AdSense account verification */}
+        <meta name='google-adsense-account' content='ca-pub-1038888374692513' />
       </head>
       <body suppressHydrationWarning>
         <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
@@ -99,6 +102,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             gtag('config', 'G-7S76865HNX');
           `}
           </Script>
+          <Script
+            id='google-adsense'
+            src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1038888374692513'
+            strategy='afterInteractive'
+            crossOrigin='anonymous'
+          />
         </ThemeProvider>
       </body>
     </html>
