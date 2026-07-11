@@ -1,4 +1,5 @@
 import { PortfolioPageClient } from '@/components/portfolio/PortfolioPageClient'
+import { StarfieldBackground } from '@/components/site/StarfieldBackground'
 import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContents } from '@/services'
@@ -163,13 +164,16 @@ export default async function PortfolioPage() {
   }
 
   return (
-    <AppLayoutPage>
-      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
-      <PortfolioPageClient
-        portfolios={portfolios}
-        softwarePortfolios={softwarePortfolios}
-        gamePortfolios={gamePortfolios}
-      />
-    </AppLayoutPage>
+    <>
+      <StarfieldBackground />
+      <AppLayoutPage>
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
+        <PortfolioPageClient
+          portfolios={portfolios}
+          softwarePortfolios={softwarePortfolios}
+          gamePortfolios={gamePortfolios}
+        />
+      </AppLayoutPage>
+    </>
   )
 }

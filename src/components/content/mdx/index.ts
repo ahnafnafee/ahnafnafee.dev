@@ -1,3 +1,4 @@
+import { AppDownloadCTA } from './AppDownloadCTA'
 import { Blockquote } from './Blockquote'
 import { Code } from './Code'
 import { ContentImage } from './ContentImage'
@@ -29,6 +30,7 @@ const MDXComponents = {
   TLDR,
   KeyPoints,
   ProjectLinks,
+  AppDownloadCTA,
   h2: HeadingTwo,
   h3: HeadingThree,
   h4: HeadingFour
@@ -46,5 +48,6 @@ export {
   HowTo,
   TLDR,
   KeyPoints,
-  ProjectLinks
+  ProjectLinks,
+  AppDownloadCTA
 }

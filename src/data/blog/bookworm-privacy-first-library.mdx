@@ -1,6 +1,6 @@
 ---
 title: 'Bookworm: A Privacy-First Library That Only Needs a Number'
-summary: "How I built a personal book library with Mullvad-style split-token authentication, Google Books edition deduplication, NYT Best Seller caching, and a mobile-first responsive layout — all on Next.js 16, Drizzle ORM, and Neon Postgres, with zero email or password."
+summary: 'How I built a personal book library with Mullvad-style split-token authentication, Google Books edition deduplication, NYT Best Seller caching, and a mobile-first responsive layout — all on Next.js 16, Drizzle ORM, and Neon Postgres, with zero email or password.'
 featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
@@ -43,10 +43,10 @@ keywords:
     'vercel marketplace',
     'drizzle schema',
     'book wishlist app',
-    'privacy by design',
+    'privacy by design'
   ]
 thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/bookworm-privacy.png'
-related: []
+related: ['building-player-2-sole-developer']
 ---
 
 Every book app wants your email. Goodreads wants your social graph. Literal wants your Apple ID. The StoryGraph wants to know how you're feeling. I just wanted to save what I've read, wishlist what I haven't, and search for books — without handing over an identity. So I built [Bookworm](https://bookworm.ahnafnafee.dev/): a privacy-first personal library that authenticates you with a single 16-digit account number, inspired by Mullvad VPN. It runs on Next.js 16, React 19, Drizzle ORM + Neon Postgres, and Tailwind v4 + shadcn/ui — with split-token authentication, Google Books edition deduplication, and cron-pre-warmed caching that keeps third-party API latency away from your first visitor of the day.
@@ -69,14 +69,14 @@ The 16-digit token is a CSPRNG-generated number using `crypto.randomInt`. The in
 
 ```ts
 export function splitToken(raw: string): { lookup: string; secret: string } {
-    return {
-        lookup: raw.slice(0, TOKEN_LOOKUP_LENGTH),
-        secret: raw.slice(TOKEN_LOOKUP_LENGTH),
-    };
+  return {
+    lookup: raw.slice(0, TOKEN_LOOKUP_LENGTH),
+    secret: raw.slice(TOKEN_LOOKUP_LENGTH)
+  }
 }
 
 export function hashSecret(secret: string): Promise<string> {
-    return hash(secret, { memoryCost: 19456, timeCost: 2, parallelism: 1 });
+  return hash(secret, { memoryCost: 19456, timeCost: 2, parallelism: 1 })
 }
 ```
 
@@ -107,24 +107,24 @@ The dedup and ranking logic is ~15 lines:
 
 ```ts
 function score(b: BookSummary): number {
-    return (b.thumbnail ? 10 : 0) + (b.rating ?? 0);
+  return (b.thumbnail ? 10 : 0) + (b.rating ?? 0)
 }
 
 function dedupAndRank(items: BookSummary[]): BookSummary[] {
-    const seen = new Map<string, BookSummary>();
-    for (const item of items) {
-        if (!item.title) continue;
-        const key = `${normalizeForDedup(item.title)}|${normalizeForDedup(firstAuthor(item.authors))}`;
-        const existing = seen.get(key);
-        if (!existing || score(item) > score(existing)) {
-            seen.set(key, item);
-        }
+  const seen = new Map<string, BookSummary>()
+  for (const item of items) {
+    if (!item.title) continue
+    const key = `${normalizeForDedup(item.title)}|${normalizeForDedup(firstAuthor(item.authors))}`
+    const existing = seen.get(key)
+    if (!existing || score(item) > score(existing)) {
+      seen.set(key, item)
     }
-    return Array.from(seen.values()).sort((a, b) => {
-        const thumbDiff = (b.thumbnail ? 1 : 0) - (a.thumbnail ? 1 : 0);
-        if (thumbDiff !== 0) return thumbDiff;
-        return (b.rating ?? 0) - (a.rating ?? 0);
-    });
+  }
+  return Array.from(seen.values()).sort((a, b) => {
+    const thumbDiff = (b.thumbnail ? 1 : 0) - (a.thumbnail ? 1 : 0)
+    if (thumbDiff !== 0) return thumbDiff
+    return (b.rating ?? 0) - (a.rating ?? 0)
+  })
 }
 ```
 
@@ -132,22 +132,22 @@ function dedupAndRank(items: BookSummary[]): BookSummary[] {
 
 Every third-party API call is wrapped in `unstable_cache` from `next/cache`, each with a TTL that matches how often the data actually changes:
 
-| Data | TTL | Why |
-| --- | --- | --- |
-| NYT Best Sellers | 24 h | Lists update weekly; 1/day is plenty |
-| Google Books search | 10 min | Most users repeat queries within a session |
-| Book detail | 24 h | Book metadata rarely changes |
-| NYT-to-Google mapping | 7 days | Title-to-Google-ID resolution is stable |
+| Data                  | TTL    | Why                                        |
+| --------------------- | ------ | ------------------------------------------ |
+| NYT Best Sellers      | 24 h   | Lists update weekly; 1/day is plenty       |
+| Google Books search   | 10 min | Most users repeat queries within a session |
+| Book detail           | 24 h   | Book metadata rarely changes               |
+| NYT-to-Google mapping | 7 days | Title-to-Google-ID resolution is stable    |
 
 Book detail gets an extra in-memory LRU (500 entries) on top of the `unstable_cache` layer — hot-path dedup without paying the cache deserialization cost.
 
 A Vercel Cron hits `/api/cron/warm-nyt` daily at 06:00 UTC, calls `revalidateTag("nyt")`, and refetches. The first real visitor of the day never pays the cold NYT API latency:
 
 ```ts
-export const searchGoogleBooks = unstable_cache(performSearch, ["google-books-search-v2"], {
-    revalidate: 600,
-    tags: ["google-books"],
-});
+export const searchGoogleBooks = unstable_cache(performSearch, ['google-books-search-v2'], {
+  revalidate: 600,
+  tags: ['google-books']
+})
 ```
 
 ## Mobile-First, Server-First

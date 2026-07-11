@@ -1,4 +1,5 @@
 import { ResearchAreas, ResearchNews, ResearchOverview, ResearchSections } from '@/components/content/research'
+import { StarfieldBackground } from '@/components/site/StarfieldBackground'
 import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContentHeaders } from '@/services/content'
@@ -125,14 +126,17 @@ export default async function ResearchPage() {
   }
 
   return (
-    <AppLayoutPage className='pt-6 md:pt-10'>
-      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
-      {/* h1 kept for accessibility / SEO; visual title removed per design — sections below carry the page */}
-      <h1 className='sr-only'>Research</h1>
-      <ResearchOverview />
-      <ResearchNews />
-      <ResearchAreas />
-      <ResearchSections posts={allResearch} />
-    </AppLayoutPage>
+    <>
+      <StarfieldBackground />
+      <AppLayoutPage className='pt-6 md:pt-10'>
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
+        {/* h1 kept for accessibility / SEO; visual title removed per design — sections below carry the page */}
+        <h1 className='sr-only'>Research</h1>
+        <ResearchOverview />
+        <ResearchNews />
+        <ResearchAreas />
+        <ResearchSections posts={allResearch} />
+      </AppLayoutPage>
+    </>
   )
 }
