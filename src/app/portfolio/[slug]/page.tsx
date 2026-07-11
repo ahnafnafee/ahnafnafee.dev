@@ -32,13 +32,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const header = res.header
   const canonical = `${SITE_URL}/portfolio/${header.slug}`
   const ogAlt = `${header.title} - ${SITE_NAME} Portfolio`
-  const ogImage = generateOgImage({
-    title: header.title,
-    subTitle: header.summary,
-    type: 'portfolio-post',
-    topics: header.stack,
-    category: header.category
-  })
+  // Prefer the entry's own hero image as the social card; fall back to a generated OG card.
+  const ogImage =
+    header.image ||
+    generateOgImage({
+      title: header.title,
+      subTitle: header.summary,
+      type: 'portfolio-post',
+      topics: header.stack,
+      category: header.category
+    })
 
   return {
     title: header.title,

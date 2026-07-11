@@ -142,7 +142,7 @@ How to write a new blog / portfolio / research entry without re-deriving convent
 
 1. **File locations.** Blog → `src/data/blog/*.mdx`. Portfolio → `src/data/portfolio/*.mdx`. Research → `src/data/research/*.mdx`. Filename (minus `.mdx`) becomes the URL slug — kebab-case, short, topical (3–4 words max, no date prefix).
 
-2. **Tone anchors.** First-person, conversational-technical, title-case headings, 850–1,400 words. Before drafting, **read 1–2 thematically adjacent posts in full** to calibrate voice. Reference posts: `local-llm-pdf-ocr.mdx` (deep technical, ~1,400w), `autograder-architecture.mdx` (architecture, ~850w), `doi-paper-scraper.mdx` (tooling), `modelfile-syntax-extension.mdx` (developer tool launch).
+2. **Tone anchors.** First-person, conversational-technical, title-case headings, 850–1,400 words. Before drafting, **read 1–2 thematically adjacent posts in full** to calibrate voice. Reference posts: `local-llm-pdf-ocr.mdx` (deep technical, ~1,400w), `autograder-architecture.mdx` (architecture, ~850w), `doi-paper-scraper.mdx` (tooling), `modelfile-syntax-extension.mdx` (developer tool launch). **Calibrate voice, not punctuation:** the anchor posts lean heavily on em dashes, but new posts must NOT (see #11).
 
 3. **TL;DR rule.** Open every blog post with a 60–120 word TL;DR paragraph **immediately under the frontmatter** (no `# Title` markdown — the page template renders frontmatter `title` as H1). LLM crawlers pull ~44% of citations from the first 30%, so front-loading the punch is non-negotiable.
 
@@ -198,7 +198,7 @@ How to write a new blog / portfolio / research entry without re-deriving convent
 
 10. **Verify checklist.** `yarn type-check` → `yarn lint` → `yarn dev` → visit `/blog/<slug>` → confirm TL;DR renders under H1, headings have anchors, Mermaid renders, code blocks colored → `yarn build` → `yarn validate:json-ld` → `yarn audit:alt-text` if any `<img>` / `<ContentImage>` → word count in 850–1,400 range → TL;DR is 60–120 words (count it).
 
-11. **What NOT to do.** No `# Title` markdown (page template handles H1). No "In this post, I'll explain..." filler — open with the punch. No keyword stuffing without body coverage. No fabricated stats / version numbers / model names — verify against linked sources. No paragraph-length comments inside code blocks — let prose do the work.
+11. **What NOT to do.** No `# Title` markdown (page template handles H1). No "In this post, I'll explain..." filler — open with the punch. No keyword stuffing without body coverage. No fabricated stats / version numbers / model names — verify against linked sources. No paragraph-length comments inside code blocks — let prose do the work. **No em dashes (`—`, U+2014) and no AI-writing tells.** Avoid dramatic reveal-colons, "that's the point", "the clever bit", "refreshingly X", "isn't just X, it's Y", rule-of-three flourishes, and anthropomorphizing the code. Draft in plain punctuation (commas, periods, parentheses, the occasional functional colon), then scan the finished `.mdx` for the em-dash codepoint (`U+2014`) and rewrite any that slipped in. The anchor posts in #2 use em dashes heavily; do not copy that habit.
 
 ## Indexing Helper
 

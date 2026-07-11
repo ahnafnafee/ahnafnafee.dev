@@ -1,4 +1,5 @@
 import { BlogPageClient } from '@/components/blog/BlogPageClient'
+import { StarfieldBackground } from '@/components/site/StarfieldBackground'
 import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 
 import { getContents } from '@/services'
@@ -127,9 +128,12 @@ export default async function BlogPage() {
   }
 
   return (
-    <AppLayoutPage>
-      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
-      <BlogPageClient allBlogs={allBlogs} />
-    </AppLayoutPage>
+    <>
+      <StarfieldBackground />
+      <AppLayoutPage>
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
+        <BlogPageClient allBlogs={allBlogs} />
+      </AppLayoutPage>
+    </>
   )
 }

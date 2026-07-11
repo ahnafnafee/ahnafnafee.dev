@@ -1,0 +1,175 @@
+---
+title: 'Mirroring My Spotify Playlists to Apple Music, YouTube Music, and Jellyfin'
+summary: 'How I built an always-on, one-way playlist mirror that keeps my Spotify playlists synced to Apple Music, YouTube Music, and a Jellyfin-ready download folder, with ISRC-first matching, Unicode-aware fuzzy fallbacks, date-added ordering, and destructive-removal safety rails, all in Python and runnable from Docker or Task Scheduler.'
+featured: true
+author_name: 'Ahnaf An Nafee'
+github_username: 'ahnafnafee'
+published: '07/11/2026'
+topics: ['Music Sync', 'Spotify', 'Self-Hosted', 'Python', 'Automation', 'APIs']
+keywords:
+  [
+    'spotify playlist sync',
+    'spotify to apple music',
+    'spotify to youtube music',
+    'playlist mirror',
+    'music sync',
+    'one-way playlist sync',
+    'isrc matching',
+    'isrc music sync',
+    'cross-platform playlist',
+    'apple music api',
+    'amp-api',
+    'ytmusicapi',
+    'youtube music api',
+    'spotdl',
+    'jellyfin music',
+    'self-hosted music',
+    'playlist automation',
+    'rapidfuzz',
+    'fuzzy music matching',
+    'anyascii romanization',
+    'transliteration matching',
+    'date-added ordering',
+    'm3u8 playlist',
+    'docker music sync',
+    'spotipy',
+    'spotify oauth',
+    'playlist reconciliation',
+    'snapshot id cache',
+    'sqlite song archive',
+    'media server music',
+    'spotify source of truth',
+    'music library sync',
+    'offline music mirror',
+    'spotify api python',
+    'playlist deduplication',
+    'token set ratio',
+    'jaro winkler',
+    'apple music token',
+    'mirror removals',
+    'windows task scheduler'
+  ]
+thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/spotify-playlist-mirror-sync.png?updatedAt=1783792691335'
+related: []
+---
+
+I curate playlists on Spotify, but I listen everywhere else: Apple Music in the car, YouTube Music when a track only exists as some indie upload, and a Jellyfin server at home when I want the files to be mine. Keeping one playlist identical across all four by hand is a chore you do once and abandon. So I built [spotify-playlist-mirror-sync](https://github.com/ahnafnafee/spotify-playlist-mirror-sync). It's an always-on, one-way mirror where Spotify is the source of truth. Add a song on Spotify and it shows up everywhere in date-added order; remove one and it disappears everywhere, behind enough safety rails that a bad API response can't nuke a playlist. ISRC-first matching, Unicode-aware fuzzy fallbacks, optional Jellyfin-ready downloads, Docker or Task Scheduler. Python, MIT.
+
+<figure className='not-prose my-8'>
+  <img
+    src='/images/spotify-playlist-mirror-teaser.png'
+    alt='A curated Spotify playlist mirrored to another music player, showing hundreds of synced tracks with cover art'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    One of my Spotify playlists, mirrored track for track and playing outside Spotify.
+  </figcaption>
+</figure>
+
+## One Source of Truth
+
+The existing tools in this space (Soundiiz, TuneMyMusic) do one-shot transfers or append-only sync. They add tracks; they rarely remove them. Over months your mirrors drift: a song you deleted from Spotify lingers on Apple Music forever, and there's no clean way to reconcile the two.
+
+The fix was to stop thinking of it as sync and start thinking of it as a mirror. One direction. Spotify is canonical, and every other service reflects it. That makes removals a first-class operation instead of an afterthought, so the mirror actually matches, subtractions included.
+
+This project actually started out syncing the _other_ way, Apple Music to Spotify, before I flipped it. Spotify's read-only API and its playlist `snapshot_id` model make it the better source of truth: I can watch it for changes cheaply and never risk writing to it by accident.
+
+## What One Pass Does
+
+Every pass, for each playlist name that also exists on Spotify, the flow is the same:
+
+```mermaid
+graph TD
+    S["Spotify playlist<br/>(source of truth)"] --> SNAP["Snapshot:<br/>tracks + ISRCs + added-at"]
+    SNAP --> A["Reconcile Apple Music<br/>(amp-api)"]
+    SNAP --> Y["Reconcile YouTube Music<br/>(ytmusicapi)"]
+    A --> DIFF["Diff each target vs Spotify"]
+    Y --> DIFF
+    DIFF --> ADD["Resolve + append missing<br/>oldest-first"]
+    DIFF --> REM["Remove gone-from-Spotify<br/>behind safety rails"]
+    ADD --> DL["Optional: spotDL local mirror"]
+    REM --> DL
+```
+
+Playlists pair by name, and a missing target is auto-created with Spotify's name and description copied over. Apple and YouTube Music reconcile **concurrently**, but writes within a service stay sequential and rate-limit-friendly, with jittered pacing and exponential backoff on `403`/`429`.
+
+Additions go in **oldest-first** on purpose. Appending one track at a time in added-at order keeps every mirrored playlist sorted by date added, newest last, exactly like the Spotify original.
+
+Everything hangs off a single `MirrorTarget` interface and a shared `mirror_pair` loop. Apple Music and YouTube Music are just two implementations of the same contract, so all the diffing, ordering, and guarding lives in one place.
+
+## Matching Is the Hard Part
+
+The hard problem is deciding when two entries are the same song across catalogs that mostly don't share a key. The pipeline uses the same hierarchy the cross-service tools ([TuneLink](https://tommcfarlin.com/case-study-tunelink-matching-music-ai/), MusicBrainz) settled on: **hard identifier, then search, then fuzzy score**.
+
+1. **Cached link.** Once a Spotify track resolves to an Apple catalog ID or a YouTube `videoId`, that link is stored and reused. It survives later title drift and makes steady-state passes nearly free.
+2. **ISRC.** Exact recording identity wherever the service exposes it (Apple does).
+3. **Scored search.** [RapidFuzz](https://rapidfuzz.com/) `token_set_ratio` (order-, subset-, and decoration-tolerant) plus Jaro-Winkler, run over both the raw _and_ romanized ([anyascii](https://github.com/anyascii/anyascii)) title and artist, anchored by duration.
+
+That last stage absorbs the real-world mess, none of it hardcoded:
+
+| Drift                | Example                                                         | Handled by                                  |
+| -------------------- | --------------------------------------------------------------- | ------------------------------------------- |
+| Multi-artist credits | `Arijit Singh, Ved Sharma, …` ↔ `Arijit Singh`                  | subset-tolerant `token_set_ratio`           |
+| Title decoration     | `Tri` ↔ `Popeye (Bangladesh) - Tri (ত্রি) Official Music Video` | decoration-tolerant score + duration anchor |
+| Transliteration      | `Камин` ↔ `Kamin`, `নেশার বোঝা` ↔ `Neshar Bojha`                | anyascii romanization                       |
+| Video-only track     | Bangla/indie/OST upload with no catalog song                    | YouTube `videos` filter fallback            |
+
+The **duration anchor** is what makes the looser, decoration-tolerant title match safe. It lets the score accept subset and decoration differences without over-accepting, so a `Runaway - Piano Version` or a wrong-artist cover whose length disagrees gets rejected even when the titles look close. Loose title matching without a length check is how you silently mirror the wrong recording.
+
+There's a known limit. CJK romanizes to a _Chinese_ reading, so kanji/kana titles that a service only stores in native script can still miss. When nothing clears the bar the track is reported (`x Not on …`) and skipped, never guessed.
+
+## Removals Are Destructive, So the Code Is Paranoid
+
+A wrong _add_ is easy to undo; you just delete the track. A wrong _remove_ silently drops a song you wanted, and you might not notice for weeks. So the entire removal path is guarded, and it's the part of the code I'm most careful about:
+
+| Guard                    | What it prevents                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------- |
+| Dry run by default       | Any write at all without an explicit `--execute`                                      |
+| Empty-snapshot guard     | A transient "Spotify returned 0 tracks" from emptying a live target                   |
+| `MAX_REMOVALS` cap       | A runaway pass mass-deleting; over the cap, removals skip and log                     |
+| `MAX_ADDS` cap           | One-burst backfills tripping bot detection; overflow just continues next pass         |
+| Fuzzy removal protection | Deleting a target track that plausibly _is_ a Spotify track (feat.-credit drift)      |
+| Net-loss protection      | Dropping a song that has no match on that service to replace it (`~ held` in the log) |
+| Fail-closed tokens       | Partial deletes when an Apple token expires mid-pass; any `401`/`403` aborts the pass |
+
+None of it is clever, which is fine. A delete path running unattended against a library you care about should be boring and over-cautious.
+
+## The Local Mirror: Files You Own
+
+The optional download mirror is what makes this more than a playlist bridge. Point `DOWNLOAD_DIR` at your music root and each `--execute` pass runs [spotDL](https://github.com/spotDL/spotify-downloader) to keep a local copy of every synced playlist. It's true mirroring here too: new tracks download, removed tracks get deleted locally. The layout is Jellyfin-ready:
+
+```text
+<DOWNLOAD_DIR>/
+  <Playlist>/
+    <Playlist>.m3u8         # tool-generated, newest-first
+    cover.jpg               # Spotify playlist cover, highest resolution
+    <AlbumArtist>/
+      <Album>/
+        Artist - Title.mp3  # tagged + cover art embedded
+```
+
+The `.m3u8` is written by the tool, not spotDL, in date-added order with newest at the top, so Jellyfin shows your latest additions first the way Spotify does. Each file's modified-time is also stamped to its added-at date, so a Date-Modified sort matches.
+
+One optimization was worth the effort. spotDL spends _minutes_ re-fetching and re-matching a whole playlist before it reports a single skip, and it does that even when nothing changed. So a playlist whose Spotify `snapshot_id` hasn't moved since its last clean download is skipped **entirely**, with no spotDL invocation at all. Only a first-time or changed playlist pays that cost.
+
+One caveat: downloading audio this way sits outside Spotify's ToS. It's for personal use of content you already have access to, so it's your call.
+
+## Near-Instant Re-Runs
+
+An always-on mirror only works if the common case, nothing changed, is cheap. Everything resolvable is cached: per-service resolve caches (ISRC and search results, misses included) and a `spotify_tracks_cache.json` keyed by `snapshot_id`. That key matters, because Spotify's `snapshot_id` changes _exactly_ when the playlist does. Unlike a time-based TTL, there's no staleness window to reason about.
+
+On top of that, `song_cache.db` holds the hard-identifier links and a `sync_state` table. After a fully clean pass, each pair's `snapshot_id` is recorded, and while it's unchanged the pair is skipped outright. Dry runs never skip or write state, so a plain `uv run main.py` always shows the full picture before you commit to anything.
+
+## Keeping It Always-On
+
+Two ways to keep it running: a Docker Compose loop that runs `--execute` every `SYNC_INTERVAL`, or a Windows Task Scheduler task firing a one-shot pass every 15 minutes. Don't run both. Two mirrors racing each other can briefly duplicate adds.
+
+Auth is low-ceremony. Spotify is a one-time OAuth with the read-only `playlist-read-private` scope, so it never writes to Spotify at all. Apple needs nothing but the two headers you copy out of `music.apple.com`'s network tab, with no Apple Developer account required. When a token expires, the pass logs exactly which one to re-capture.
+
+## Adding Another Service Is Eight Methods
+
+Adding a service is deliberately small. To support Tidal or Deezer, you subclass `MirrorTarget` and implement about eight methods (`list_playlists`, `playlist_tracks`, `track_id`, `resolve`, `add`, `remove`, `create`, `is_editable`), then register a builder. The diff, the oldest-first ordering, every safety rail, the logging, and the snapshot-skip are all inherited from `mirror_pair`. Apple Music and YouTube Music are just the first two implementations.
+
+## Try It Yourself
+
+The source is on [GitHub](https://github.com/ahnafnafee/spotify-playlist-mirror-sync), MIT-licensed. The default is a dry run: it prints every add and remove it _would_ make and writes nothing, so you can point it at your own library and read the whole plan before it touches a single playlist. Stars, issues, and PRs all welcome.

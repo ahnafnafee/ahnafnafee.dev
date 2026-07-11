@@ -34,22 +34,32 @@ export async function generateStaticParams() {
   }
 }
 
+// Resolve a blog post's og:image / JSON-LD image. Prefer an author-set
+// thumbnail, absolutized against SITE_URL when it's a site-relative path, and
+// otherwise fall back to the dynamic mesh-hero card. Absolutizing here keeps the
+// URL stable regardless of metadataBase.
+function resolveBlogOgImage(header: Blog): string {
+  if (header.thumbnail) {
+    return header.thumbnail.startsWith('http') ? header.thumbnail : `${SITE_URL}${header.thumbnail}`
+  }
+  return generateOgImage({
+    title: header.title,
+    subTitle: header.summary,
+    type: 'blog-post',
+    topics: header.topics,
+    theme: 'dark'
+  })
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   try {
     const res = await getContentBySlug<Blog>('/blog', slug)
     const header = res.header
-    // Always render the dynamic mesh-hero card for og:image — the in-site
-    // listing card on /blog continues to use header.thumbnail directly via
-    // BlogItem.tsx, so the raw thumbnail still appears where it makes sense
-    // (1:1 / 5:4 listing slots) without competing with the OG card chrome.
-    const ogImage = generateOgImage({
-      title: header.title,
-      subTitle: header.summary,
-      type: 'blog-post',
-      topics: header.topics,
-      theme: 'dark'
-    })
+    // Prefer an author-set thumbnail for og:image / twitter:image, mirroring the
+    // /blog listing card (BlogItem.tsx) so the social card and listing thumbnail
+    // stay in sync.
+    const ogImage = resolveBlogOgImage(header)
     const modifiedTime = header.updated || header.published
     const canonical = `${SITE_URL}/blog/${header.slug}`
     const seeAlso = (header.related ?? []).map((s) => `${SITE_URL}/blog/${s}`)
@@ -115,13 +125,7 @@ export default async function BlogPost({ params }: Props) {
     const stats = readingTime(res.content)
     const est_read = stats.text
     const header = { est_read, ...res.header }
-    const ogImage = generateOgImage({
-      title: header.title,
-      subTitle: header.summary,
-      type: 'blog-post',
-      topics: header.topics,
-      theme: 'dark'
-    })
+    const ogImage = resolveBlogOgImage(header)
     const dateModified = header.updated || header.published
     const keywordsList = header.keywords?.filter(Boolean) ?? []
     const adjacent = getAdjacentPosts(slug, allPosts)

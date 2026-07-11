@@ -44,7 +44,7 @@ keywords:
     'composite vs javascript action'
   ]
 thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/gofile-upload-github-action.png?updatedAt=1779277967140'
-related: []
+related: ['building-player-2-sole-developer']
 ---
 
 My CI builds produce a lot of files I want to share without ceremony. A 50MB APK on every feature branch, a debug log bundle when a flaky test finally reproduces, a screenshot diff I want my designer to look at. None of these need authentication. They need a public URL someone can click in a Slack message.
@@ -52,8 +52,8 @@ My CI builds produce a lot of files I want to share without ceremony. A 50MB APK
 So I built [`action-upload-gofile`](https://github.com/ahnafnafee/action-upload-gofile) — a GitHub Action that uploads any file from a workflow to [GoFile.io](https://gofile.io) and returns a public URL plus a QR code as outputs. This post covers why GoFile fit, the API gotchas I hit along the way, and the v3 rewrite when GoFile changed their API in late 2025.
 
 <ProjectLinks
-  github="https://github.com/ahnafnafee/action-upload-gofile"
-  marketplace="https://github.com/marketplace/actions/upload-to-gofile-io"
+  github='https://github.com/ahnafnafee/action-upload-gofile'
+  marketplace='https://github.com/marketplace/actions/upload-to-gofile-io'
 />
 
 ## Why a GitHub Action for GoFile
