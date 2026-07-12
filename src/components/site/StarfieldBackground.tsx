@@ -98,11 +98,11 @@ export const StarfieldBackground: React.FC = () => {
       let h = window.innerHeight
       let dpr = Math.min(window.devicePixelRatio || 1, 2)
 
-      // alpha:true keeps the canvas transparent until the first frame paints, so the
-      // page bg shows through instead of WebGL's opaque-black default buffer — that
-      // black buffer is a dark flash on navigation, invisible in dark mode but glaring
-      // in light. The full-screen post pass writes opaque pixels every frame, so the
-      // composited look is unchanged once initialized.
+      // alpha:true keeps the canvas transparent in the brief window before the first
+      // frame renders, so the page bg shows through instead of WebGL's opaque-black
+      // default buffer. The full-screen post pass writes opaque pixels every frame, so
+      // the look is unchanged once running. (The rt prime below handles the other half:
+      // the first painted frames themselves ramping up from dark.)
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
       renderer.setPixelRatio(dpr)
       renderer.setSize(w, h, false)
@@ -203,6 +203,13 @@ export const StarfieldBackground: React.FC = () => {
 
       // ---- chromatic-aberration post pass (renders the star RT to screen) ----
       const rt = new THREE.WebGLRenderTarget(Math.floor(w * dpr), Math.floor(h * dpr))
+      // Prime the accumulation buffer to the bg color. The warp-trail fade never
+      // clears rt (autoClear off in the loop), so an unprimed rt starts at the GPU
+      // default transparent-black and the first ~10 frames ramp up from dark to the
+      // bg — invisible in dark mode, a clear dark flash on a light page each mount.
+      renderer.setRenderTarget(rt)
+      renderer.clear()
+      renderer.setRenderTarget(null)
       const postScene = new THREE.Scene()
       const postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
       const post = new THREE.ShaderMaterial({
