@@ -133,8 +133,6 @@ The backend is Spring Boot 4 on Java 25, and it is deliberately a modular monoli
 
 Data lives in PostgreSQL 17 with every schema change managed by Flyway and gated in the build, so the database can never drift away from the code. The API is REST with header-based versioning, which let me ship a second version of an endpoint next to the first without breaking older app builds still out in the wild. Auth is JWT with refresh tokens that rotate on every use. Chat and presence run over STOMP WebSockets, fanned out across instances through Redis pub/sub so a message reaches every device no matter which server it lands on. Virtual threads keep all of that cheap under load.
 
-Two pieces were more interesting than plumbing. The home feed is a two-stage retrieve-then-rank mixer modeled on the algorithm X open-sourced, except mine is transparent SQL and arithmetic sized for the userbase I actually have, with no black box in the middle. Every card it shows records whether you saw it, tapped it, or dismissed it, which quietly builds the labelled dataset a learned ranker would need later. Matchmaking follows the same spirit: weighted cosine similarity over survey answers, a binary similarity score over game libraries, and a diversity re-rank so you never get five near-identical suggestions in a row.
-
 ## Keeping Mobile and Web in Lockstep
 
 The mobile app is Expo and React Native, organized as a monorepo so screens, logic, UI, and assets stay in separate packages that can move at their own pace. State is split on purpose: Redux Toolkit for the things that must persist, and TanStack Query for server data. Every piece of user-facing text runs through translation, and the app ships in English, Arabic, Turkish, and Spanish, with full right-to-left layout for Arabic. Releases go out through EAS with an update policy tied to the version number, so a patch ships as a JavaScript update over the air in minutes while a larger change goes through the stores.
@@ -165,33 +163,6 @@ The web client is its own app, not a wrapper around the mobile one. It is a TanS
 ## Deep Links Without Paying for Branch
 
 Deep links look trivial until you try to leave a vendor. When a link has to open the app if it is installed, fall back to the store if it is not, and show a rich preview when someone pastes it into a chat, most teams reach for a paid service. I replaced that with a small Cloudflare Worker on its own subdomain. It renders share previews from backend metadata, redirects based on the device that tapped the link, and serves the platform association files byte for byte identical to the old vendor, so every already-installed app kept working through the switch. Anyone with the app never even sees it.
-
-## Marketing Is Engineering Too
-
-This is the part I did not expect to own, and it turned out to be as much work as any service. App store optimization is a real discipline, so I treated it like one. I wrote a strategy grounded in an actual competitor teardown, mapped the search terms worth ranking for, and settled on a clear positioning wedge: match on the games you own and the way you play, not just your rank. The store listings and release notes are versioned like source code and localized into nine languages. The screenshots are exported from a single Figma system through a documented, repeatable process instead of being hand-cropped fresh every release.
-
-I also planned for how software gets found now. Beyond the two app stores, that means being the kind of thing an answer engine will cite, so the plan covers listicles, community threads, and structured data that assistants like ChatGPT and Perplexity can actually read. Marketing, approached this way, is just another system with inputs, versioning, and a feedback loop.
-
-<div className='not-prose my-8 grid grid-cols-2 gap-3 sm:grid-cols-3'>
-  <img
-    src='/images/player2/player2-paywall.webp'
-    alt='Player 2 PRO subscription paywall'
-    loading='lazy'
-    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
-  />
-  <img
-    src='/images/player2/player2-store.webp'
-    alt='Player 2 in-app cosmetics store'
-    loading='lazy'
-    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
-  />
-  <img
-    src='/images/player2/player2-pcoins-store.webp'
-    alt='Player 2 Player Coins purchase screen'
-    loading='lazy'
-    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
-  />
-</div>
 
 ## Learning From Users Without a Research Team
 
