@@ -98,7 +98,12 @@ export const StarfieldBackground: React.FC = () => {
       let h = window.innerHeight
       let dpr = Math.min(window.devicePixelRatio || 1, 2)
 
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
+      // alpha:true keeps the canvas transparent until the first frame paints, so the
+      // page bg shows through instead of WebGL's opaque-black default buffer — that
+      // black buffer is a dark flash on navigation, invisible in dark mode but glaring
+      // in light. The full-screen post pass writes opaque pixels every frame, so the
+      // composited look is unchanged once initialized.
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true })
       renderer.setPixelRatio(dpr)
       renderer.setSize(w, h, false)
       // match the live --background token exactly (pal.clear is just the fallback)
