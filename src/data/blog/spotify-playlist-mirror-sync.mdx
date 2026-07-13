@@ -1,10 +1,11 @@
 ---
 title: 'Mirroring My Spotify Playlists to Apple Music, YouTube Music, and Jellyfin'
-summary: 'How I built an always-on, one-way playlist mirror that keeps my Spotify playlists synced to Apple Music, YouTube Music, and a Jellyfin-ready download folder, with ISRC-first matching, Unicode-aware fuzzy fallbacks, date-added ordering, and destructive-removal safety rails, all in Python and runnable from Docker or Task Scheduler.'
+summary: 'How I built omni-playlist-sync, an always-on mirror that keeps my Spotify playlists synced to Apple Music, YouTube Music, and a Jellyfin-ready download folder, one-way by default with an optional bidirectional N-way mode, using ISRC-first matching, Unicode-aware fuzzy fallbacks, date-added ordering, and destructive-removal safety rails, all in Python and runnable from Docker or Task Scheduler.'
 featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
 published: '07/11/2026'
+updated: '07/12/2026'
 topics: ['Music Sync', 'Spotify', 'Self-Hosted', 'Python', 'Automation', 'APIs']
 keywords:
   [
@@ -14,12 +15,15 @@ keywords:
     'playlist mirror',
     'music sync',
     'one-way playlist sync',
+    'bidirectional playlist sync',
+    'n-way music sync',
+    'omni playlist sync',
     'isrc matching',
     'isrc music sync',
     'cross-platform playlist',
     'apple music api',
     'amp-api',
-    'ytmusicapi',
+    'youtube data api v3',
     'youtube music api',
     'spotdl',
     'jellyfin music',
@@ -53,7 +57,7 @@ thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/spotify-playlist-mirror-sync.
 related: []
 ---
 
-I curate playlists on Spotify, but I listen everywhere else: Apple Music in the car, YouTube Music when a track only exists as some indie upload, and a Jellyfin server at home when I want the files to be mine. Keeping one playlist identical across all four by hand is a chore you do once and abandon. So I built [spotify-playlist-mirror-sync](https://github.com/ahnafnafee/spotify-playlist-mirror-sync). It's an always-on, one-way mirror where Spotify is the source of truth. Add a song on Spotify and it shows up everywhere in date-added order; remove one and it disappears everywhere, behind enough safety rails that a bad API response can't nuke a playlist. ISRC-first matching, Unicode-aware fuzzy fallbacks, optional Jellyfin-ready downloads, Docker or Task Scheduler. Python, MIT.
+I curate playlists on Spotify, but I listen everywhere else: Apple Music in the car, YouTube Music for indie uploads, and a Jellyfin server at home when I want the files to be mine. Keeping them identical by hand is a chore you do once and abandon. So I built [omni-playlist-sync](https://github.com/ahnafnafee/omni-playlist-sync). By default it's a one-way mirror where Spotify is the source of truth: add a song and it appears everywhere in date-added order, remove one and it disappears everywhere, behind safety rails that a bad API response can't nuke a playlist. Flip on the optional N-way mode and every provider becomes a read-write peer. ISRC-first matching, YouTube via the official Data API v3, Docker or Task Scheduler. Python, MIT.
 
 <figure className='not-prose my-8'>
   <img
@@ -74,6 +78,8 @@ The fix was to stop thinking of it as sync and start thinking of it as a mirror.
 
 This project actually started out syncing the _other_ way, Apple Music to Spotify, before I flipped it. Spotify's read-only API and its playlist `snapshot_id` model make it the better source of truth: I can watch it for changes cheaply and never risk writing to it by accident.
 
+That one-way model is the default and what most of this post describes. There's also an opt-in mode that relaxes it into a full two-way sync across every provider, which I get to further down.
+
 ## What One Pass Does
 
 Every pass, for each playlist name that also exists on Spotify, the flow is the same:
@@ -82,7 +88,7 @@ Every pass, for each playlist name that also exists on Spotify, the flow is the 
 graph TD
     S["Spotify playlist<br/>(source of truth)"] --> SNAP["Snapshot:<br/>tracks + ISRCs + added-at"]
     SNAP --> A["Reconcile Apple Music<br/>(amp-api)"]
-    SNAP --> Y["Reconcile YouTube Music<br/>(ytmusicapi)"]
+    SNAP --> Y["Reconcile YouTube Music<br/>(YouTube Data API v3)"]
     A --> DIFF["Diff each target vs Spotify"]
     Y --> DIFF
     DIFF --> ADD["Resolve + append missing<br/>oldest-first"]
@@ -160,16 +166,24 @@ An always-on mirror only works if the common case, nothing changed, is cheap. Ev
 
 On top of that, `song_cache.db` holds the hard-identifier links and a `sync_state` table. After a fully clean pass, each pair's `snapshot_id` is recorded, and while it's unchanged the pair is skipped outright. Dry runs never skip or write state, so a plain `uv run main.py` always shows the full picture before you commit to anything.
 
+## Going N-Way When You Want It
+
+One-way is the default because it's the safe, boring choice: Spotify stays read-only, and nothing I do on Apple or YouTube can surprise it. But sometimes you add a track straight from the Apple Music app, or thumb one on YouTube Music, and want it to flow back. So there's an opt-in `SYNC_MODE=nway` that turns the mirror into a full peer sync. Spotify, Apple Music, and YouTube Music all become read-and-write, and a track added or removed on any one of them propagates to the other two.
+
+The hard part of two-way sync is echoes: provider A gets a track, provider B copies it, and next pass B's copy looks like a fresh addition that should flow back to A, forever. The fix is a per-provider canonical snapshot. Each service remembers what it has actually seen, so a track that's merely unmatchable on one service is never mistaken for a deletion there, and a copy that originated elsewhere is never re-announced as new. Additions win ties, a read that collapses to zero tracks is refused, and every removal still clears the same caps and guards as the one-way path.
+
+The one real cost is that Spotify stops being read-only: N-way needs the write scopes, so you re-authorize once. Leave the switch alone and nothing changes, Spotify keeps its hands-off, canonical role.
+
 ## Keeping It Always-On
 
 Two ways to keep it running: a Docker Compose loop that runs `--execute` every `SYNC_INTERVAL`, or a Windows Task Scheduler task firing a one-shot pass every 15 minutes. Don't run both. Two mirrors racing each other can briefly duplicate adds.
 
-Auth is low-ceremony. Spotify is a one-time OAuth with the read-only `playlist-read-private` scope, so it never writes to Spotify at all. Apple needs nothing but the two headers you copy out of `music.apple.com`'s network tab, with no Apple Developer account required. When a token expires, the pass logs exactly which one to re-capture.
+Auth is low-ceremony. In the default one-way mode, Spotify is a one-time OAuth with the read-only `playlist-read-private` scope, so it never writes to Spotify at all; N-way mode adds the write scopes with a one-time re-auth. Apple needs nothing but the two headers you copy out of `music.apple.com`'s network tab, no Apple Developer account required. YouTube Music runs on the official Data API v3 with a durable OAuth refresh token, so unlike the old browser-cookie approach it doesn't expire out from under an unattended mirror. When a token does expire, the pass logs exactly which one to re-capture.
 
 ## Adding Another Service Is Eight Methods
 
-Adding a service is deliberately small. To support Tidal or Deezer, you subclass `MirrorTarget` and implement about eight methods (`list_playlists`, `playlist_tracks`, `track_id`, `resolve`, `add`, `remove`, `create`, `is_editable`), then register a builder. The diff, the oldest-first ordering, every safety rail, the logging, and the snapshot-skip are all inherited from `mirror_pair`. Apple Music and YouTube Music are just the first two implementations.
+Adding a service is deliberately small. To support Tidal or Deezer, you subclass `MirrorTarget` and implement about eight methods (`list_playlists`, `playlist_tracks`, `track_id`, `resolve`, `add`, `remove`, `create`, `is_editable`), then add it to the provider registry. The diff, the oldest-first ordering, every safety rail, the logging, and the snapshot-skip are all inherited from `mirror_pair`. Apple Music and YouTube Music are just the first two implementations.
 
 ## Try It Yourself
 
-The source is on [GitHub](https://github.com/ahnafnafee/spotify-playlist-mirror-sync), MIT-licensed. The default is a dry run: it prints every add and remove it _would_ make and writes nothing, so you can point it at your own library and read the whole plan before it touches a single playlist. Stars, issues, and PRs all welcome.
+The source is on [GitHub](https://github.com/ahnafnafee/omni-playlist-sync), MIT-licensed. The default is a dry run: it prints every add and remove it _would_ make and writes nothing, so you can point it at your own library and read the whole plan before it touches a single playlist. Stars, issues, and PRs all welcome.

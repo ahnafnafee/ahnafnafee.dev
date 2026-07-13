@@ -7,8 +7,10 @@ import type { IconType } from 'react-icons/lib'
 import {
   SiArtstation,
   SiBehance,
+  SiFacebook,
   SiGithub,
   SiGooglescholar,
+  SiInstagram,
   SiItchdotio,
   SiLinkedin,
   SiMaildotru,
@@ -27,7 +29,9 @@ const icon = {
   telegram: SiTelegram,
   'itch.io': SiItchdotio,
   artstation: SiArtstation,
-  behance: SiBehance
+  behance: SiBehance,
+  facebook: SiFacebook,
+  instagram: SiInstagram
 } as Record<string, IconType>
 
 const socialList: SocialWithIcon[] = SOCIAL.map((social) => ({

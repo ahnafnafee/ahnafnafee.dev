@@ -52,7 +52,9 @@ export const getPersonNode = () => ({
     'https://orcid.org/0009-0000-9363-4536',
     'https://ahnafnafee.itch.io',
     'https://www.artstation.com/ahnafnafee',
-    'https://www.behance.net/ahnafannafee'
+    'https://www.behance.net/ahnafannafee',
+    'https://www.facebook.com/ahnaf26',
+    'https://www.instagram.com/ahnaf_nafee'
   ],
   // identifier lets Google directly bind this Person node to the Wikidata
   // entity by Q-id, in addition to the sameAs URL above.

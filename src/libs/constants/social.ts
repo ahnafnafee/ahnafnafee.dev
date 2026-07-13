@@ -30,6 +30,14 @@ const SOCIAL = [
   {
     title: 'Behance',
     href: 'https://www.behance.net/ahnafannafee'
+  },
+  {
+    title: 'Facebook',
+    href: 'https://www.facebook.com/ahnaf26/'
+  },
+  {
+    title: 'Instagram',
+    href: 'https://www.instagram.com/ahnaf_nafee/'
   }
 ]
 
