@@ -2,6 +2,7 @@ import { AppDownloadCTA } from './AppDownloadCTA'
 import { Blockquote } from './Blockquote'
 import { Code } from './Code'
 import { ContentImage } from './ContentImage'
+import { ContentImageZoom } from './ContentImageZoom'
 import { FAQ } from './FAQ'
 import { HeadingFour, HeadingThree, HeadingTwo } from './Headings'
 import { HowTo } from './HowTo'
@@ -17,8 +18,9 @@ import { MDXRemoteProps } from 'next-mdx-remote'
 
 const MDXComponents = {
   pre: Pre,
-  // Note: img mapping removed to support external images/SVGs
-  // Use <ContentImage> explicitly for ImageKit-hosted images
+  // No `img` mapping: MDX only routes markdown ![]() through components, not the
+  // literal <img> tags authors use, and next/image breaks external images/SVGs.
+  // Content images are made click-to-zoom by <ContentImageZoom> (delegated).
   code: Code,
   blockquote: Blockquote,
   a: MDXLink,
@@ -38,6 +40,7 @@ const MDXComponents = {
 
 export {
   MDXComponents,
+  ContentImageZoom,
   Pre,
   Code,
   Blockquote,

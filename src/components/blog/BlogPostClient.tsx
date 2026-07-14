@@ -2,6 +2,7 @@
 
 import { PRButton } from '@/components/content'
 import { GiscusComment, HeadingContent } from '@/components/content/blog'
+import { ContentImageZoom } from '@/components/content/mdx'
 import { Button } from '@/components/ui/button'
 
 import { twclsx } from '@/libs/twclsx'
@@ -60,6 +61,8 @@ export function BlogPostClient({ header, children }: BlogPostClientProps) {
         >
           {children}
         </div>
+
+        <ContentImageZoom />
       </article>
 
       <GiscusComment />
