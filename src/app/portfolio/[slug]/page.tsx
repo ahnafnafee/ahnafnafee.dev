@@ -1,4 +1,4 @@
-import { HeadingPortfolio, IconStack, MDXComponents, PRButton } from '@/components/content'
+import { ContentImageZoom, HeadingPortfolio, IconStack, MDXComponents, PRButton } from '@/components/content'
 import { BackToTop } from '@/components/site/buttons'
 import { WrappedImage } from '@/components/site/images'
 import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
@@ -19,6 +19,29 @@ type Props = {
   params: { slug: string }
 }
 
+// Resolve a portfolio entry's og:image / JSON-LD image. Prefer the entry's own
+// hero image, absolutized against SITE_URL when it's a site-relative path (local
+// /images assets), and otherwise fall back to the generated mesh-hero card.
+// Mirrors resolveBlogOgImage so local and ImageKit-hosted images both work.
+function resolvePortfolioOgImage(header: Portfolio): string {
+  if (header.image) {
+    return header.image.startsWith('http') ? header.image : `${SITE_URL}${header.image}`
+  }
+  return generateOgImage({
+    title: header.title,
+    subTitle: header.summary,
+    type: 'portfolio-post',
+    topics: header.stack,
+    category: header.category
+  })
+}
+
+// The hero teaser appends an ImageKit width transform to remote URLs; local
+// /images assets are served as-is (next/image optimizes them anyway).
+function resolvePortfolioHeroSrc(image: string): string {
+  return image.startsWith('http') ? `${image}&tr=w-700` : image
+}
+
 export async function generateStaticParams() {
   const portfolio = await getContents<Portfolio>('/portfolio')
   return portfolio.map((p) => ({
@@ -33,15 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonical = `${SITE_URL}/portfolio/${header.slug}`
   const ogAlt = `${header.title} - ${SITE_NAME} Portfolio`
   // Prefer the entry's own hero image as the social card; fall back to a generated OG card.
-  const ogImage =
-    header.image ||
-    generateOgImage({
-      title: header.title,
-      subTitle: header.summary,
-      type: 'portfolio-post',
-      topics: header.stack,
-      category: header.category
-    })
+  const ogImage = resolvePortfolioOgImage(header)
 
   return {
     title: header.title,
@@ -88,6 +103,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
   const { slug } = await params
   const res = await getContentBySlug<Portfolio>('/portfolio', slug)
   const header = res.header
+  const ogImage = resolvePortfolioOgImage(header)
   const pageUrl = `${SITE_URL}/portfolio/${header.slug}`
   const projectId = `${pageUrl}#project`
   const webpageId = `${pageUrl}#webpage`
@@ -102,7 +118,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
         '@id': projectId,
         name: header.title,
         description: header.summary,
-        image: header.image,
+        image: ogImage,
         dateCreated: header.date,
         dateModified: header.updated || header.date,
         inLanguage: 'en-US',
@@ -122,7 +138,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
         datePublished: header.date,
         dateModified: header.updated || header.date,
         isPartOf: { '@type': 'WebSite', url: SITE_URL },
-        primaryImageOfPage: { '@type': 'ImageObject', url: header.image },
+        primaryImageOfPage: { '@type': 'ImageObject', url: ogImage },
         breadcrumb: { '@id': breadcrumbId }
       },
       {
@@ -162,10 +178,10 @@ export default async function PortfolioDetailPage({ params }: Props) {
 
         <WrappedImage
           title={header.title}
-          alt={header.title}
-          src={header.image + '&tr=w-700'}
+          alt={`${header.title} project cover`}
+          src={resolvePortfolioHeroSrc(header.image)}
           parentStyle='w-full h-56 sm:h-72 md:h-96 my-4'
-          className='rounded-lg object-cover'
+          className='rounded-lg object-contain'
           priority
           fill
         />
@@ -173,6 +189,8 @@ export default async function PortfolioDetailPage({ params }: Props) {
         <section className={twclsx('prose', 'dark:prose-invert', 'md:prose-lg')}>
           <MDXRemote source={res.content} components={MDXComponents} options={commonMDXOptions} />
         </section>
+
+        <ContentImageZoom />
 
         <div className='mt-5 mb-2'>
           <PRButton path={`/portfolio/${header.slug}.mdx`} />

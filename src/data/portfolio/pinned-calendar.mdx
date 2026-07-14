@@ -1,0 +1,67 @@
+---
+title: 'Pinned Calendar'
+date: '06/03/2026'
+updated: '07/14/2026'
+featured: false
+category: 'software'
+summary: "An Android app that pins this week's Google Calendar events and to-dos to your notification shade, self-healing and fully on-device. Kotlin, Jetpack Compose, and Material You."
+image: '/images/pinned-og.png'
+stack: [kotlin, android, android-studio]
+link: { github: 'https://github.com/ahnafnafee/pinned-calendar', live: 'https://pinnedcalendar.ahnafnafee.dev' }
+---
+
+## Overview
+
+Pinned Calendar keeps this week's Google Calendar events and your to-dos in a single ongoing notification at the top of the Android shade. It reads the calendars already synced on your device, so there is no Google sign-in, no OAuth, and no internet permission, and your schedule never leaves the phone. The pin is self-healing: swipe it away by accident and it re-posts itself, and when you do want it gone you switch it off in the app or turn on swipe-twice-to-remove.
+
+<AppDownloadCTA
+  heading='Get Pinned Calendar'
+  subtext='Coming soon to Google Play. The latest signed APK is on GitHub Releases.'
+  web='https://pinnedcalendar.ahnafnafee.dev'
+/>
+
+## What I Built
+
+A privacy-first productivity app with a testable, platform-decoupled core:
+
+- **Pure-Kotlin core** for windowing, day-bucketing, and content building, unit-tested and independent of Android, consumed by a thin platform layer of `RemoteViews`, WorkManager, and receivers.
+- **Persistent, self-healing notification** with no foreground service, a delete-intent receiver that re-posts on swipe, and Top, Normal, or Silent priority.
+- **Local to-dos** stored in DataStore that merge into the same agenda and carry forward day to day until done.
+- **Material 3 and Material You** throughout: wallpaper-based dynamic color, seed colors, AMOLED black, selectable fonts, and a theme- and accent-adaptive launcher icon.
+
+## Highlights
+
+- Reads device calendars through Android's Calendar Provider with per-calendar colors, no account or network required.
+- Day-grouped agenda (Today, Tomorrow, and weekday sections) with tasks shown as their own rows.
+- A configurable window of the next 3 days, this week, 7 days, or 14 days, with per-calendar filtering and an item cap.
+- Background refresh with WorkManager and a `ContentObserver` for instant updates, and the pin restores itself after reboots and app updates.
+- Offline by design: no `INTERNET` permission, no analytics, no accounts, and minimal permissions.
+
+## Full Write-Up
+
+I broke down the self-healing notification, the on-device calendar reads, and the testable date math in a dedicated post: [Pinned Calendar: A Self-Healing, Offline Agenda for Android](/blog/pinned-calendar).
+
+## Screenshots
+
+<div className='not-prose my-6 grid grid-cols-2 gap-3 sm:grid-cols-3'>
+  <img
+    src='/images/pinned-calendar-notification-light.png'
+    alt="Pinned Calendar's persistent notification showing the week's agenda in light mode"
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/pinned-calendar-notification-dark.png'
+    alt="Pinned Calendar's persistent notification showing the week's agenda in dark mode"
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/pinned-calendar-settings.png'
+    alt='The Pinned Calendar settings tab with Material You cards for notifications, time window, and calendars'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
+
+It is open source and MIT-licensed on [GitHub](https://github.com/ahnafnafee/pinned-calendar), with more at [pinnedcalendar.ahnafnafee.dev](https://pinnedcalendar.ahnafnafee.dev).
