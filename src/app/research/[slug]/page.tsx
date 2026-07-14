@@ -1,4 +1,4 @@
-import { MDXComponents } from '@/components/content/mdx'
+import { ContentImageZoom, MDXComponents } from '@/components/content/mdx'
 import { PRButton } from '@/components/content/PRButton'
 import { HeadingResearch, ResearchAbstract, ResearchBibTeX, ResearchTeaser } from '@/components/content/research'
 import { BackToTop } from '@/components/site/buttons'
@@ -273,6 +273,8 @@ export default async function ResearchEntryPage({ params }: Props) {
           <section className={twclsx('prose', 'dark:prose-invert', 'md:prose-lg')}>
             <MDXRemote source={res.content} components={MDXComponents} options={commonMDXOptions} />
           </section>
+
+          <ContentImageZoom />
 
           {header.bibtex && <ResearchBibTeX bibtex={header.bibtex} />}
 

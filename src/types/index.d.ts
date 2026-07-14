@@ -30,6 +30,9 @@ declare module 'me' {
     slug: string
     stack: Array<string>
     image: string
+    /** Optional hero/teaser image shown on the detail page. Falls back to `image`.
+     * Kept separate so an animated teaser (e.g. a .gif) never becomes the og:image. */
+    teaser?: string
     link: {
       github?: string
       live?: string

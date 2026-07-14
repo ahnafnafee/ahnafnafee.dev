@@ -5,7 +5,7 @@ featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
 published: '07/11/2026'
-updated: '07/12/2026'
+updated: '07/14/2026'
 topics: ['Music Sync', 'Spotify', 'Self-Hosted', 'Python', 'Automation', 'APIs']
 keywords:
   [
@@ -51,30 +51,99 @@ keywords:
     'jaro winkler',
     'apple music token',
     'mirror removals',
-    'windows task scheduler'
+    'windows task scheduler',
+    'self-hosted playlist sync',
+    'soundiiz alternative',
+    'tunemymusic alternative',
+    'freeyourmusic alternative',
+    'self-hosted music app',
+    'playlist transfer',
+    'playlist sync web app',
+    'jellyfin playlist sync',
+    'fastapi react app'
   ]
-thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/spotify-playlist-mirror-sync.png?updatedAt=1783792691335'
+thumbnail: '/images/omni-sync-social.png'
 related: []
 ---
 
-I curate playlists on Spotify, but I listen everywhere else: Apple Music in the car, YouTube Music for indie uploads, and a Jellyfin server at home when I want the files to be mine. Keeping them identical by hand is a chore you do once and abandon. So I built [omni-playlist-sync](https://github.com/ahnafnafee/omni-playlist-sync). By default it's a one-way mirror where Spotify is the source of truth: add a song and it appears everywhere in date-added order, remove one and it disappears everywhere, behind safety rails that a bad API response can't nuke a playlist. Flip on the optional N-way mode and every provider becomes a read-write peer. ISRC-first matching, YouTube via the official Data API v3, Docker or Task Scheduler. Python, MIT.
+I curate playlists on Spotify but listen everywhere else: Apple Music in the car, YouTube Music for indie uploads, and a Jellyfin server at home when I want the files to be mine. Keeping them identical by hand is a chore you do once and abandon, so I built [omni-playlist-sync](https://github.com/ahnafnafee/omni-playlist-sync). It's now a self-hosted web app: connect Spotify, Apple Music, YouTube Music, and Jellyfin in the browser, build any number of syncs, and run one-off transfers between services. By default it's a one-way mirror with a source of truth (add a song and it appears everywhere in date-added order, remove one and it disappears everywhere), behind safety rails a bad API response can't get past. Flip on N-way mode and every provider becomes a read-write peer. ISRC-first matching, Docker or a headless CLI. Python, MIT.
 
-<figure className='not-prose my-8'>
+<div className='not-prose mt-8 mb-6 flex justify-center'>
   <img
-    src='/images/spotify-playlist-mirror-teaser.png'
-    alt='A curated Spotify playlist mirrored to another music player, showing hundreds of synced tracks with cover art'
+    src='/images/omni-sync-wordmark-light.png'
+    alt='Omni Playlist Sync logo and wordmark'
+    className='h-11 w-auto sm:h-14 dark:hidden'
+  />
+  <img
+    src='/images/omni-sync-wordmark-dark.png'
+    alt='Omni Playlist Sync logo and wordmark'
+    className='hidden h-11 w-auto sm:h-14 dark:block'
+  />
+</div>
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/omni-sync-demo.gif'
+    alt='Animated demo of Omni Sync connecting services, setting up a one-way and bidirectional sync, and running a live playlist transfer across Spotify, Apple Music, and YouTube Music'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    One of my Spotify playlists, mirrored track for track and playing outside Spotify.
+    Omni Sync end to end: connect a service, build a sync, and transfer a playlist, with every match streaming live.
   </figcaption>
 </figure>
+
+## From a Script to a Browser App
+
+The first version of this was a Python script you ran from a terminal. It works, and the headless CLI still does, but connecting four services by editing environment variables and reading log lines is not something I wanted to do every time I set it up somewhere. So it's now a self-hosted web app on the same engine. One `docker compose up -d` serves a browser UI on port 8888, no `.env` to edit: connect each service, build your syncs, start transfers, and watch every match, add, and removal stream by live.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/omni-sync-accounts.png'
+    alt='The Omni Sync Accounts page connecting Spotify with OAuth, Apple Music with a token paste, YouTube Music with a device code, and Jellyfin with an API key'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    Connecting services from the browser: OAuth for Spotify and YouTube Music, a token paste for Apple Music, an API key
+    for Jellyfin.
+  </figcaption>
+</figure>
+
+Connecting is low-ceremony. Spotify and YouTube Music are one-click OAuth, and the wizard prints the exact redirect URI to whitelist. Apple Music takes the two headers you copy out of the web player, no developer account required. Jellyfin takes an API key. Nothing is proxied through a third party, and every credential is written owner-only to a local data folder, so your listening history never leaves the machine.
+
+## Syncs and Transfers
+
+The app splits into two ideas. A **sync** is an ongoing job: pick the services, the direction, the playlists, and a schedule, and it reconciles them every pass. You can run as many named syncs as you like, each with its own safety caps, and the source of truth no longer has to be Spotify. A **transfer** is a one-off copy from one service to another, with a live progress bar and pause, resume, and stop, plus a panel to hand-resolve any track that didn't match automatically.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/omni-sync-wizard.png'
+    alt='The Omni Sync sync setup wizard choosing between a one-way source-of-truth direction and a bidirectional N-way sync'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    Setting up a sync: pick the direction, the services, the playlists, and a schedule.
+  </figcaption>
+</figure>
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/omni-sync-dashboard.png'
+    alt='The Omni Playlist Sync dashboard showing sync status, configured one-way and bidirectional sync jobs, a live activity feed, and connected Spotify, Apple Music, YouTube Music, and Jellyfin services'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The dashboard pulls it together: active syncs, service health, and the live activity feed.
+  </figcaption>
+</figure>
+
+The browser made one more thing easy: syncing playlists you follow but don't own. A web-player fallback reads them past the dev-mode restriction, so a shared playlist mirrors and transfers like any of your own. And everything the UI does, the CLI still does headless, because both drive the same core: the web layer never touches the engine directly, it goes through a small services layer that owns the event bus and a single-writer queue, so a scheduled sync and a manual transfer can't stomp on each other.
 
 ## One Source of Truth
 
 The existing tools in this space (Soundiiz, TuneMyMusic) do one-shot transfers or append-only sync. They add tracks; they rarely remove them. Over months your mirrors drift: a song you deleted from Spotify lingers on Apple Music forever, and there's no clean way to reconcile the two.
 
-The fix was to stop thinking of it as sync and start thinking of it as a mirror. One direction. Spotify is canonical, and every other service reflects it. That makes removals a first-class operation instead of an afterthought, so the mirror actually matches, subtractions included.
+The fix was to stop thinking of it as sync and start thinking of it as a mirror. One direction. One provider is canonical (Spotify by default, though one-way mode is provider-agnostic and any service can take that role), and every other service reflects it. That makes removals a first-class operation instead of an afterthought, so the mirror actually matches, subtractions included.
 
 This project actually started out syncing the _other_ way, Apple Music to Spotify, before I flipped it. Spotify's read-only API and its playlist `snapshot_id` model make it the better source of truth: I can watch it for changes cheaply and never risk writing to it by accident.
 
@@ -176,13 +245,13 @@ The one real cost is that Spotify stops being read-only: N-way needs the write s
 
 ## Keeping It Always-On
 
-Two ways to keep it running: a Docker Compose loop that runs `--execute` every `SYNC_INTERVAL`, or a Windows Task Scheduler task firing a one-shot pass every 15 minutes. Don't run both. Two mirrors racing each other can briefly duplicate adds.
+Two ways to keep it running. The Docker container is the main one: it serves the web UI and runs every sync on its own schedule, restarting with the host. If you'd rather stay headless, the CLI runs a one-shot pass you can fire from cron or a Windows Task Scheduler task every 15 minutes. Don't run both against the same playlists. Two mirrors racing each other can briefly duplicate adds.
 
 Auth is low-ceremony. In the default one-way mode, Spotify is a one-time OAuth with the read-only `playlist-read-private` scope, so it never writes to Spotify at all; N-way mode adds the write scopes with a one-time re-auth. Apple needs nothing but the two headers you copy out of `music.apple.com`'s network tab, no Apple Developer account required. YouTube Music runs on the official Data API v3 with a durable OAuth refresh token, so unlike the old browser-cookie approach it doesn't expire out from under an unattended mirror. When a token does expire, the pass logs exactly which one to re-capture.
 
 ## Adding Another Service Is Eight Methods
 
-Adding a service is deliberately small. To support Tidal or Deezer, you subclass `MirrorTarget` and implement about eight methods (`list_playlists`, `playlist_tracks`, `track_id`, `resolve`, `add`, `remove`, `create`, `is_editable`), then add it to the provider registry. The diff, the oldest-first ordering, every safety rail, the logging, and the snapshot-skip are all inherited from `mirror_pair`. Apple Music and YouTube Music are just the first two implementations.
+Adding a service is deliberately small. To support Tidal or Deezer, you subclass `MirrorTarget` and implement about eight methods (`list_playlists`, `playlist_tracks`, `track_id`, `resolve`, `add`, `remove`, `create`, `is_editable`), then add it to the provider registry. The diff, the oldest-first ordering, every safety rail, the logging, and the snapshot-skip are all inherited from `mirror_pair`. Apple Music, YouTube Music, and Jellyfin are just the implementations that ship today.
 
 ## Try It Yourself
 

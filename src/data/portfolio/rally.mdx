@@ -1,0 +1,69 @@
+---
+title: 'Rally'
+date: '06/20/2026'
+updated: '07/14/2026'
+featured: true
+category: 'software'
+summary: 'A mobile, gamified, crowdsourced map of open tennis, pickleball, badminton, and soccer courts, with live free, busy, or full status verified by the players who actually show up. Built on Expo, Supabase, and Cloudflare.'
+image: '/images/rally-og.png'
+stack: [react-native, expo, typescript, supabase, postgresql, serverless]
+link: { live: 'https://rally.ahnafnafee.dev' }
+---
+
+## Overview
+
+Rally turns finding a place to play into a game of its own. Every tennis, pickleball, badminton, and soccer court sits on one live map, and the answer to "is it free, busy, or full right now" comes from the players standing on the court, verified by GPS. Log a check-in, add a court that is missing, or confirm someone else's, and you earn XP, a currency called Aces, levels, streaks, badges, and a spot on the seasonal leaderboard. Think of Strava's map meeting a crowdsourced court directory, built on open data and owned by no single map vendor.
+
+<AppDownloadCTA heading='Play Rally' subtext='Learn more at the project site.' web='https://rally.ahnafnafee.dev' />
+
+## What I Built
+
+Rally is a mobile-only app backed by a swappable, self-hostable stack:
+
+- **Expo and React Native app** for iOS and Android, with a MapLibre map, drag-to-place court creation, and a fullscreen picker, wired end to end and typechecked clean.
+- **Supabase backend** on Postgres and PostGIS: the spatial schema, RPCs, the XP and Aces economy, crowdsourcing with proof-of-presence, rate limits, and row-level security on every table, all covered by a green test suite.
+- **Cloudflare Workers** as the `rally-api` proxy the app always talks to, so the backend can be swapped without an app rebuild, plus R2 for photos.
+- **Open data seeding** from OpenStreetMap through the Overpass API, with crowdsourcing filling the gaps.
+
+## Highlights
+
+- Live free, busy, or full court status with surface, lights, price, and hours on one map.
+- Crowdsourced court adds that publish only once two nearby players confirm on-site, so no photo spam.
+- Proof-of-presence check-ins by GPS or a court QR code keep the map honest.
+- A full gamification layer: XP, Aces, levels, streaks, earned badges, quests, and Local, Friends, and Global leaderboards.
+- Games and groups that auto-fill open slots with nearby players, plus push notifications and deep links.
+
+## Full Write-Up
+
+I broke down the data model, the proof-of-presence design, and the anti-gaming rules in a dedicated post: [Building Rally: A Live, Crowdsourced Court Map That Stays Honest](/blog/rally-crowdsourced-court-map).
+
+## Screenshots
+
+<div className='not-prose my-6 grid grid-cols-2 gap-3 sm:grid-cols-4'>
+  <img
+    src='/images/rally-map.png'
+    alt='The Rally map screen showing nearby courts with free, busy, and full status markers'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/rally-add-court.png'
+    alt='Adding a court that is not yet on the Rally map, dropping a pin for nearby players to confirm'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/rally-quests.png'
+    alt='The Rally quests screen with rotating challenges, streaks, and XP rewards'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/rally-profile.png'
+    alt='A Rally player profile showing tier, season stats, ranks, and saved courts'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
+
+See it at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).

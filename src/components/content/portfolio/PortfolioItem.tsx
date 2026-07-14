@@ -21,7 +21,7 @@ export const PortfolioItem: React.FunctionComponent<Portfolio> = (props) => {
         )}
       >
         <WrappedImage
-          src={props.image + '&tr=w-400'}
+          src={props.image.startsWith('http') ? `${props.image}&tr=w-400` : props.image}
           alt={props.title}
           className='w-full rounded-lg object-cover'
           parentStyle='w-full h-44 rounded-lg'
