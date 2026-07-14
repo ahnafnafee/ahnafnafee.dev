@@ -83,12 +83,12 @@ I curate playlists on Spotify but listen everywhere else: Apple Music in the car
 
 <figure className='not-prose my-6'>
   <img
-    src='/images/omni-sync-dashboard.png'
-    alt='The Omni Playlist Sync dashboard showing sync status, configured one-way and bidirectional sync jobs, a live activity feed, and connected Spotify, Apple Music, YouTube Music, and Jellyfin services'
+    src='/images/omni-sync-demo.gif'
+    alt='Animated demo of Omni Sync connecting services, setting up a one-way and bidirectional sync, and running a live playlist transfer across Spotify, Apple Music, and YouTube Music'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The Omni Sync dashboard: every service, every sync, and a live feed of matches, adds, and removals.
+    Omni Sync end to end: connect a service, build a sync, and transfer a playlist, with every match streaming live.
   </figcaption>
 </figure>
 
@@ -114,18 +114,28 @@ Connecting is low-ceremony. Spotify and YouTube Music are one-click OAuth, and t
 
 The app splits into two ideas. A **sync** is an ongoing job: pick the services, the direction, the playlists, and a schedule, and it reconciles them every pass. You can run as many named syncs as you like, each with its own safety caps, and the source of truth no longer has to be Spotify. A **transfer** is a one-off copy from one service to another, with a live progress bar and pause, resume, and stop, plus a panel to hand-resolve any track that didn't match automatically.
 
-<div className='not-prose my-6 grid grid-cols-1 items-start gap-4 sm:grid-cols-2'>
+<figure className='not-prose my-6'>
   <img
     src='/images/omni-sync-wizard.png'
     alt='The Omni Sync sync setup wizard choosing between a one-way source-of-truth direction and a bidirectional N-way sync'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    Setting up a sync: pick the direction, the services, the playlists, and a schedule.
+  </figcaption>
+</figure>
+
+<figure className='not-prose my-6'>
   <img
-    src='/images/omni-sync-transfers.png'
-    alt='An Omni Sync one-off transfer copying a Spotify playlist to Apple Music, with a live progress bar, pause and stop controls, and a panel to resolve tracks that could not be matched automatically'
+    src='/images/omni-sync-dashboard.png'
+    alt='The Omni Playlist Sync dashboard showing sync status, configured one-way and bidirectional sync jobs, a live activity feed, and connected Spotify, Apple Music, YouTube Music, and Jellyfin services'
+    loading='lazy'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
-</div>
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The dashboard pulls it together: active syncs, service health, and the live activity feed.
+  </figcaption>
+</figure>
 
 The browser made one more thing easy: syncing playlists you follow but don't own. A web-player fallback reads them past the dev-mode restriction, so a shared playlist mirrors and transfers like any of your own. And everything the UI does, the CLI still does headless, because both drive the same core: the web layer never touches the engine directly, it goes through a small services layer that owns the event bus and a single-writer queue, so a scheduled sync and a manual transfer can't stomp on each other.
 

@@ -104,6 +104,9 @@ export default async function PortfolioDetailPage({ params }: Props) {
   const res = await getContentBySlug<Portfolio>('/portfolio', slug)
   const header = res.header
   const ogImage = resolvePortfolioOgImage(header)
+  const heroSrc = header.teaser || header.image
+  // next/image freezes animated GIFs unless unoptimized, so let the teaser play.
+  const heroIsGif = /\.gif(\?|$)/i.test(heroSrc)
   const pageUrl = `${SITE_URL}/portfolio/${header.slug}`
   const projectId = `${pageUrl}#project`
   const webpageId = `${pageUrl}#webpage`
@@ -179,11 +182,12 @@ export default async function PortfolioDetailPage({ params }: Props) {
         <WrappedImage
           title={header.title}
           alt={`${header.title} project cover`}
-          src={resolvePortfolioHeroSrc(header.image)}
+          src={resolvePortfolioHeroSrc(heroSrc)}
           parentStyle='w-full h-56 sm:h-72 md:h-96 my-4'
           className='rounded-lg object-contain'
           priority
           fill
+          unoptimized={heroIsGif}
         />
 
         <section className={twclsx('prose', 'dark:prose-invert', 'md:prose-lg')}>
