@@ -243,6 +243,19 @@ const config = {
         permanent: true
       },
 
+      // SongMirror rename (formerly Omni Playlist Sync)
+      {
+        source: '/blog/spotify-playlist-mirror-sync',
+        destination: '/blog/songmirror-playlist-sync',
+        permanent: true
+      },
+
+      {
+        source: '/portfolio/omni-playlist-sync',
+        destination: '/portfolio/songmirror',
+        permanent: true
+      },
+
       {
         source: '/tags',
         destination: '/blog/topics',
