@@ -5,6 +5,7 @@ featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
 published: '04/26/2026'
+updated: '07/15/2026'
 topics: ['OCR', 'LLM', 'Vision Language Models', 'AI Engineering', 'Python', 'PDF']
 keywords:
   [
@@ -60,11 +61,35 @@ Cloud OCR APIs solve this, but at a cost: your privacy, a per-page bill, and an 
 
 This is how I engineered a **fully local, privacy-first, hybrid OCR engine** that pairs the surgical layout precision of **Surya** with the semantic understanding of **local Vision Language Models** (OlmOCR, GLM-OCR, Qwen2.5/3-VL) — bound together by a **Needleman-Wunsch dynamic-programming aligner** — to produce searchable PDFs from anything you can rasterize. No cloud. No API keys. No documents leaving your machine.
 
-<img
-  src='https://ik.imagekit.io/8ieg70pvks/blog/local-llm-ocr-ui.png'
-  alt='Local LLM PDF OCR Web UI'
-  className='w-full rounded-lg'
-/>
+<figure className='not-prose my-6'>
+  <img
+    src='/images/local-llm-ocr-web-light.png'
+    alt='The local-llm-pdf-ocr web UI in light mode: a drag-and-drop drop zone, a Hybrid / Grounded / Text-only engine toggle, a local model selector showing allenai/olmocr-2-7b with 14 models loaded on localhost, and a searchable-PDF output format'
+    className='w-full rounded-lg border border-gray-200 dark:hidden'
+  />
+  <img
+    src='/images/local-llm-ocr-web-dark.png'
+    alt='The local-llm-pdf-ocr web UI in dark mode: a drag-and-drop drop zone, a Hybrid / Grounded / Text-only engine toggle, a local model selector showing allenai/olmocr-2-7b with 14 models loaded on localhost, and a searchable-PDF output format'
+    className='hidden w-full rounded-lg border border-gray-800 dark:block'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The FastAPI web UI: drop a file, pick the engine and a local model, and get a searchable PDF back. Everything runs
+    on localhost, nothing is uploaded.
+  </figcaption>
+</figure>
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/local-llm-ocr-demo.gif'
+    alt='Animated end-to-end demo: a scanned PDF is dropped into the local-llm-pdf-ocr web UI, layout detection and a local vision model transcribe each page, and an invisible text layer is embedded to produce a searchable PDF, all running locally'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The whole pipeline end to end: drop a scan, watch layout detection and a local VLM read it, and get back a
+    searchable PDF, all on your own machine.
+  </figcaption>
+</figure>
 
 ## The OCR Triangle
 
@@ -186,6 +211,19 @@ That horizontal-scale matrix is the trick that makes selection actually work. Wi
 
 The user sees the original document — every font, every annotation, every coffee stain. Their cursor interacts with a perfectly searchable hidden layer they never see.
 
+<figure className='not-prose my-6'>
+  <img
+    src='/images/local-llm-ocr-selection.png'
+    alt='A scanned health-intake form with mixed printed and handwritten fields, rendered as a searchable PDF, with the invisible text layer highlighted in blue to show selectable text aligned over the original pixels'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The sandwich PDF in action: selecting text on a scanned form highlights the invisible layer, character-aligned to
+    the printed and handwritten pixels underneath.
+  </figcaption>
+</figure>
+
 ## Multi-Format Input — Beyond Just PDFs
 
 The pipeline accepts whatever you throw at it:
@@ -233,6 +271,19 @@ A tool is only as good as its developer experience. The pipeline ships **two int
 
 - **CLI** — Powered by `rich`, with live progress bars for detection, LLM OCR, refinement, and embedding. Full flag surface for batch automation: `--pages`, `--concurrency`, `--dpi`, `--no-refine`, `--api-base`, `--model`, `--grounded`.
 - **Web UI** — FastAPI + WebSockets, drag-and-drop, dark mode, real-time per-page progress, and an in-browser preview of the raw VLM output _before_ it gets aligned. Same WebSocket events drive both surfaces.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/local-llm-ocr-web-advanced.png'
+    alt='The web UI with Advanced Options expanded, exposing DPI, page range, concurrency, max image dimension, a model-loaded verification toggle, the OpenAI-compatible API base URL, and hybrid-tuning controls for crop-refine, dense mode, dense threshold, and minimum box confidence'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The same flag surface the CLI exposes, in the browser: DPI, concurrency, the OpenAI-compatible endpoint, and the
+    hybrid-tuning knobs for crop-refine and dense pages.
+  </figcaption>
+</figure>
 
 ```python
 with progress:
