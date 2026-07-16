@@ -55,6 +55,19 @@ thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/local-llm-pdf-ocr.png?updated
 related: []
 ---
 
+<figure className='not-prose my-6'>
+  <img
+    src='/images/local-llm-ocr-demo.gif'
+    alt='Animated end-to-end demo: a scanned PDF is dropped into the local-llm-pdf-ocr web UI, layout detection and a local vision model transcribe each page, and an invisible text layer is embedded to produce a searchable PDF, all running locally'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The whole pipeline end to end: drop a scan, watch layout detection and a local VLM read it, and get back a
+    searchable PDF, all on your own machine.
+  </figcaption>
+</figure>
+
 We live in a digital world, yet the most valuable data is still trapped in the analog prison of scanned PDFs. Invoices, handwritten notes, contracts, medical forms, decades-old research archives — pixels without meaning to a machine.
 
 Cloud OCR APIs solve this, but at a cost: your privacy, a per-page bill, and an internet round-trip on every document you process. I wanted none of that.
@@ -75,19 +88,6 @@ This is how I engineered a **fully local, privacy-first, hybrid OCR engine** tha
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
     The FastAPI web UI: drop a file, pick the engine and a local model, and get a searchable PDF back. Everything runs
     on localhost, nothing is uploaded.
-  </figcaption>
-</figure>
-
-<figure className='not-prose my-6'>
-  <img
-    src='/images/local-llm-ocr-demo.gif'
-    alt='Animated end-to-end demo: a scanned PDF is dropped into the local-llm-pdf-ocr web UI, layout detection and a local vision model transcribe each page, and an invisible text layer is embedded to produce a searchable PDF, all running locally'
-    loading='lazy'
-    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
-  />
-  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The whole pipeline end to end: drop a scan, watch layout detection and a local VLM read it, and get back a
-    searchable PDF, all on your own machine.
   </figcaption>
 </figure>
 
