@@ -13,7 +13,7 @@ export const HEADLINE = {
 export const LINKS: typeof SOCIAL = [
   ...SOCIAL.filter((s) => s.title !== 'Telegram'),
   {
-    href: 'https://ahnafnafee.dev',
+    href: 'https://www.ahnafnafee.dev',
     title: 'Website'
   },
   {

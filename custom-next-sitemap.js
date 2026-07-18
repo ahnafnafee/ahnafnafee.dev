@@ -94,12 +94,14 @@ const STATIC_PAGE_IMAGES = {
 function priorityFor(path) {
   if (path === '/') return { priority: 1.0, changefreq: 'weekly' }
   if (path === '/resume') return { priority: 0.9, changefreq: 'monthly' }
+  // Utility / legal pages — crawlable and linked, but ranked below content.
+  if (path === '/about' || path === '/contact' || path === '/privacy-policy' || path === '/security-policy')
+    return { priority: 0.4, changefreq: 'yearly' }
   if (path === '/portfolio' || path === '/blog') return { priority: 0.8, changefreq: 'weekly' }
   if (path === '/research') return { priority: 0.8, changefreq: 'weekly' }
   if (path.startsWith('/portfolio/')) return { priority: 0.7, changefreq: 'monthly' }
   if (path.startsWith('/research/')) return { priority: 0.75, changefreq: 'monthly' }
   if (path.startsWith('/blog/')) return { priority: 0.6, changefreq: 'monthly' }
-  if (path.startsWith('/snippet/')) return { priority: 0.5, changefreq: 'monthly' }
   return { priority: 0.7, changefreq: 'monthly' }
 }
 
@@ -136,7 +138,10 @@ module.exports = {
     crawlDelay: 1
   },
   priority: 1.0,
-  exclude: ['/api/*', '/_next/*', '/static/*', '/.well-known/*'],
+  // /offline and topic leaf pages are noindexed (PWA fallback / thin tag
+  // listings) — keep the sitemap consistent with the robots meta. The
+  // /blog/topics hub itself stays included.
+  exclude: ['/api/*', '/_next/*', '/static/*', '/.well-known/*', '/offline', '/blog/topics/*'],
   generateIndexSitemap: false,
   sitemapSize: 10000,
   changefreq: 'weekly',
@@ -164,9 +169,7 @@ module.exports = {
       // a pre-escaped href so `&` in query strings becomes `&amp;`.
       try {
         const validated = new URL(imageMeta.url)
-        entry.images = [
-          { loc: { href: validated.href.replace(/&/g, '&amp;') }, title: imageMeta.title }
-        ]
+        entry.images = [{ loc: { href: validated.href.replace(/&/g, '&amp;') }, title: imageMeta.title }]
       } catch (err) {
         console.warn(`[sitemap] image URL invalid for ${urlPath}:`, err.message)
       }

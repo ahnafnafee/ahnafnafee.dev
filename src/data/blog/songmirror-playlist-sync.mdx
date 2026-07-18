@@ -63,7 +63,7 @@ keywords:
     'fastapi react app'
   ]
 thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/spotify-playlist-mirror-sync.png?updatedAt=1783792638037'
-related: []
+related: ['gofile-upload-github-action', 'doi-paper-scraper', 'bookworm-privacy-first-library']
 ---
 
 I curate playlists on Spotify but listen everywhere else: Apple Music in the car, YouTube Music for indie uploads, and a Jellyfin server at home when I want the files to be mine. Keeping them identical by hand is a chore you do once and abandon, so I built [SongMirror](https://github.com/ahnafnafee/songmirror). It's now a self-hosted web app: connect Spotify, Apple Music, YouTube Music, and Jellyfin in the browser, build any number of syncs, and run one-off transfers between services. By default it's a one-way mirror with a source of truth (add a song and it appears everywhere in date-added order, remove one and it disappears everywhere), behind safety rails a bad API response can't get past. Flip on N-way mode and every provider becomes a read-write peer. ISRC-first matching, Docker or a headless CLI. Python, MIT.
