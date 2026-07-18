@@ -3,7 +3,7 @@
 import { FooterSocialHome } from '@/components/site/common/FooterSocialHome'
 import { UnstyledLink } from '@/components/site/links'
 
-import APP_ROUTE from '@/libs/constants/route'
+import APP_ROUTE, { SITE_LINKS } from '@/libs/constants/route'
 import { twclsx } from '@/libs/twclsx'
 
 import { usePathname } from 'next/navigation'
@@ -32,8 +32,18 @@ export const Footer: React.FunctionComponent = () => {
             </UnstyledLink>
           ))}
         </div>
-        {/*Empty Column*/}
-        <div></div>
+        <div className='flex flex-col space-y-4'>
+          <p className={'text-sm font-bold'}>SITE</p>
+          {SITE_LINKS.map((route) => (
+            <UnstyledLink
+              href={route.path}
+              key={`footer-${route.path}`}
+              className='hover:border-b-theme-500 max-w-max border-b border-dashed border-transparent text-sm font-medium text-gray-400 hover:text-gray-600'
+            >
+              {route.name}
+            </UnstyledLink>
+          ))}
+        </div>
         <FooterSocialHome />
       </div>
       <hr className='mb-4 w-full border-1 border-gray-200 dark:border-gray-800' />

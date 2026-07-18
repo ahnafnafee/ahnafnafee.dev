@@ -80,6 +80,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${label} — Blog Topics`,
     description,
     alternates: { canonical: url },
+    // Topic pages are thin near-duplicates of the blog index (most tag exactly
+    // one post) — noindex keeps them out of Search/AdSense quality signals
+    // while `follow` still passes link equity to the posts. Revisit when the
+    // blog is large enough that topic hubs aggregate real content.
+    robots: { index: false, follow: true },
     openGraph: {
       title: ogTitle,
       description,
