@@ -5,6 +5,7 @@ featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
 published: '07/11/2026'
+updated: '07/18/2026'
 topics: ['React Native', 'Supabase', 'PostGIS', 'Maps', 'Mobile', 'Crowdsourcing']
 keywords:
   [
@@ -49,6 +50,12 @@ related: ['pinned-calendar']
 
 Rally is a mobile app that shows which courts near you are free right now, tennis first, plus pickleball, badminton, and soccer, on one live map. The hard part was never the map. A crowdsourced map is only as good as its worst contributor, so every status report is GPS-verified, a new court needs two independent on-site confirmations before it publishes, and no XP or points are ever minted by the phone. Under the hood it's an Expo and React Native app on Supabase Postgres with PostGIS, fronted by a Cloudflare Worker. Live at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
 
+<img
+  src='/images/rally-feature.png'
+  alt="Rally's store banner: the tennis-ball app icon and Rally wordmark above the tagline 'Find a court. Right now.' with Tennis, Pickleball, and Soccer chips"
+  className='my-8 w-full rounded-xl border border-gray-200 dark:border-gray-700'
+/>
+
 <AppDownloadCTA
   heading='Get Rally'
   subtext='See which courts near you are free right now.'
@@ -62,12 +69,12 @@ Static directories tell you a court exists. They don't tell you whether you can 
 <div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
   <img
     src='/images/rally-map.png'
-    alt="Rally's court map showing clustered court pins with free and busy status over the Fairfax area, with filter chips for surface, lights, and indoor"
+    alt="Rally's court map showing court markers with open-court counts across the area, a sport selector, and filter chips for Free now, lights, and surface"
     className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
   />
   <img
-    src='/images/rally-add-court.png'
-    alt="Rally's add-a-court form: drop a pin on the map, set the surface, court count, access, and lights, attach a required photo, with a note that two independent confirmations are needed to publish"
+    src='/images/rally-court.png'
+    alt="Rally showing a tapped court's live card with its address, surface, lights, and free-or-busy status, so you know before you go"
     className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
   />
 </div>
@@ -107,7 +114,7 @@ The `&&` bounding-box operator hits the spatial index, so the query stays fast w
 
 This is the part that makes or breaks a crowdsourced app. If anyone can mark any court "free" from anywhere, the status is noise within a week. So reporting is gated on presence, not on having the app open.
 
-Every status report is tied to a proof-of-presence check-in: your GPS has to put you at the court, or you scan a QR code posted on-site. Adding a brand-new court is stricter still. You drop the pin, set the surface, court count, access, and lights, attach a photo, and submit, as in the second screenshot above. It stays invisible to everyone else until two other players independently confirm it on the ground. One account can't spam courts into existence, and one bored person can't quietly flip a busy court to free.
+Every status report is tied to a proof-of-presence check-in: your GPS has to put you at the court, or you scan a QR code posted on-site. Adding a brand-new court is stricter still. You drop the pin, set the surface, court count, access, and lights, attach a photo, and submit. It stays invisible to everyone else until two other players independently confirm it on the ground. One account can't spam courts into existence, and one bored person can't quietly flip a busy court to free.
 
 ## The Phone Never Owns the Score
 
@@ -145,13 +152,13 @@ The unglamorous truth of any live-data product is that someone has to keep updat
 
 <div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
   <img
-    src='/images/rally-quests.png'
-    alt="Rally's Quests screen showing a daily streak card and quests that pay out XP for checking in and reporting court statuses"
+    src='/images/rally-game.png'
+    alt="Rally's pickup-game screen where every player checks in by GPS at the court, the game verifies attendance, and each player earns points"
     className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
   />
   <img
     src='/images/rally-profile.png'
-    alt="Rally's profile screen showing rank progress from Rookie to Scout, a live season tally of Aces and reputation, a badge pin board, and the rewards store entry"
+    alt="Rally's profile screen showing rank progress from Rookie to Scout, a live season tally of Aces, reputation, and streak, and a badge pin board"
     className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
   />
 </div>
@@ -163,6 +170,20 @@ The gamification is the incentive layer, not a growth-hack bolt-on. It's what pr
 A few things are v1-simple on purpose. Live status is polled, not streamed: the map refetches, it doesn't hold a websocket open. Maps run on MapLibre with Carto vector tiles and an Esri satellite layer, so there's no Google Maps or Mapbox SDK to lock into or pay per-load. Rally Pro, the subscription, goes through RevenueCat, with the entitlement verified server-side instead of trusted from a receipt on the phone. Each of these has an obvious upgrade path if it ever earns one, and none of them were worth building up front.
 
 The map was the easy part. The real work was letting strangers edit it without wrecking it, and making the edits feel worth doing. Rally is live at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
+
+<div className='my-8 flex justify-center'>
+  <video
+    src='/videos/rally-promo.mp4'
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+    autoPlay
+    muted
+    loop
+    playsInline
+    controls
+    preload='metadata'
+    aria-label='Rally promo video walking through the live court map, a court status card, a pickup game with GPS check-in, and a player profile'
+  />
+</div>
 
 <AppDownloadCTA
   heading='Find your next court with Rally'

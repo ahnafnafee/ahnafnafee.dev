@@ -10,7 +10,7 @@ const ContentSecurityPolicy = `
     style-src 'self' 'unsafe-inline' *.googleapis.com *.unpkg.com *.giscus.app;
     img-src * blob: data:;
     frame-src *.youtube.com *.google.com *.twitter.com giscus.app *.giscus.app *.googlesyndication.com *.doubleclick.net;
-    media-src 'none';
+    media-src 'self';
     connect-src *;
     font-src 'self' fonts.gstatic.com;
 `
