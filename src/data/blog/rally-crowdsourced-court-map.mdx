@@ -1,6 +1,6 @@
 ---
 title: 'Building Rally: A Live, Crowdsourced Court Map That Stays Honest'
-summary: 'How I built Rally, a gamified, crowdsourced map that shows which tennis, pickleball, badminton, and soccer courts are free right now, using an Expo and React Native app on Supabase Postgres with PostGIS spatial queries, GPS proof-of-presence check-ins, and server-side-only scoring so the crowdsourced map stays trustworthy.'
+summary: 'How I built Rally, a gamified, crowdsourced map that shows which tennis, pickleball, and soccer courts are free right now, using an Expo and React Native app on Supabase Postgres with PostGIS spatial queries, GPS proof-of-presence check-ins, and server-side-only scoring so the crowdsourced map stays trustworthy.'
 featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
@@ -16,7 +16,6 @@ keywords:
     'live court status',
     'court finder app',
     'pickleball courts',
-    'badminton courts',
     'react native app',
     'expo sdk 56',
     'expo router',
@@ -48,7 +47,7 @@ thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/rally-crowdsourced-court-map.
 related: ['pinned-calendar']
 ---
 
-Rally is a mobile app that shows which courts near you are free right now, tennis first, plus pickleball, badminton, and soccer, on one live map. The hard part was never the map. A crowdsourced map is only as good as its worst contributor, so every status report is GPS-verified, a new court needs two independent on-site confirmations before it publishes, and no XP or points are ever minted by the phone. Under the hood it's an Expo and React Native app on Supabase Postgres with PostGIS, fronted by a Cloudflare Worker. Live at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
+Rally is a mobile app that shows which courts near you are free right now, tennis first, plus pickleball and soccer, on one live map. The hard part was never the map. A crowdsourced map is only as good as its worst contributor, so every status report is GPS-verified, a new court needs two independent on-site confirmations before it publishes, and no XP or points are ever minted by the phone. Under the hood it's an Expo and React Native app on Supabase Postgres with PostGIS, fronted by a Cloudflare Worker. Live at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
 
 <img
   src='/images/rally-feature.png'
@@ -64,7 +63,7 @@ Rally is a mobile app that shows which courts near you are free right now, tenni
 
 ## Why Another Court App
 
-Static directories tell you a court exists. They don't tell you whether you can play on it in the next ten minutes, which is the only question that matters when you're standing there with a racquet. That answer changes by the hour, and it can only come from someone who is physically at the court. So Rally is built around live status, free / busy / full, reported by players on the ground, plus a map the community can correct when the official data is stale or missing.
+Static directories tell you a court exists. They don't tell you whether you can play on it in the next ten minutes, which is the only question that matters when you're standing there with a racquet. That answer changes by the hour, and it can only come from someone who is physically at the court. So Rally is built around live status, free / busy / full, reported by players on the ground, plus a map the community can correct when a court's details are stale or missing.
 
 <div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
   <img
@@ -167,23 +166,21 @@ The gamification is the incentive layer, not a growth-hack bolt-on. It's what pr
 
 ## What's Deliberately Simple
 
-A few things are v1-simple on purpose. Live status is polled, not streamed: the map refetches, it doesn't hold a websocket open. Maps run on MapLibre with Carto vector tiles and an Esri satellite layer, so there's no Google Maps or Mapbox SDK to lock into or pay per-load. Rally Pro, the subscription, goes through RevenueCat, with the entitlement verified server-side instead of trusted from a receipt on the phone. Each of these has an obvious upgrade path if it ever earns one, and none of them were worth building up front.
+A few things are v1-simple on purpose. Live status is polled, not streamed: the map refetches, it doesn't hold a websocket open. Maps run on MapLibre, so there's no Google Maps or Mapbox SDK to lock into or pay per-load. Rally Pro, the subscription, goes through RevenueCat, with the entitlement verified server-side instead of trusted from a receipt on the phone. Each of these has an obvious upgrade path if it ever earns one, and none of them were worth building up front.
 
 The map was the easy part. The real work was letting strangers edit it without wrecking it, and making the edits feel worth doing. Rally is live at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
 
-<div className='my-8 flex justify-center'>
-  <video
-    src='/videos/rally-promo.mp4'
-    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
-    autoPlay
-    muted
-    loop
-    playsInline
-    controls
-    preload='metadata'
-    aria-label='Rally promo video walking through the live court map, a court status card, a pickup game with GPS check-in, and a player profile'
+<figure className='my-8'>
+  <img
+    src='/images/rally-promo.gif'
+    alt='Animated Rally promo: the live court map, a court status card, a pickup game with GPS check-in, and the player profile with ranks and Aces'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
-</div>
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    Rally in motion: court map, live status, pickup games, and player progress.
+  </figcaption>
+</figure>
 
 <AppDownloadCTA
   heading='Find your next court with Rally'

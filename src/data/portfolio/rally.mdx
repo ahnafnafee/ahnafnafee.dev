@@ -4,7 +4,7 @@ date: '06/20/2026'
 updated: '07/18/2026'
 featured: true
 category: 'software'
-summary: 'A mobile, gamified, crowdsourced map of open tennis, pickleball, badminton, and soccer courts, with live free, busy, or full status verified by the players who actually show up. Built on Expo, Supabase, and Cloudflare.'
+summary: 'A mobile, gamified, crowdsourced map of open tennis, pickleball, and soccer courts, with live free, busy, or full status verified by the players who actually show up. Built on Expo, Supabase, and Cloudflare.'
 image: '/images/rally-og.png'
 stack: [react-native, expo, typescript, supabase, postgresql, serverless]
 link: { live: 'https://rally.ahnafnafee.dev' }
@@ -12,7 +12,7 @@ link: { live: 'https://rally.ahnafnafee.dev' }
 
 ## Overview
 
-Rally turns finding a place to play into a game of its own. Every tennis, pickleball, badminton, and soccer court sits on one live map, and the answer to "is it free, busy, or full right now" comes from the players standing on the court, verified by GPS. Log a check-in, add a court that is missing, or confirm someone else's, and you earn XP, a currency called Aces, levels, streaks, badges, and a spot on the seasonal leaderboard. Think of Strava's map meeting a crowdsourced court directory, built on open data and owned by no single map vendor.
+Rally turns finding a place to play into a game of its own. Every tennis, pickleball, and soccer court sits on one live map, and the answer to "is it free, busy, or full right now" comes from the players standing on the court, verified by GPS. Log a check-in, add a court that is missing, or confirm someone else's, and you earn XP, a currency called Aces, levels, streaks, badges, and a spot on the seasonal leaderboard.
 
 <AppDownloadCTA heading='Play Rally' subtext='Learn more at the project site.' web='https://rally.ahnafnafee.dev' />
 
@@ -23,7 +23,6 @@ Rally is a mobile-only app backed by a swappable, self-hostable stack:
 - **Expo and React Native app** for iOS and Android, with a MapLibre map, drag-to-place court creation, and a fullscreen picker, wired end to end and typechecked clean.
 - **Supabase backend** on Postgres and PostGIS: the spatial schema, RPCs, the XP and Aces economy, crowdsourcing with proof-of-presence, rate limits, and row-level security on every table, all covered by a green test suite.
 - **Cloudflare Workers** as the `rally-api` proxy the app always talks to, so the backend can be swapped without an app rebuild, plus R2 for photos.
-- **Open data seeding** from OpenStreetMap through the Overpass API, with crowdsourcing filling the gaps.
 
 ## Highlights
 
