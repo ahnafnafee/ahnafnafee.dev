@@ -29,11 +29,16 @@ export const AppDownloadCTA: React.FC<AppDownloadCTAProps> = ({
 }) => {
   if (!appStore && !playStore && !marketplace && !openVsx && !github && !web) return null
 
+  // Stacked rather than side-by-side: the article column is capped at max-w-2xl,
+  // too narrow to hold a copy block and more than two buttons on one line
+  // without the button group wrapping mid-group. `leading-*` is explicit
+  // because the base layer sets `p { leading-7 }`, which `not-prose` leaves
+  // alone.
   return (
-    <aside className='not-prose border-border bg-muted/40 my-8 flex flex-col gap-4 rounded-xl border p-5 sm:flex-row sm:items-center sm:justify-between'>
+    <aside className='not-prose border-border bg-muted/40 my-8 flex flex-col gap-4 rounded-xl border p-5'>
       <div className='flex flex-col'>
-        <p className='text-foreground text-base font-bold'>{heading}</p>
-        {subtext ? <p className='text-muted-foreground mt-0.5 text-sm'>{subtext}</p> : null}
+        <p className='text-foreground text-base leading-snug font-bold'>{heading}</p>
+        {subtext ? <p className='text-muted-foreground mt-1 text-sm leading-snug'>{subtext}</p> : null}
       </div>
 
       <div className='flex flex-wrap items-center gap-2'>
@@ -65,7 +70,7 @@ export const AppDownloadCTA: React.FC<AppDownloadCTAProps> = ({
         ) : null}
 
         {openVsx ? (
-          <Button asChild size='sm'>
+          <Button asChild size='sm' variant='outline'>
             <a href={openVsx} target='_blank' rel='noopener noreferrer'>
               <VscExtensions data-icon='inline-start' />
               Open VSX
