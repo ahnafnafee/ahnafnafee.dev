@@ -1,11 +1,17 @@
 import { Button } from '@/components/ui/button'
 
 import { HiGlobeAlt } from 'react-icons/hi'
-import { SiApple, SiGoogleplay } from 'react-icons/si'
+import { SiApple, SiGithub, SiGoogleplay } from 'react-icons/si'
+import { VscExtensions, VscVscode } from 'react-icons/vsc'
 
 type AppDownloadCTAProps = {
   appStore?: string
   playStore?: string
+  /** Visual Studio Marketplace listing (VSCode, Cursor, Windsurf, vscode.dev). */
+  marketplace?: string
+  /** Open VSX listing — the registry VSCodium, Gitpod, and OSS Codespaces install from. */
+  openVsx?: string
+  github?: string
   web?: string
   heading?: string
   subtext?: string
@@ -14,11 +20,14 @@ type AppDownloadCTAProps = {
 export const AppDownloadCTA: React.FC<AppDownloadCTAProps> = ({
   appStore,
   playStore,
+  marketplace,
+  openVsx,
+  github,
   web,
   heading = 'Download the app',
   subtext
 }) => {
-  if (!appStore && !playStore && !web) return null
+  if (!appStore && !playStore && !marketplace && !openVsx && !github && !web) return null
 
   return (
     <aside className='not-prose border-border bg-muted/40 my-8 flex flex-col gap-4 rounded-xl border p-5 sm:flex-row sm:items-center sm:justify-between'>
@@ -42,6 +51,33 @@ export const AppDownloadCTA: React.FC<AppDownloadCTAProps> = ({
             <a href={playStore} target='_blank' rel='noopener noreferrer'>
               <SiGoogleplay data-icon='inline-start' />
               Google Play
+            </a>
+          </Button>
+        ) : null}
+
+        {marketplace ? (
+          <Button asChild size='sm'>
+            <a href={marketplace} target='_blank' rel='noopener noreferrer'>
+              <VscVscode data-icon='inline-start' />
+              VS Marketplace
+            </a>
+          </Button>
+        ) : null}
+
+        {openVsx ? (
+          <Button asChild size='sm'>
+            <a href={openVsx} target='_blank' rel='noopener noreferrer'>
+              <VscExtensions data-icon='inline-start' />
+              Open VSX
+            </a>
+          </Button>
+        ) : null}
+
+        {github ? (
+          <Button asChild size='sm' variant='outline'>
+            <a href={github} target='_blank' rel='noopener noreferrer'>
+              <SiGithub data-icon='inline-start' />
+              GitHub
             </a>
           </Button>
         ) : null}

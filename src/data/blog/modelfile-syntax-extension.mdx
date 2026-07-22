@@ -5,6 +5,7 @@ featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
 published: '05/15/2026'
+updated: '07/22/2026'
 topics: ['Developer Tools', 'VSCode Extension', 'Ollama', 'Local LLM', 'TypeScript', 'TextMate Grammar']
 keywords:
   [
@@ -51,6 +52,14 @@ related: ['local-llm-pdf-ocr', 'gofile-upload-github-action', 'bookworm-privacy-
 I run a lot of GGUFs locally. Custom system prompts, sampling parameters, conversation primers — all expressed in Ollama Modelfiles. VSCode treated them as plain text: typos in `PARAMETER` names got silently ignored, single-quote `SYSTEM` prompts truncated at the first newline, and `num_ctx` quietly defaulted to 2048 even on models with 32K windows.
 
 So I built [`modelfile-syntax`](https://github.com/ahnafnafee/modelfile-syntax) — a VSCode-family extension with a real grammar, an 18-rule linter, hover docs, autocomplete, and 26+ snippets. This post is the story of what it catches, why it matters, and how it works across every editor you might actually use.
+
+<AppDownloadCTA
+  heading='Get modelfile-syntax'
+  subtext='Free and open source. VSCode, Cursor, Windsurf, VSCodium, Gitpod, and the browser.'
+  marketplace='https://marketplace.visualstudio.com/items?itemName=ahnafnafee.modelfile-syntax'
+  openVsx='https://open-vsx.org/extension/ahnafnafee/modelfile-syntax'
+  github='https://github.com/ahnafnafee/modelfile-syntax'
+/>
 
 ## The Modelfile Footguns I Kept Stepping On
 
@@ -118,7 +127,7 @@ Rules you don't want can be silenced per-project: `"modelfileSyntax.lint.disable
 
 ## The Cross-Editor Story: Why This Was Surprisingly Annoying
 
-A VSCode extension can _technically_ run anywhere VSCode runs. In practice, "anywhere" is a minefield. Microsoft's official Visual Studio Marketplace is licensed only to first-party MS products and a few approved partners — VSCodium, OSS Codespaces, and Gitpod cannot install from it. The community answer is **[Open VSX](https://open-vsx.org/extension/ahnafnafee/modelfile-syntax)**, a parallel registry run by the Eclipse Foundation.
+A VSCode extension can _technically_ run anywhere VSCode runs. In practice, "anywhere" is a minefield. Microsoft's official **[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ahnafnafee.modelfile-syntax)** is licensed only to first-party MS products and a few approved partners — VSCodium, OSS Codespaces, and Gitpod cannot install from it. The community answer is **[Open VSX](https://open-vsx.org/extension/ahnafnafee/modelfile-syntax)**, a parallel registry run by the Eclipse Foundation.
 
 If you publish to only one, half your users can't install your thing. So I dual-published, and the deployment graph looks like this:
 
@@ -140,7 +149,14 @@ Same bundle, two registries, eight editors. The pure-TypeScript / no-native-deps
 
 ## Install
 
-Pick your editor:
+<AppDownloadCTA
+  heading='Install modelfile-syntax'
+  subtext='Same bundle, both registries. Pick whichever one your editor talks to.'
+  marketplace='https://marketplace.visualstudio.com/items?itemName=ahnafnafee.modelfile-syntax'
+  openVsx='https://open-vsx.org/extension/ahnafnafee/modelfile-syntax'
+/>
+
+Or from the command line:
 
 ```bash
 code --install-extension ahnafnafee.modelfile-syntax       # VSCode
