@@ -1,4 +1,4 @@
-import { Header } from '@/components/site/common'
+import { Clarity, Header } from '@/components/site/common'
 import { Toaster } from '@/components/ui/sonner'
 
 import { PERSON_ID, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/libs/constants/site'
@@ -92,6 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Toaster position='bottom-center' richColors />
           <Analytics />
           <SpeedInsights />
+          <Clarity />
           <Script src='https://www.googletagmanager.com/gtag/js?id=G-7S76865HNX' strategy='afterInteractive' />
           <Script id='google-analytics' strategy='afterInteractive'>
             {`

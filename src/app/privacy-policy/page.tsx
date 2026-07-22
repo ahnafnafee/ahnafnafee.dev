@@ -175,6 +175,19 @@ export default function PrivacyPolicyPage() {
                 </a>
                 .
               </li>
+              <li>
+                <strong>Microsoft Clarity</strong> — records aggregated heatmaps and session replays of how visitors
+                interact with pages. Clarity masks text and input content by default. See the{' '}
+                <a
+                  href='https://privacy.microsoft.com/privacystatement'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='text-primary-600 hover:text-primary-700'
+                >
+                  Microsoft Privacy Statement
+                </a>
+                .
+              </li>
             </ul>
           </section>
 

@@ -2158,6 +2158,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@microsoft/clarity@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@microsoft/clarity@npm:1.0.2"
+  checksum: 10c0/43986711a39115097348b38f8203f02e86ebc251d79a1673f05b0e1b562513e21045892e889551d271d6c2186cd6bd84f69a968fd46c3e563ebed5153c262a4e
+  languageName: node
+  linkType: hard
+
 "@modelcontextprotocol/sdk@npm:^1.26.0":
   version: 1.29.0
   resolution: "@modelcontextprotocol/sdk@npm:1.29.0"
@@ -5102,6 +5109,7 @@ __metadata:
     "@ducanh2912/next-pwa": "npm:^10.2.9"
     "@giscus/react": "npm:^3.1.0"
     "@ianvs/prettier-plugin-sort-imports": "npm:^4.7.1"
+    "@microsoft/clarity": "npm:^1.0.2"
     "@neondatabase/serverless": "npm:^1.1.0"
     "@supabase/supabase-js": "npm:^2.86.2"
     "@tailwindcss/postcss": "npm:^4.1.17"
