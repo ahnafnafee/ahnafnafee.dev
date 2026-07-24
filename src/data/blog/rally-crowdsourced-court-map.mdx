@@ -1,11 +1,11 @@
 ---
 title: 'Building Rally: A Live, Crowdsourced Court Map That Stays Honest'
-summary: 'How I built Rally, a gamified, crowdsourced map that shows which tennis, pickleball, and soccer courts are free right now, using an Expo and React Native app on Supabase Postgres with PostGIS spatial queries, GPS proof-of-presence check-ins, and server-side-only scoring so the crowdsourced map stays trustworthy.'
+summary: 'How I built Rally, a gamified, crowdsourced map of 1,450,000+ courts and fields across nine sports worldwide, using an Expo and React Native app on Supabase Postgres with PostGIS, a Cloudflare D1 edge replica for court reads, GPS proof-of-presence check-ins, and server-side-only scoring so the crowdsourced map stays trustworthy.'
 featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
 published: '07/11/2026'
-updated: '07/18/2026'
+updated: '07/23/2026'
 topics: ['React Native', 'Supabase', 'PostGIS', 'Maps', 'Mobile', 'Crowdsourcing']
 keywords:
   [
@@ -16,6 +16,8 @@ keywords:
     'live court status',
     'court finder app',
     'pickleball courts',
+    'basketball courts near me',
+    'soccer fields near me',
     'react native app',
     'expo sdk 56',
     'expo router',
@@ -27,7 +29,13 @@ keywords:
     'row level security',
     'rls',
     'cloudflare workers',
+    'cloudflare d1',
     'cloudflare r2',
+    'edge read replica',
+    'map clustering',
+    'openstreetmap',
+    'qlever sparql',
+    'overture maps',
     'proof of presence',
     'gps check in',
     'geospatial app',
@@ -47,11 +55,11 @@ thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/rally-crowdsourced-court-map.
 related: ['pinned-calendar']
 ---
 
-Rally is a mobile app that shows which courts near you are free right now, tennis first, plus pickleball and soccer, on one live map. The hard part was never the map. A crowdsourced map is only as good as its worst contributor, so every status report is GPS-verified, a new court needs two independent on-site confirmations before it publishes, and no XP or points are ever minted by the phone. Under the hood it's an Expo and React Native app on Supabase Postgres with PostGIS, fronted by a Cloudflare Worker. Live at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
+Rally is a mobile app that shows which courts near you are free right now, across nine sports and more than 1,450,000 courts, pitches, fields, and grounds worldwide. The hard part was never the map. A crowdsourced map is only as good as its worst contributor, so every status report is GPS-verified, a new court needs two independent on-site confirmations before it publishes, and no XP or points are ever minted by the phone. Under the hood it's an Expo and React Native app on Supabase Postgres with PostGIS, fronted by a Cloudflare Worker that serves court reads from a D1 replica at the edge. Live at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
 
 <img
   src='/images/rally-feature.png'
-  alt="Rally's store banner: the tennis-ball app icon and Rally wordmark above the tagline 'Find a court. Right now.' with Tennis, Pickleball, and Soccer chips"
+  alt="Rally's store banner: the tennis-ball app icon and Rally wordmark above the tagline 'Find a court. Right now.' with nine sport glyphs and the line 'Nine sports, 1,450,000+ places to play'"
   className='my-8 w-full rounded-xl border border-gray-200 dark:border-gray-700'
 />
 
@@ -68,34 +76,35 @@ Static directories tell you a court exists. They don't tell you whether you can 
 
 <div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
   <img
-    src='/images/rally-map.png'
+    src='/images/rally-map.webp'
     alt="Rally's court map showing court markers with open-court counts across the area, a sport selector, and filter chips for Free now, lights, and surface"
     className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
   />
   <img
-    src='/images/rally-court.png'
-    alt="Rally showing a tapped court's live card with its address, surface, lights, and free-or-busy status, so you know before you go"
+    src='/images/rally-court.webp'
+    alt="Rally showing a tapped court's live card with its address, court count, lights, and free-or-busy status, so you know before you go"
     className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
   />
 </div>
 
 ## The Shape of It
 
-The app is Expo (SDK 56, React Native, expo-router with typed routes, MapLibre for the map, React Query for data). It never talks to the database directly. Every request goes through a small Cloudflare Worker called `rally-api`, which fronts a Supabase Postgres database. Court photos land in Cloudflare R2.
+The app is Expo (SDK 56, React Native, expo-router with typed routes, MapLibre for the map, React Query for data). It never talks to the database directly. Every request goes through a small Cloudflare Worker called `rally-api`, which fronts a Supabase Postgres database and a Cloudflare D1 replica of the court catalog. Court photos and nightly backups land in Cloudflare R2.
 
 ```mermaid
 graph TD
     APP["Expo app<br/>(iOS + Android, MapLibre)"] -->|HTTPS + JWT| API["rally-api<br/>Cloudflare Worker"]
-    API --> REST["Supabase Data API<br/>PostgREST + /rpc"]
-    REST --> DB["Postgres + PostGIS<br/>RLS on every table"]
+    API -->|court reads| D1["Cloudflare D1<br/>edge replica"]
+    API -->|everything else| REST["Supabase Data API<br/>PostgREST + /rpc"]
+    REST --> DB["Postgres + PostGIS<br/>source of truth, RLS on every table"]
     API --> R2["Cloudflare R2<br/>court photos"]
 ```
 
-The design choice I'd defend hardest is that the app only ever knows about the proxy. Swap Supabase for something else and the app doesn't change. Move regions, add a cache, or rewrite the data layer, and the client keeps calling the same worker with the same JWT. That indirection costs a few milliseconds and buys the freedom to change everything behind it later.
+The design choice I'd defend hardest is that the app only ever knows about the proxy. Swap Supabase for something else, move regions, add a cache, or rewrite the data layer, and the client keeps calling the same worker with the same JWT. That indirection costs a few milliseconds and buys the freedom to change everything behind it later.
 
 ## Finding Courts Is a Spatial Query
 
-Every court and field is a point with a PostGIS geometry. "44 courts in view" and the "search this area" button are the same operation underneath: give me the published courts whose location falls inside the map's current bounding box, nearest first. Postgres with PostGIS answers that in one indexed query, exposed to the app as a PostgREST RPC. The core lookup is roughly this:
+Every court and field is a point with a PostGIS geometry. "37 courts in view" and the "search this area" button are the same operation underneath: give me the published courts whose location falls inside the map's current bounding box, nearest first. Postgres with PostGIS answers that in one indexed query, exposed to the app as a PostgREST RPC. The core lookup is roughly this:
 
 ```sql
 -- published courts inside the current map viewport, closest first
@@ -109,6 +118,41 @@ order by geom <-> st_centroid(
 ```
 
 The `&&` bounding-box operator hits the spatial index, so the query stays fast whether the viewport holds four courts or four hundred.
+
+## Where 1.45 Million Courts Come From
+
+Rally launched with about 37,000 courts, seeded from OpenStreetMap one country at a time through the Overpass API. Overpass is a shared public good and it behaves like one under load: it rate-limits per IP and rejects large requests outright, so sweeping 243 countries is a bad idea for everyone involved. Querying a whole-planet OSM index instead turned the sweep into a single query per sport.
+
+Getting the rows is the easy half. OSM maps individual courts, not venues, so a tennis club with eight courts arrives as eight shapes and would render as eight pins stacked on top of each other. Collapsing them into one pin that knows it has eight courts is a clustering problem, and the naive version quietly under-merges any court row longer than the clustering radius. Deduplication also has to stay within a sport: a tennis court and a soccer pitch sharing a park are two real places, not a duplicate.
+
+OpenStreetMap gives the coverage. Overture Places and official open-data censuses layer names, addresses, surfaces, and lighting on top, with the richer source winning a shared venue. Anything still unnamed gets a reverse-geocoded one, so you see "Shibuya Tennis Court #3" instead of a bare pin.
+
+## Then the Map Got Too Big for One Query
+
+Forty times the data broke two assumptions at once. Zoomed out over a country, the bounding-box query is asked to return hundreds of thousands of rows nobody wants to see individually, and every one of those reads hits the same Postgres instance that also serves check-ins, ledgers, and auth.
+
+Both problems have the same shape: the court catalog is large, static, and identical for every user, while the live status layered on top is small and personal. So the read path splits along that seam. The static catalog is mirrored into a Cloudflare D1 database the worker reads at the edge, with the zoomed-out counts precomputed so a country-wide view is a lookup instead of an aggregation over a million rows. Writes, auth, and anything user-scoped stay on Supabase.
+
+The discipline that makes this safe rather than clever is that the mirror is never allowed to become a second source of truth. Postgres still owns the data, a stale row at the edge is a cache miss rather than data loss, an edge failure falls back to Postgres instead of taking the map down, and switching the whole thing off is a config change rather than a deploy. Because the app only ever talks to the proxy, none of it required shipping an app update.
+
+## Nine Sports, One Map
+
+Rally started as a tennis app with pickleball and soccer along for the ride. It now covers nine: tennis, pickleball, soccer, basketball, baseball, football, volleyball, badminton, and cricket, each with its own attributes, so a soccer pitch can say whether goals are provided and a tennis court can say hard, clay, or grass. Your picks drive the map, the quests, and the badges you earn.
+
+<div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
+  <img
+    src='/images/rally-sports.webp'
+    alt="Rally's sport picker asking what you play, listing tennis, pickleball, soccer, basketball, baseball, and football with the number of courts and fields mapped for each"
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+  />
+  <img
+    src='/images/rally-follow.webp'
+    alt="Rally's Follow tab showing a happening-now tournament, an upcoming league with schedule and results, recent match scores, and the latest headlines"
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+  />
+</div>
+
+The same expansion pushed a Follow tab into the app: live scores, results, a majors calendar, and per-sport news. It's the one part of Rally that isn't crowdsourced, and it exists because the app already knows which sports you care about.
 
 ## Keeping the Map Honest
 
@@ -152,13 +196,13 @@ The unglamorous truth of any live-data product is that someone has to keep updat
 
 <div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
   <img
-    src='/images/rally-game.png'
-    alt="Rally's pickup-game screen where every player checks in by GPS at the court, the game verifies attendance, and each player earns points"
+    src='/images/rally-game.webp'
+    alt="Rally's pickup-game screen with an open slot, a share invite link, and a GPS check-in button, where the game verifies attendance and every player earns points"
     className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
   />
   <img
-    src='/images/rally-profile.png'
-    alt="Rally's profile screen showing rank progress from Rookie to Scout, a live season tally of Aces, reputation, and streak, and a badge pin board"
+    src='/images/rally-profile.webp'
+    alt="Rally's profile screen showing rank progress from Rookie to Scout, a live season tally of Aces, reputation, and streak, a badge pin board, and saved courts"
     className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
   />
 </div>
@@ -167,14 +211,14 @@ The gamification is the incentive layer, not a growth-hack bolt-on. It's what pr
 
 ## What's Deliberately Simple
 
-A few things are v1-simple on purpose. Live status is polled, not streamed: the map refetches, it doesn't hold a websocket open. Maps run on MapLibre, so there's no Google Maps or Mapbox SDK to lock into or pay per-load. Rally Pro, the subscription, goes through RevenueCat, with the entitlement verified server-side instead of trusted from a receipt on the phone. Each of these has an obvious upgrade path if it ever earns one, and none of them were worth building up front.
+A few things are v1-simple on purpose. Live status is polled, not streamed: the map refetches, it doesn't hold a websocket open. Court data you've already browsed is cached on-device for a week, which doubles as the offline story without a sync engine. Maps run on MapLibre over Carto vector tiles, so there's no Google Maps or Mapbox SDK to lock into or pay per-load. Rally Pro, the subscription, goes through RevenueCat, with the entitlement verified server-side instead of trusted from a receipt on the phone.
 
 The map was the easy part. The real work was letting strangers edit it without wrecking it, and making the edits feel worth doing. Rally is live at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
 
 <figure className='my-8'>
   <img
     src='/images/rally-promo.gif'
-    alt='Animated Rally promo: the live court map, a court status card, a pickup game with GPS check-in, and the player profile with ranks and Aces'
+    alt='Animated Rally promo: the live court map across nine sports, a court status card, a pickup game with GPS check-in, and the player profile with ranks and Aces'
     loading='lazy'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
