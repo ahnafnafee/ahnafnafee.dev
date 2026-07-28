@@ -1,0 +1,2886 @@
+# Ahnaf An Nafee - Full Site Content
+
+> Complete text of every blog post, research entry, and portfolio project on https://www.ahnafnafee.dev.
+> Curated index and API map: https://www.ahnafnafee.dev/llms.txt
+> Content may be used with attribution. Please link back to the URL listed above each document.
+
+---
+
+# Revamping and Scaling Player 2: Infrastructure, Product, and Marketing
+
+URL: https://www.ahnafnafee.dev/blog/building-player-2-sole-developer
+Published: 2026-07-14
+Summary: How I revamped an established gaming social app end to end, shipped it across the App Store and Play Store, and operationalized and scaled it: self-hosted infrastructure on Hetzner and Coolify, a modular Spring Boot backend, an Expo mobile app and a TanStack web client, app store optimization in nine languages, and an analytics-driven feedback loop.
+Topics: Full-Stack Engineering, Infrastructure, Mobile Development, Marketing, App Store Optimization
+
+Player 2 is a matchmaking and social app for gamers, and I am the engineer who rebuilt it into what it is today. It is an established Dynasty 11 Studios product with a history before me. My work has been to revamp it end to end, ship it across the App Store and Play Store, and operationalize and scale it. Today I own the full technical stack: the Spring Boot backend, the Expo mobile app, a web client, the admin tools, the deep-link service, and the infrastructure it runs on, along with the app store optimization, localized listings, and analytics loop that keep it growing. This post is a look at what that takes across a real product with real users.
+
+<AppDownloadCTA
+  heading='Play Player 2 free'
+  subtext='Available on iOS and Android.'
+  appStore='https://apps.apple.com/us/app/player-2/id1619655364'
+  playStore='https://play.google.com/store/apps/details?id=com.dynasty11.player2app'
+/>
+
+## What Player 2 Actually Does
+
+The core idea is simple. Most matchmaking pairs people by rank, which tells you almost nothing about whether you will enjoy playing together. Player 2 matches on personality and playstyle instead, using a short in-app survey, and it only suggests games you both actually own. You link real accounts (Steam, Xbox, PlayStation, Epic, GOG, EA, Battle.net) so the recommendations stay grounded in your real library.
+
+Around that sits a full social product. There is a Looking for Group hub you can filter by region, language, platform, and rank. Communities, which we call Playgrounds, give people a place to organize. A personalized feed called GameHub mixes posts from the people and games you care about. A game library carries critic and player scores, reviews, and trivia. Quests hand out XP and collectibles, and a customizable Player Card pulls cosmetics from an in-app store. Real-time chat and live presence tie it together, and the whole thing is paid for by ads, a PRO subscription, and cosmetic coins.
+
+<div className='not-prose my-8 grid grid-cols-2 gap-3 sm:grid-cols-3'>
+  <img
+    src='/images/player2/player2-matchmaking.webp'
+    alt='Player 2 matchmaking screen suggesting a compatible player based on playstyle'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/player2/player2-communities.webp'
+    alt='Player 2 Playgrounds communities screen'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/player2/player2-gamehub.webp'
+    alt='Player 2 GameHub personalized social feed'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
+
+## The Shape of the System
+
+Player 2 is not one repo. It is eight, split across two GitHub orgs, each with its own stack and its own deploy path. Two of them are clients: the mobile app and the web app. One is the backend everything talks to. The rest are supporting services, meaning the admin tools, the deep links, the infrastructure definitions, and the marketing assets.
+
+```mermaid
+flowchart TD
+  M[Mobile app · Expo / React Native]
+  W[Web app · TanStack Start on a Worker]
+  DL[Deep links · Cloudflare Worker]
+  CF{{Cloudflare · DNS, proxy, Workers}}
+  API[Backend API · Spring Boot on Coolify]
+  ADM[Admin UI · Next.js]
+  DB[(PostgreSQL 17)]
+  R[(Redis · chat and presence)]
+  OBJ[(S3 / R2 · assets and backups)]
+  EXT[IGDB · RevenueCat · Firebase · Expo Push]
+
+  M --> CF
+  W --> CF
+  DL --> CF
+  CF --> API
+  ADM --> API
+  API --> DB
+  API --> R
+  API --> OBJ
+  API --> EXT
+```
+
+Everything public sits behind Cloudflare, which handles DNS, acts as the proxy in front of the backend, and hosts two of the services directly as Workers. The backend owns the data in PostgreSQL, uses Redis for anything that has to be fast or shared across instances, and keeps assets and backups in object storage. Holding that whole picture together is the actual job. The code is the easy part.
+
+## Infrastructure I Own End to End
+
+I do not rent a platform to run this. The backend and admin tools live on Hetzner virtual machines, orchestrated by Coolify, which builds each service straight from a Dockerfile on every push to its deploy branch. There is no external image registry in the path and no separate build farm. Push, build, deploy.
+
+The pieces that benefit from being declarative live in Terraform: the AWS storage bucket and its scoped IAM user, and the whole Grafana Cloud setup, which is the dashboards, the alert rules, and the Discord contact points that page me when something breaks. Observability runs through an OpenTelemetry collector and a blackbox probe into Grafana, so metrics and logs stay portable across vendors instead of locked to one dashboard product.
+
+The part I am most proud of is how much paid tooling I replaced with a little code. Instead of a managed deep-link vendor, I run my own Cloudflare Worker. Instead of a platform-as-a-service bill that scales with growth, I run Coolify on a box I control. The infrastructure repo is not app code at all. It is the operator's manual: bootstrap scripts that stand a fresh machine up from nothing, a hardening runbook, dated audits, and blameless post-mortems, so future me can rebuild the entire environment from zero without guessing.
+
+## The Backend Is a Modular Monolith
+
+The backend is Spring Boot 4 on Java 25, and it is deliberately a modular monolith rather than a pile of microservices. Each domain (players, chat, matchmaking, feed, LFG, store, gamification, and the rest) is its own module with clear boundaries, and modules talk to each other through durable events instead of reaching into one another's internals. That structure gives most of the isolation benefits of microservices without the operational tax of running a dozen of them.
+
+Data lives in PostgreSQL 17 with every schema change managed by Flyway and gated in the build, so the database can never drift away from the code. The API is REST with header-based versioning, which let me ship a second version of an endpoint next to the first without breaking older app builds still out in the wild. Auth is JWT with refresh tokens that rotate on every use. Chat and presence run over STOMP WebSockets, fanned out across instances through Redis pub/sub so a message reaches every device no matter which server it lands on. Virtual threads keep all of that cheap under load.
+
+## Keeping Mobile and Web in Lockstep
+
+The mobile app is Expo and React Native, organized as a monorepo so screens, logic, UI, and assets stay in separate packages that can move at their own pace. State is split on purpose: Redux Toolkit for the things that must persist, and TanStack Query for server data. Every piece of user-facing text runs through translation, and the app ships in English, Arabic, Turkish, and Spanish, with full right-to-left layout for Arabic. Releases go out through EAS with an update policy tied to the version number, so a patch ships as a JavaScript update over the air in minutes while a larger change goes through the stores.
+
+<div className='not-prose my-8 grid grid-cols-2 gap-3 sm:grid-cols-3'>
+  <img
+    src='/images/player2/player2-game-library.webp'
+    alt='Player 2 game library with critic and player scores'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/player2/player2-lfg.webp'
+    alt='Player 2 Looking for Group hub filtered by platform and rank'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/player2/player2-player-card.webp'
+    alt='Customizable Player 2 profile and Player Card'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
+
+The web client is its own app, not a wrapper around the mobile one. It is a TanStack Start project running on a single Cloudflare Worker that owns both the marketing site and a browser version of the product at close to feature parity with mobile. It shares no React Native code. It reuses the patterns and points at the same API. A few things stay native on purpose, like buying a subscription or linking a console account, because dragging them into the browser would cost more than it returns.
+
+## Deep Links Without Paying for Branch
+
+Deep links look trivial until you try to leave a vendor. When a link has to open the app if it is installed, fall back to the store if it is not, and show a rich preview when someone pastes it into a chat, most teams reach for a paid service. I replaced that with a small Cloudflare Worker on its own subdomain. It renders share previews from backend metadata, redirects based on the device that tapped the link, and serves the platform association files byte for byte identical to the old vendor, so every already-installed app kept working through the switch. Anyone with the app never even sees it.
+
+## Learning From Users Without a Research Team
+
+I never ran a formal usability lab, but the product is full of research if you know where to look. The matchmaking survey is continuous preference data: every answer feeds both who you get matched with and who gets recommended to you. The feed's seen, tap, and dismiss signals are a live read on what is actually landing. Analytics run through Segment, Firebase, and Mixpanel, crash reporting through two independent tools, and I periodically audit the real production database to learn how people use the thing rather than how I imagined they would.
+
+Beta testing goes through TestFlight and Firebase App Distribution before anything reaches the stores, backed by automated end-to-end flows that sign in and click through the core paths on a real emulator. One small detail I am fond of: the app asks for a review at a moment of delight, right after your first accepted match, instead of interrupting you the moment you open it. Timing choices like that are the whole difference between a prompt that helps and one that annoys.
+
+## What Owning the Whole Stack Taught Me
+
+The lesson that surprised me is that writing code was never the bottleneck. The bottleneck is context: how much of the system you can hold at once, and how fast you can move between a database migration, a WebSocket bug, an App Store rejection, and a paywall experiment without losing the thread. Owning the whole stack shaped every call I made. I chose boring, self-hosted tools where they saved money and kept control. I documented obsessively, because documentation is what lets a small team operate this much surface area. And I got comfortable deciding what not to build, which is the real skill, because every yes is paid for by everything else it crowds out.
+
+Player 2 is live on the App Store and Play Store today, in far better shape than I inherited it. If you want the shorter version with just the highlights, the [project page](/portfolio/player2) has it.
+
+<AppDownloadCTA
+  heading='Ready to find your Player 2?'
+  subtext='Download the app free on iOS and Android.'
+  appStore='https://apps.apple.com/us/app/player-2/id1619655364'
+  playStore='https://play.google.com/store/apps/details?id=com.dynasty11.player2app'
+/>
+
+---
+
+# Mirroring My Spotify Playlists to Apple Music, YouTube Music, and Jellyfin
+
+URL: https://www.ahnafnafee.dev/blog/songmirror-playlist-sync
+Published: 2026-07-13 (updated 2026-07-15)
+Summary: How I built SongMirror, an always-on mirror that keeps my Spotify playlists synced to Apple Music, YouTube Music, and a Jellyfin-ready download folder, one-way by default with an optional bidirectional N-way mode, using ISRC-first matching, Unicode-aware fuzzy fallbacks, date-added ordering, and destructive-removal safety rails, all in Python and runnable from Docker or Task Scheduler.
+Topics: Music Sync, Spotify, Self-Hosted, Python, Automation, APIs
+
+I curate playlists on Spotify but listen everywhere else: Apple Music in the car, YouTube Music for indie uploads, and a Jellyfin server at home when I want the files to be mine. Keeping them identical by hand is a chore you do once and abandon, so I built [SongMirror](https://github.com/ahnafnafee/songmirror). It's now a self-hosted web app: connect Spotify, Apple Music, YouTube Music, and Jellyfin in the browser, build any number of syncs, and run one-off transfers between services. By default it's a one-way mirror with a source of truth (add a song and it appears everywhere in date-added order, remove one and it disappears everywhere), behind safety rails a bad API response can't get past. Flip on N-way mode and every provider becomes a read-write peer. ISRC-first matching, Docker or a headless CLI. Python, MIT.
+
+<div className='not-prose mt-8 mb-6 flex justify-center'>
+  <img
+    src='/images/songmirror-lockup-light.png'
+    alt='SongMirror logo and wordmark'
+    className='h-11 w-auto sm:h-14 dark:hidden'
+  />
+  <img
+    src='/images/songmirror-lockup-dark.png'
+    alt='SongMirror logo and wordmark'
+    className='hidden h-11 w-auto sm:h-14 dark:block'
+  />
+</div>
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/songmirror-demo.gif'
+    alt='Animated demo of SongMirror connecting services, setting up a one-way and bidirectional sync, and running a live playlist transfer across Spotify, Apple Music, and YouTube Music'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    SongMirror end to end: connect a service, build a sync, and transfer a playlist, with every match streaming live.
+  </figcaption>
+</figure>
+
+## From a Script to a Browser App
+
+The first version of this was a Python script you ran from a terminal. It works, and the headless CLI still does, but connecting four services by editing environment variables and reading log lines is not something I wanted to do every time I set it up somewhere. So it's now a self-hosted web app on the same engine. One `docker compose up -d` serves a browser UI on port 8888, no `.env` to edit: connect each service, build your syncs, start transfers, and watch every match, add, and removal stream by live.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/songmirror-accounts.png'
+    alt='The SongMirror Accounts page connecting Spotify with OAuth, Apple Music with a token paste, YouTube Music with a device code, and Jellyfin with an API key'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    Connecting services from the browser: OAuth for Spotify and YouTube Music, a token paste for Apple Music, an API key
+    for Jellyfin.
+  </figcaption>
+</figure>
+
+Connecting is low-ceremony. Spotify and YouTube Music are one-click OAuth, and the wizard prints the exact redirect URI to whitelist. Apple Music takes the two headers you copy out of the web player, no developer account required. Jellyfin takes an API key. Nothing is proxied through a third party, and every credential is written owner-only to a local data folder, so your listening history never leaves the machine.
+
+## Syncs and Transfers
+
+The app splits into two ideas. A **sync** is an ongoing job: pick the services, the direction, the playlists, and a schedule, and it reconciles them every pass. You can run as many named syncs as you like, each with its own safety caps, and the source of truth no longer has to be Spotify. A **transfer** is a one-off copy from one service to another, with a live progress bar and pause, resume, and stop, plus a panel to hand-resolve any track that didn't match automatically.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/songmirror-wizard.png'
+    alt='The SongMirror sync setup wizard choosing between a one-way source-of-truth direction and a bidirectional N-way sync'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    Setting up a sync: pick the direction, the services, the playlists, and a schedule.
+  </figcaption>
+</figure>
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/songmirror-dashboard.png'
+    alt='The SongMirror dashboard showing sync status, configured one-way and bidirectional sync jobs, a live activity feed, and connected Spotify, Apple Music, YouTube Music, and Jellyfin services'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The dashboard pulls it together: active syncs, service health, and the live activity feed.
+  </figcaption>
+</figure>
+
+The browser made one more thing easy: syncing playlists you follow but don't own. A web-player fallback reads them past the dev-mode restriction, so a shared playlist mirrors and transfers like any of your own. And everything the UI does, the CLI still does headless, because both drive the same core: the web layer never touches the engine directly, it goes through a small services layer that owns the event bus and a single-writer queue, so a scheduled sync and a manual transfer can't stomp on each other.
+
+## One Source of Truth
+
+The existing tools in this space (Soundiiz, TuneMyMusic) do one-shot transfers or append-only sync. They add tracks; they rarely remove them. Over months your mirrors drift: a song you deleted from Spotify lingers on Apple Music forever, and there's no clean way to reconcile the two.
+
+The fix was to stop thinking of it as sync and start thinking of it as a mirror. One direction. One provider is canonical (Spotify by default, though one-way mode is provider-agnostic and any service can take that role), and every other service reflects it. That makes removals a first-class operation instead of an afterthought, so the mirror actually matches, subtractions included.
+
+This project actually started out syncing the _other_ way, Apple Music to Spotify, before I flipped it. Spotify's read-only API and its playlist `snapshot_id` model make it the better source of truth: I can watch it for changes cheaply and never risk writing to it by accident.
+
+That one-way model is the default and what most of this post describes. There's also an opt-in mode that relaxes it into a full two-way sync across every provider, which I get to further down.
+
+## What One Pass Does
+
+Every pass, for each playlist name that also exists on Spotify, the flow is the same:
+
+```mermaid
+graph TD
+    S["Spotify playlist<br/>(source of truth)"] --> SNAP["Snapshot:<br/>tracks + ISRCs + added-at"]
+    SNAP --> A["Reconcile Apple Music<br/>(amp-api)"]
+    SNAP --> Y["Reconcile YouTube Music<br/>(YouTube Data API v3)"]
+    A --> DIFF["Diff each target vs Spotify"]
+    Y --> DIFF
+    DIFF --> ADD["Resolve + append missing<br/>oldest-first"]
+    DIFF --> REM["Remove gone-from-Spotify<br/>behind safety rails"]
+    ADD --> DL["Optional: spotDL local mirror"]
+    REM --> DL
+```
+
+Playlists pair by name, and a missing target is auto-created with Spotify's name and description copied over. Apple and YouTube Music reconcile **concurrently**, but writes within a service stay sequential and rate-limit-friendly, with jittered pacing and exponential backoff on `403`/`429`.
+
+Additions go in **oldest-first** on purpose. Appending one track at a time in added-at order keeps every mirrored playlist sorted by date added, newest last, exactly like the Spotify original.
+
+Everything hangs off a single `MirrorTarget` interface and a shared `mirror_pair` loop. Apple Music and YouTube Music are just two implementations of the same contract, so all the diffing, ordering, and guarding lives in one place.
+
+## Matching Is the Hard Part
+
+The hard problem is deciding when two entries are the same song across catalogs that mostly don't share a key. The pipeline uses the same hierarchy the cross-service tools ([TuneLink](https://tommcfarlin.com/case-study-tunelink-matching-music-ai/), MusicBrainz) settled on: **hard identifier, then search, then fuzzy score**.
+
+1. **Cached link.** Once a Spotify track resolves to an Apple catalog ID or a YouTube `videoId`, that link is stored and reused. It survives later title drift and makes steady-state passes nearly free.
+2. **ISRC.** Exact recording identity wherever the service exposes it (Apple does).
+3. **Scored search.** [RapidFuzz](https://rapidfuzz.com/) `token_set_ratio` (order-, subset-, and decoration-tolerant) plus Jaro-Winkler, run over both the raw _and_ romanized ([anyascii](https://github.com/anyascii/anyascii)) title and artist, anchored by duration.
+
+That last stage absorbs the real-world mess, none of it hardcoded:
+
+| Drift                | Example                                                         | Handled by                                  |
+| -------------------- | --------------------------------------------------------------- | ------------------------------------------- |
+| Multi-artist credits | `Arijit Singh, Ved Sharma, …` ↔ `Arijit Singh`                  | subset-tolerant `token_set_ratio`           |
+| Title decoration     | `Tri` ↔ `Popeye (Bangladesh) - Tri (ত্রি) Official Music Video` | decoration-tolerant score + duration anchor |
+| Transliteration      | `Камин` ↔ `Kamin`, `নেশার বোঝা` ↔ `Neshar Bojha`                | anyascii romanization                       |
+| Video-only track     | Bangla/indie/OST upload with no catalog song                    | YouTube `videos` filter fallback            |
+
+The **duration anchor** is what makes the looser, decoration-tolerant title match safe. It lets the score accept subset and decoration differences without over-accepting, so a `Runaway - Piano Version` or a wrong-artist cover whose length disagrees gets rejected even when the titles look close. Loose title matching without a length check is how you silently mirror the wrong recording.
+
+There's a known limit. CJK romanizes to a _Chinese_ reading, so kanji/kana titles that a service only stores in native script can still miss. When nothing clears the bar the track is reported (`x Not on …`) and skipped, never guessed.
+
+## Removals Are Destructive, So the Code Is Paranoid
+
+A wrong _add_ is easy to undo; you just delete the track. A wrong _remove_ silently drops a song you wanted, and you might not notice for weeks. So the entire removal path is guarded, and it's the part of the code I'm most careful about:
+
+| Guard                    | What it prevents                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------- |
+| Dry run by default       | Any write at all without an explicit `--execute`                                      |
+| Empty-snapshot guard     | A transient "Spotify returned 0 tracks" from emptying a live target                   |
+| `MAX_REMOVALS` cap       | A runaway pass mass-deleting; over the cap, removals skip and log                     |
+| `MAX_ADDS` cap           | One-burst backfills tripping bot detection; overflow just continues next pass         |
+| Fuzzy removal protection | Deleting a target track that plausibly _is_ a Spotify track (feat.-credit drift)      |
+| Net-loss protection      | Dropping a song that has no match on that service to replace it (`~ held` in the log) |
+| Fail-closed tokens       | Partial deletes when an Apple token expires mid-pass; any `401`/`403` aborts the pass |
+
+None of it is clever, which is fine. A delete path running unattended against a library you care about should be boring and over-cautious.
+
+## The Local Mirror: Files You Own
+
+The optional download mirror is what makes this more than a playlist bridge. Point `DOWNLOAD_DIR` at your music root and each `--execute` pass runs [spotDL](https://github.com/spotDL/spotify-downloader) to keep a local copy of every synced playlist. It's true mirroring here too: new tracks download, removed tracks get deleted locally. The layout is Jellyfin-ready:
+
+```text
+<DOWNLOAD_DIR>/
+  <Playlist>/
+    <Playlist>.m3u8         # tool-generated, newest-first
+    cover.jpg               # Spotify playlist cover, highest resolution
+    <AlbumArtist>/
+      <Album>/
+        Artist - Title.mp3  # tagged + cover art embedded
+```
+
+The `.m3u8` is written by the tool, not spotDL, in date-added order with newest at the top, so Jellyfin shows your latest additions first the way Spotify does. Each file's modified-time is also stamped to its added-at date, so a Date-Modified sort matches.
+
+One optimization was worth the effort. spotDL spends _minutes_ re-fetching and re-matching a whole playlist before it reports a single skip, and it does that even when nothing changed. So a playlist whose Spotify `snapshot_id` hasn't moved since its last clean download is skipped **entirely**, with no spotDL invocation at all. Only a first-time or changed playlist pays that cost.
+
+One caveat: downloading audio this way sits outside Spotify's ToS. It's for personal use of content you already have access to, so it's your call.
+
+## Near-Instant Re-Runs
+
+An always-on mirror only works if the common case, nothing changed, is cheap. Everything resolvable is cached: per-service resolve caches (ISRC and search results, misses included) and a `spotify_tracks_cache.json` keyed by `snapshot_id`. That key matters, because Spotify's `snapshot_id` changes _exactly_ when the playlist does. Unlike a time-based TTL, there's no staleness window to reason about.
+
+On top of that, `song_cache.db` holds the hard-identifier links and a `sync_state` table. After a fully clean pass, each pair's `snapshot_id` is recorded, and while it's unchanged the pair is skipped outright. Dry runs never skip or write state, so a plain `uv run main.py` always shows the full picture before you commit to anything.
+
+## Going N-Way When You Want It
+
+One-way is the default because it's the safe, boring choice: Spotify stays read-only, and nothing I do on Apple or YouTube can surprise it. But sometimes you add a track straight from the Apple Music app, or thumb one on YouTube Music, and want it to flow back. So there's an opt-in `SYNC_MODE=nway` that turns the mirror into a full peer sync. Spotify, Apple Music, and YouTube Music all become read-and-write, and a track added or removed on any one of them propagates to the other two.
+
+The hard part of two-way sync is echoes: provider A gets a track, provider B copies it, and next pass B's copy looks like a fresh addition that should flow back to A, forever. The fix is a per-provider canonical snapshot. Each service remembers what it has actually seen, so a track that's merely unmatchable on one service is never mistaken for a deletion there, and a copy that originated elsewhere is never re-announced as new. Additions win ties, a read that collapses to zero tracks is refused, and every removal still clears the same caps and guards as the one-way path.
+
+The one real cost is that Spotify stops being read-only: N-way needs the write scopes, so you re-authorize once. Leave the switch alone and nothing changes, Spotify keeps its hands-off, canonical role.
+
+## Keeping It Always-On
+
+Two ways to keep it running. The Docker container is the main one: it serves the web UI and runs every sync on its own schedule, restarting with the host. If you'd rather stay headless, the CLI runs a one-shot pass you can fire from cron or a Windows Task Scheduler task every 15 minutes. Don't run both against the same playlists. Two mirrors racing each other can briefly duplicate adds.
+
+Auth is low-ceremony. In the default one-way mode, Spotify is a one-time OAuth with the read-only `playlist-read-private` scope, so it never writes to Spotify at all; N-way mode adds the write scopes with a one-time re-auth. Apple needs nothing but the two headers you copy out of `music.apple.com`'s network tab, no Apple Developer account required. YouTube Music runs on the official Data API v3 with a durable OAuth refresh token, so unlike the old browser-cookie approach it doesn't expire out from under an unattended mirror. When a token does expire, the pass logs exactly which one to re-capture.
+
+## Adding Another Service Is Eight Methods
+
+Adding a service is deliberately small. To support Tidal or Deezer, you subclass `MirrorTarget` and implement about eight methods (`list_playlists`, `playlist_tracks`, `track_id`, `resolve`, `add`, `remove`, `create`, `is_editable`), then add it to the provider registry. The diff, the oldest-first ordering, every safety rail, the logging, and the snapshot-skip are all inherited from `mirror_pair`. Apple Music, YouTube Music, and Jellyfin are just the implementations that ship today.
+
+## Try It Yourself
+
+The source is on [GitHub](https://github.com/ahnafnafee/songmirror), MIT-licensed. The default is a dry run: it prints every add and remove it _would_ make and writes nothing, so you can point it at your own library and read the whole plan before it touches a single playlist. Stars, issues, and PRs all welcome.
+
+---
+
+# Building Rally: A Live, Crowdsourced Court Map That Stays Honest
+
+URL: https://www.ahnafnafee.dev/blog/rally-crowdsourced-court-map
+Published: 2026-07-11 (updated 2026-07-23)
+Summary: How I built Rally, a gamified, crowdsourced map of 1,450,000+ courts and fields across nine sports worldwide, using an Expo and React Native app on Supabase Postgres with PostGIS, a Cloudflare D1 edge replica for court reads, GPS proof-of-presence check-ins, and server-side-only scoring so the crowdsourced map stays trustworthy.
+Topics: React Native, Supabase, PostGIS, Maps, Mobile, Crowdsourcing
+
+Rally is a mobile app that shows which courts near you are free right now, across nine sports and more than 1,450,000 courts, pitches, fields, and grounds worldwide. The hard part was never the map. A crowdsourced map is only as good as its worst contributor, so every status report is GPS-verified, a new court needs two independent on-site confirmations before it publishes, and no XP or points are ever minted by the phone. Under the hood it's an Expo and React Native app on Supabase Postgres with PostGIS, fronted by a Cloudflare Worker that serves court reads from a D1 replica at the edge. Live at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
+
+<img
+  src='/images/rally-feature.png'
+  alt="Rally's store banner: the tennis-ball app icon and Rally wordmark above the tagline 'Find a court. Right now.' with nine sport glyphs and the line 'Nine sports, 1,450,000+ places to play'"
+  className='my-8 w-full rounded-xl border border-gray-200 dark:border-gray-700'
+/>
+
+<AppDownloadCTA
+  heading='Get Rally'
+  subtext='See which courts near you are free right now.'
+  playStore='https://play.google.com/store/apps/details?id=dev.ahnafnafee.rally'
+  web='https://rally.ahnafnafee.dev'
+/>
+
+## Why Another Court App
+
+Static directories tell you a court exists. They don't tell you whether you can play on it in the next ten minutes, which is the only question that matters when you're standing there with a racquet. That answer changes by the hour, and it can only come from someone who is physically at the court. So Rally is built around live status, free / busy / full, reported by players on the ground, plus a map the community can correct when a court's details are stale or missing.
+
+<div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
+  <img
+    src='/images/rally-map.webp'
+    alt="Rally's court map showing court markers with open-court counts across the area, a sport selector, and filter chips for Free now, lights, and surface"
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+  />
+  <img
+    src='/images/rally-court.webp'
+    alt="Rally showing a tapped court's live card with its address, court count, lights, and free-or-busy status, so you know before you go"
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+  />
+</div>
+
+## The Shape of It
+
+The app is Expo (SDK 56, React Native, expo-router with typed routes, MapLibre for the map, React Query for data). It never talks to the database directly. Every request goes through a small Cloudflare Worker called `rally-api`, which fronts a Supabase Postgres database and a Cloudflare D1 replica of the court catalog. Court photos and nightly backups land in Cloudflare R2.
+
+```mermaid
+graph TD
+    APP["Expo app<br/>(iOS + Android, MapLibre)"] -->|HTTPS + JWT| API["rally-api<br/>Cloudflare Worker"]
+    API -->|court reads| D1["Cloudflare D1<br/>edge replica"]
+    API -->|everything else| REST["Supabase Data API<br/>PostgREST + /rpc"]
+    REST --> DB["Postgres + PostGIS<br/>source of truth, RLS on every table"]
+    API --> R2["Cloudflare R2<br/>court photos"]
+```
+
+The design choice I'd defend hardest is that the app only ever knows about the proxy. Swap Supabase for something else, move regions, add a cache, or rewrite the data layer, and the client keeps calling the same worker with the same JWT. That indirection costs a few milliseconds and buys the freedom to change everything behind it later.
+
+## Finding Courts Is a Spatial Query
+
+Every court and field is a point with a PostGIS geometry. "37 courts in view" and the "search this area" button are the same operation underneath: give me the published courts whose location falls inside the map's current bounding box, nearest first. Postgres with PostGIS answers that in one indexed query, exposed to the app as a PostgREST RPC. The core lookup is roughly this:
+
+```sql
+-- published courts inside the current map viewport, closest first
+select *
+from courts
+where geom && st_makeenvelope(min_lng, min_lat, max_lng, max_lat, 4326)
+  and status = 'published'
+order by geom <-> st_centroid(
+  st_makeenvelope(min_lng, min_lat, max_lng, max_lat, 4326)
+);
+```
+
+The `&&` bounding-box operator hits the spatial index, so the query stays fast whether the viewport holds four courts or four hundred.
+
+## Where 1.45 Million Courts Come From
+
+Rally launched with about 37,000 courts, seeded from OpenStreetMap one country at a time through the Overpass API. Overpass is a shared public good and it behaves like one under load: it rate-limits per IP and rejects large requests outright, so sweeping 243 countries is a bad idea for everyone involved. Querying a whole-planet OSM index instead turned the sweep into a single query per sport.
+
+Getting the rows is the easy half. OSM maps individual courts, not venues, so a tennis club with eight courts arrives as eight shapes and would render as eight pins stacked on top of each other. Collapsing them into one pin that knows it has eight courts is a clustering problem, and the naive version quietly under-merges any court row longer than the clustering radius. Deduplication also has to stay within a sport: a tennis court and a soccer pitch sharing a park are two real places, not a duplicate.
+
+OpenStreetMap gives the coverage. Overture Places and official open-data censuses layer names, addresses, surfaces, and lighting on top, with the richer source winning a shared venue. Anything still unnamed gets a reverse-geocoded one, so you see "Shibuya Tennis Court #3" instead of a bare pin.
+
+## Then the Map Got Too Big for One Query
+
+Forty times the data broke two assumptions at once. Zoomed out over a country, the bounding-box query is asked to return hundreds of thousands of rows nobody wants to see individually, and every one of those reads hits the same Postgres instance that also serves check-ins, ledgers, and auth.
+
+Both problems have the same shape: the court catalog is large, static, and identical for every user, while the live status layered on top is small and personal. So the read path splits along that seam. The static catalog is mirrored into a Cloudflare D1 database the worker reads at the edge, with the zoomed-out counts precomputed so a country-wide view is a lookup instead of an aggregation over a million rows. Writes, auth, and anything user-scoped stay on Supabase.
+
+The discipline that makes this safe rather than clever is that the mirror is never allowed to become a second source of truth. Postgres still owns the data, a stale row at the edge is a cache miss rather than data loss, an edge failure falls back to Postgres instead of taking the map down, and switching the whole thing off is a config change rather than a deploy. Because the app only ever talks to the proxy, none of it required shipping an app update.
+
+## Nine Sports, One Map
+
+Rally started as a tennis app with pickleball and soccer along for the ride. It now covers nine: tennis, pickleball, soccer, basketball, baseball, football, volleyball, badminton, and cricket, each with its own attributes, so a soccer pitch can say whether goals are provided and a tennis court can say hard, clay, or grass. Your picks drive the map, the quests, and the badges you earn.
+
+<div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
+  <img
+    src='/images/rally-sports.webp'
+    alt="Rally's sport picker asking what you play, listing tennis, pickleball, soccer, basketball, baseball, and football with the number of courts and fields mapped for each"
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+  />
+  <img
+    src='/images/rally-follow.webp'
+    alt="Rally's Follow tab showing a happening-now tournament, an upcoming league with schedule and results, recent match scores, and the latest headlines"
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+  />
+</div>
+
+The same expansion pushed a Follow tab into the app: live scores, results, a majors calendar, and per-sport news. It's the one part of Rally that isn't crowdsourced, and it exists because the app already knows which sports you care about.
+
+## Keeping the Map Honest
+
+This is the part that makes or breaks a crowdsourced app. If anyone can mark any court "free" from anywhere, the status is noise within a week. So reporting is gated on presence, not on having the app open.
+
+Every status report is tied to a proof-of-presence check-in: your GPS has to put you at the court, or you scan a QR code posted on-site. Adding a brand-new court is stricter still. You drop the pin, set the surface, court count, access, and lights, attach a photo, and submit. It stays invisible to everyone else until two other players independently confirm it on the ground. One account can't spam courts into existence, and one bored person can't quietly flip a busy court to free.
+
+## The Phone Never Owns the Score
+
+Points have real value in Rally. XP moves you up the ranks (Rookie, then Scout, and up from there), Aces are a currency you spend in a rewards store, and there are seasonal leaderboards. The moment something has value, someone will try to get it for free, and the baseline attacker isn't tapping through your UI. They're running `curl` with a valid token.
+
+So the rule is blunt: the client can request an award, it can never grant one. XP and Aces are written only by server-side functions that first verify the check-in's GPS and the per-user rate limit. Row-level security is on every table, so even a hand-crafted request can only ever touch the caller's own rows.
+
+```sql
+-- the ledger is readable by its owner and writable by no client
+alter table xp_ledger enable row level security;
+
+create policy "read own ledger" on xp_ledger
+  for select using (user_id = auth.uid());
+
+-- there is deliberately no client insert or update policy.
+-- awards are written by a security-definer function the worker calls,
+-- after it has checked presence and rate limits.
+```
+
+The full set of rails is small and boring on purpose:
+
+| Guard                                            | What it stops                                |
+| ------------------------------------------------ | -------------------------------------------- |
+| GPS or QR proof-of-presence on every check-in    | Reporting a court's status from your couch   |
+| Two independent on-site confirmations to publish | One person spamming fake courts onto the map |
+| Awards written only by server-side functions     | Minting XP or Aces with a crafted API call   |
+| RLS on every table                               | Reading or writing another player's data     |
+| Per-user rate limits on costed actions           | Scripted floods farming points               |
+
+None of this is visible to a normal player, which is the whole point. It should feel like a game and be tedious to cheat.
+
+## Gamification Is the Data Strategy
+
+The unglamorous truth of any live-data product is that someone has to keep updating it, forever. Waze solved that for traffic by making reporting feel like play. Rally borrows the idea directly. Daily quests pay out XP for checking in and adding courts. Streaks reward showing up two days running. Badges, ranks, and a seasonal Aces tally turn "keep the map fresh" into something with a scoreboard attached.
+
+<div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
+  <img
+    src='/images/rally-game.webp'
+    alt="Rally's pickup-game screen with an open slot, a share invite link, and a GPS check-in button, where the game verifies attendance and every player earns points"
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+  />
+  <img
+    src='/images/rally-profile.webp'
+    alt="Rally's profile screen showing rank progress from Rookie to Scout, a live season tally of Aces, reputation, and streak, a badge pin board, and saved courts"
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+  />
+</div>
+
+The gamification is the incentive layer, not a growth-hack bolt-on. It's what produces the fresh data the rest of the app depends on. Take it out and Rally is just another directory that goes stale.
+
+## What's Deliberately Simple
+
+A few things are v1-simple on purpose. Live status is polled, not streamed: the map refetches, it doesn't hold a websocket open. Court data you've already browsed is cached on-device for a week, which doubles as the offline story without a sync engine. Maps run on MapLibre over Carto vector tiles, so there's no Google Maps or Mapbox SDK to lock into or pay per-load. Rally Pro, the subscription, goes through RevenueCat, with the entitlement verified server-side instead of trusted from a receipt on the phone.
+
+The map was the easy part. The real work was letting strangers edit it without wrecking it, and making the edits feel worth doing. Rally is live at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
+
+<figure className='my-8'>
+  <img
+    src='/images/rally-promo.gif'
+    alt='Animated Rally promo: the live court map across nine sports, a court status card, a pickup game with GPS check-in, and the player profile with ranks and Aces'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    Rally in motion: court map, live status, pickup games, and player progress.
+  </figcaption>
+</figure>
+
+<AppDownloadCTA
+  heading='Find your next court with Rally'
+  subtext='Live court status, crowdsourced by players on the ground.'
+  playStore='https://play.google.com/store/apps/details?id=dev.ahnafnafee.rally'
+  web='https://rally.ahnafnafee.dev'
+/>
+
+---
+
+# Pinned Calendar: A Self-Healing, Offline Agenda for Android
+
+URL: https://www.ahnafnafee.dev/blog/pinned-calendar
+Published: 2026-06-06
+Summary: How I built a privacy-first Android app that pins your week's Google Calendar events and to-dos to a persistent, self-healing notification — no foreground service, no sign-in, and no INTERNET permission — using Kotlin, Jetpack Compose, custom RemoteViews, WorkManager, and a delete-intent that re-posts the pin the instant you swipe it away.
+Topics: Android, Kotlin, Jetpack Compose, Privacy, Mobile
+
+Calendar reminders are too easy to swipe away by accident — and then you forget what's next. So I built **[Pinned Calendar](https://github.com/ahnafnafee/pinned-calendar)**, a privacy-first Android app that keeps this week's Google Calendar events _and_ your to-dos in a single, always-present notification that **re-posts itself the instant you swipe it off**. It reads the calendars already on your phone — no sign-in, no OAuth, and no `INTERNET` permission, so your schedule never leaves the device. Built with Kotlin and Jetpack Compose, it pulls off a self-healing pin with **no foreground service**: a delete-intent broadcast, a `WorkManager` refresh, and a calendar `ContentObserver` do all the work.
+
+## The Problem: Reminders You Can Swipe Into Oblivion
+
+Every reminder system shares one failure mode: it interrupts you at the wrong moment, you flick it away on reflex, and the information goes with it. Heads-up notifications are _designed_ to be dismissed. Widgets solve persistence but lose the home-screen real-estate war — they sit one swipe behind whatever launcher page you aren't looking at.
+
+Pinned Calendar takes a different seat in the house: the notification shade. It posts one ongoing notification — your whole week, grouped by day, color-coded per calendar — and parks it at the top of the drawer where you already look a hundred times a day. Events and tasks share the same surface, and there's nothing to open.
+
+<div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
+  <img
+    src='/images/pinned-calendar-notification-light.png'
+    alt='Pinned Calendar persistent notification in light mode, showing the week agenda grouped into TODAY, TOMORROW, and FRI sections with color-coded bars for each event'
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+  />
+  <img
+    src='/images/pinned-calendar-notification-dark.png'
+    alt='The same pinned agenda notification in dark mode, with the week of events and times on a dark notification shade'
+    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+  />
+</div>
+
+## A Notification That Refuses to Die
+
+`setOngoing(true)` keeps the pin out of an ordinary swipe, but Android still lets a determined user — or a _Clear all_ — dismiss it. Rather than fight the platform, I let the dismissal happen and immediately undo it.
+
+Every notification can carry a **delete-intent**: a `PendingIntent` the system fires when the notification is removed. Point it at a `BroadcastReceiver` and a swipe stops being a deletion and becomes a trigger to rebuild.
+
+```mermaid
+flowchart LR
+    A["Pinned notification"] -->|swipe / Clear all| B["Android fires deleteIntent"]
+    B --> C["SelfHealReceiver.onReceive"]
+    C --> D["AgendaNotifier.refresh()"]
+    D -->|re-post| A
+```
+
+The builder wires the delete-intent to a receiver and marks the notification ongoing and alert-once, so re-posting it never makes a sound:
+
+```kotlin
+val deleteIntent = PendingIntent.getBroadcast(
+    context, 1,
+    Intent(context, SelfHealReceiver::class.java),
+    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+)
+
+return NotificationCompat.Builder(context, channelId)
+    .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+    .setCustomContentView(renderer.collapsed(content))
+    .setCustomBigContentView(renderer.expanded(content))
+    .setOngoing(true)
+    .setOnlyAlertOnce(true)
+    .setDeleteIntent(deleteIntent)
+    .build()
+```
+
+The receiver is almost trivially small — the whole trick is the wiring above:
+
+```kotlin
+class SelfHealReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent?) {
+        val pending = goAsync()
+        try {
+            runBlocking { AgendaNotifier(context).refresh() }
+        } finally {
+            pending?.finish()
+        }
+    }
+}
+```
+
+`goAsync()` is what makes this safe. A `BroadcastReceiver` is normally killed the moment `onReceive` returns, which would cut off the suspend work that reads settings, queries the calendar, and rebuilds the rows. `goAsync()` buys a few extra seconds so the refresh completes before the receiver finishes. From the user's side, a swipe produces a flicker at most — the pin is already back.
+
+## No Internet Permission, No Sign-In
+
+The events on the pin are the events already synced to your phone. Pinned Calendar never talks to Google's servers — it queries Android's **Calendar Provider** through `CalendarContract`, the same content provider the stock Calendar app uses. A single `contentResolver.query` against the `Instances` table, scoped to the time window, returns every event with its title, start time, all-day flag, and per-calendar color:
+
+```kotlin
+val uri = CalendarContract.Instances.CONTENT_URI.buildUpon()
+    .appendPath(startMillis.toString())
+    .appendPath(endMillis.toString())
+    .build()
+
+context.contentResolver.query(uri, projection, null, null, "${Instances.BEGIN} ASC")?.use { c ->
+    // map each row → AgendaItem(title, start, allDay, calendar color, deep link)
+}
+```
+
+Because the data already lives on the device, the whole feature needs exactly one dangerous permission — `READ_CALENDAR` — and zero network access. The entire manifest is four permission lines, and `INTERNET` isn't one of them:
+
+```xml
+<uses-permission android:name="android.permission.READ_CALENDAR" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+```
+
+Omitting `INTERNET` is the strongest privacy guarantee an Android app can make: the OS itself refuses any socket the app tries to open. There's no sign-in, no OAuth token, no analytics SDK, and — by construction — nothing that _can_ leave the phone.
+
+## Two-Tier Refresh, No Foreground Service
+
+A pin is only useful if it's current. The obvious way to keep a notification fresh is a **foreground service** — but that costs a permanent wakelock and its own second notification, and modern Android actively fights long-running ones. Pinned Calendar skips it entirely and leans on two cheaper signals instead.
+
+While the app's process is alive, a `ContentObserver` registered on `CalendarContract.CONTENT_URI` fires the moment any calendar data changes — add an event in Google Calendar and the pin updates within a second:
+
+```kotlin
+private val calendarObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
+    override fun onChange(selfChange: Boolean) {
+        AgendaScheduler.refreshNow(this@App)   // process alive → refresh instantly
+    }
+}
+
+override fun onCreate() {
+    super.onCreate()
+    AgendaScheduler.schedulePeriodic(this)     // 15-min WorkManager baseline
+    AgendaScheduler.refreshNow(this)
+    contentResolver.registerContentObserver(CalendarContract.CONTENT_URI, true, calendarObserver)
+}
+```
+
+For everything that happens when the process _isn't_ alive — time marching forward, an event starting while your phone sits on the nightstand — a `WorkManager` periodic job rebuilds the agenda every 15 minutes. `WorkManager` is the part that survives Doze, app-standby, and reboots; a `BootReceiver` re-arms both the periodic job and an immediate refresh after the device restarts. No foreground service means the pin is nearly free on the battery, and it still comes back after a reboot.
+
+## A Pure-Kotlin Core You Can Actually Test
+
+The trickiest logic in an app like this isn't the Android plumbing — it's the date math. "This week" has to respect the device's first-day-of-week. "Today" and "Tomorrow" headers have to flip at local midnight. All-day events cross time zones in surprising ways. None of that should require an emulator to verify.
+
+So the core is plain Kotlin with no Android imports. `WindowCalculator` turns a window mode into a `[now, end)` epoch-millis range. `DayBucketer` groups events by local date and labels them `TODAY · WED 3`, `TOMORROW · THU 4`, or a bare weekday. `NotificationContentBuilder` assembles the rows the notification renders. Every one of them takes a `java.time.Clock` in its constructor:
+
+```kotlin
+class DayBucketer(
+    private val clock: Clock,
+    private val zone: ZoneId = ZoneId.systemDefault(),
+) {
+    fun bucket(items: List<AgendaItem>): List<DaySection> { /* … */ }
+}
+```
+
+Injecting the `Clock` means a test can pin "now" to a fixed instant and assert that an event at 23:59 lands under TODAY while one a minute later rolls to TOMORROW — deterministically, on the JVM, in milliseconds. The repo's unit tests cover the windowing, bucketing, content-building, self-heal, and boot paths; the Android-specific layer (custom `RemoteViews`, the receivers, `WorkManager`) is a thin shell over that tested core. The whole thing is one clean dependency flow:
+
+```mermaid
+flowchart TD
+    CP["Calendar Provider<br/>(CalendarContract)"] --> AR["AgendaRepository"]
+    TD["Local to-dos<br/>(DataStore)"] --> AR
+    AR --> NCB["NotificationContentBuilder<br/>(pure-Kotlin core)"]
+    NCB --> NP["NotificationPoster → RemoteViews"]
+    NP --> N["Ongoing notification"]
+    OBS["ContentObserver"] -->|calendar changed| AR
+    WM["WorkManager · 15 min"] -->|periodic| AR
+    N -->|deleteIntent on swipe| SH["SelfHealReceiver"]
+    SH --> AR
+```
+
+## Material You, Down to the Notification Rows
+
+The agenda inside the pin isn't a stock notification template — it's custom `RemoteViews` wrapped in `DecoratedCustomViewStyle`, so each row gets its calendar's color as a vertical accent bar, tasks render distinctly from events, and tapping a row deep-links straight into Google Calendar at that event. The settings screen is full Material 3: wallpaper-based dynamic color via [MaterialKolor](https://github.com/jordond/MaterialKolor), hand-picked seed colors, an AMOLED-black option, selectable fonts, and a theme- and accent-adaptive launcher icon.
+
+<img
+  src='/images/pinned-calendar-settings.png'
+  alt='Pinned Calendar Material You settings screen: a week-overview card with a bar chart and "5 events / 0 to-dos" pill chips, then Notifications, a Time window selector (3 days, this week, 7 days, 14 days), and per-calendar toggles'
+  className='mx-auto my-6 w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+/>
+
+Notification priority is its own small puzzle. Android won't let you raise a channel's importance once it exists, so each level — Top, Normal, Silent — owns a separate channel with a fixed importance. Switching levels posts on the new channel and retires the others, leaving a single "Pinned agenda" entry in system settings at whatever priority you chose, never a pile of stale channels. Every level stays silent (no sound, no vibration); Top simply uses `IMPORTANCE_HIGH` so the pin ranks above the everyday notification stream.
+
+## Try It
+
+Pinned Calendar is open source under the MIT license. Grab the signed APK from the [latest release](https://github.com/ahnafnafee/pinned-calendar/releases/latest) — no Play Store account needed — grant Calendar and Notification access, flip **Pin to notifications** on, and your week moves into the shade. It runs on Android 8.0 (API 26) and up.
+
+Source, issues, and PRs live at [github.com/ahnafnafee/pinned-calendar](https://github.com/ahnafnafee/pinned-calendar). If a pinned week keeps you on schedule, a ⭐ on the repo genuinely helps.
+
+---
+
+# Bringing Real Tooling to Ollama Modelfiles
+
+URL: https://www.ahnafnafee.dev/blog/modelfile-syntax-extension
+Published: 2026-05-15 (updated 2026-07-22)
+Summary: How I built a VSCode-family extension that brings syntax highlighting, an 18-rule linter, hover documentation, autocomplete, and 26+ snippets to Ollama Modelfiles — so the next time you scaffold a custom GGUF runtime, your editor catches the foot-guns before `ollama create` does.
+Topics: Developer Tools, VSCode Extension, Ollama, Local LLM, TypeScript, TextMate Grammar
+
+I run a lot of GGUFs locally. Custom system prompts, sampling parameters, conversation primers — all expressed in Ollama Modelfiles. VSCode treated them as plain text: typos in `PARAMETER` names got silently ignored, single-quote `SYSTEM` prompts truncated at the first newline, and `num_ctx` quietly defaulted to 2048 even on models with 32K windows.
+
+So I built [`modelfile-syntax`](https://github.com/ahnafnafee/modelfile-syntax) — a VSCode-family extension with a real grammar, an 18-rule linter, hover docs, autocomplete, and 26+ snippets. This post is the story of what it catches, why it matters, and how it works across every editor you might actually use.
+
+<AppDownloadCTA
+  heading='Get modelfile-syntax'
+  subtext='Free and open source. VSCode, Cursor, Windsurf, VSCodium, Gitpod, and the browser.'
+  marketplace='https://marketplace.visualstudio.com/items?itemName=ahnafnafee.modelfile-syntax'
+  openVsx='https://open-vsx.org/extension/ahnafnafee/modelfile-syntax'
+  github='https://github.com/ahnafnafee/modelfile-syntax'
+/>
+
+## The Modelfile Footguns I Kept Stepping On
+
+If you've never written one, an Ollama Modelfile is the recipe for a custom local LLM. It declares the base model (a Hugging Face GGUF, an Ollama registry name, or a local path), sets sampling parameters, applies system prompts, defines chat templates in Go template syntax, and optionally pre-loads conversation messages. You then run `ollama create my-model -f Modelfile` and chat with it.
+
+The format is small, terse, and unreasonably easy to get wrong. Four bugs in particular cost me hours before I started annotating my own files with comments like _"DO NOT use single quotes here"_:
+
+**Single-quote truncation.** `SYSTEM "first line\nsecond line"` only ships the first line. The single-quoted form is single-line; multi-line bodies require triple quotes (`"""..."""`). Discovering this means watching your model behave as if half its system prompt vanished — because it did.
+
+**Silently-discarded unknown parameters.** If you write `PARAMETER temprature 0.4` (note the typo), Ollama ignores it. No warning. No error. Your model runs at the default `temperature 0.8` and you wonder why your "deterministic" prompt is generating wildly different outputs.
+
+**The `num_ctx 2048` foot-gun.** Most modern models have 32K, 64K, even 128K context windows. Ollama's default is **2048**. If you don't set `num_ctx` explicitly, your shiny new Llama 3.2 is operating with a context window roughly the size of a long email.
+
+**Invalid MESSAGE roles.** Roles are exactly `system`, `user`, `assistant`. Type `MESSAGE bot ...` or `MESSAGE human ...` and Ollama drops the line. Again, no error. You just don't get your few-shot examples.
+
+Every one of these is a real mistake I've made — sometimes more than once. The linter is, in a real sense, a list of my embarrassing prior selves.
+
+## What "Real Tooling" Means Here
+
+The goal was to bring Modelfiles to feature-parity with what you'd expect from any first-class language in 2026. Five pillars:
+
+1. **TextMate grammar** for syntax coloring — every instruction (`FROM`, `PARAMETER`, `TEMPLATE`, `SYSTEM`, `ADAPTER`, `LICENSE`, `MESSAGE`, `REQUIRES`, `RENDERER`, `PARSER`, `DRAFT`), plus embedded Go template highlighting inside `TEMPLATE """..."""` bodies. Keywords, variables, pipes — all colored.
+2. **Real-time linter** with 18 diagnostic rules (`OM001`–`OM018`) — the foot-guns above plus 14 more, each with a stable ID, severity, and an actionable message you can click through.
+3. **Hover documentation** on every PARAMETER — type, default, valid range, one-line description, all sourced from the canonical Ollama spec. No more guessing whether `min_p` ranges from 0–1 or 0–100.
+4. **Autocomplete** for instruction keywords, PARAMETER names, MESSAGE roles, and Go template variables (`.System`, `.Prompt`, `.Messages`, `.Tools`, `.Response`). Type `PARAMETER ` and the right names show up.
+5. **26+ snippets** for the patterns you actually reach for — Llama 3 / Qwen 2.5 / ChatML / Phi-3 chat templates, RAG-grounded system prompts, coder personas, full-file scaffolds.
+
+All of it runs locally. No network calls, no telemetry, no remote model lookups. The whole extension is pure TypeScript with no `child_process` or `fs` dependency, which has a useful downstream property: it works in `vscode.dev` and `github.dev` too.
+
+## Quick Start: From Zero to a Custom Local LLM
+
+Create a file named `Modelfile` (no extension) in your project. The extension activates automatically. Try this:
+
+```modelfile
+FROM hf.co/Qwen/Qwen2.5-7B-Instruct-GGUF
+
+PARAMETER temperature 0.4
+PARAMETER num_ctx 8192
+PARAMETER stop "<|im_end|>"
+
+SYSTEM """You are a concise senior engineer.
+Answer in 1–3 sentences. No hedging."""
+```
+
+Hover over `temperature` — you'll see its type (`float`), default (`0.8`), recommended range (`≥ 0`), and a one-liner about what it does. Type `PARAMETER ` and you'll get autocomplete for every valid name. Make a typo — `PARAMETER bogus 1` — and a red squiggle (`OM005`) appears immediately.
+
+Or skip all of that: type `modelfile-chat` and press <kbd>Tab</kbd>. You'll get a full chat Modelfile scaffolded out, with cursor stops at every value you need to customize. From there, `ollama create qwen-concise -f Modelfile && ollama run qwen-concise` and you're talking to a local LLM with your exact preferences.
+
+## The 18 Linter Rules: The Greatest Hits
+
+Every rule has a stable ID, a severity (`error` / `warning` / `info`), and a one-line message that tells you what to do. Here are the ones I lean on most:
+
+| ID      | Severity | What It Catches                                                                |
+| ------- | -------- | ------------------------------------------------------------------------------ |
+| `OM001` | error    | Missing `FROM` instruction.                                                    |
+| `OM005` | error    | Unknown `PARAMETER` name (catches `temprature` and friends).                   |
+| `OM006` | error    | `PARAMETER` value doesn't match expected type.                                 |
+| `OM008` | error    | Invalid `MESSAGE` role (only `system` / `user` / `assistant`).                 |
+| `OM011` | warning  | Single-quoted body truncates at newline (use `"""..."""` for multi-line).      |
+| `OM012` | warning  | `num_ctx 2048` is the legacy default — your model probably supports more.      |
+| `OM014` | warning  | `ADAPTER` got a `.safetensors` / `.bin` / `.pt` file; expects `.gguf`.         |
+| `OM016` | error    | Unterminated triple-quoted string.                                             |
+
+Rules you don't want can be silenced per-project: `"modelfileSyntax.lint.disabledRules": ["OM012", "OM015"]` in your VSCode settings. The full list with before/after examples lives in [`docs/rules.md`](https://github.com/ahnafnafee/modelfile-syntax/blob/main/docs/rules.md).
+
+## The Cross-Editor Story: Why This Was Surprisingly Annoying
+
+A VSCode extension can _technically_ run anywhere VSCode runs. In practice, "anywhere" is a minefield. Microsoft's official **[Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=ahnafnafee.modelfile-syntax)** is licensed only to first-party MS products and a few approved partners — VSCodium, OSS Codespaces, and Gitpod cannot install from it. The community answer is **[Open VSX](https://open-vsx.org/extension/ahnafnafee/modelfile-syntax)**, a parallel registry run by the Eclipse Foundation.
+
+If you publish to only one, half your users can't install your thing. So I dual-published, and the deployment graph looks like this:
+
+```mermaid
+graph LR
+    EXT["modelfile-syntax<br/>v0.1.0"]
+    EXT --> MS["Visual Studio<br/>Marketplace"]
+    EXT --> OVSX["Open VSX<br/>Registry"]
+    MS --> VS["VSCode"]
+    MS --> CUR["Cursor"]
+    MS --> WIND["Windsurf"]
+    MS --> WEB["vscode.dev<br/>github.dev"]
+    OVSX --> VCM["VSCodium"]
+    OVSX --> GIT["Gitpod"]
+    OVSX --> CSP["Codespaces (OSS)"]
+```
+
+Same bundle, two registries, eight editors. The pure-TypeScript / no-native-deps constraint is what lets the same `dist/extension.js` run in vscode.dev and github.dev — the moment you touch `child_process` or `fs` you forfeit web compatibility, and a "syntax extension that only works in desktop VSCode" is half a product.
+
+## Install
+
+<AppDownloadCTA
+  heading='Install modelfile-syntax'
+  subtext='Same bundle, both registries. Pick whichever one your editor talks to.'
+  marketplace='https://marketplace.visualstudio.com/items?itemName=ahnafnafee.modelfile-syntax'
+  openVsx='https://open-vsx.org/extension/ahnafnafee/modelfile-syntax'
+/>
+
+Or from the command line:
+
+```bash
+code --install-extension ahnafnafee.modelfile-syntax       # VSCode
+cursor --install-extension ahnafnafee.modelfile-syntax     # Cursor
+codium --install-extension ahnafnafee.modelfile-syntax     # VSCodium
+```
+
+For Windsurf, Gitpod, Codespaces, vscode.dev, and github.dev: search **"Ollama Modelfile"** in the Extensions panel. Or grab the source: [github.com/ahnafnafee/modelfile-syntax](https://github.com/ahnafnafee/modelfile-syntax).
+
+## What's Next
+
+This is `v0.1` — a complete grammar + linter + hover + completion + snippets release. The roadmap:
+
+- **v0.2** — Markdown / Jinja injection grammars inside `SYSTEM` / `TEMPLATE` bodies, so prompts get their own coloring. Right now the body is one big string; soon it'll be a structured nested grammar.
+- **v0.3** — Language Server Protocol mode so Neovim, Helix, and Emacs users get the same linter + hover experience.
+- **v0.4** — Optional `ollama create --dry-run` integration for true semantic validation. The current linter is intentionally static — no Ollama CLI calls — so it works offline and in the browser. But the dry-run mode would catch the runtime-only errors (malformed adapter files, unresolvable bases) that no amount of grammar can flag.
+
+## Closing
+
+If you write Modelfiles, this saves you a debugging session. If you write a lot of Modelfiles, it saves you many. Source, issues, and a comparison-vs-other-extensions table all live on [GitHub](https://github.com/ahnafnafee/modelfile-syntax). If it earns its keep, a Marketplace review and a link from your own Modelfile repo is the kindest thing you can do — that's how the Open VSX side of things finds its audience.
+
+---
+
+# Building a Local LLM-Powered Hybrid OCR Engine
+
+URL: https://www.ahnafnafee.dev/blog/local-llm-pdf-ocr
+Published: 2026-04-26 (updated 2026-07-15)
+Summary: How I built a privacy-first, fully offline OCR pipeline that pairs Surya's layout detection with local Vision Language Models (OlmOCR, GLM-OCR, Qwen3-VL) and a Needleman-Wunsch aligner — turning handwriting, forms, and scanned PDFs into pixel-perfect searchable documents on your own laptop.
+Topics: OCR, LLM, Vision Language Models, AI Engineering, Python, PDF
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/local-llm-ocr-demo.gif'
+    alt='Animated end-to-end demo: a scanned PDF is dropped into the local-llm-pdf-ocr web UI, layout detection and a local vision model transcribe each page, and an invisible text layer is embedded to produce a searchable PDF, all running locally'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The whole pipeline end to end: drop a scan, watch layout detection and a local VLM read it, and get back a
+    searchable PDF, all on your own machine.
+  </figcaption>
+</figure>
+
+We live in a digital world, yet the most valuable data is still trapped in the analog prison of scanned PDFs. Invoices, handwritten notes, contracts, medical forms, decades-old research archives — pixels without meaning to a machine.
+
+Cloud OCR APIs solve this, but at a cost: your privacy, a per-page bill, and an internet round-trip on every document you process. I wanted none of that.
+
+This is how I engineered a **fully local, privacy-first, hybrid OCR engine** that pairs the surgical layout precision of **Surya** with the semantic understanding of **local Vision Language Models** (OlmOCR, GLM-OCR, Qwen2.5/3-VL) — bound together by a **Needleman-Wunsch dynamic-programming aligner** — to produce searchable PDFs from anything you can rasterize. No cloud. No API keys. No documents leaving your machine.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/local-llm-ocr-web-light.png'
+    alt='The local-llm-pdf-ocr web UI in light mode: a drag-and-drop drop zone, a Hybrid / Grounded / Text-only engine toggle, a local model selector showing allenai/olmocr-2-7b with 14 models loaded on localhost, and a searchable-PDF output format'
+    className='w-full rounded-lg border border-gray-200 dark:hidden'
+  />
+  <img
+    src='/images/local-llm-ocr-web-dark.png'
+    alt='The local-llm-pdf-ocr web UI in dark mode: a drag-and-drop drop zone, a Hybrid / Grounded / Text-only engine toggle, a local model selector showing allenai/olmocr-2-7b with 14 models loaded on localhost, and a searchable-PDF output format'
+    className='hidden w-full rounded-lg border border-gray-800 dark:block'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The FastAPI web UI: drop a file, pick the engine and a local model, and get a searchable PDF back. Everything runs
+    on localhost, nothing is uploaded.
+  </figcaption>
+</figure>
+
+## The OCR Triangle
+
+When you build OCR today, the literature lets you pick two of three:
+
+1. **Layout accuracy** — knowing _where_ the text lives.
+2. **Semantic accuracy** — knowing _what_ the text says.
+3. **Speed and privacy** — running it on your laptop, offline.
+
+| Tool                                                      | Layout            | Semantics                  | Speed / Privacy        |
+| :-------------------------------------------------------- | :---------------- | :------------------------- | :--------------------- |
+| **Tesseract / EasyOCR**                                   | ✅ Good           | ❌ Fails on handwriting    | ⚡ Fast, local         |
+| **Surya Recognition**                                     | ✅ Excellent      | ⚠️ Moderate on cursive     | 🐢 ~20s/page, local    |
+| **Surya Detection-Only**                                  | ✅ Excellent      | ❌ No text output          | ⚡ ~1s/page, local     |
+| **Local VLM (OlmOCR-2, Qwen3-VL, GLM-OCR, DeepSeek-OCR)** | ❌ No coordinates | ✅ Reads cursive perfectly | 🐢 GPU-bound, local    |
+| **Cloud Vision APIs**                                     | ✅ Good           | ✅ Good                    | ☁️ Not local, not free |
+
+The bet: a vision-language model has the _semantic brain_ to read messy handwriting, but no idea where pixels live on a page. A detection-only Surya pass has _structural eyes_ but nothing to say. **Compose them, and the triangle collapses into a quadrilateral.**
+
+## The Architecture: Two Paths Behind One Seam
+
+The pipeline lives behind a single `OCRPipeline` orchestration seam, with **two execution paths**:
+
+- **Hybrid path** (default) — works with _any_ OCR-capable VLM, including text-only models.
+- **Grounded path** (opt-in via `--grounded`) — for the new generation of bbox-native VLMs that emit text and coordinates in a single call.
+
+```mermaid
+graph TD
+    A["Input: PDF / JPEG / PNG / TIFF / BMP / WebP"] --> B["Rasterize to images"]
+
+    B -->|"--grounded"| Z["Grounded VLM<br/>text + bbox in one call"]
+    Z --> EMB["Sandwich PDF Writer"]
+
+    B -->|"default: hybrid"| C["Surya DetectionPredictor<br/>batch, detection-only"]
+    B --> D["Local VLM full-page OCR<br/>OlmOCR / GLM-OCR / etc."]
+    C --> E["Layout boxes in reading order"]
+    D --> F["Plain text with line breaks"]
+    E --> G["Needleman-Wunsch DP aligner<br/>line ↔ box monotonic match"]
+    F --> G
+    G --> H{"Boxes the DP<br/>left empty?"}
+    H -->|"yes"| R["Per-box crop re-OCR<br/>refine stage"]
+    H -->|"no"| EMB
+    R --> EMB
+    EMB --> L["Searchable PDF Output"]
+```
+
+The core insight on both paths is the same: **decouple "where" from "what."** Detection is fast, deterministic, and well-solved. Recognition is slow, semantic, and where modern VLMs shine. Wiring them together cleanly is the entire game.
+
+## Path 1: The Hybrid Pipeline (Surya + LLM + DP Alignment)
+
+The hybrid path is the safe default. It works with _any_ OCR-capable VLM — even ones that can only return plain text — because it never relies on the model knowing geometry.
+
+### Step 1: Batch Layout Detection with Surya
+
+Surya's `DetectionPredictor` runs on every page in **a single batched call**, returning bounding boxes sorted into reading order. We never pay for Surya's recognition step, which is the expensive part of full Surya — running detection-only is roughly **10–21× faster** than full recognition.
+
+```python
+# Process ALL pages in one batched detection call
+all_image_bytes = [decode(img) for img in images_dict.values()]
+all_boxes = hybrid_aligner.get_detected_boxes_batch(all_image_bytes)
+```
+
+That single call is amortized across the whole document. On a warm pipeline it finishes in about half a second total — regardless of how many pages you threw at it.
+
+### Step 2: Full-Page Transcription with a Local VLM
+
+Each page image gets handed to a local **OpenAI-compatible** endpoint — LM Studio with `allenai/olmocr-2-7b`, Ollama with `glm-ocr:latest`, vLLM, SGLang, or anything else that speaks the same wire format — with a prompt asking the model to transcribe the entire page.
+
+The VLM doesn't care about coordinates. It just reads the page like a human and returns text. That's its superpower, and the rest of the pipeline is built around exploiting it.
+
+### Step 3: Needleman-Wunsch Alignment — The Heart of the System
+
+This is where it gets interesting. A naive "distribute tokens proportionally to box width" trick works for clean prose but falls apart on tables, multi-column papers, and forms. The fix is to model the problem properly.
+
+You have **N detected boxes** in reading order on the left, and **M LLM lines** in reading order on the right. You need a **monotonic alignment** — every box keeps its position, every line keeps its position, you just decide which line(s) belong to which box (and which boxes are non-text decorations to be skipped entirely).
+
+That is exactly the shape of [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) — the same dynamic-programming algorithm that aligns DNA sequences in bioinformatics. The score function:
+
+- **Rewards** a line whose character count fits a box's width.
+- **Mildly penalizes** skipping a box (many detected boxes are rules, decorations, or page furniture).
+- **Heavily penalizes** skipping a line (LLM text is precious).
+
+Unmatched LLM lines aren't dropped on the floor — they're attached to the nearest matched box, so no semantic content disappears. The DP runs in `O(N × M)` time, which is nothing on a per-page basis.
+
+### Step 4: Per-Box Refine Fallback
+
+Even a good aligner leaves some boxes empty when layouts get pathological — multi-column research papers, dense tables, figure captions floating in whitespace. Rather than tank accuracy, the pipeline crops each empty box and runs **per-box re-OCR** on just that crop.
+
+It catches the hard cases without paying N× latency on clean pages. Disable with `--no-refine` when you're optimizing for throughput on documents you know are clean.
+
+## Path 2: The Grounded Path (One-Shot VLM)
+
+The newest generation of open-weight vision models — **Qwen3-VL** (including the 2026-01-22 Flash snapshot), **GLM-4.6V**, **GLM-OCR** (Z.ai's March 2026 release that tops OmniDocBench V1.5), **DeepSeek-OCR** with its Contexts Optical Compression trick, **InternVL3**, **Chandra-OCR**, **MinerU 2.5**, and **PaddleOCR-VL** — can return **text and bounding boxes in a single JSON response**. When you point the tool at one of these with `--grounded`, the entire hybrid stack collapses into one call:
+
+```bash
+uv run main.py scan.pdf --grounded \
+    --api-base http://localhost:1234/v1 \
+    --model qwen/qwen3-vl-8b
+```
+
+No Surya. No DP. No refine. The model returns `{"bbox_2d": [...], "content": "..."}` tuples and the sandwich-PDF writer takes it from there. It's faster, has fewer moving parts, and eliminates the entire DP-alignment class of bugs.
+
+It also requires a model that emits coordinates reliably — which is why the hybrid path remains the default. Hybrid works with _any_ OCR-capable VLM, including the long tail of text-only models. Grounded is the cleaner path when your model can support it.
+
+| Path                        | Detection | Text            | Alignment        | Refine       | When to use                                      |
+| :-------------------------- | :-------- | :-------------- | :--------------- | :----------- | :----------------------------------------------- |
+| **Hybrid** (default)        | Surya     | LLM full-page   | Needleman-Wunsch | Per-box crop | Any OCR-capable VLM; max coverage                |
+| **Grounded** (`--grounded`) | —         | Bbox-native VLM | —                | —            | Qwen2.5/3-VL, MinerU; simplest path, fewest bugs |
+
+## The "Sandwich" PDF — Invisible Text Over Real Pixels
+
+Once we have aligned text and boxes, we embed everything as a **sandwich PDF** with PyMuPDF:
+
+1.  **Rasterize the page as an image** — strips any existing (often broken) text layer, giving us a clean slate.
+2.  **Insert the image as the visible background** — what the user sees.
+3.  **Overlay invisible text** with `render_mode=3`, geometrically scaled with horizontal-scale matrices so each glyph's bounding box spans the full width of its source region.
+
+That horizontal-scale matrix is the trick that makes selection actually work. Without it, a PDF reader's selection caret jumps in weird places and you get selection runs that look right visually but produce garbage when you copy. With it, dragging your cursor across `INVOICE #4521` highlights _exactly_ that region, character-aligned to the underlying pixels.
+
+The user sees the original document — every font, every annotation, every coffee stain. Their cursor interacts with a perfectly searchable hidden layer they never see.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/local-llm-ocr-selection.png'
+    alt='A scanned health-intake form with mixed printed and handwritten fields, rendered as a searchable PDF, with the invisible text layer highlighted in blue to show selectable text aligned over the original pixels'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The sandwich PDF in action: selecting text on a scanned form highlights the invisible layer, character-aligned to
+    the printed and handwritten pixels underneath.
+  </figcaption>
+</figure>
+
+## Multi-Format Input — Beyond Just PDFs
+
+The pipeline accepts whatever you throw at it:
+
+- `.pdf` — multi-page handled natively.
+- `.jpg`, `.jpeg`, `.png`, `.bmp`, `.webp` — single-page images skip the PDF round-trip and feed straight into rasterization.
+- `.tif`, `.tiff` — multi-frame TIFFs **expand to one output page per frame**. No manual PDF-wrapping step. This is the format archives, hospitals, and law firms still ship in.
+
+```bash
+# Raw image — no PDF required
+uv run main.py scan.png scan_ocr.pdf
+
+# Multi-frame TIFF → multi-page searchable PDF
+uv run main.py archive.tiff archive_ocr.pdf
+```
+
+Output is always a PDF, even when the input isn't.
+
+## Performance: Where the Time Actually Goes
+
+Here's the punchline: **detection is no longer the bottleneck — full-page LLM OCR is.** Once you've offloaded recognition to a VLM, Surya's contribution is rounding error. Warm-run breakdown on an LM Studio + OlmOCR-2-7B + single GPU setup:
+
+| Phase                   | Per-page cost          | Notes                                                 |
+| ----------------------- | ---------------------- | ----------------------------------------------------- |
+| Rasterize PDF → image   | ~0.3 s                 | Linear in pages                                       |
+| Surya batch detection   | ~0.5 s                 | Amortized across all pages in one batched call        |
+| **LLM full-page OCR**   | **~2–4 s**             | **Dominant cost.** Parallelize with `--concurrency 3` |
+| Per-box refine (if any) | ~0.5–1 s × empty boxes | Typically 0–2 s; disable with `--no-refine`           |
+| PDF assembly            | ~0.2 s                 | Linear in pages                                       |
+| Cold-start Surya load   | +5–10 s (paid once)    | Paid even on grounded runs                            |
+
+End-to-end on the example PDFs (hybrid path, OlmOCR-2-7B, warm cache): digital ≈ 14 s, hybrid form ≈ 5 s, handwritten ≈ 4 s. The handwritten case being the cheapest is genuinely funny — fewer detected boxes means a shorter DP, fewer LLM tokens to align, less refine work. Messy is sometimes faster than clean.
+
+`--concurrency` is the lever that matters most. The LLM is the bottleneck and there's nothing stopping you from streaming three pages at once on a beefy GPU.
+
+## CLI & Real-time Web UI
+
+A tool is only as good as its developer experience. The pipeline ships **two interfaces, each rendering the same progress events** so you don't have to learn two mental models.
+
+<img
+  src='https://ik.imagekit.io/8ieg70pvks/blog/local-llm-ocr-cli.png'
+  alt='Local LLM PDF OCR CLI'
+  className='w-full rounded-lg'
+/>
+
+- **CLI** — Powered by `rich`, with live progress bars for detection, LLM OCR, refinement, and embedding. Full flag surface for batch automation: `--pages`, `--concurrency`, `--dpi`, `--no-refine`, `--api-base`, `--model`, `--grounded`.
+- **Web UI** — FastAPI + WebSockets, drag-and-drop, dark mode, real-time per-page progress, and an in-browser preview of the raw VLM output _before_ it gets aligned. Same WebSocket events drive both surfaces.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/local-llm-ocr-web-advanced.png'
+    alt='The web UI with Advanced Options expanded, exposing DPI, page range, concurrency, max image dimension, a model-loaded verification toggle, the OpenAI-compatible API base URL, and hybrid-tuning controls for crop-refine, dense mode, dense threshold, and minimum box confidence'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    The same flag surface the CLI exposes, in the browser: DPI, concurrency, the OpenAI-compatible endpoint, and the
+    hybrid-tuning knobs for crop-refine and dense pages.
+  </figcaption>
+</figure>
+
+```python
+with progress:
+    # Phase 1: Batch layout detection (one Surya call for all pages)
+    task_layout = progress.add_task("[cyan]Detecting layouts (batch)...", total=1)
+    all_boxes = hybrid_aligner.get_detected_boxes_batch(all_image_bytes)
+
+    # Phase 2: LLM OCR per page, with optional concurrency
+    task_ocr = progress.add_task(f"[cyan]LLM OCR Processing...", total=total_pages)
+    for page_num in page_nums:
+        llm_text = ocr_processor.perform_ocr(image_base64)
+        aligned_data = hybrid_aligner.align_text(boxes, llm_text)
+        progress.advance(task_ocr)
+```
+
+## Validating the Whole Thing
+
+Hybrid systems break in subtle ways: a DP edge case, a glyph-scale matrix off by 1.02×, a TIFF frame that gets dropped silently. The repo ships a **145-test suite** covering DP invariants, embedding geometry, grounded JSON parsing, and end-to-end runs against the example PDFs.
+
+There's also a **confidence evaluator** that scores either path against ground-truth fixtures — block recall at IoU ≥ 0.3, average IoU of matched pairs, and average text similarity. Run it against both paths to see which one wins on _your_ document set:
+
+```bash
+uv run scripts/confidence_eval.py --path both \
+    --grounded-model qwen/qwen3-vl-8b \
+    --hybrid-model allenai/olmocr-2-7b
+```
+
+That's the honest way to choose between hybrid and grounded — measure it on the documents you actually care about.
+
+## Why This Matters Beyond OCR
+
+This project is, at its heart, a case study in **hybrid AI systems** — the architectural pattern of decomposing a problem into a fast deterministic stage and a slow semantic stage, then binding them together with a classical algorithm.
+
+- **Surya detection** — fast, deterministic, well-defined contract.
+- **Local VLM** — slow, semantic, the part that actually reads.
+- **Needleman-Wunsch DP** — a 1970 algorithm, still the cleanest tool for monotonic alignment.
+
+Each piece is replaceable. Swap Surya for a different layout model. Swap OlmOCR for Qwen3-VL and flip the `--grounded` switch. Swap the embedder for one that emits HTML or Markdown instead of PDF. The seams are clean because each stage has a crisp contract: "boxes in reading order," "text in reading order," "aligned `(box, text)` pairs."
+
+It also matters for **RAG and document-AI pipelines**. Searchable PDFs are the input format every downstream tool expects — vector-database ingestors, LangChain loaders, enterprise search, Notion imports, knowledge-graph builders. A good local OCR layer is the unglamorous bedrock under all of it. Get the OCR wrong and every downstream embedding inherits the noise; get it right and your retrieval just works.
+
+## Try It Yourself
+
+100% local. No API keys. No subscription fees. Your documents never leave your machine.
+
+The full source is on [GitHub](https://github.com/ahnafnafee/local-llm-pdf-ocr). Stars, issues, and PRs all welcome.
+
+[![zread](https://img.shields.io/badge/Ask_Zread-_.svg?style=for-the-badge&color=00b0aa&labelColor=000000&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuOTYxNTYgMS42MDAxSDIuMjQxNTZDMS44ODgxIDEuNjAwMSAxLjYwMTU2IDEuODg2NjQgMS42MDE1NiAyLjI0MDFWNC45NjAxQzEuNjAxNTYgNS4zMTM1NiAxLjg4ODEgNS42MDAxIDIuMjQxNTYgNS42MDAxSDQuOTYxNTZDNS4zMTUwMiA1LjYwMDEgNS42MDE1NiA1LjMxMzU2IDUuNjAxNTYgNC45NjAxVjIuMjQwMUM1LjYwMTU2IDEuODg2NjQgNS4zMTUwMiAxLjYwMDEgNC45NjE1NiAxLjYwMDFaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00Ljk2MTU2IDEwLjM5OTlIMi4yNDE1NkMxLjg4ODEgMTAuMzk5OSAxLjYwMTU2IDEwLjY4NjQgMS42MDE1NiAxMS4wMzk5VjEzLjc1OTlDMS42MDE1NiAxNC4xMTM0IDEuODg4MSAxNC4zOTk5IDIuMjQxNTYgMTQuMzk5OUg0Ljk2MTU2QzUuMzE1MDIgMTQuMzk5OSA1LjYwMTU2IDE0LjExMzQgNS42MDE1NiAxMy43NTk5VjExLjAzOTlDNS42MDE1NiAxMC42ODY0IDUuMzE1MDIgMTAuMzk5OSA0Ljk2MTU2IDEwLjM5OTlaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik0xMy43NTg0IDEuNjAwMUgxMS4wMzg0QzEwLjY4NSAxLjYwMDEgMTAuMzk4NCAxLjg4NjY0IDEwLjM5ODQgMi4yNDAxVjQuOTYwMUMxMC4zOTg0IDUuMzEzNTYgMTAuNjg1IDUuNjAwMSAxMS4wMzg0IDUuNjAwMUgxMy43NTg0QzE0LjExMTkgNS42MDAxIDE0LjM5ODQgNS4zMTM1NiAxNC4zOTg0IDQuOTYwMVYyLjI0MDFDMTQuMzk4NCAxLjg4NjY0IDE0LjExMTkgMS42MDAxIDEzLjc1ODQgMS42MDAxWiIgZmlsbD0iI2ZmZiIvPgo8cGF0aCBkPSJNNCAxMkwxMiA0TDQgMTJaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00IDEyTDEyIDQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K&logoColor=ffffff)](https://zread.ai/ahnafnafee/local-llm-pdf-ocr)
+
+---
+
+# From DOI to Markdown: A Two-Repo Pipeline for Faster Research
+
+URL: https://www.ahnafnafee.dev/blog/doi-paper-scraper
+Published: 2026-02-25
+Summary: How DOI Paper Scraper and Papers-to-Markdown work together to convert academic papers into structured Markdown for better reading, search, and research productivity.
+Topics: Research Productivity, Web Scraping, OCR, Python, Markdown, Automation
+
+Academic reading workflows are still too fragmented. Some papers are easy to access through DOI landing pages, others are only available as PDFs, and note-taking usually becomes a manual copy-paste process.
+
+I built two complementary tools to fix this:
+
+1. [doi-paper-scraper](https://github.com/ahnafnafee/doi-paper-scraper) for structured extraction from publisher pages (ACM/IEEE).
+2. [papers-to-markdown](https://github.com/ahnafnafee/papers-to-markdown) for OCR-based PDF to Markdown/EPUB conversion.
+
+Together, they form a practical pipeline to turn papers into searchable, reusable Markdown for faster literature review.
+
+<img
+  src='https://opengraph.githubassets.com/1/ahnafnafee/doi-paper-scraper'
+  alt='DOI Paper Scraper repository preview'
+  className='w-full rounded-lg'
+/>
+
+## Motivation: Why Convert Papers to Markdown?
+
+PDF is excellent for publishing, but weak for daily research workflows:
+
+1. Cross-paper search and linking are harder.
+2. Equations/tables are painful to reuse in notes.
+3. Versioning and iterative annotation are clunky.
+4. Feeding papers into local RAG/NLP pipelines takes extra cleanup.
+
+Markdown solves this by making papers editable, diffable, linkable, and automation-friendly.
+
+## Architecture: DOI-First, OCR-Second
+
+```mermaid
+flowchart LR
+    A["Paper Input"] --> B{"Has DOI + Supported Publisher?"}
+
+    B -->|"Yes"| C["doi-paper-scraper"]
+    C --> D["Resolve DOI"]
+    D --> E["Publisher Scraper (ACM/IEEE)"]
+    E --> F["Structured Paper Object"]
+
+    B -->|"No / Unreliable HTML"| G["papers-to-markdown"]
+    G --> H["pdf-craft OCR Pipeline"]
+    H --> I["Markdown or EPUB + assets"]
+
+    F --> J["Markdown Output"]
+    I --> J
+```
+
+This split is deliberate:
+
+1. Use publisher-native HTML when available (better structure fidelity).
+2. Fall back to OCR for PDFs that are hard to scrape or not DOI-accessible.
+
+## Repo 1: How `doi-paper-scraper` Works
+
+The CLI accepts plain DOI strings, DOI URLs, or publisher URLs:
+
+```bash
+uv run paper-scrape 10.1145/3746059.3747603
+uv run paper-scrape "https://doi.org/10.1109/CSCloud-EdgeCom58631.2023.00053"
+```
+
+### Step 1: DOI resolution and publisher routing
+
+`doi_resolver.py` extracts DOI tokens via regex, resolves canonical URLs through `doi.org`, and detects publisher from DOI prefix or resolved domain.
+
+### Step 2: Scraper selection
+
+`get_scraper()` maps publishers to concrete implementations:
+
+- `ACMScraper`
+- `IEEEScraper`
+
+Both return a shared `Paper` data model (`title`, `authors`, `abstract`, `sections`, `figures`, `keywords`).
+
+### Step 3: Browser-based acquisition
+
+`BaseScraper` uses `pydoll` to handle real web constraints:
+
+1. cookie injection/saving
+2. institutional proxy templating (`%u`, `%h`, `%p`)
+3. login detection and wait flow
+4. lazy-load scrolling before extraction
+
+### Step 4: Markdown reconstruction
+
+`markdown_builder.py` converts the structured `Paper` object into clean Markdown with headings, abstract, metadata, and inline figures.
+
+## Repo 2: How `papers-to-markdown` Works
+
+This project handles the PDF-first path using `pdf-craft`.
+
+```bash
+uv run main.py --format markdown --output-dir markdown
+uv run main.py --format epub --output-dir epubs
+```
+
+### Core processing flow
+
+1. Discover top-level PDF files under `--root`.
+2. Run OCR/analysis with configurable model size (`tiny` to `gundam`).
+3. Convert to Markdown or EPUB.
+4. Preserve math/tables via renderer settings (notably for EPUB).
+5. Store analysis artifacts and model cache in local directories.
+
+### Useful implementation details
+
+- Uses 600 DPI conversion for strong OCR quality.
+- Supports `en` and `zh` language settings.
+- Includes post-processing for Markdown math delimiters:
+  - `\[ ... \]` -> `$$ ... $$`
+  - `\( ... \)` -> `$ ... $`
+
+```python
+content = output_path.read_text(encoding="utf-8")
+content = content.replace("\\\\", "\\")
+content = content.replace(r"\[", "$$").replace(r"\]", "$$")
+content = content.replace(r"\(", "$").replace(r"\)", "$")
+output_path.write_text(content, encoding="utf-8")
+```
+
+## Combined Workflow for Research Productivity
+
+```mermaid
+sequenceDiagram
+    participant U as Researcher
+    participant D as doi-paper-scraper
+    participant P as papers-to-markdown
+    participant K as Knowledge Base
+
+    U->>D: Try DOI extraction path
+    alt Supported ACM/IEEE content
+        D-->>U: Structured Markdown + images
+    else Paywalled/unsupported/poor HTML
+        U->>P: Run PDF OCR conversion
+        P-->>U: Markdown/EPUB + assets
+    end
+    U->>K: Import into Obsidian/Logseq/RAG
+```
+
+The practical result is a robust ingestion strategy:
+
+1. **Fast path**: DOI scraping for clean structure and metadata.
+2. **Fallback path**: PDF OCR conversion when web extraction is not ideal.
+
+This reduces manual cleanup and gives a consistent Markdown corpus for reading, annotation, and synthesis.
+
+## Why This Boosts Productivity
+
+| Traditional PDF Workflow          | Two-Repo Markdown Workflow      |
+| :-------------------------------- | :------------------------------ |
+| Manual extraction from each paper | Automated DOI/PDF conversion    |
+| Inconsistent notes across tools   | Standardized Markdown outputs   |
+| Weak figure/equation portability  | Reusable assets and math markup |
+| Friction for RAG/NLP ingestion    | Plain-text-first pipeline       |
+
+Less time is spent formatting and locating information. More time is spent comparing methods, writing insights, and moving research forward.
+
+## Conclusion
+
+`doi-paper-scraper` and `papers-to-markdown` solve different sides of the same problem: turning academic content into an active, searchable research format.
+
+If the web page is structured, scrape by DOI. If the paper is locked to PDF or extraction quality is poor, run OCR conversion. In both cases, the destination is the same: high-utility Markdown that improves reading speed and research throughput.
+
+Repositories:
+
+- [DOI Paper Scraper](https://github.com/ahnafnafee/doi-paper-scraper)
+- [Papers to Markdown](https://github.com/ahnafnafee/papers-to-markdown)
+
+---
+
+# Scaling Education: A Strategy Pattern Approach to Grading at Scale
+
+URL: https://www.ahnafnafee.dev/blog/autograder-architecture
+Published: 2025-12-11
+Summary: Deep dive into building a scalable autograder using Python, Java, and the Strategy Pattern. Learn how we can automate grading for hundreds of students using "Frankenstein" code stitching, dynamic rubrics, and local LLMs.
+Topics: Education Technology, Software Architecture, Python, Java, Automation, LLM
+
+Grading programming assignments provides a unique sandbox to experiment with software architecture. It presents a classic engineering challenge: **how can we build a system that is both flexible enough to handle diverse assignments and robust enough to run at scale?**
+
+This article explores a hobby project of mine where I attempted to engineer a solution using the **Strategy Pattern**, **"Frankenstein" code instrumentation**, and **Local LLMs**. The goal was to see if modern software patterns and local AI could create a "universal" grading engine.
+
+## The Architecture: Python Conductor, Java Engine
+
+The core philosophy is simple: **Python orchestrates, Java executes.**
+
+<img
+  src='/images/autograder_architecture_terminal.png'
+  alt="Screenshot of the terminal output showing the 'Python Conductor' starting the grading process"
+  className='w-full'
+/>
+
+We use Python for its flexibility in file manipulation, process management, and API interactions. Java is used strictly for running the student's code against JUnit tests.
+
+```mermaid
+graph TD
+    A["run.py (Conductor)"] -->|Selects Strategy| B[GradingStrategy]
+    A -->|Iterates Submissions| C[AutoGraderEngine]
+    C -->|Prepares| D[Temp Sandbox]
+    D -->|Compiles| E[Javac]
+    D -->|Executes| F[JUnit Tests]
+    F -->|Results| G[CSV Report]
+    G -->|Uploads| H[Gradescope Bot]
+```
+
+### The Strategy Pattern
+
+The biggest challenge in building a "universal" grader is that every assignment is different. Some require graph traversal, others list manipulation, and some need strict time complexity checks.
+
+Instead of writing a massive `if-else` block, I used the **Strategy Pattern**. We define a **Parent Strategy** (`GradingStrategy`) that acts as the blueprint. It enforces a contract that all assignments must follow, while also providing shared utility methods (like code preprocessing and penalty calculations) that child strategies can inherit.
+
+```python
+# core/grading_strategy.py
+
+from abc import ABC, abstractmethod
+
+# The Parent Strategy
+class GradingStrategy(ABC):
+    @property
+    @abstractmethod
+    def assignment_name(self) -> str:
+        """Name of the assignment (e.g., 'GraphAssignment')"""
+        pass
+
+    @property
+    @abstractmethod
+    def rubric(self) -> dict:
+        """
+        Dynamic rubric mapping.
+        Keys are test names, values are points.
+        """
+        pass
+
+    # Shared logic inherited by all child strategies
+    def preprocess_code(self, source_code: str) -> str:
+        """Optional hook to modify student code before compilation."""
+        return source_code
+```
+
+```python
+# core/strategies/graph_strategy.py
+
+class GraphSearchStrategy(GradingStrategy):
+    @property
+    def assignment_name(self) -> str:
+        return "GraphSearch"
+
+    @property
+    def rubric(self) -> dict:
+        # Maps JUnit test names to point values
+        return {
+            "testBFS": 15,
+            "testDFS": 15,
+            "testDijkstra": 20,
+            "testEdgeCases": 5
+        }
+
+    def preprocess_code(self, source_code: str) -> str:
+        # Specific to this assignment: Remove student's main method
+        # to prevent it from conflicting with our test harness
+        return re.sub(r"public static void main.*?}", "", source_code, flags=re.DOTALL)
+```
+
+This structure allows the main engine (`universal_grader.py`) to be completely agnostic of the assignment details. It treats every assignment as just a generic `GradingStrategy`.
+
+## The "Frankenstein" Method
+
+One of the most complex parts of autograding is testing private methods or ensuring students follow specific implementation details without exposing our test logic.
+
+To solve this, I implemented what I call the **"Frankenstein" Method**. We don't just compile the student's file; we surgically alter it.
+
+In `universal_grader.py`, we extract specific methods from the student's submission and stitch them into a "Frankenstein" class that contains our test harnesses. Crucially, we use regex to flip visibility modifiers so we can test private helper methods directly.
+
+```python
+# core/universal_grader.py
+
+def _create_frankenstein_file(self, content_buffer, student_code):
+    # ... imports and class definition ...
+
+    # The "Frankenstein" Logic: Force visibility to public
+    # This allows JUnit to access private helper methods directly
+    public_code = re.sub(r"private\s", "public ", student_code)
+    public_code = re.sub(r"protected\s", "public ", public_code)
+
+    # Track line number offset to map compiler errors back to student's original file
+    self.line_offset = len(content_buffer.splitlines())
+    content_buffer += f"\n// --- STUDENT CODE START ---\n{public_code}\n"
+
+    return content_buffer
+```
+
+This allows us to maintain strict interface requirements for students (`private void helper()`) while having full access to test those internals during grading. We also maintain a line offset map so if the compiler fails on line 150 of the Frankenstein file, we can tell the student the error is actually on line 20 of their submission.
+
+## Dynamic Compilation & Loading
+
+We compile everything locally in a sandboxed temporary directory to prevent pollution. The system dynamically builds the classpath based on the assignment's needs. We use Python's `subprocess` with a timeout to catch infinite loops (a common issue in student code).
+
+```python
+# core/universal_grader.py
+
+# Dynamic Classpath Construction
+self.base_jars = ["junit-4.13.1.jar", "hamcrest-core-1.3.jar"]
+extra_jars = getattr(self.strategy, "extra_jars", [])
+
+# Constructing the javac command
+# Note: We use ';' separator for Windows, ':' for Linux
+classpath = ";".join([".", *self.base_jars, *extra_jars])
+
+cmd = ["javac", "-cp", classpath, student_file, tester_file]
+
+try:
+    result = subprocess.run(
+        cmd,
+        cwd=self.temp_dir,
+        capture_output=True,
+        text=True,
+        timeout=10 # Kill compilation if it freezes
+    )
+    if result.returncode != 0:
+        # Handle compilation error...
+        pass
+except subprocess.TimeoutExpired:
+    self.record_error("Compilation Timed Out")
+```
+
+## AI-Assisted Grading with Local LLMs
+
+While JUnit captures functional correctness, it fails at **semantic analysis**.
+
+- _Did the student comment their code?_
+- _Is the variable naming descriptive?_
+- _Did they explain their logic in the header?_
+
+To catch these, I integrated a **Local LLM** (Mininstral 3B) running on a local server. When a submission needs semantic checking, we send the code snippets to the LLM with a strict JSON system prompt.
+
+```python
+# utils/llm_utils.py
+
+SYSTEM_PROMPT = """
+You are a strict grader for a Computer Science course.
+Analyze the source code provided.
+Output strictly valid JSON with no markdown formatting.
+Schema:
+{
+    "present": boolean, // Is the required info present?
+    "feedback": string // Brief feedback for the student
+}
+"""
+
+def check_student_info(header_text: str) -> dict:
+    payload = {
+        "model": "mininstral-3b",
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": f"Check for Student Name/ID in:\n{header_text}"}
+        ],
+        "temperature": 0.1 # Low temp for deterministic outputs
+    }
+
+    response = requests.post("http://localhost:3002/v1/chat/completions", json=payload)
+    raw_content = response.json()['choices'][0]['message']['content']
+
+    try:
+        # Validation Loop: Ensure we got valid JSON back
+        return json.loads(raw_content)
+    except json.JSONDecodeError:
+        # Fallback or retry logic...
+        return {"present": False, "feedback": "Error parsing AI response"}
+```
+
+```mermaid
+sequenceDiagram
+    participant Engine as AutoGrader Engine
+    participant LLM as Mininstral 3B (Local)
+
+    Engine->>Engine: Run JUnit Tests
+    alt Tests Pass
+        Engine->>LLM: Check Semantic Requirements
+        LLM-->>Engine: JSON { "grade": 10, "feedback": "Good job" }
+    else Tests Fail
+        Engine->>Engine: Assign Functional Score
+    end
+```
+
+This hybrid approach gives us the best of both worlds: the precision of unit tests and the semantic understanding of LLMs, without sending student data to external cloud providers.
+
+## Automating the Last Mile
+
+The final step is getting grades into the system. Manually entering thousands of grades is error-prone.
+
+I built a **Playwright** bot that:
+
+1.  Reads the final CSV report generated by the `UniversalGrader`.
+2.  Logs into the grading portal.
+3.  Navigates to each student's submission.
+4.  Fills in the rubric and uploads the detailed feedback file.
+
+```python
+import os
+import csv
+import time
+from playwright.sync_api import sync_playwright
+from dotenv import load_dotenv
+
+# Load credentials
+load_dotenv()
+EMAIL = os.getenv("GRADESCOPE_EMAIL")
+PASSWORD = os.getenv("GRADESCOPE_PASSWORD")
+
+def main():
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)  # Visible browser
+        context = browser.new_context()
+        page = context.new_page()
+
+        # 1. Login
+        print("Logging in...")
+        page.goto("https://www.gradescope.com/login")
+        page.fill("input[name='session[email]']", EMAIL)
+        page.fill("input[name='session[password]']", PASSWORD)
+        page.click("input[type='submit']")
+        page.wait_for_selector("text=Your Courses", timeout=10000)
+
+        # 2. Grading Loop
+        print(f"Reading CSV: {CSV_FILE}...")
+        # ... read csv logic ...
+
+        for row in rows:
+            student_email = row.get("Email")
+
+            # Resilience: Ensure we are on the right page
+            if page.url != review_grades_url:
+                page.goto(review_grades_url)
+
+            # Search and Navigate
+            page.get_by_placeholder("Search").fill(student_email)
+            page.get_by_role("link", name=student_name).first.click()
+
+            # Robust Rubric Selection
+            def ensure_rubric_item(name_or_index, desired_state=True):
+                btn = page.get_by_role("button", name=name_or_index)
+                if btn.get_attribute("aria-pressed") != str(desired_state).lower():
+                    btn.click()
+
+            # Grade Question 2
+            page.get_by_role("link", name="2:").click()
+            if float(row.get("Q2 Score")) == 1.0:
+                ensure_rubric_item(1, True)
+
+            # Submit
+            # ... submission logic ...
+```
+
+## Conclusion
+
+By treating grading as a software engineering problem, we turned a multi-day ordeal into a process that takes minutes. The combination of the **Strategy Pattern** for extensibility, **Frankenstein** code manipulation for deep testing, and **Local LLMs** for semantic checks creates a robust, scalable system that serves hundreds of students efficiently.
+
+---
+
+# Uploading Files to GoFile.io From a GitHub Action
+
+URL: https://www.ahnafnafee.dev/blog/gofile-upload-github-action
+Published: 2022-10-01 (updated 2026-05-20)
+Summary: I built a GitHub Action that uploads any file from your CI/CD workflow to GoFile.io and hands you back a public URL plus QR code. Here's why GoFile, the API gotchas I hit, and the v3 rewrite when GoFile changed their API in late 2025.
+Topics: GitHub Actions, CI/CD, DevOps, File Sharing, Automation, Open Source
+
+My CI builds produce a lot of files I want to share without ceremony. A 50MB APK on every feature branch, a debug log bundle when a flaky test finally reproduces, a screenshot diff I want my designer to look at. None of these need authentication. They need a public URL someone can click in a Slack message.
+
+So I built [`action-upload-gofile`](https://github.com/ahnafnafee/action-upload-gofile) — a GitHub Action that uploads any file from a workflow to [GoFile.io](https://gofile.io) and returns a public URL plus a QR code as outputs. This post covers why GoFile fit, the API gotchas I hit along the way, and the v3 rewrite when GoFile changed their API in late 2025.
+
+<ProjectLinks
+  github='https://github.com/ahnafnafee/action-upload-gofile'
+  marketplace='https://github.com/marketplace/actions/upload-to-gofile-io'
+/>
+
+## Why a GitHub Action for GoFile
+
+GitHub Actions has built-in `actions/upload-artifact` and `actions/download-artifact` — and for a lot of cases they're the right answer. But they have three properties that make them wrong for "share a build with someone outside the repo":
+
+- **They expire.** Artifacts are deleted after a retention window (default 90 days, often shorter when org policy tightens it).
+- **They live inside the workflow run.** Downloading an artifact requires you to be a logged-in GitHub user with read access to the repository.
+- **They're scoped to the run, not the world.** There's no public URL — only an authenticated download link gated on the GitHub UI.
+
+S3 or R2 fixes the "public URL" part but introduces its own ceremony: a bucket, an IAM policy, lifecycle rules to clean up old uploads, and the cognitive overhead of remembering which project's bucket is where. For a one-off "send this APK to a tester" job, it's overkill.
+
+GoFile sits in the right slot: anonymous uploads, instant public URLs, optional token for higher rate limits, no infrastructure to set up. The action wraps the upload so the entire flow becomes two lines in a workflow.
+
+## What It Does
+
+`file` in, `url` and `qrcode` out. Both outputs are workflow strings you can consume in any downstream step — log them, post them, embed them in a comment.
+
+There are two inputs:
+
+- `file` (required) — path to the file you want to upload.
+- `token` (optional) — a GoFile API token. Anonymous uploads work without it; the token lifts rate limits and gives access to private buckets if you have a GoFile account.
+
+The action is published on the [GitHub Marketplace](https://github.com/marketplace/actions/upload-to-gofile-io) under MIT, so you can audit the source, fork it, and pin to whatever tag your security model wants.
+
+## Using It in a Workflow
+
+```yaml
+steps:
+  - name: Upload artifact to GoFile
+    id: gofile
+    uses: ahnafnafee/action-upload-gofile@v3.0.0
+    with:
+      token: ${{ secrets.GOFILE_TOKEN }}
+      file: ./build/app-release.apk
+
+  - name: Post link to PR
+    uses: actions/github-script@v7
+    with:
+      script: |
+        github.rest.issues.createComment({
+          issue_number: context.issue.number,
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+          body: 'APK: ${{ steps.gofile.outputs.url }}'
+        })
+```
+
+That's the whole pattern: upload, capture the URL output, hand it to the next step. The QR code output is the same idea — useful when the recipient is going to scan it from their phone to install an APK directly.
+
+## How It Works Under the Hood
+
+The action is about 60 lines of JavaScript running on the `node16` runtime (no Docker, no cold start). The flow is:
+
+1. Read the `file` and optional `token` inputs via `@actions/core`.
+2. Build a multipart form body with the file stream and, if present, the token.
+3. POST it to GoFile's `/uploadFile` endpoint.
+4. Parse the response (`url` and `qrcode` are both server-generated).
+5. Set them as workflow outputs with `core.setOutput()`.
+
+```mermaid
+graph LR
+    A[Workflow step] -->|file, token| B[action-upload-gofile]
+    B -->|POST /uploadFile<br/>multipart| C[GoFile API]
+    C -->|url, qrcode<br/>JSON response| B
+    B -->|outputs.url<br/>outputs.qrcode| D[Next workflow step]
+```
+
+There's no retry loop, no chunked upload, no resumable transfer. GoFile's HTTP layer handles enough of that on its own that adding a wrapper would be more risk than benefit for the file sizes this action targets (typically under 500MB).
+
+## Real-World Use Cases
+
+- **APK / IPA distribution.** Push the release artifact to GoFile from the release job; post the URL to your QA Slack channel.
+- **PR-comment build previews.** Pair with `actions/github-script` (see the snippet above) and your reviewers get a clickable download link in the PR thread.
+- **Screenshot bundles from visual-regression runs.** When a Playwright or Percy run produces a diff folder, zip it, upload, and share the URL with the designer.
+- **Debug log handoff.** Failing scheduled jobs can publish their log bundle to GoFile and notify the on-call channel with the link, without bloating Actions artifact storage.
+
+## The v3 Rewrite: When GoFile Changed Their API
+
+In late 2025, GoFile shipped a new API with breaking changes to the upload endpoint and the response shape. The old `v2.x` codepath stopped working. **v3.0.0** (released December 13, 2025) reimplements the upload path against the new API.
+
+The breaking-change story is mostly boring from the action's user-facing perspective — the inputs and outputs didn't change. But if you were pinned to `@v2.1.0` and started seeing `400` responses in your workflow logs in early 2026, that's the explanation: bump to `@v3` and you're back online.
+
+The release cadence going forward is "patch on `@v3` when GoFile changes within the v3 contract; major-bump when they break it again." The repo's [releases page](https://github.com/ahnafnafee/action-upload-gofile/releases) tracks every change.
+
+## Try It Yourself
+
+The action is on the [GitHub Marketplace](https://github.com/marketplace/actions/upload-to-gofile-io) and the source is at [github.com/ahnafnafee/action-upload-gofile](https://github.com/ahnafnafee/action-upload-gofile). Pin to `@v3` for safety patches or `@v3.0.0` if you want manual control over upgrades.
+
+Credits where due: this action extends [@rnkdsh/action-upload-diawi](https://github.com/rnkdsh/action-upload-diawi). The Diawi action's clean output wiring was the template — GoFile API specifics, the QR code output, and the v3 rewrite are this project's contributions.
+
+---
+
+# Bookworm: A Privacy-First Library That Only Needs a Number
+
+URL: https://www.ahnafnafee.dev/blog/bookworm-privacy-first-library
+Published: 2022-05-01 (updated 2026-05-20)
+Summary: How I built a personal book library with Mullvad-style split-token authentication, Google Books edition deduplication, NYT Best Seller caching, and a mobile-first responsive layout — all on Next.js 16, Drizzle ORM, and Neon Postgres, with zero email or password.
+Topics: Privacy, Authentication, Next.js, TypeScript, Full Stack
+
+Every book app wants your email. Goodreads wants your social graph. Literal wants your Apple ID. The StoryGraph wants to know how you're feeling. I just wanted to save what I've read, wishlist what I haven't, and search for books — without handing over an identity. So I built [Bookworm](https://bookworm.ahnafnafee.dev/): a privacy-first personal library that authenticates you with a single 16-digit account number, inspired by Mullvad VPN. It runs on Next.js 16, React 19, Drizzle ORM + Neon Postgres, and Tailwind v4 + shadcn/ui — with split-token authentication, Google Books edition deduplication, and cron-pre-warmed caching that keeps third-party API latency away from your first visitor of the day.
+
+## The Problem: Every Book App Wants Your Email
+
+The minimum viable book library is surprisingly small: save books you've read, wishlist books you want to read, and search for new ones. That's three verbs. Yet every app in this space layers on email verification, social feeds, recommendation engines, and account recovery flows — each one a surface for data collection and a friction point at signup.
+
+Mullvad VPN proved a different model works: generate an account number, write it down, done. No email. No password. No "verify your identity" loop. Bookworm applies the same idea to a book library. You get a 16-digit number at signup — shown once, never stored in plaintext, never recoverable — and that's the only credential that exists.
+
+## The Auth Problem: No Email, No Password, No Recovery
+
+The 16-digit token is a CSPRNG-generated number using `crypto.randomInt`. The interesting part isn't generating it — it's storing it safely for lookup without painting a target on the database.
+
+**Why not bcrypt the whole thing?** Bcrypt (or argon2id) hashes the entire token. To verify a login, you'd compare the hash against every row — O(n) argon2id verifications per attempt. At 10K users, that's 10K memory-hard hash comparisons just to log someone in.
+
+**Why not SHA-256 the whole thing?** SHA-256 is fast and indexable — O(1) lookup. But a 10-digit numeric space (the remaining digits after splitting) has ~33 bits of entropy. An attacker with a leaked DB brute-forces that in milliseconds against a fast hash.
+
+**The split-token pattern** solves both. The token is split at position 6: the first 6 digits (`token_lookup`) are stored plaintext and uniquely indexed for O(1) lookup. The remaining 10 digits (`secret`) are argon2id-hashed. One indexed scan narrows the search to exactly one row; one memory-hard verify confirms the match:
+
+```ts
+export function splitToken(raw: string): { lookup: string; secret: string } {
+  return {
+    lookup: raw.slice(0, TOKEN_LOOKUP_LENGTH),
+    secret: raw.slice(TOKEN_LOOKUP_LENGTH)
+  }
+}
+
+export function hashSecret(secret: string): Promise<string> {
+  return hash(secret, { memoryCost: 19456, timeCost: 2, parallelism: 1 })
+}
+```
+
+```mermaid
+flowchart LR
+    A["16-digit input"] --> B["Split at position 6"]
+    B --> C["First 6: token_lookup"]
+    B --> D["Last 10: secret"]
+    C --> E["Unique index scan → 1 row"]
+    D --> F["argon2id verify against that row"]
+    E --> F
+    F -->|Match| G["Issue opaque session"]
+    F -->|No match| H["Generic error"]
+```
+
+Sessions are opaque 32-byte IDs stored in Postgres — not JWTs. A JWT is self-validating; you can't revoke it without a revocation list. An opaque ID is deleted on logout, period. Sessions live for 30 days and rotate every 7 days of activity. Rate limits cap signup at 20/hour per IP and login at 10/minute per IP.
+
+## Search That Doesn't Waste Your Time
+
+Raw Google Books returns 40 results for "Dune." Fifteen of them are the same Frank Herbert novel in different editions, and half have no cover thumbnail. The search pipeline in [`lib/books/google.ts`](https://github.com/ahnafnafee/Bookworm/blob/main/lib/books/google.ts) does four things beyond the raw API call:
+
+1. **Query preprocessing** — when no field prefix is detected, the query is wrapped in quotes for exact-phrase ranking. If the user types `intitle:dune`, it passes through untouched.
+2. **Edition deduplication** — results are keyed on normalized `title|firstAuthor`. Same key? Keep the edition with the better cover + rating score.
+3. **Thumbnail-preferring sort** — results with covers bubble to the top. Nobody clicks a grey placeholder.
+4. **Field operators** — users can type `intitle:dune`, `inauthor:"ursula le guin"`, `isbn:9780747532743` directly.
+
+The dedup and ranking logic is ~15 lines:
+
+```ts
+function score(b: BookSummary): number {
+  return (b.thumbnail ? 10 : 0) + (b.rating ?? 0)
+}
+
+function dedupAndRank(items: BookSummary[]): BookSummary[] {
+  const seen = new Map<string, BookSummary>()
+  for (const item of items) {
+    if (!item.title) continue
+    const key = `${normalizeForDedup(item.title)}|${normalizeForDedup(firstAuthor(item.authors))}`
+    const existing = seen.get(key)
+    if (!existing || score(item) > score(existing)) {
+      seen.set(key, item)
+    }
+  }
+  return Array.from(seen.values()).sort((a, b) => {
+    const thumbDiff = (b.thumbnail ? 1 : 0) - (a.thumbnail ? 1 : 0)
+    if (thumbDiff !== 0) return thumbDiff
+    return (b.rating ?? 0) - (a.rating ?? 0)
+  })
+}
+```
+
+## Caching: Don't Pay for the Same API Call Twice
+
+Every third-party API call is wrapped in `unstable_cache` from `next/cache`, each with a TTL that matches how often the data actually changes:
+
+| Data                  | TTL    | Why                                        |
+| --------------------- | ------ | ------------------------------------------ |
+| NYT Best Sellers      | 24 h   | Lists update weekly; 1/day is plenty       |
+| Google Books search   | 10 min | Most users repeat queries within a session |
+| Book detail           | 24 h   | Book metadata rarely changes               |
+| NYT-to-Google mapping | 7 days | Title-to-Google-ID resolution is stable    |
+
+Book detail gets an extra in-memory LRU (500 entries) on top of the `unstable_cache` layer — hot-path dedup without paying the cache deserialization cost.
+
+A Vercel Cron hits `/api/cron/warm-nyt` daily at 06:00 UTC, calls `revalidateTag("nyt")`, and refetches. The first real visitor of the day never pays the cold NYT API latency:
+
+```ts
+export const searchGoogleBooks = unstable_cache(performSearch, ['google-books-search-v2'], {
+  revalidate: 600,
+  tags: ['google-books']
+})
+```
+
+## Mobile-First, Server-First
+
+The layout is a single `flex-col md:flex-row` container. Below `md:` — bottom tab bar (`BottomNav`) with safe-area padding for iOS, sticky at the bottom, always reachable with one thumb. Above `md:` — a sidebar with logo, nav links, and user menu, hidden on mobile via `md:flex` / `md:hidden`. Both share a single `NAV_ITEMS` array so navigation stays in sync automatically.
+
+All data fetching runs in Server Components. Client components are used only where interactivity is unavoidable — the search form, book detail dialogs, and the theme toggle. Every server action calls `requireUser()`, which re-verifies the session against the database on every request. The proxy (`proxy.ts` — Next.js 16's renamed middleware convention) handles UX redirects only; it is not a security boundary.
+
+## What's Next
+
+- **Import/export** — dump your library as JSON or CSV, import it into a fresh account.
+- **Reading stats** — yearly reading goals, pages logged, streak tracking.
+- **Shared reading lists** — still privacy-first: share a token to a list, not an email to a platform.
+- **Self-hosting guide** — for people who don't want to trust any third-party deployment.
+
+## Try It
+
+Live at [bookworm.ahnafnafee.dev](https://bookworm.ahnafnafee.dev/). Source at [github.com/ahnafnafee/Bookworm](https://github.com/ahnafnafee/Bookworm). No email. No password. Just a number.
+
+---
+
+# Performance Analysis of 3D Mesh Simplification Algorithms: QEM vs. Vertex Clustering on CAD and Organic Models
+
+URL: https://www.ahnafnafee.dev/research/mesh-decimation-benchmark
+Published: 2025-12-08
+Summary: A 2×2×2 factorial study comparing Quadric Error Metrics and Vertex Clustering across CAD and organic meshes — Clustering is 60–80× faster, while QEM trades speed for fidelity that collapses on sparse CAD geometry at 90% reduction.
+Topics: 3D Graphics, Computer Graphics, Mesh Simplification, Computer Geometry, Statistical Analysis
+
+This study provides empirical evidence that mesh simplification algorithm selection must be informed by **both** the source topology and the target decimation ratio. Given the widespread use of mesh decimation in game engines, VR/AR applications, and 3D printing pipelines, understanding when to use which algorithm is critical.
+
+---
+
+## Key Findings
+
+Our results support all three research hypotheses with strong statistical significance:
+
+**Finding 1: Universal Speed Advantage.**
+Vertex Clustering is **60–80× faster** than QEM across all conditions ($p < 0.001$). For a typical organic model with 300k vertices, Clustering completes in ~0.03 seconds (suitable for real-time LOD at 60 FPS), while QEM requires ~1.29 seconds (acceptable only for offline preprocessing).
+
+**Finding 2: Topology-Conditional Fidelity.**
+QEM's geometric accuracy advantage is **highly conditional**. It offers superior fidelity on organic surfaces (mean Hausdorff Distance = 0.006 vs. 0.013 for Clustering), effectively halving the error. However, it **catastrophically fails** on sparse CAD geometries at 90% decimation (mean HD = 0.034), performing significantly worse than Clustering.
+
+**Finding 3: Stability vs. Optimality Trade-off.**
+Clustering exhibits remarkable error stability (coefficient of variation $< 15\%$) across all conditions, whereas QEM's error variance increases by 300% when applied to unsuitable topologies.
+
+---
+
+## Methodology
+
+We utilized a $2 \times 2 \times 2$ factorial design:
+
+- **Factor 1: Algorithm** — Quadric Edge Collapse Decimation (QEM) vs. Vertex Clustering
+- **Factor 2: Mesh Type** — Clean CAD (ModelNet40) vs. Organic Scanned (Thingi10k)
+- **Factor 3: Decimation Level** — Moderate (50%) vs. Extreme (90%)
+
+### Datasets
+
+We curated a balanced dataset of **30 models** to mitigate selection bias:
+
+- **Clean CAD**: 15 models from [ModelNet40](https://modelnet.cs.princeton.edu/). Man-made objects (airplanes, chairs, guitars) with sharp edges, large planar surfaces, and 18k–80k vertices.
+- **Organic Scanned**: 15 models from [Thingi10k](https://ten-thousand-models.appspot.com/). 3D scans of sculptures, animals, and characters with smooth curvatures, 10k–600k vertices, and surface noise typical of scanning.
+
+### Metrics
+
+1. **Execution Time**: Wall-clock time with warm-up runs and 5 measured repetitions using `time.perf_counter_ns()`
+2. **Geometric Fidelity**: Two-sided Hausdorff Distance $\max(d(A,B), d(B,A))$, measuring maximum deviation between original mesh $A$ and simplified mesh $B$
+
+### Statistical Analysis
+
+Three-way ANOVA with Tukey HSD post-hoc tests. Significance level $\alpha = 0.05$, 95% confidence intervals. Total of **120 observations** across the factorial design.
+
+---
+
+## Algorithm Background
+
+### Quadric Error Metrics (QEM)
+
+QEM is a high-quality decimation algorithm that iteratively collapses edges to minimize geometric error. Each face incident to a vertex defines a plane, and the error at a vertex is the sum of squared distances to all incident planes:
+
+$$\Delta(v) = v^T Q v$$
+
+where $Q$ is a symmetric $4 \times 4$ matrix. For an edge collapse $(v_1, v_2) \to \bar{v}$, the new vertex inherits combined quadrics:
+
+$$\bar{Q} = Q_1 + Q_2$$
+
+The optimal placement minimizes $\bar{v}^T \bar{Q} \bar{v}$.
+
+**Complexity**: $O(n \log n)$ due to priority queue maintenance.
+
+### Vertex Clustering
+
+Vertex Clustering is a fast, low-memory technique using spatial hashing:
+
+1. Compute bounding box and divide into uniform 3D grid cells
+2. Map each vertex to cell index: $\text{cell}(v) = \lfloor (v - v_{\text{min}}) / \delta \rfloor$
+3. Collapse all vertices within a cell to representative vertex
+4. Remove degenerate faces
+
+**Complexity**: $O(n)$ with constant-time bin assignments.
+
+---
+
+## Results
+
+### Summary Statistics
+
+| Algorithm      | Mesh Type              | Time (s)      | Hausdorff Dist. |
+| :------------- | :--------------------- | :------------ | :-------------- |
+| **Clustering** | Clean CAD (ModelNet40) | 0.005 ± 0.004 | 0.006 ± 0.006   |
+| **Clustering** | Organic (Thingi10k)    | 0.032 ± 0.062 | 0.013 ± 0.012   |
+| **QEM**        | Clean CAD (ModelNet40) | 0.259 ± 0.178 | 0.034 ± 0.061   |
+| **QEM**        | Organic (Thingi10k)    | 1.290 ± 1.718 | 0.006 ± 0.007   |
+
+<p className='mb-8 text-center text-sm text-gray-500 dark:text-gray-400'>
+  Table 1: Mean ± SD across all decimation levels. Lower Hausdorff Distance indicates better geometric preservation.
+</p>
+
+### Execution Time Analysis
+
+The three-way ANOVA revealed a statistically significant main effect for Algorithm:
+
+$$F(1,112) \approx 22.89, \quad p < 0.001$$
+
+The **Algorithm × Mesh Type interaction** was also significant ($F(1,112) \approx 10.09$, $p = 0.002$):
+
+- Clustering: under 0.05s regardless of input complexity
+- QEM: 0.26s (CAD) → 1.29s (Organic) — a **~40× performance gap**
+
+This gap arises from QEM's priority queue maintenance requiring $O(\log n)$ heap updates per edge collapse, whereas Clustering performs constant-time spatial hashing.
+
+### Geometric Fidelity Analysis
+
+Significant effects for Algorithm ($p=0.008$), Mesh Type ($p=0.011$), and Decimation Level ($p=0.001$). The **Algorithm × Type interaction** was significant ($p=0.004$).
+
+**Critical finding**: QEM catastrophically fails on CAD models at 90% decimation.
+
+Failure case analysis:
+
+- **Wing Collapse (Airplane Model)**: QEM eliminates thin planar surfaces defining wings—quadric error cannot distinguish "safe" interior edges from silhouette-critical boundaries
+- **Leg Detachment (Chair Model)**: Supporting columns with 200–300 vertices disappear as QEM prioritizes the larger seat surface
+
+Clustering's voxelization maintains coarse volumetric approximation—appearing "blocky" but preserving global topology.
+
+### Effect Size Analysis
+
+Cohen's $d$ confirms practical significance:
+
+**Execution Time:**
+
+- Algorithm effect: $d = 0.81$ (large)
+- Mesh Type effect: $d = 0.54$ (medium)
+- Algorithm × Type interaction: $d = 1.04$ (very large)
+
+**Hausdorff Distance:**
+
+- QEM on CAD vs. Clustering on CAD at 90%: $d = 0.98$ (very large)
+
+---
+
+## Practical Recommendations
+
+- **Real-time VR/AR**: Use Clustering exclusively ($<16$ms frame budget)
+- **Offline CAD simplification at 90%**: Prefer Clustering to avoid topological collapse
+- **High-fidelity organic reduction at 50%**: QEM provides optimal surface preservation
+- **Unknown topology pipelines**: Implement hybrid routing based on vertex density
+
+The "one-size-fits-all" approach is suboptimal. Future pipelines should incorporate **topology detection** as preprocessing to route meshes to algorithm-appropriate strategies.
+
+---
+
+## Limitations
+
+- **Non-normality**: Shapiro-Wilk tests revealed deviations ($W \approx 0.53$, $p < 0.001$). ANOVA is generally robust, but p-values should be interpreted with caution.
+- **Sample Size**: $N=120$ (30 models × 2 algorithms × 2 decimation levels)
+- **Single Error Metric**: Only Hausdorff Distance measured
+
+---
+
+# SongMirror
+
+URL: https://www.ahnafnafee.dev/portfolio/songmirror
+Published: 2026-07-11 (updated 2026-07-22)
+Summary: A self-hosted, always-on playlist sync for Spotify, Apple Music, YouTube Music, and Jellyfin, with a browser app, one-off transfers, and ISRC-accurate matching. A free, open-source Soundiiz alternative you run yourself.
+Stack: python, typescript, react, docker, tailwindcss, rest-api
+
+## Overview
+
+SongMirror keeps the playlists you curate on one service mirrored across all the others. Spotify, Apple Music, YouTube Music, and a local, Jellyfin-ready download folder stay identical without manual re-adding, one-by-one copying, or a paid cloud service holding your library. It runs one-way with a chosen source of truth, or as a full bidirectional (N-way) sync where an add or removal on any service propagates everywhere. I built it as a free, open-source alternative to Soundiiz and TuneMyMusic that you own and host yourself.
+
+I wrote up the engineering behind it in a dedicated post: [Mirroring My Spotify Playlists to Apple Music, YouTube Music, and Jellyfin](/blog/songmirror-playlist-sync).
+
+## What I Built
+
+It started as a headless Python engine and grew into a browser app on the same core:
+
+- **Sync engine** in Python: ISRC-first matching with Unicode-aware fuzzy fallbacks (RapidFuzz plus anyascii romanization, anchored by track duration), oldest-first date-added ordering, and a paranoid removal path guarded by a dry-run default, per-pass caps, and net-loss and empty-snapshot protection.
+- **Web app** with a FastAPI backend and a React single-page UI: connect each service, build any number of named syncs, run one-off transfers, and watch every match, add, and removal stream live over server-sent events. A `services` layer drives the engine so the web layer never touches it directly.
+- **Four connectors** behind one `MirrorTarget` interface: Spotify (OAuth), Apple Music (paste two web-player tokens, no developer account), YouTube Music (the official Data API v3), and Jellyfin (API key) for the local download mirror.
+- **Docker deployment**: one `docker compose up -d` serves the UI and runs your syncs on schedule. Everything is configured in the browser and saved to a local data folder, so no credentials ever leave the machine.
+
+## Highlights
+
+- Cross-catalog matching that survives multi-artist credit drift, remaster and "Official Music Video" suffixes, and non-Latin scripts, never guessing when nothing clears the bar.
+- Bidirectional N-way sync with echo suppression via a per-provider canonical snapshot, add-wins conflict resolution, and a read-collapse guard against transient API hiccups.
+- One-off transfers with pause, resume, and stop, plus manual resolution of tracks that could not be matched automatically.
+- A Jellyfin-ready local audio mirror through spotDL, with per-playlist folders, real playlist covers, and an auto-updated `.m3u8`.
+
+## Screenshots
+
+<div className='not-prose my-6 grid grid-cols-1 gap-3 sm:grid-cols-2'>
+  <img
+    src='/images/songmirror-dashboard.png'
+    alt='SongMirror dashboard showing sync status, configured sync jobs, a live activity feed, and connected Spotify, Apple Music, YouTube Music, and Jellyfin services'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/songmirror-wizard.png'
+    alt='The SongMirror setup wizard choosing a one-way or bidirectional N-way direction for a sync job'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/songmirror-accounts.png'
+    alt='The Accounts page for connecting Spotify, Apple Music, YouTube Music, and Jellyfin in the browser'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/songmirror-playlists.png'
+    alt='Browsing playlists across connected services with cover art and track counts, and pairing playlists that do not share a name'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
+
+The source is on [GitHub](https://github.com/ahnafnafee/songmirror), MIT-licensed, and the default run is a dry run that prints every add and removal it would make before touching a single playlist.
+
+---
+
+# Rally
+
+URL: https://www.ahnafnafee.dev/portfolio/rally
+Published: 2026-06-20 (updated 2026-07-23)
+Summary: A mobile, gamified, crowdsourced map of 1,450,000+ courts and fields across nine sports worldwide, with live free, busy, or full status verified by the players who actually show up. Built on Expo, Supabase, and Cloudflare.
+Stack: react-native, expo, typescript, supabase, postgresql, serverless, python
+
+## Overview
+
+Rally turns finding a place to play into a game of its own. More than 1,450,000 courts, pitches, fields, and grounds sit on one live map across nine sports, anywhere in the world, and the answer to "is it free, busy, or full right now" comes from the players standing on the court, verified by GPS. Log a check-in, add a court that is missing, or confirm someone else's, and you earn XP, a currency called Aces, levels, streaks, badges, and a spot on the seasonal leaderboard.
+
+<AppDownloadCTA heading='Play Rally' subtext='Free on Android.' playStore='https://play.google.com/store/apps/details?id=dev.ahnafnafee.rally' web='https://rally.ahnafnafee.dev' />
+
+## What I Built
+
+Rally is a mobile-only app backed by a swappable, self-hostable stack:
+
+- **Expo and React Native app** for iOS and Android, with a MapLibre map, drag-to-place court creation, a fullscreen picker, and every user-facing string behind typed i18n keys.
+- **Supabase backend** on Postgres and PostGIS: the spatial schema, RPCs, the XP and Aces economy, crowdsourcing with proof-of-presence, rate limits, and row-level security on every table, all covered by a green test suite.
+- **Cloudflare Workers** as the `rally-api` proxy the app always talks to, so the backend can be swapped without an app rebuild, with D1 serving the static court catalog from the edge and R2 holding photos and nightly backups.
+- **A worldwide data pipeline** in Python that merges OpenStreetMap (whole planet via QLever), Overture Places, and official open-data censuses into one cleaned, deduplicated seed.
+
+## Highlights
+
+- Nine sports on one map, tennis, pickleball, soccer, basketball, baseball, football, volleyball, badminton, and cricket, each with sport-aware attributes.
+- Live free, busy, or full status with surface, lights, price, and hours, plus filters for free-now, lights, indoor, and surface type.
+- Crowdsourced court adds that publish only once two nearby players confirm on-site, so no photo spam.
+- Proof-of-presence check-ins by GPS or a court QR code keep the map honest.
+- A full gamification layer: XP, Aces, levels, streaks, earned badges, quests, and Local, Friends, and Global leaderboards.
+- Games and groups that auto-fill open slots with nearby players, plus push notifications and deep links.
+- A Follow tab with live scores, results, a majors calendar, and per-sport news.
+
+## Full Write-Up
+
+I broke down the data model, the proof-of-presence design, and the anti-gaming rules in a dedicated post: [Building Rally: A Live, Crowdsourced Court Map That Stays Honest](/blog/rally-crowdsourced-court-map).
+
+## Screenshots
+
+<div className='not-prose my-6 grid grid-cols-2 gap-3 sm:grid-cols-3'>
+  <img
+    src='/images/rally-map.webp'
+    alt='The Rally map screen showing nearby court markers with open-court counts, a sport selector, and filter chips for free now, lights, and surface'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/rally-court.webp'
+    alt="Tapping a court on the Rally map to see its live card with address, court count, lights, and free status before heading over"
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/rally-game.webp'
+    alt='A Rally pickup game with an open slot, a share invite link, and a GPS check-in button that verifies attendance and pays out points'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/rally-profile.webp'
+    alt='A Rally player profile showing rank progress from Rookie to Scout, a live season tally of Aces and streak, a badge pin board, and saved courts'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/rally-follow.webp'
+    alt="Rally's Follow tab showing a happening-now tournament, an upcoming league, recent match results, and the latest headlines for the selected sport"
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/rally-sports.webp'
+    alt='The Rally sport picker listing tennis, pickleball, soccer, basketball, baseball, and football with the number of courts and fields mapped for each'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
+
+See it at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
+
+---
+
+# Pinned Calendar
+
+URL: https://www.ahnafnafee.dev/portfolio/pinned-calendar
+Published: 2026-06-03 (updated 2026-07-14)
+Summary: An Android app that pins this week's Google Calendar events and to-dos to your notification shade, self-healing and fully on-device. Kotlin, Jetpack Compose, and Material You.
+Stack: kotlin, android, android-studio
+
+## Overview
+
+Pinned Calendar keeps this week's Google Calendar events and your to-dos in a single ongoing notification at the top of the Android shade. It reads the calendars already synced on your device, so there is no Google sign-in, no OAuth, and no internet permission, and your schedule never leaves the phone. The pin is self-healing: swipe it away by accident and it re-posts itself, and when you do want it gone you switch it off in the app or turn on swipe-twice-to-remove.
+
+<AppDownloadCTA
+  heading='Get Pinned Calendar'
+  subtext='Coming soon to Google Play. The latest signed APK is on GitHub Releases.'
+  web='https://pinnedcalendar.ahnafnafee.dev'
+/>
+
+## What I Built
+
+A privacy-first productivity app with a testable, platform-decoupled core:
+
+- **Pure-Kotlin core** for windowing, day-bucketing, and content building, unit-tested and independent of Android, consumed by a thin platform layer of `RemoteViews`, WorkManager, and receivers.
+- **Persistent, self-healing notification** with no foreground service, a delete-intent receiver that re-posts on swipe, and Top, Normal, or Silent priority.
+- **Local to-dos** stored in DataStore that merge into the same agenda and carry forward day to day until done.
+- **Material 3 and Material You** throughout: wallpaper-based dynamic color, seed colors, AMOLED black, selectable fonts, and a theme- and accent-adaptive launcher icon.
+
+## Highlights
+
+- Reads device calendars through Android's Calendar Provider with per-calendar colors, no account or network required.
+- Day-grouped agenda (Today, Tomorrow, and weekday sections) with tasks shown as their own rows.
+- A configurable window of the next 3 days, this week, 7 days, or 14 days, with per-calendar filtering and an item cap.
+- Background refresh with WorkManager and a `ContentObserver` for instant updates, and the pin restores itself after reboots and app updates.
+- Offline by design: no `INTERNET` permission, no analytics, no accounts, and minimal permissions.
+
+## Full Write-Up
+
+I broke down the self-healing notification, the on-device calendar reads, and the testable date math in a dedicated post: [Pinned Calendar: A Self-Healing, Offline Agenda for Android](/blog/pinned-calendar).
+
+## Screenshots
+
+<div className='not-prose my-6 grid grid-cols-2 gap-3 sm:grid-cols-3'>
+  <img
+    src='/images/pinned-calendar-notification-light.png'
+    alt="Pinned Calendar's persistent notification showing the week's agenda in light mode"
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/pinned-calendar-notification-dark.png'
+    alt="Pinned Calendar's persistent notification showing the week's agenda in dark mode"
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/pinned-calendar-settings.png'
+    alt='The Pinned Calendar settings tab with Material You cards for notifications, time window, and calendars'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
+
+It is open source and MIT-licensed on [GitHub](https://github.com/ahnafnafee/pinned-calendar), with more at [pinnedcalendar.ahnafnafee.dev](https://pinnedcalendar.ahnafnafee.dev).
+
+---
+
+# Player 2
+
+URL: https://www.ahnafnafee.dev/portfolio/player2
+Published: 2022-12-01 (updated 2026-07-14)
+Summary: An AI-assisted matchmaking and social platform for gamers that I revamped, shipped across app stores, and now operate and scale.
+Stack: react-native, expo, react, typescript, next.js, java, spring-boot, postgresql, aws, docker, ci-cd, android, ios
+
+## Overview
+
+Player 2 is an AI-assisted matchmaking and social platform for gamers across PC, console, and mobile. Instead of pairing people by rank, it matches on personality and playstyle from a short in-app survey, and it only suggests games players actually own. As the engineer behind its current release, I revamped Player 2 end to end at Dynasty 11 Studios, shipped it across the App Store and Play Store, and now operate and scale the entire technical stack, from the backend and the apps down to the infrastructure and the app store presence.
+
+<AppDownloadCTA
+  heading='Get Player 2'
+  subtext='Free on iOS and Android.'
+  appStore='https://apps.apple.com/us/app/player-2/id1619655364'
+  playStore='https://play.google.com/store/apps/details?id=com.dynasty11.player2app'
+/>
+
+## What I Built
+
+Player 2 spans eight repositories and every layer of the stack:
+
+- **Mobile app** in Expo and React Native, shipping in four languages with full right-to-left support for Arabic, released through EAS with over-the-air patch updates.
+- **Web client** as a TanStack Start app on a single Cloudflare Worker, serving both the marketing site and a browser version of the product.
+- **Backend** in Spring Boot 4 and Java 25, built as a modular monolith on PostgreSQL 17, with real-time chat and presence over STOMP WebSockets and Redis.
+- **Infrastructure** self-hosted on Hetzner and Coolify, with Terraform, Grafana Cloud, and OpenTelemetry for provisioning and observability, all behind Cloudflare.
+- **Supporting services** including an admin console, a self-built deep-link service that replaced a paid vendor, and the full marketing and app store optimization workstream.
+
+## Highlights
+
+- Personality-based matchmaking using cosine and game-library similarity with a diversity re-rank.
+- A transparent, two-stage recommendation feed that learns from seen, tap, and dismiss signals.
+- Self-hosted replacements for paid platform, deep-link, and monitoring services.
+- App store optimization with listings localized into nine languages and a repeatable Figma screenshot pipeline.
+
+## Full Write-Up
+
+I broke down the whole effort across infrastructure, product, and marketing in a dedicated post: [Revamping and Scaling Player 2](/blog/building-player-2-sole-developer).
+
+## Press
+
+- [Dynasty 11 Studios Announces Foray into Social Networking with the Player 2 Platform for Gamers](https://markets.businessinsider.com/news/stocks/dynasty-11-studios-announces-foray-into-social-networking-with-the-player-2-platform-for-gamers-1031485933)
+
+## Screenshots
+
+<div className='not-prose my-6 grid grid-cols-2 gap-3 sm:grid-cols-3'>
+  <img
+    src='/images/player2/player2-matchmaking.webp'
+    alt='Player 2 matchmaking screen suggesting a compatible player'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/player2/player2-communities.webp'
+    alt='Player 2 Playgrounds communities screen'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/player2/player2-gamehub.webp'
+    alt='Player 2 GameHub personalized social feed'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/player2/player2-game-library.webp'
+    alt='Player 2 game library with critic and player scores'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/player2/player2-lfg.webp'
+    alt='Player 2 Looking for Group hub'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/player2/player2-player-card.webp'
+    alt='Customizable Player 2 profile and Player Card'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
+
+<AppDownloadCTA
+  heading='Ready to play?'
+  subtext='Download Player 2 free on iOS and Android.'
+  appStore='https://apps.apple.com/us/app/player-2/id1619655364'
+  playStore='https://play.google.com/store/apps/details?id=com.dynasty11.player2app'
+/>
+
+---
+
+# Upload Files to GoFile.io — GitHub Action
+
+URL: https://www.ahnafnafee.dev/portfolio/action-upload-gofile
+Published: 2022-10-01 (updated 2026-05-20)
+Summary: A GitHub Action that uploads any file from your CI/CD workflow to GoFile.io and returns a public URL plus QR code — no S3 bucket, no auth dance, one step in your YAML.
+Stack: github-actions, ci-cd, node-js, javascript, rest-api
+
+## Overview
+
+`action-upload-gofile` is a JavaScript-based GitHub Action that uploads any file from a CI/CD workflow to [GoFile.io](https://gofile.io) and returns a public URL plus a QR code as workflow outputs. It's built for the boring-but-common need to share a build artifact — an APK, an IPA, a debug log, a screenshot bundle — without standing up an S3 bucket, configuring an IAM policy, or asking the recipient to authenticate against GitHub just to download a file.
+
+The action runs on the standard `node16` runtime that ships with every GitHub-hosted runner, so there's no Docker pull and no cold-start tax. Drop two lines into your workflow YAML, pipe an optional GoFile API token through `secrets`, and the next step gets a public URL it can post to Slack, email, or a PR comment.
+
+## Features
+
+- One-step upload — `uses: ahnafnafee/action-upload-gofile@v3.0.0` with `file:` and you're done.
+- Returns a public `url` and `qrcode` as workflow outputs, consumable by any downstream step.
+- Optional `token` input for higher rate limits and access to private buckets.
+- Anonymous mode for quick artifact shares — no GoFile account required.
+- File-agnostic: APKs, IPAs, ZIPs, build logs, screenshots, JSON dumps — anything under GoFile's size cap.
+- Updated for the v3.0.0 GoFile API (Dec 2025); the `@v3` tag tracks GoFile's current API contract.
+
+## Built With
+
+- **[Node.js 16](https://nodejs.org/)** — The default GitHub-hosted runner runtime. No additional setup, no Docker pull.
+- **[GoFile REST API](https://gofile.io/api)** — A single `POST /uploadFile` call carries the multipart body; GoFile's response includes the public URL and a server-generated QR code.
+- **[@actions/core](https://github.com/actions/toolkit/tree/main/packages/core)** — The GitHub Actions Toolkit primitive for reading inputs and setting workflow outputs.
+
+## Use Cases
+
+- **Mobile build distribution** — Push an APK or IPA on every merge to `main` and post the public link to a QA Slack channel.
+- **PR-comment artifact previews** — A follow-up `actions/github-script` step can attach the URL as a PR comment so reviewers download the build with one click.
+- **Debug log handoff** — Failing CI jobs that produce hundreds of MB of logs can publish them ephemerally instead of bloating Actions artifact storage.
+- **Screenshot bundles from visual-regression runs** — Upload the diff folder and share the URL with the designer instead of zipping and emailing.
+
+## Usage
+
+### Basic upload (anonymous)
+
+```yaml
+steps:
+  - name: Upload File
+    id: gofile
+    uses: ahnafnafee/action-upload-gofile@v3.0.0
+    with:
+      file: ./example.webp
+
+  - name: View URL and QR Code
+    run: |
+      echo "GoFile URL = ${{ steps.gofile.outputs.url }}"
+      echo "GoFile QR Code = ${{ steps.gofile.outputs.qrcode }}"
+```
+
+### With a GoFile API token
+
+```yaml
+steps:
+  - name: Upload File
+    id: gofile
+    uses: ahnafnafee/action-upload-gofile@v3.0.0
+    with:
+      token: ${{ secrets.GOFILE_TOKEN }}
+      file: ./build/app-release.apk
+```
+
+The token lifts rate limits and lets you upload into a private bucket. Store it as a repository secret — never inline it.
+
+## Version History
+
+- **v3.0.0** (Dec 2025) — Rewritten to match the new GoFile API.
+- **v2.1.0** (Oct 2022) — Added `serverName` input for specifying a GoFile server bucket.
+- **v2.0.1** (Aug 2022) — Initial stable release.
+
+Pin to a major tag (`@v3`) to receive patch updates automatically; pin to a full version (`@v3.0.0`) if you'd rather opt in manually.
+
+## Credits
+
+Extends [@rnkdsh/action-upload-diawi](https://github.com/rnkdsh/action-upload-diawi). The Diawi action's clean approach to multipart upload and output wiring was the starting point — GoFile's API specifics, the QR code output, and the v3 rewrite are this project's contributions.
+
+---
+
+# EAS Build Webhook Notification
+
+URL: https://www.ahnafnafee.dev/portfolio/eas-build-discord
+Published: 2022-07-01
+Summary: 🔔 Build/Submit Notification EAS Webhook using Discord
+Stack: aws, serverless, cloud, javascript, discord, expo, webhook
+
+## Overview
+
+`EAS Build Webhook Notification` is a serverless lambda to notify the result of EAS build.
+
+## Objectives
+
+- Primary objective with this project was to learn build automation
+- Wanted to create pipelines in AWS for faster mobile builds
+- Also got exposure to serverless, lambda functions for AWS
+- Discord API is fun to experiment with!
+
+## Screenshots
+
+![Screenshot 1](https://github.com/ahnafnafee/eas-discord-build-notify/raw/main/assets/success.png)
+![Screenshot 2](https://github.com/ahnafnafee/eas-discord-build-notify/raw/main/assets/fail.png)
+
+---
+
+# Bookworm
+
+URL: https://www.ahnafnafee.dev/portfolio/bookworm
+Published: 2022-05-01
+Summary: 📚 Bookworm is a mobile-targeted website where book lovers can search and store books they have read in their library
+Stack: react, next.js, typescript, javascript, Tailwindcss, supabase, chakraui, postgresql
+
+## Overview
+
+Bookworm is a mobile-targeted website where book lovers can search and store books they have read in their library.
+They will also be able to wish-list books they want to read. It’s an all-in-one book tracker.
+
+## Features
+
+- ❤ Minimal: Minimalist UI for the most essential features
+- 🔌 Real-time search: Search books by name, author, genre etc
+
+## Built With
+
+- [Next.js](https://nextjs.org/) - Used for the frontend as well all middleware applications for the app.
+  Handles most server-side capabilities as well
+
+- [Supabase](https://www.supabase.com) - Used for the frontend as well all middleware applications for the app.
+  Handles most server-side capabilities as well
+
+## Screenshots
+
+![Screenshot 1](https://ik.imagekit.io/8ieg70pvks/portfolio/bookworm_ss_01.png?ik-sdk-version=javascript-1.4.3&updatedAt=1671244590863)
+
+---
+
+# PostScript Preview
+
+URL: https://www.ahnafnafee.dev/portfolio/postscript-preview
+Published: 2021-11-01
+Summary: 💻 PostScript Preview is an extension that helps to preview EPS and PS files in Visual Studio Code
+Stack: typescript, vscode, javascript, node.js, bash
+
+<div className='row-center'>
+  <a href='https://marketplace.visualstudio.com/items?itemName=ahnafnafee.postscript-preview'>
+    <img
+      src='https://img.shields.io/visual-studio-marketplace/v/ahnafnafee.postscript-preview?logo=visualstudiocode&style=for-the-badge'
+      alt='Version'
+    />
+  </a>
+  <a href='https://marketplace.visualstudio.com/items?itemName=ahnafnafee.postscript-preview'>
+    <img
+      src='https://img.shields.io/visual-studio-marketplace/r/ahnafnafee.postscript-preview?logo=visualstudiocode&style=for-the-badge'
+      alt='Rating'
+    />
+  </a>
+  <a href='https://marketplace.visualstudio.com/items?itemName=ahnafnafee.postscript-preview'>
+    <img
+      src='https://img.shields.io/visual-studio-marketplace/azure-devops/installs/total/ahnafnafee.postscript-preview?logo=visualstudiocode&style=for-the-badge'
+      alt='Installs'
+    />
+  </a>
+</div>
+
+## Overview
+
+PostScript Preview is an extension that helps to preview EPS and PS files in Visual Studio Code. It supercharges
+how your view PostScript files by also allowing to pan and zoom the image. You can also change the preview
+background for extra customizations.
+
+## Screenshots
+
+![Screenshot 1](https://ik.imagekit.io/8ieg70pvks/portfolio/pp_ss_01.gif?ik-sdk-version=javascript-1.4.3&updatedAt=1671244656231)
+
+---
+
+# The Void Above
+
+URL: https://www.ahnafnafee.dev/portfolio/the-void-above
+Published: 2021-04-01
+Summary: 🚀 The Void Above is a new action/adventure game from the developers, Void Gaming.
+Stack: unity, csharp, photoshop, figma, illustrator, maya, perforce
+
+## Overview
+
+The Void Above is a new action/adventure game from the developers, Void Gaming.
+
+The Void Above takes aspects from Journey and Death Stranding. Our game will have a focus on both action and adventure
+where the player can explore the beautiful landscape while fighting enemies along the way.
+
+## Responsibilities
+
+- As the producer, I was in charge of overlooking all aspects of development and implementation within the game.
+  I held weekly scrum meetings with my team every week to ensure all features were being delivered on time.
+  My firm philosophy of iterating through implementing and playtesting from the early design phase helped
+  ensure all parts of the game was always up to code.
+
+- I was also the lead UI designer for the game, so every UI was singularly crafted by me with user experience
+  in mind. Throughout the weekly play tests, I noted each issue and features that players were asking for from
+  the interface standpoint and implemented them based off that.
+
+- As the project lead, I was familiar with every aspect of development, from the programming to the art side.
+  I analyzed the existing code and applied efficient tweaks and solutions, reducing draw calls by more than 60%.
+  From the modelling standpoint, I UV’d existing models in the game and reduced their mesh to boost performance
+  in-game; utilized LODs for this process.
+
+- I developed the HUD manager within the game which utilized multiple vector calculations to draw the GUI in
+  the proper area of the camera view. The HUD was also made modular so that it could be applied to any
+  GameObject in the scene.
+
+## Blog Links
+
+- [Second Alpha Out](https://voidgaminginc.wixsite.com/thevoidabove/post/second-alpha-out)
+- [Revamp to Sci-Fi UI](https://voidgaminginc.wixsite.com/thevoidabove/post/revamp-to-sci-fi-ui)
+- [Ramping up to Release 1.0](https://voidgaminginc.wixsite.com/thevoidabove/post/ramping-up-to-release-1-0)
+
+## Code Snippets
+
+- [HudManager](https://gist.github.com/ahnafnafee/2a991775d6ecf1be3c9e88505c025935)
+
+> Code for `OffScreen GUI Indicator`
+
+```csharp
+void OffScreen(int i)
+{
+    //if transform destroy, then remove from list
+    if (huds[i].m_Target == null)
+    {
+        huds.Remove(huds[i]);
+        return;
+    }
+
+    if (huds[i].Arrow.ArrowIcon != null && huds[i].Arrow.ShowArrow)
+    {
+
+        //Check target if OnScreen
+        if (!HudUtility.isOnScreen(HudUtility.ScreenPosition(huds[i].m_Target), huds[i].m_Target))
+        {
+            //Get the relative position of arrow
+            Vector3 ArrowPosition = huds[i].m_Target.position + huds[i].Arrow.ArrowOffset;
+            Vector3 pointArrow = HudUtility.mCamera.WorldToScreenPoint(ArrowPosition);
+
+            pointArrow.x = pointArrow.x / HudUtility.mCamera.pixelWidth;
+            pointArrow.y = pointArrow.y / HudUtility.mCamera.pixelHeight;
+
+            Vector3 mForward = huds[i].m_Target.position - HudUtility.mCamera.transform.position;
+            Vector3 mDir = HudUtility.mCamera.transform.InverseTransformDirection(mForward);
+            mDir = mDir.normalized / 5;
+            pointArrow.x = 0.5f + mDir.x * 20f / HudUtility.mCamera.aspect;
+            pointArrow.y = 0.5f + mDir.y * 20f;
+
+            if (pointArrow.z < 0)
+            {
+                pointArrow *= -1f;
+                pointArrow *= -1f;
+            }
+            //Arrow
+            GUI.color = huds[i].m_Color;
+
+            float Xpos = HudUtility.mCamera.pixelWidth * pointArrow.x;
+            float Ypos = HudUtility.mCamera.pixelHeight * (1f - pointArrow.y);
+
+            //palpating effect
+            if (huds[i].isPalpitin)
+            {
+                Palpating(huds[i]);
+            }
+
+            //Calculate area to rotate guis
+            float mRot = HudUtility.GetRotation(HudUtility.mCamera.pixelWidth / (2), HudUtility.mCamera.pixelHeight / (2), Xpos, Ypos);
+          //Get pivot from area
+            Vector2 mPivot = HudUtility.GetPivot(Xpos, Ypos, huds[i].Arrow.ArrowSize);
+            //Arrow
+            Matrix4x4 matrix = GUI.matrix;
+            GUIUtility.RotateAroundPivot(mRot, mPivot);
+            GUI.DrawTexture(new Rect(mPivot.x - HudUtility.HalfSize(huds[i].Arrow.ArrowSize), mPivot.y - HudUtility.HalfSize(huds[i].Arrow.ArrowSize), huds[i].Arrow.ArrowSize, huds[i].Arrow.ArrowSize), huds[i].Arrow.ArrowIcon);
+            GUI.matrix = matrix;
+
+            float ClampedX = Mathf.Clamp(mPivot.x, 20, (Screen.width - offScreenIconSize) - 20);
+            float ClampedY = Mathf.Clamp(mPivot.y, 20, (Screen.height - offScreenIconSize) - 20);
+            GUI.DrawTexture(HudUtility.ScalerRect(new Rect(ClampedX, ClampedY, offScreenIconSize, offScreenIconSize)), huds[i].m_Icon);
+
+            Vector2 ClampedTextPosition = mPivot;
+            //Icons and Text
+            if (!huds[i].ShowDistance)
+            {
+                if (!string.IsNullOrEmpty(huds[i].m_Text))
+                {
+                    Vector2 size = TextStyle.CalcSize(new GUIContent(huds[i].m_Text));
+                    ClampedTextPosition.x = Mathf.Clamp(ClampedTextPosition.x, (size.x + offScreenIconSize) + 30, ((Screen.width - offScreenIconSize)- 10) - size.x);
+                    ClampedTextPosition.y = Mathf.Clamp(ClampedTextPosition.y, (size.y + offScreenIconSize) + 35, ((Screen.height - size.y) - offScreenIconSize) - 20);
+                    GUI.Label(HudUtility.ScalerRect(new Rect(ClampedTextPosition.x - (size.x / 2), ClampedTextPosition.y - (size.y / 2), size.x, size.y)), huds[i].m_Text, TextStyle);
+                }
+            }
+            else
+            {
+                float Distance = Vector3.Distance(localPlayer.position, huds[i].m_Target.position);
+                if (!string.IsNullOrEmpty(huds[i].m_Text))
+                {
+                    string text = huds[i].m_Text + "\n <color=white>[" + string.Format("{0:N0}m", Distance) + "]</color>";
+                    Vector2 size = TextStyle.CalcSize(new GUIContent(text));
+                    ClampedTextPosition.x = Mathf.Clamp(ClampedTextPosition.x, (size.x + offScreenIconSize) + 30, ((Screen.width - offScreenIconSize) - 10) - size.x);
+                    ClampedTextPosition.y = Mathf.Clamp(ClampedTextPosition.y, (size.y + offScreenIconSize) + 35, ((Screen.height - size.y) - offScreenIconSize) - 20);
+                    GUI.Label(HudUtility.ScalerRect(new Rect(ClampedTextPosition.x - (size.x / 2), (ClampedTextPosition.y - (size.y / 2)), size.x, size.y)), text, TextStyle);
+                }
+                else
+                {
+                    string text = "<color=white>[" + string.Format("{0:N0}m", Distance) + "]</color>";
+                    Vector2 size = TextStyle.CalcSize(new GUIContent(text));
+                    ClampedTextPosition.x = Mathf.Clamp(ClampedTextPosition.x, (size.x + offScreenIconSize) + 30, ((Screen.width - offScreenIconSize) - 10) - size.x);
+                    ClampedTextPosition.y = Mathf.Clamp(ClampedTextPosition.y, (size.y + offScreenIconSize) + 35, ((Screen.height - size.y) - offScreenIconSize) - 20);
+                    GUI.Label(HudUtility.ScalerRect(new Rect(ClampedTextPosition.x - (size.x / 2) , (ClampedTextPosition.y - (size.y / 2)), size.x, size.y)),text, TextStyle);
+                }
+            }
+        }
+        GUI.color = Color.white;
+    }
+}
+```
+
+- [WeaponScript](https://gist.github.com/ahnafnafee/b3dc1844bff72ac473a1f8f91137dcca)
+
+> Shoot function excerpt
+
+```csharp
+public void Shoot()
+{
+    //Find the exact hit position using a raycast
+    Ray ray = mainCam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+    RaycastHit hit;
+
+    //check if ray hits something
+    Vector3 targetPoint;
+    //
+    if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
+    {
+        targetPoint = hit.point;
+    }
+    else
+    {
+        Physics.Raycast(ray, out hit, Mathf.Infinity);
+        targetPoint = ray.origin + ray.direction * 10000.0f;
+    }
+
+    //Calculate direction from attackPoint to targetPoint
+    var position = attackPoint.position;
+
+    Vector3 directionWithoutSpread = targetPoint - position;
+
+    // For debugging bullet path
+    Debug.DrawRay(position, directionWithoutSpread, Color.red, 7, false);
+
+
+    //Calculate spread
+    float x = Random.Range(-spread, spread);
+    float y = Random.Range(-spread, spread);
+
+    //Calculate new direction with spread
+    Vector3 directionWithSpread = directionWithoutSpread + new Vector3(x, y, 0);
+
+    //Instantiate bullet/projectile
+    var currentBullet = Instantiate(GameObject.Find("Player").GetComponent<Player>().isPowered() ? poweredBullet : bullet, position, Quaternion.identity);
+
+
+    GameObject.Find("Player").GetComponent<Player>().Shoot();
+    currentBullet.transform.forward = directionWithSpread.normalized;
+
+    currentBullet.GetComponent<Rigidbody>().AddForce(directionWithoutSpread.normalized * shootForce, ForceMode.Impulse);
+    currentBullet.GetComponent<Rigidbody>().AddForce(mainCam.transform.up * upwardForce, ForceMode.Impulse);
+
+    AkSoundEngine.PostEvent("shoot_event",this.gameObject);
+    StartCoroutine(DelayTrail(currentBullet, 0.01f));
+}
+```
+
+## Screenshots
+
+![Screenshot 1](https://ik.imagekit.io/8ieg70pvks/portfolio/tva_ss_01.jpg?ik-sdk-version=javascript-1.4.3)
+![Screenshot 2](https://ik.imagekit.io/8ieg70pvks/portfolio/tva_ss_02.jpg?ik-sdk-version=javascript-1.4.3)
+
+---
+
+# Checkers Party
+
+URL: https://www.ahnafnafee.dev/portfolio/checkers-party
+Published: 2020-12-01
+Summary: ⚪ Checkers Party is a two-player game designed to be played remotely ⚫
+Stack: unity, csharp, photoshop, figma, illustrator, maya
+
+## Overview
+
+Checkers Party is a two-player game designed to be played remotely. When each player joins the game, they will
+be placed in a lobby until both players are ready to play. Once they are prepared to play, they will be taken
+to the main checkers game, with the board facing their respective side. The objective of each player will be to
+take out all their opponent’s pieces.
+
+The game will provide a medium for players to interactively play with each other in real-time from any
+remote location in the world.
+
+## Responsibilities
+
+- I was the lead game developer for this project. Primarily, I was in charge of creating the multiplayer
+  functionality for the game. Despite networking being a new avenue for me, I successfully
+  integrated a cross-platform multiplayer solution into the game.
+
+- Furthermore, I ensured that the user interface utilized common tropes found in multiplayer games like lobbies
+  and rooms so that the common experience is maintained. I was able to leverage multiple modules offered in
+  Photon’s documentation to achieve that while modifying the source code where I saw fit.
+
+- I also utilized animations across multiple GameObjects, further increasing user interactivity.
+
+- As the game needed to be ported to Android, increasing performance for low-end devices was essential.
+  So, I optimized the game’s resources across all front, compressing existing sprites as well tweaking
+  advanced quality settings in the render pipeline. I was able to reduce draw calls by more than 95% in the end.
+
+## Code Snippets
+
+- [Launcher](https://gist.github.com/ahnafnafee/0a0c88f69f2676c5ff7d42315e9cd897)
+
+## Screenshots
+
+![Screenshot 1](https://ik.imagekit.io/8ieg70pvks/portfolio/checkers_ss_01.jpg?ik-sdk-version=javascript-1.4.3)
+![Screenshot 2](https://ik.imagekit.io/8ieg70pvks/portfolio/checkers_ss_02.jpg?ik-sdk-version=javascript-1.4.3)
+
+---
+
+# TimeKour
+
+URL: https://www.ahnafnafee.dev/portfolio/timekour
+Published: 2020-09-01
+Summary: Synthwave-styled parkour game
+Stack: unity, csharp, photoshop, figma, illustrator
+
+## Overview
+
+TimeKour is a retro-wave themed game with parkour mechanics. This includes Wall Run, High Jumps and also Grappling.
+Your objective will be to run across the obstacles and kill all enemies in each level. Bullets in this world move
+slowly so it will give you time to dodge and weave while performing some cool stunts to defeat your enemies.
+
+## Responsibilities
+
+- This was a solo indie project that I completed from scratch in one month. My primary motivation of the idea came
+  from Mirror’s Edge. I developed the first-person controller which utilized the basic parkour mechanics using
+  a grappler.
+
+- I got exposure to FMOD while developing this game. I heavily utilized the options offered by the software to mix
+  and add tracks into my game to spice up the gameplay.
+
+- Another game mechanic I added into the game was SuperHot’s slow bullet time. Basically, I added the ability to
+  freeze time to dodge enemy bullets while performing parkour.
+
+## Screenshots
+
+![Screenshot 1](https://ik.imagekit.io/8ieg70pvks/portfolio/timekour_ss_01.jpg?ik-sdk-version=javascript-1.4.3)
+![Screenshot 2](https://ik.imagekit.io/8ieg70pvks/portfolio/timekour_ss_02.jpg?ik-sdk-version=javascript-1.4.3)
+
+---
+
+# Sky Pirates
+
+URL: https://www.ahnafnafee.dev/portfolio/sky-pirates
+Published: 2020-06-01
+Summary: Sky Pirates is a single player, arcade style bullet hell
+Stack: unity, csharp, photoshop, figma, illustrator
+
+## Overview
+
+Sky Pirates is a single player, scrolling, arcade style, bullet hell game; the player controls a customizable
+sea plane, capable of submersing itself underwater. On the run from the king, the player must tackle various
+missions to earn money, which is spent on upgrades for the plane; these upgrades range from new weapons, power-ups,
+and increased stats for the plane. These missions pit the player against numerous enemies above and below water
+for the player; ultimately, the goal is to defeat the King Frond’s massive Man O’ War ship and escape his grasp.
+
+## Responsibilities
+
+- For the game Sky Pirates, I was the Lead Artist of the team. I was in charge of creating and incorporating all
+  art assets into the game and ensured the theme was maintained through the development lifecycle.
+
+- Beside the art, I was also in charge of adding the audio into game to make the environment as dynamic and
+  lively as possible.
+
+- The pixel art I created took inspiration from Hayao Miyazaki’s film, Porco Rosso. The user interface also followed
+  the same theme which I also implemented into the game.
+
+- I also created 2D frames and converted them into animations within Unity. From the development side, I set up
+  animation states for the main player.
+
+## Screenshots
+
+![Screenshot 1](https://ik.imagekit.io/8ieg70pvks/portfolio/sky_ss_01.png?ik-sdk-version=javascript-1.4.3)
+![Screenshot 2](https://ik.imagekit.io/8ieg70pvks/portfolio/sky_ss_02.png?ik-sdk-version=javascript-1.4.3)
+
+---
+
+# Need for ABC
+
+URL: https://www.ahnafnafee.dev/portfolio/need-for-abc
+Published: 2020-05-01
+Summary: 🎮🚗 An Alphabet Game for kids
+Stack: unity, csharp, photoshop, figma, illustrator
+
+## Overview
+
+Need for ABC is a game targeted towards children where they can drive around in an open world with a car and
+learn the alphabet. You will be timed on how fast you can find the alphabets.
+
+## Credits
+
+- [Planet Assets](https://kenney.nl/assets/nature-kit)
+- [Car model](https://kenney.nl/assets/car-kit)
+- Inspiration from [here](https://brackeysgames.itch.io/shrinking-planet)
+- Planet gravity inspired from [here](https://www.youtube.com/watch?v=UeqfHkfPNh4)
+- Polygon ParticleFX particles used
+
+## Screenshots
+
+![Screenshot 1](https://ik.imagekit.io/8ieg70pvks/portfolio/nfa_ss_01.png?ik-sdk-version=javascript-1.4.3)
+![Screenshot 2](https://ik.imagekit.io/8ieg70pvks/portfolio/nfa_ss_02.png?ik-sdk-version=javascript-1.4.3)
+![Screenshot 3](https://ik.imagekit.io/8ieg70pvks/portfolio/nfa_ss_03.png?ik-sdk-version=javascript-1.4.3)
+
+---
+
+# Icebreaker
+
+URL: https://www.ahnafnafee.dev/portfolio/icebreaker
+Published: 2020-03-01
+Summary: 💗 Dating app for matching personality
+Stack: css, node.js, html, javascript, mysql, jquery
+
+## Overview
+
+- Web application that will be a dating app where users can match with others based primarily on personality
+- Profile can contain pictures of a person’s room, hobbies, interests, etc
+- All information is organized neatly into a webpage, mainly relying on imagery
+- Will display names and general information about themselves
+- Can choose who they want to talk to by pressing yes or no
+- Will include personal profiles with login and logout functionality
+
+## Features
+
+- Mobile friendly
+- Scalable to provide compatibility with most mobile devices
+- Working login and logout system
+- Utilizes client sessions and cookies to save user data
+- Working registration and profile pages
+
+## Built With
+
+- HTML - Provides the general framework to the application
+- CSS - Used to add style to the web application
+- JavaScript - Adds functionality to the website
+- MySQL - Stores user data (log in, password, profile data, etc)
+- Node.js - Used to host a local server to test functionality and debug. Used various modules to improve
+  developer experience - express - client-sessions - bcrypt - morgan
+- AJAX - Client-side programming technique used to establish an active connection between the
+  browser and the web server
+
+## Screenshots
+
+![Screenshot 1](https://ik.imagekit.io/8ieg70pvks/portfolio/icebreaker_ss_01.png?ik-sdk-version=javascript-1.4.3)
+
+---
+
+# Roomie
+
+URL: https://www.ahnafnafee.dev/portfolio/roomie
+Published: 2019-06-01
+Summary: 📱🏫 Tinder Style Roommate Finder App. 🔎🃏 An app that can say goodbye to all the hassles of a college student and present them with simplicity and connectivity
+Stack: firebase, java, kotlin, adobe-xd, android-studio, trello
+
+## Overview
+
+Bookworm is an app that works similarly to the Tinder app, where instead of matching with a potential partner,
+the user will be able to match with a potential roommate. It is targeted towards college students people are looking
+for roommates. They are able to input their major, hobbies, and other preferences as well as their school or their
+general location where they are looking for roommates. The app will then generate potential roommates with similar
+interests for the user to match with, and the user can decide whether they want to reach out to their matches or not.
+
+## Technologies Used
+
+- Java
+- Android Studio
+- Kotlin
+- Firebase
+- Adobe Xd
+- Trello
+
+## Screenshots
+
+![Screenshot 1](https://ik.imagekit.io/8ieg70pvks/portfolio/roomie_ss_01.jpg?ik-sdk-version=javascript-1.4.3)
+![Screenshot 2](https://ik.imagekit.io/8ieg70pvks/portfolio/roomie_ss_02.jpg?ik-sdk-version=javascript-1.4.3)
+
+---

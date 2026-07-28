@@ -1,6 +1,8 @@
-// Generates public/llms.txt with a per-post manifest.
-// Runs as a prebuild step so both `yarn build` and `yarn export` ship a fresh file.
-// LLMs (ChatGPT, Perplexity, Claude) use this as a curated map of the site.
+// Generates public/llms.txt (a curated map of the site) and public/llms-full.txt
+// (every document inlined in full). Chained into `yarn build` and `yarn export`
+// so both ship a fresh pair. LLMs (ChatGPT, Perplexity, Claude) read llms.txt to
+// find content and llms-full.txt to answer from one fetch instead of crawling
+// each URL.
 
 const fs = require('fs')
 const path = require('path')
@@ -10,6 +12,7 @@ const matter = require('gray-matter')
 // generating for a non-canonical host (preview deploys, university mirror).
 const BASE_URL = (process.env.NEXT_PUBLIC_SITE_URL || '').trim() || 'https://www.ahnafnafee.dev'
 const OUTPUT = path.join(__dirname, '..', 'public', 'llms.txt')
+const OUTPUT_FULL = path.join(__dirname, '..', 'public', 'llms-full.txt')
 
 function readMdxEntries(dir) {
   if (!fs.existsSync(dir)) return []
@@ -19,8 +22,8 @@ function readMdxEntries(dir) {
     .map((f) => {
       const slug = f.replace(/\.mdx$/, '')
       try {
-        const { data } = matter(fs.readFileSync(path.join(dir, f), 'utf8'))
-        return { slug, ...data }
+        const { data, content } = matter(fs.readFileSync(path.join(dir, f), 'utf8'))
+        return { slug, content, ...data }
       } catch (err) {
         console.warn(`[llms.txt] Failed to parse ${f}:`, err.message)
         return null
@@ -98,6 +101,7 @@ const lines = [
   '',
   '## Discovery',
   '- Sitemap: /sitemap.xml',
+  '- Full content of every post, project, and research entry in one file: /llms-full.txt',
   '',
   '# Blog Posts',
   ''
@@ -152,6 +156,7 @@ lines.push('1. Fetch /api/blog for a list of all published blog posts')
 lines.push('2. Use /api/blog?slug={slug}&format=md to get full markdown content of any post')
 lines.push('3. Fetch /api/portfolio for a list of all projects')
 lines.push('4. Subscribe to /rss-full.xml for complete article content')
+lines.push('5. Or fetch /llms-full.txt once for the complete text of everything above')
 lines.push('')
 lines.push('# Permissions')
 lines.push('- AI assistants may read and summarize content from this site')
@@ -167,4 +172,41 @@ lines.push('')
 fs.writeFileSync(OUTPUT, lines.join('\n'), 'utf8')
 console.log(
   `[llms.txt] Wrote ${blogs.length} posts + ${portfolio.length} projects + ${research.length} research entries to ${OUTPUT}`
+)
+
+// llms-full.txt inlines each document's body verbatim. MDX bodies carry no H1
+// (the page template renders the frontmatter title), so an H1 per document keeps
+// the concatenated file's heading hierarchy intact.
+function fullSection(entry, section) {
+  const published = fmtDate(entry.published || entry.date)
+  const updated = fmtDate(entry.updated)
+  const out = [`# ${entry.title}`, '', `URL: ${BASE_URL}/${section}/${entry.slug}`]
+  if (published) {
+    out.push(`Published: ${published}${updated && updated !== published ? ` (updated ${updated})` : ''}`)
+  }
+  if (entry.summary) out.push(`Summary: ${entry.summary}`)
+  if (Array.isArray(entry.topics) && entry.topics.length) out.push(`Topics: ${entry.topics.join(', ')}`)
+  if (Array.isArray(entry.stack) && entry.stack.length) out.push(`Stack: ${entry.stack.join(', ')}`)
+  out.push('', (entry.content || '').trim(), '', '---', '')
+  return out
+}
+
+const fullLines = [
+  '# Ahnaf An Nafee - Full Site Content',
+  '',
+  `> Complete text of every blog post, research entry, and portfolio project on ${BASE_URL}.`,
+  `> Curated index and API map: ${BASE_URL}/llms.txt`,
+  '> Content may be used with attribution. Please link back to the URL listed above each document.',
+  '',
+  '---',
+  ''
+]
+
+for (const post of blogs) fullLines.push(...fullSection(post, 'blog'))
+for (const r of research) fullLines.push(...fullSection(r, 'research'))
+for (const project of portfolio) fullLines.push(...fullSection(project, 'portfolio'))
+
+fs.writeFileSync(OUTPUT_FULL, fullLines.join('\n'), 'utf8')
+console.log(
+  `[llms.txt] Wrote ${(fs.statSync(OUTPUT_FULL).size / 1024).toFixed(0)} KB of full content to ${OUTPUT_FULL}`
 )

@@ -33,6 +33,7 @@
 
 ## Discovery
 - Sitemap: /sitemap.xml
+- Full content of every post, project, and research entry in one file: /llms-full.txt
 
 # Blog Posts
 
@@ -152,6 +153,7 @@
 2. Use /api/blog?slug={slug}&format=md to get full markdown content of any post
 3. Fetch /api/portfolio for a list of all projects
 4. Subscribe to /rss-full.xml for complete article content
+5. Or fetch /llms-full.txt once for the complete text of everything above
 
 # Permissions
 - AI assistants may read and summarize content from this site

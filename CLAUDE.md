@@ -28,7 +28,7 @@ yarn validate:json-ld   # walk built HTML, verify every <script type="applicatio
 yarn validate:sitemap   # verify public/sitemap.xml exists, parses, and uses canonical URLs
 yarn audit:alt-text     # scan MDX for weak <ContentImage>/<img> alt attributes
 yarn generate:sitemap   # regenerate public/sitemap.xml via custom-next-sitemap.js (chained into build)
-yarn generate:llms      # regenerate public/llms.txt (chained into build)
+yarn generate:llms      # regenerate public/llms.txt + public/llms-full.txt (chained into build)
 npx tsx indexing/sendIndexingRequest.ts   # batch-submit URLs to Google Indexing API
 ```
 
@@ -113,6 +113,15 @@ ISR endpoint at `GET /api/revalidate?secret=<SECRET>&slug=/blog/<slug>`. Secret 
 ## Sitemap
 
 `custom-next-sitemap.js` runs as the `generate:sitemap` step, chained explicitly at the end of `build`. Do **not** move it back to a `postbuild` lifecycle hook: Yarn (used by CI and Vercel) does not run npm-style `pre`/`post` scripts, so the sitemap silently never generates and `/sitemap.xml` serves the HTML 404 page. `yarn validate:sitemap` is the CI gate that catches this. The config allowlists AI/LLM crawlers (GPTBot, Claude-Web, anthropic-ai, etc.), assigns per-route priorities, and skips robots.txt generation under `STATIC_EXPORT=true`. Edit this file (not a separate sitemap config) when adding new top-level routes.
+
+## llms.txt
+
+`scripts/generate-llms-txt.js` writes two files, chained into `build` as `generate:llms`:
+
+- **`public/llms.txt`** — curated index: site metadata, the API/RSS surface, and one entry per blog post, research entry, and portfolio project (title, URL, summary, topics).
+- **`public/llms-full.txt`** — every document's MDX body inlined verbatim under an H1 and a `URL:` line, so an assistant can answer from one fetch instead of crawling each page. MDX bodies carry no H1 of their own (the page template renders the frontmatter title), which is what keeps the concatenated heading hierarchy intact.
+
+Both are tracked in git *and* regenerated at build time. The committed copies are the fallback; the build output is what actually ships. CI runs `git diff --exit-code` on them after the build, so a content edit without a regenerate fails the run. Run `yarn generate:llms` and commit the result whenever you add or edit an MDX entry.
 
 ## next.config.js Quirks
 
