@@ -60,6 +60,13 @@ jobs:
           # PWA / service worker generation is fine on CI; no secrets required.
           NEXT_TELEMETRY_DISABLED: '1'
 
+      # Runs against the output of the `yarn build` step above, which uses the
+      # same package manager as the Vercel build. A sitemap that fails to
+      # generate is otherwise invisible until a crawler hits /sitemap.xml and
+      # gets the HTML 404 page instead.
+      - name: Validate sitemap
+        run: yarn validate:sitemap
+
       - name: Validate JSON-LD on built output
         run: yarn validate:json-ld
 

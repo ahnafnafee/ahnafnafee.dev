@@ -167,8 +167,10 @@ module.exports = {
       // next-sitemap reads `image.loc.href` and writes it into <image:loc>
       // WITHOUT XML-escaping. Wrap in a URL object to validate, then expose
       // a pre-escaped href so `&` in query strings becomes `&amp;`.
+      // Frontmatter images may be site-relative (`/images/foo.png`), so resolve
+      // against siteUrl — <image:loc> requires an absolute URL.
       try {
-        const validated = new URL(imageMeta.url)
+        const validated = new URL(imageMeta.url, siteUrl)
         entry.images = [{ loc: { href: validated.href.replace(/&/g, '&amp;') }, title: imageMeta.title }]
       } catch (err) {
         console.warn(`[sitemap] image URL invalid for ${urlPath}:`, err.message)

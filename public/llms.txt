@@ -36,7 +36,27 @@
 
 # Blog Posts
 
-- [Building a Local LLM-Powered Hybrid OCR Engine](https://www.ahnafnafee.dev/blog/local-llm-pdf-ocr) — published 2026-04-26
+- [Revamping and Scaling Player 2: Infrastructure, Product, and Marketing](https://www.ahnafnafee.dev/blog/building-player-2-sole-developer) — published 2026-07-14
+  Summary: How I revamped an established gaming social app end to end, shipped it across the App Store and Play Store, and operationalized and scaled it: self-hosted infrastructure on Hetzner and Coolify, a modular Spring Boot backend, an Expo mobile app and a TanStack web client, app store optimization in nine languages, and an analytics-driven feedback loop.
+  Topics: Full-Stack Engineering, Infrastructure, Mobile Development, Marketing, App Store Optimization
+
+- [Mirroring My Spotify Playlists to Apple Music, YouTube Music, and Jellyfin](https://www.ahnafnafee.dev/blog/songmirror-playlist-sync) — published 2026-07-13, updated 2026-07-15
+  Summary: How I built SongMirror, an always-on mirror that keeps my Spotify playlists synced to Apple Music, YouTube Music, and a Jellyfin-ready download folder, one-way by default with an optional bidirectional N-way mode, using ISRC-first matching, Unicode-aware fuzzy fallbacks, date-added ordering, and destructive-removal safety rails, all in Python and runnable from Docker or Task Scheduler.
+  Topics: Music Sync, Spotify, Self-Hosted, Python, Automation, APIs
+
+- [Building Rally: A Live, Crowdsourced Court Map That Stays Honest](https://www.ahnafnafee.dev/blog/rally-crowdsourced-court-map) — published 2026-07-11, updated 2026-07-23
+  Summary: How I built Rally, a gamified, crowdsourced map of 1,450,000+ courts and fields across nine sports worldwide, using an Expo and React Native app on Supabase Postgres with PostGIS, a Cloudflare D1 edge replica for court reads, GPS proof-of-presence check-ins, and server-side-only scoring so the crowdsourced map stays trustworthy.
+  Topics: React Native, Supabase, PostGIS, Maps, Mobile, Crowdsourcing
+
+- [Pinned Calendar: A Self-Healing, Offline Agenda for Android](https://www.ahnafnafee.dev/blog/pinned-calendar) — published 2026-06-06
+  Summary: How I built a privacy-first Android app that pins your week's Google Calendar events and to-dos to a persistent, self-healing notification — no foreground service, no sign-in, and no INTERNET permission — using Kotlin, Jetpack Compose, custom RemoteViews, WorkManager, and a delete-intent that re-posts the pin the instant you swipe it away.
+  Topics: Android, Kotlin, Jetpack Compose, Privacy, Mobile
+
+- [Bringing Real Tooling to Ollama Modelfiles](https://www.ahnafnafee.dev/blog/modelfile-syntax-extension) — published 2026-05-15, updated 2026-07-22
+  Summary: How I built a VSCode-family extension that brings syntax highlighting, an 18-rule linter, hover documentation, autocomplete, and 26+ snippets to Ollama Modelfiles — so the next time you scaffold a custom GGUF runtime, your editor catches the foot-guns before `ollama create` does.
+  Topics: Developer Tools, VSCode Extension, Ollama, Local LLM, TypeScript, TextMate Grammar
+
+- [Building a Local LLM-Powered Hybrid OCR Engine](https://www.ahnafnafee.dev/blog/local-llm-pdf-ocr) — published 2026-04-26, updated 2026-07-15
   Summary: How I built a privacy-first, fully offline OCR pipeline that pairs Surya's layout detection with local Vision Language Models (OlmOCR, GLM-OCR, Qwen3-VL) and a Needleman-Wunsch aligner — turning handwriting, forms, and scanned PDFs into pixel-perfect searchable documents on your own laptop.
   Topics: OCR, LLM, Vision Language Models, AI Engineering, Python, PDF
 
@@ -48,24 +68,44 @@
   Summary: Deep dive into building a scalable autograder using Python, Java, and the Strategy Pattern. Learn how we can automate grading for hundreds of students using "Frankenstein" code stitching, dynamic rubrics, and local LLMs.
   Topics: Education Technology, Software Architecture, Python, Java, Automation, LLM
 
+- [Uploading Files to GoFile.io From a GitHub Action](https://www.ahnafnafee.dev/blog/gofile-upload-github-action) — published 2022-10-01, updated 2026-05-20
+  Summary: I built a GitHub Action that uploads any file from your CI/CD workflow to GoFile.io and hands you back a public URL plus QR code. Here's why GoFile, the API gotchas I hit, and the v3 rewrite when GoFile changed their API in late 2025.
+  Topics: GitHub Actions, CI/CD, DevOps, File Sharing, Automation, Open Source
+
+- [Bookworm: A Privacy-First Library That Only Needs a Number](https://www.ahnafnafee.dev/blog/bookworm-privacy-first-library) — published 2022-05-01, updated 2026-05-20
+  Summary: How I built a personal book library with Mullvad-style split-token authentication, Google Books edition deduplication, NYT Best Seller caching, and a mobile-first responsive layout — all on Next.js 16, Drizzle ORM, and Neon Postgres, with zero email or password.
+  Topics: Privacy, Authentication, Next.js, TypeScript, Full Stack
+
 # Research
 
 - [Performance Analysis of 3D Mesh Simplification Algorithms: QEM vs. Vertex Clustering on CAD and Organic Models](https://www.ahnafnafee.dev/research/mesh-decimation-benchmark) — published 2025-12-08
   Summary: A 2×2×2 factorial study comparing Quadric Error Metrics and Vertex Clustering across CAD and organic meshes — Clustering is 60–80× faster, while QEM trades speed for fidelity that collapses on sparse CAD geometry at 90% reduction.
   Topics: 3D Graphics, Computer Graphics, Mesh Simplification, Computer Geometry, Statistical Analysis
-  Venue: GMU CS 657 (2025)
+  Venue: GMU CS700 (2025)
   Paper: https://www.researchgate.net/publication/400103838_Performance_Analysis_of_3D_Mesh_Simplification_Algorithms_QEM_vs_Vertex_Clustering_on_CAD_and_Organic_Models
   Code: https://github.com/ahnafnafee/mesh-decimation-benchmark
 
 # Portfolio
 
-- [Player 2](https://www.ahnafnafee.dev/portfolio/player2) — 2022-12-01
-  Summary: Player 2 - The Gamer's Companion
-  Stack: react-native, react, expo, next.js, typescript, aws, java, spring-boot, postgresql, android, ios
+- [SongMirror](https://www.ahnafnafee.dev/portfolio/songmirror) — 2026-07-11, updated 2026-07-22
+  Summary: A self-hosted, always-on playlist sync for Spotify, Apple Music, YouTube Music, and Jellyfin, with a browser app, one-off transfers, and ISRC-accurate matching. A free, open-source Soundiiz alternative you run yourself.
+  Stack: python, typescript, react, docker, tailwindcss, rest-api
 
-- [Action Upload GoFile](https://www.ahnafnafee.dev/portfolio/action-upload-gofile) — 2022-10-01
-  Summary: 📦 GitHub Action for uploading Files to Gofile.io 
-  Stack: android, ios, cloud, github-action, aws
+- [Rally](https://www.ahnafnafee.dev/portfolio/rally) — 2026-06-20, updated 2026-07-23
+  Summary: A mobile, gamified, crowdsourced map of 1,450,000+ courts and fields across nine sports worldwide, with live free, busy, or full status verified by the players who actually show up. Built on Expo, Supabase, and Cloudflare.
+  Stack: react-native, expo, typescript, supabase, postgresql, serverless, python
+
+- [Pinned Calendar](https://www.ahnafnafee.dev/portfolio/pinned-calendar) — 2026-06-03, updated 2026-07-14
+  Summary: An Android app that pins this week's Google Calendar events and to-dos to your notification shade, self-healing and fully on-device. Kotlin, Jetpack Compose, and Material You.
+  Stack: kotlin, android, android-studio
+
+- [Player 2](https://www.ahnafnafee.dev/portfolio/player2) — 2022-12-01, updated 2026-07-14
+  Summary: An AI-assisted matchmaking and social platform for gamers that I revamped, shipped across app stores, and now operate and scale.
+  Stack: react-native, expo, react, typescript, next.js, java, spring-boot, postgresql, aws, docker, ci-cd, android, ios
+
+- [Upload Files to GoFile.io — GitHub Action](https://www.ahnafnafee.dev/portfolio/action-upload-gofile) — 2022-10-01, updated 2026-05-20
+  Summary: A GitHub Action that uploads any file from your CI/CD workflow to GoFile.io and returns a public URL plus QR code — no S3 bucket, no auth dance, one step in your YAML.
+  Stack: github-actions, ci-cd, node-js, javascript, rest-api
 
 - [EAS Build Webhook Notification](https://www.ahnafnafee.dev/portfolio/eas-build-discord) — 2022-07-01
   Summary: 🔔 Build/Submit Notification EAS Webhook using Discord

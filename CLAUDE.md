@@ -25,8 +25,10 @@ yarn test:coverage      # vitest with v8 coverage report
 yarn format             # prettier write across js/ts/tsx/md/mdx/json
 yarn analyze            # bundle analyzer (cross-env ANALYZE=true next build)
 yarn validate:json-ld   # walk built HTML, verify every <script type="application/ld+json">
+yarn validate:sitemap   # verify public/sitemap.xml exists, parses, and uses canonical URLs
 yarn audit:alt-text     # scan MDX for weak <ContentImage>/<img> alt attributes
-yarn postbuild          # runs automatically after build — generates sitemap via custom-next-sitemap.js
+yarn generate:sitemap   # regenerate public/sitemap.xml via custom-next-sitemap.js (chained into build)
+yarn generate:llms      # regenerate public/llms.txt (chained into build)
 npx tsx indexing/sendIndexingRequest.ts   # batch-submit URLs to Google Indexing API
 ```
 
@@ -110,7 +112,7 @@ ISR endpoint at `GET /api/revalidate?secret=<SECRET>&slug=/blog/<slug>`. Secret 
 
 ## Sitemap
 
-`custom-next-sitemap.js` runs in `postbuild`. It allowlists AI/LLM crawlers (GPTBot, Claude-Web, anthropic-ai, etc.), assigns per-route priorities, and skips robots.txt generation under `STATIC_EXPORT=true`. Edit this file (not a separate sitemap config) when adding new top-level routes.
+`custom-next-sitemap.js` runs as the `generate:sitemap` step, chained explicitly at the end of `build`. Do **not** move it back to a `postbuild` lifecycle hook: Yarn (used by CI and Vercel) does not run npm-style `pre`/`post` scripts, so the sitemap silently never generates and `/sitemap.xml` serves the HTML 404 page. `yarn validate:sitemap` is the CI gate that catches this. The config allowlists AI/LLM crawlers (GPTBot, Claude-Web, anthropic-ai, etc.), assigns per-route priorities, and skips robots.txt generation under `STATIC_EXPORT=true`. Edit this file (not a separate sitemap config) when adding new top-level routes.
 
 ## next.config.js Quirks
 
