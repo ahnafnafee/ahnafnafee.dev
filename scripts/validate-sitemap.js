@@ -102,17 +102,28 @@ if (origins.has('http://localhost:3000') || [...origins].some((o) => o.includes(
 // robots.txt is committed while the sitemap is generated, so the two drift
 // independently. A Sitemap: line pointing at the wrong host is invisible until a
 // crawler follows it.
-if (fs.existsSync(robotsFile) && origins.size === 1) {
+if (fs.existsSync(robotsFile)) {
   const robots = fs.readFileSync(robotsFile, 'utf8')
-  const declared = [...robots.matchAll(/^\s*Sitemap:\s*(\S+)\s*$/gim)].map((m) => m[1])
-  if (declared.length === 0) fail(`${rel(robotsFile)} declares no Sitemap: line.`)
-  for (const entry of declared) {
-    try {
-      if (new URL(entry).origin !== [...origins][0]) {
-        fail(`${rel(robotsFile)} points at ${entry}, but the sitemap uses ${[...origins][0]}.`)
+
+  // /api/og renders every og:image. It sits under the broader `/api/` Disallow,
+  // so it needs an explicit Allow carve-out (longest-match wins in Google/Bing).
+  // Without it, Google silently reports each social card as "Blocked by
+  // robots.txt" and skips it for rich results.
+  if (!/^\s*Allow:\s*\/api\/og\s*$/im.test(robots)) {
+    fail(`${rel(robotsFile)} is missing "Allow: /api/og". og:image URLs fall under the /api/ Disallow.`)
+  }
+
+  if (origins.size === 1) {
+    const declared = [...robots.matchAll(/^\s*Sitemap:\s*(\S+)\s*$/gim)].map((m) => m[1])
+    if (declared.length === 0) fail(`${rel(robotsFile)} declares no Sitemap: line.`)
+    for (const entry of declared) {
+      try {
+        if (new URL(entry).origin !== [...origins][0]) {
+          fail(`${rel(robotsFile)} points at ${entry}, but the sitemap uses ${[...origins][0]}.`)
+        }
+      } catch {
+        fail(`${rel(robotsFile)} has an unparseable Sitemap: entry: ${entry}`)
       }
-    } catch {
-      fail(`${rel(robotsFile)} has an unparseable Sitemap: entry: ${entry}`)
     }
   }
 }
