@@ -116,7 +116,11 @@ module.exports = {
     policies: [
       // Single combined wildcard record so crawlers that only honor the first
       // matching User-agent don't miss the Disallow directives.
-      { userAgent: '*', allow: '/', disallow: ['/api/', '/_next/', '/static/'] },
+      // `/api/og` is carved out of the `/api/` block: it backs every og:image
+      // meta tag, so blocking it makes Google report each social card as
+      // "Blocked by robots.txt" and skip it for rich results. Longest-match
+      // wins in Google/Bing, so the Allow overrides the broader Disallow.
+      { userAgent: '*', allow: ['/', '/api/og'], disallow: ['/api/', '/_next/', '/static/'] },
       // AI / LLM crawlers — explicitly allow each so they don't fall back to
       // wildcard rules and so we have a single source of truth.
       { userAgent: 'GPTBot', allow: '/' },
