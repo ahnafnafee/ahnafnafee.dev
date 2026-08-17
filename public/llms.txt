@@ -37,13 +37,17 @@
 
 # Blog Posts
 
+- [Airlock: Private File Transfer Across Your Own Devices](https://www.ahnafnafee.dev/blog/airlock-private-tailscale-file-transfer) — published 2026-08-17
+  Summary: How I built Airlock, a self-hosted PWA for moving files between your own devices over Tailscale. Files are chunked and encrypted in the browser before upload, then resume, deduplicate, and expire after collection without the server ever receiving the key.
+  Topics: Privacy, Tailscale, Go, PWA, Encryption, Self-Hosted
+
 - [Revamping and Scaling Player 2: Infrastructure, Product, and Marketing](https://www.ahnafnafee.dev/blog/building-player-2-sole-developer) — published 2026-07-14
   Summary: How I revamped an established gaming social app end to end, shipped it across the App Store and Play Store, and operationalized and scaled it: self-hosted infrastructure on Hetzner and Coolify, a modular Spring Boot backend, an Expo mobile app and a TanStack web client, app store optimization in nine languages, and an analytics-driven feedback loop.
   Topics: Full-Stack Engineering, Infrastructure, Mobile Development, Marketing, App Store Optimization
 
-- [Mirroring My Spotify Playlists to Apple Music, YouTube Music, and Jellyfin](https://www.ahnafnafee.dev/blog/songmirror-playlist-sync) — published 2026-07-13, updated 2026-07-15
-  Summary: How I built SongMirror, an always-on mirror that keeps my Spotify playlists synced to Apple Music, YouTube Music, and a Jellyfin-ready download folder, one-way by default with an optional bidirectional N-way mode, using ISRC-first matching, Unicode-aware fuzzy fallbacks, date-added ordering, and destructive-removal safety rails, all in Python and runnable from Docker or Task Scheduler.
-  Topics: Music Sync, Spotify, Self-Hosted, Python, Automation, APIs
+- [A Self-Hosted Playlist Mirror for Seven Music Services](https://www.ahnafnafee.dev/blog/songmirror-playlist-sync) — published 2026-07-13, updated 2026-08-17
+  Summary: How I built SongMirror, an always-on playlist mirror for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music, plus a Jellyfin-ready local archive. It supports one-way sync, authoritative provider groups, and bidirectional N-way reconciliation behind ISRC-first matching, durable caches, and guarded removals.
+  Topics: Music Sync, Self-Hosted, Spotify, Python, Automation, APIs
 
 - [Building Rally: A Live, Crowdsourced Court Map That Stays Honest](https://www.ahnafnafee.dev/blog/rally-crowdsourced-court-map) — published 2026-07-11, updated 2026-07-23
   Summary: How I built Rally, a gamified, crowdsourced map of 1,450,000+ courts and fields across nine sports worldwide, using an Expo and React Native app on Supabase Postgres with PostGIS, a Cloudflare D1 edge replica for court reads, GPS proof-of-presence check-ins, and server-side-only scoring so the crowdsourced map stays trustworthy.
@@ -88,8 +92,8 @@
 
 # Portfolio
 
-- [SongMirror](https://www.ahnafnafee.dev/portfolio/songmirror) — 2026-07-11, updated 2026-07-22
-  Summary: A self-hosted, always-on playlist sync for Spotify, Apple Music, YouTube Music, and Jellyfin, with a browser app, one-off transfers, and ISRC-accurate matching. A free, open-source Soundiiz alternative you run yourself.
+- [SongMirror](https://www.ahnafnafee.dev/portfolio/songmirror) — 2026-07-11, updated 2026-08-17
+  Summary: A self-hosted, always-on playlist mirror for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music, with a browser app, one-off transfers, and a Jellyfin-ready local archive. A free, open-source Soundiiz alternative you run yourself.
   Stack: python, typescript, react, docker, tailwindcss, rest-api
 
 - [Rally](https://www.ahnafnafee.dev/portfolio/rally) — 2026-06-20, updated 2026-07-23

@@ -1,10 +1,10 @@
 ---
 title: 'SongMirror'
 date: '07/11/2026'
-updated: '07/22/2026'
+updated: '08/17/2026'
 featured: true
 category: 'software'
-summary: 'A self-hosted, always-on playlist sync for Spotify, Apple Music, YouTube Music, and Jellyfin, with a browser app, one-off transfers, and ISRC-accurate matching. A free, open-source Soundiiz alternative you run yourself.'
+summary: 'A self-hosted, always-on playlist mirror for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music, with a browser app, one-off transfers, and a Jellyfin-ready local archive. A free, open-source Soundiiz alternative you run yourself.'
 image: '/images/songmirror-og.png'
 teaser: '/images/songmirror-demo.gif'
 stack: [python, typescript, react, docker, tailwindcss, rest-api]
@@ -13,23 +13,23 @@ link: { github: 'https://github.com/ahnafnafee/songmirror' }
 
 ## Overview
 
-SongMirror keeps the playlists you curate on one service mirrored across all the others. Spotify, Apple Music, YouTube Music, and a local, Jellyfin-ready download folder stay identical without manual re-adding, one-by-one copying, or a paid cloud service holding your library. It runs one-way with a chosen source of truth, or as a full bidirectional (N-way) sync where an add or removal on any service propagates everywhere. I built it as a free, open-source alternative to Soundiiz and TuneMyMusic that you own and host yourself.
+SongMirror keeps the playlists you curate on one service mirrored across all the others. Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, YouTube Music, and a local, Jellyfin-ready download folder stay identical without manual re-adding, one-by-one copying, or a paid cloud service holding your library. It can run one-way with a chosen source of truth, use an authoritative group where two or more services jointly define the playlist, or reconcile every selected service in bidirectional (N-way) mode. I built it as a free, open-source alternative to Soundiiz and TuneMyMusic that you own and host yourself.
 
-I wrote up the engineering behind it in a dedicated post: [Mirroring My Spotify Playlists to Apple Music, YouTube Music, and Jellyfin](/blog/songmirror-playlist-sync).
+I wrote up the engineering behind it in a dedicated post: [A Self-Hosted Playlist Mirror for Seven Music Services](/blog/songmirror-playlist-sync).
 
 ## What I Built
 
 It started as a headless Python engine and grew into a browser app on the same core:
 
 - **Sync engine** in Python: ISRC-first matching with Unicode-aware fuzzy fallbacks (RapidFuzz plus anyascii romanization, anchored by track duration), oldest-first date-added ordering, and a paranoid removal path guarded by a dry-run default, per-pass caps, and net-loss and empty-snapshot protection.
-- **Web app** with a FastAPI backend and a React single-page UI: connect each service, build any number of named syncs, run one-off transfers, and watch every match, add, and removal stream live over server-sent events. A `services` layer drives the engine so the web layer never touches it directly.
-- **Four connectors** behind one `MirrorTarget` interface: Spotify (OAuth), Apple Music (paste two web-player tokens, no developer account), YouTube Music (the official Data API v3), and Jellyfin (API key) for the local download mirror.
+- **Web app** with a FastAPI backend and a React single-page UI: connect each service, build any number of named syncs, choose one-way, authoritative-group, or N-way reconciliation, run one-off transfers, and watch every match, add, and removal stream live over server-sent events. A `services` layer drives the engine so the web layer never touches it directly.
+- **Seven music-service connectors** behind one `MirrorTarget` interface: Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music. A separate Jellyfin integration keeps a local download mirror organized and playlist-ready.
 - **Docker deployment**: one `docker compose up -d` serves the UI and runs your syncs on schedule. Everything is configured in the browser and saved to a local data folder, so no credentials ever leave the machine.
 
 ## Highlights
 
 - Cross-catalog matching that survives multi-artist credit drift, remaster and "Official Music Video" suffixes, and non-Latin scripts, never guessing when nothing clears the bar.
-- Bidirectional N-way sync with echo suppression via a per-provider canonical snapshot, add-wins conflict resolution, and a read-collapse guard against transient API hiccups.
+- Authoritative groups for playlists curated across two or more services, plus bidirectional N-way sync with echo suppression via a per-provider canonical snapshot, add-wins conflict resolution, and a read-collapse guard against transient API hiccups.
 - One-off transfers with pause, resume, and stop, plus manual resolution of tracks that could not be matched automatically.
 - A Jellyfin-ready local audio mirror through spotDL, with per-playlist folders, real playlist covers, and an auto-updated `.m3u8`.
 
@@ -38,19 +38,19 @@ It started as a headless Python engine and grew into a browser app on the same c
 <div className='not-prose my-6 grid grid-cols-1 gap-3 sm:grid-cols-2'>
   <img
     src='/images/songmirror-dashboard.png'
-    alt='SongMirror dashboard showing sync status, configured sync jobs, a live activity feed, and connected Spotify, Apple Music, YouTube Music, and Jellyfin services'
+    alt='SongMirror dashboard showing sync status, configured jobs, a live activity feed, and health for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, YouTube Music, and Jellyfin'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
     src='/images/songmirror-wizard.png'
-    alt='The SongMirror setup wizard choosing a one-way or bidirectional N-way direction for a sync job'
+    alt='The SongMirror setup wizard choosing services and a one-way, authoritative-group, or bidirectional direction for a sync job'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
     src='/images/songmirror-accounts.png'
-    alt='The Accounts page for connecting Spotify, Apple Music, YouTube Music, and Jellyfin in the browser'
+    alt='The Accounts page for connecting Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, YouTube Music, and Jellyfin in the browser'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
