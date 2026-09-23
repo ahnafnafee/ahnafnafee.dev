@@ -25,6 +25,10 @@ const AREAS: Area[] = [
   {
     label: '3D Content Generation',
     className: 'bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-200'
+  },
+  {
+    label: 'Recommender Systems',
+    className: 'bg-purple-100 text-purple-800 dark:bg-purple-500/15 dark:text-purple-200'
   }
 ]
 

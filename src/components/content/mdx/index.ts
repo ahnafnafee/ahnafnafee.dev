@@ -1,3 +1,5 @@
+import { RecommendationDecisionLab } from '@/components/content/research/RecommendationDecisionLab'
+
 import { AppDownloadCTA } from './AppDownloadCTA'
 import { Blockquote } from './Blockquote'
 import { Code } from './Code'
@@ -33,6 +35,7 @@ const MDXComponents = {
   KeyPoints,
   ProjectLinks,
   AppDownloadCTA,
+  RecommendationDecisionLab,
   h2: HeadingTwo,
   h3: HeadingThree,
   h4: HeadingFour

@@ -15,15 +15,14 @@ import type { Metadata } from 'next'
 const RESEARCH_URL = `${SITE_URL}/research`
 const RESEARCH_OG_IMAGE = generateOgImage({
   title: 'Research',
-  subTitle: 'Papers and projects at the intersection of AI and 3D computer graphics',
+  subTitle: 'AI, 3D graphics, and reliable recommendation',
   type: 'research'
 })
-const RESEARCH_OG_ALT = `Research - ${SITE_NAME} - Papers and projects on AI & 3D Computer Graphics`
+const RESEARCH_OG_ALT = `Research - ${SITE_NAME} - Projects in AI, 3D graphics, and recommendation`
 
 export const metadata: Metadata = {
   title: `Research - ${SITE_NAME}`,
-  description:
-    'Papers, course projects, and ongoing investigations at the intersection of AI and 3D computer graphics by Ahnaf An Nafee.',
+  description: 'Research projects in AI, 3D computer graphics, and recommender systems by Ahnaf An Nafee.',
   keywords: [
     'Ahnaf An Nafee research',
     'ahnafnafee research',
@@ -32,6 +31,7 @@ export const metadata: Metadata = {
     'machine learning for graphics',
     'mesh simplification research',
     'AI 3D content generation',
+    'recommender systems evaluation',
     'GMU research',
     'DCXR Lab',
     'academic publications',
@@ -42,8 +42,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: `Research - ${SITE_NAME}`,
-    description:
-      'Papers, course projects, and ongoing investigations at the intersection of AI and 3D computer graphics.',
+    description: 'Research projects in AI, 3D computer graphics, and recommender systems.',
     url: RESEARCH_URL,
     siteName: SITE_NAME,
     images: [{ url: RESEARCH_OG_IMAGE, width: 1200, height: 630, alt: RESEARCH_OG_ALT, type: 'image/png' }],
@@ -53,8 +52,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: `Research - ${SITE_NAME}`,
-    description:
-      'Papers, course projects, and ongoing investigations at the intersection of AI and 3D computer graphics.',
+    description: 'Research projects in AI, 3D computer graphics, and recommender systems.',
     site: TWITTER_HANDLE,
     creator: TWITTER_HANDLE,
     images: [{ url: RESEARCH_OG_IMAGE, alt: RESEARCH_OG_ALT }]
@@ -91,8 +89,7 @@ export default async function ResearchPage() {
         '@id': webpageId,
         url: RESEARCH_URL,
         name: `Research - ${SITE_NAME}`,
-        description:
-          'Papers, course projects, and ongoing investigations at the intersection of AI and 3D computer graphics.',
+        description: 'Research projects in AI, 3D computer graphics, and recommender systems.',
         inLanguage: 'en-US',
         isPartOf: { '@type': 'WebSite', url: SITE_URL },
         primaryImageOfPage: {

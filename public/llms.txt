@@ -83,6 +83,10 @@
 
 # Research
 
+- [Recommendation Decision Lab: When Does Personalization Earn a Route?](https://www.ahnafnafee.dev/research/recommendation-decision-lab) — published 2026-09-22
+  Summary: Full-catalog temporal evaluation and a guarded recommendation service. A personalized hybrid makes a small held-out gain in a second product category.
+  Topics: Recommender Systems, Ranking, ML Evaluation, Research Engineering
+
 - [Performance Analysis of 3D Mesh Simplification Algorithms: QEM vs. Vertex Clustering on CAD and Organic Models](https://www.ahnafnafee.dev/research/mesh-decimation-benchmark) — published 2025-12-08
   Summary: A 2×2×2 factorial study comparing Quadric Error Metrics and Vertex Clustering across CAD and organic meshes — Clustering is 60–80× faster, while QEM trades speed for fidelity that collapses on sparse CAD geometry at 90% reduction.
   Topics: 3D Graphics, Computer Graphics, Mesh Simplification, Computer Geometry, Statistical Analysis

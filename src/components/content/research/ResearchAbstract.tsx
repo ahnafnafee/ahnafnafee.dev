@@ -1,5 +1,3 @@
-import { twclsx } from '@/libs/twclsx'
-
 type ResearchAbstractProps = {
   abstract: string
 }
@@ -8,28 +6,18 @@ export const ResearchAbstract: React.FunctionComponent<ResearchAbstractProps> = 
   return (
     <section
       aria-labelledby='abstract-heading'
-      className={twclsx(
-        'not-prose',
-        'bg-gray-50 dark:bg-gray-900/40',
-        'border-l-4 border-purple-500',
-        'rounded-r-lg',
-        'p-5 md:p-6',
-        'my-2'
-      )}
+      className='not-prose border-border bg-card my-2 rounded-xl border p-5 md:p-6'
     >
-      <h2
-        id='abstract-heading'
-        className={twclsx(
-          'text-center text-lg font-extrabold tracking-wider uppercase md:text-xl',
-          'text-purple-600 dark:text-purple-400',
-          'mb-4'
-        )}
-      >
-        Abstract
-      </h2>
-      <p className={twclsx('text-sm leading-relaxed md:text-base', 'text-gray-700 dark:text-gray-300')}>
-        {abstract.trim()}
-      </p>
+      <div className='mb-3 flex items-center gap-3'>
+        <span aria-hidden='true' className='h-0.5 w-7 rounded-full bg-purple-500' />
+        <h2
+          id='abstract-heading'
+          className='m-0 text-sm font-bold tracking-[0.14em] text-purple-700 uppercase dark:text-purple-300'
+        >
+          Abstract
+        </h2>
+      </div>
+      <p className='text-card-foreground m-0 text-sm leading-7 md:text-base'>{abstract.trim()}</p>
     </section>
   )
 }

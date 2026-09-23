@@ -1,0 +1,52 @@
+---
+title: 'Recommendation Decision Lab: When Does Personalization Earn a Route?'
+summary: 'Full-catalog temporal evaluation and a guarded recommendation service. A personalized hybrid makes a small held-out gain in a second product category.'
+abstract: >-
+  Recommendation experiments can look persuasive when they score only items a user has already encountered, yet fail when asked to retrieve from a full catalog. This project evaluates a train-only co-review recommender against a validation-selected popularity baseline using temporal splits of Amazon Reviews'23. On 35,905 eligible Musical Instruments review requests in a held-out category, the hybrid reached 0.008681 NDCG@10 versus 0.008007 for recent popularity, a paired difference of 0.000674 with a user-cluster 95% interval of [0.000040, 0.001338]. A local service makes the validation gate, shadow ranking, and runtime fallback inspectable. The gain is small and offline; the method is established rather than a new recommendation algorithm.
+authors:
+  - name: 'Ahnaf An Nafee'
+    url: 'https://www.ahnafnafee.dev'
+published: '09/22/2026'
+featured: false
+new: true
+section: 'others'
+category: 'ai'
+topics: ['Recommender Systems', 'Ranking', 'ML Evaluation', 'Research Engineering']
+keywords:
+  - recommender systems
+  - full-catalog ranking
+  - temporal evaluation
+  - popularity baseline
+  - co-review personalization
+  - model selection
+  - fallback routing
+  - Amazon Reviews 2023
+thumbnail: '/images/recommendation-decision-lab.png'
+links:
+  dataset: 'https://amazon-reviews-2023.github.io/data_processing/5core.html'
+related: []
+---
+
+A recommender that predicts ratings well may still fail at the task users actually see: finding relevant items among thousands they have never reviewed. This project asks a narrower, testable question. Can a small personalized layer beat a strong, transparent popularity control when both must rank the entire train-known catalog, and can the system decline personalization when the evidence or runtime conditions do not support it?
+
+<RecommendationDecisionLab />
+
+## Evaluation design
+
+The experiment uses the [Amazon Reviews'23 5-core temporal benchmark](https://amazon-reviews-2023.github.io/data_processing/5core.html). Training reviews with ratings of at least four stars provide item popularity counts and a cosine co-review neighborhood. Each eligible positive review in validation or test becomes a retrieval request. The ranker excludes the user's earlier reviewed items, searches the full train-known catalog, and counts a target absent from that catalog as a miss.
+
+Lifetime and recent popularity compete on validation to select the control. The challenger blends that control with co-review scores; validation also selects its blend weight and decides whether a user-cluster bootstrap supports opening the route. This choice is saved before the test archive is read. The design avoids selecting a winning model from test outcomes, although it cannot remove the benchmark's retrospective filtering or turn reviews into exposure logs.
+
+## Held-out evidence
+
+The selected method was tested on the previously unopened Musical Instruments category. Across 35,905 eligible requests, the hybrid reached 0.008681 NDCG@10 versus 0.008007 for recent popularity. The paired hybrid-minus-popularity difference was +0.000674, with a user-cluster 95% interval of [0.000040, 0.001338].
+
+The Musical Instruments gain is positive but small, and both absolute scores are low. Of its 35,905 eligible test requests, 12,305 targeted items absent from the training catalog. Reordering known items cannot recover those targets. The experiment therefore exposes a coverage problem as well as a ranking result.
+
+## From measurement to a usable system
+
+A local HTTP service serves the same ranking function through a hash-checked model bundle. For each request it can report the active route alongside baseline and shadow rankings, while invalid histories or challenger failures return the baseline with a reason. The interactive walkthrough above uses invented users, item names, and precomputed rankings to illustrate that behavior without distributing review records or fitted weights. The underlying repository and full local demo remain private.
+
+## Limits and next test
+
+This is a category transfer within one platform and one fixed time split, not evidence of online impact. The 5-core subset uses support measured over the full corpus, and a review is neither an impression nor an unbiased engagement label. The paired interval resamples users in that split; it does not capture refitting, shared-item dependence, or future traffic shifts. The hybrid also has not been compared with stronger modern retrieval baselines. A useful next test would use exposure-logged or less-filtered activity, independent time periods, and a predeclared comparison against those baselines.
