@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="960" viewBox="0 0 1200 960" role="img" aria-labelledby="title desc">
+  <title id="title">Recommendation Decision Lab</title>
+  <desc id="desc">A popularity baseline and a personalized hybrid meet at a validation gate. The hybrid becomes the active route, popularity remains the fallback, and a neural challenger stays in shadow.</desc>
+  <rect width="1200" height="960" fill="#151923"/>
+  <rect x="54" y="54" width="1092" height="852" rx="26" fill="#1d2230" stroke="#41465a" stroke-width="2"/>
+
+  <text x="104" y="126" fill="#c4b5fd" font-family="Arial, sans-serif" font-size="23" font-weight="700" letter-spacing="3">FULL-CATALOG / STUDY A</text>
+  <text x="104" y="214" fill="#f5f3ff" font-family="Arial, sans-serif" font-size="70" font-weight="700">Recommendation</text>
+  <text x="104" y="288" fill="#f5f3ff" font-family="Arial, sans-serif" font-size="70" font-weight="700">Decision Lab</text>
+  <text x="104" y="340" fill="#b5bdce" font-family="Arial, sans-serif" font-size="25">When does personalization earn the route?</text>
+
+  <path d="M478 493H562 M478 640H562" fill="none" stroke="#697084" stroke-width="4" stroke-linecap="round"/>
+  <path d="M745 565H807" fill="none" stroke="#a78bfa" stroke-width="5" stroke-linecap="round"/>
+  <path d="M745 565C775 565 775 726 807 726" fill="none" stroke="#60a5fa" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 9"/>
+  <path d="m797 556 12 9-12 9" fill="none" stroke="#a78bfa" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="m797 717 12 9-12 9" fill="none" stroke="#60a5fa" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="104" y="427" width="374" height="132" rx="16" fill="#252d40" stroke="#3b82f6" stroke-width="3"/>
+  <circle cx="143" cy="470" r="14" fill="#3b82f6"/>
+  <text x="174" y="480" fill="#f5f3ff" font-family="Arial, sans-serif" font-size="30" font-weight="700">Popularity</text>
+  <text x="130" y="526" fill="#b5bdce" font-family="Arial, sans-serif" font-size="23">Transparent baseline</text>
+
+  <rect x="104" y="574" width="374" height="132" rx="16" fill="#2e2945" stroke="#a78bfa" stroke-width="3"/>
+  <circle cx="143" cy="617" r="14" fill="#a78bfa"/>
+  <text x="174" y="627" fill="#f5f3ff" font-family="Arial, sans-serif" font-size="30" font-weight="700">Hybrid</text>
+  <text x="130" y="673" fill="#cbc5dc" font-family="Arial, sans-serif" font-size="23">Personalized candidate</text>
+
+  <rect x="562" y="480" width="183" height="172" rx="19" fill="#303748" stroke="#f59e0b" stroke-width="3"/>
+  <circle cx="654" cy="532" r="21" fill="#f59e0b"/>
+  <path d="m645 531 7 7 14-16" fill="none" stroke="#18181b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="654" y="587" text-anchor="middle" fill="#f5f3ff" font-family="Arial, sans-serif" font-size="27" font-weight="700">Validation</text>
+  <text x="654" y="620" text-anchor="middle" fill="#b5bdce" font-family="Arial, sans-serif" font-size="23">gate</text>
+
+  <rect x="807" y="492" width="292" height="146" rx="17" fill="#392c57" stroke="#a78bfa" stroke-width="3"/>
+  <text x="832" y="537" fill="#c4b5fd" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="2">ACTIVE ROUTE</text>
+  <text x="832" y="592" fill="#f5f3ff" font-family="Arial, sans-serif" font-size="35" font-weight="700">Hybrid</text>
+
+  <rect x="807" y="673" width="292" height="107" rx="17" fill="#253246" stroke="#60a5fa" stroke-width="3"/>
+  <text x="832" y="715" fill="#93c5fd" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="2">FALLBACK</text>
+  <text x="832" y="756" fill="#f5f3ff" font-family="Arial, sans-serif" font-size="30" font-weight="700">Popularity</text>
+
+  <rect x="104" y="752" width="374" height="73" rx="14" fill="#252a35" stroke="#9299a8" stroke-width="2" stroke-dasharray="8 8"/>
+  <circle cx="140" cy="789" r="10" fill="#9299a8"/>
+  <text x="165" y="799" fill="#d7dce8" font-family="Arial, sans-serif" font-size="25" font-weight="700">Neural challenger</text>
+  <text x="526" y="800" fill="#b5bdce" font-family="Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="2">SHADOW ONLY</text>
+  <text x="104" y="865" fill="#b5bdce" font-family="Arial, sans-serif" font-size="21">Train-only signals · Held-out ranking · Visible fallback</text>
+</svg>
