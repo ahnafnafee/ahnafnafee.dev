@@ -25,6 +25,7 @@ keywords:
   - Amazon Reviews 2023
 thumbnail: '/images/recommendation-decision-lab.png'
 links:
+  code: 'https://github.com/ahnafnafee/recommendation-decision-lab'
   dataset: 'https://amazon-reviews-2023.github.io/data_processing/5core.html'
 related: []
 ---
@@ -53,7 +54,7 @@ The standalone neural model scored 0.001411 NDCG@10 on validation. A 40% neural 
 
 ## From measurement to a usable system
 
-A local HTTP service serves the same ranking function through a hash-checked model bundle. It can also load the neural weights after source and integrity checks, returning that ranking as a shadow while the validation gate stays closed. For each request it reports the active route alongside baseline and shadow rankings; empty or unsupported histories and challenger failures return the baseline with a reason. The interactive walkthrough above uses invented users, item names, and precomputed rankings to illustrate routing without distributing review records or fitted weights. The underlying repository and full local demo remain private.
+A local HTTP service serves the same ranking function through a hash-checked model bundle. It can also load the neural weights after source and integrity checks, returning that ranking as a shadow while the validation gate stays closed. For each request it reports the active route alongside baseline and shadow rankings; empty or unsupported histories and challenger failures return the baseline with a reason. The interactive walkthrough above uses invented users, item names, and precomputed rankings to illustrate routing. The [source repository](https://github.com/ahnafnafee/recommendation-decision-lab) includes the synthetic demo and aggregate results; downloaded reviews and fitted weights are not distributed.
 
 ## Limits and next test
 
