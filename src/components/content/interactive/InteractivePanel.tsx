@@ -71,7 +71,7 @@ export const InteractivePanel: React.FunctionComponent<InteractivePanelProps> = 
       aria-label={ariaLabel}
       className='not-prose border-border bg-card text-card-foreground my-9 overflow-hidden rounded-2xl border shadow-sm'
     >
-      <div className='border-border border-b px-5 py-5 sm:px-7'>
+      <div className='border-border border-b px-5 sm:px-7' style={{ paddingBlock: 20 }}>
         <p className='m-0 text-xs font-bold tracking-[0.16em] text-purple-700 uppercase dark:text-purple-300'>
           {eyebrow}
         </p>
@@ -79,7 +79,8 @@ export const InteractivePanel: React.FunctionComponent<InteractivePanelProps> = 
         <p className='text-muted-foreground m-0 max-w-2xl text-sm leading-6'>{description}</p>
         {hasTabs && (
           <div
-            className='mt-5 grid grid-cols-2 gap-2 sm:flex'
+            className='mt-5 gap-2'
+            style={{ display: 'flex' }}
             role='tablist'
             aria-label={`${title} views`}
             onKeyDown={selectWithKeyboard}
@@ -97,6 +98,13 @@ export const InteractivePanel: React.FunctionComponent<InteractivePanelProps> = 
                 aria-controls={`${instanceId}-panel-${view.id}`}
                 tabIndex={activeView.id === view.id ? 0 : -1}
                 onClick={() => setSelectedView(view.id)}
+                style={{
+                  flex: '1 1 0',
+                  minWidth: 0,
+                  ...(activeView.id === view.id
+                    ? { backgroundColor: '#7C3AED', borderColor: '#7C3AED', color: '#FFFFFF' }
+                    : {})
+                }}
                 className={`rounded-lg border px-2 py-2 text-center text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 sm:px-3 sm:text-sm ${activeView.id === view.id ? 'border-purple-600 bg-purple-600 text-white' : 'border-border bg-background text-foreground hover:border-purple-500 hover:text-purple-600 dark:hover:text-purple-300'}`}
               >
                 {view.label}

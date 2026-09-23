@@ -1,3 +1,4 @@
+import { CoverageFigure } from './CoverageFigure'
 import { EVIDENCE } from './model'
 
 const MAX_SCORE = 0.012
@@ -55,6 +56,7 @@ export const EvidenceView: React.FunctionComponent = () => (
         </p>
       </div>
     </div>
+    <CoverageFigure />
     <p className='text-muted-foreground mt-4 mb-0 text-sm leading-6'>
       User-cluster 95% interval for the paired difference: [{formatScore(EVIDENCE.interval[0])},{' '}
       {formatScore(EVIDENCE.interval[1])}]. These are offline review-retrieval scores from one temporal split, not
