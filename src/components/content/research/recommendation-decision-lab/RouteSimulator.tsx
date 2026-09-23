@@ -2,7 +2,7 @@
 
 import { ChoiceGroup } from '@/components/content/interactive'
 
-import { Profile, PROFILES } from './model'
+import { Profile, PROFILES, resolveRoute } from './model'
 
 import { useState } from 'react'
 
@@ -57,15 +57,7 @@ export const RouteSimulator: React.FunctionComponent = () => {
   const [simulateFailure, setSimulateFailure] = useState(false)
 
   const scenario = PROFILES[profile]
-  const canUseChallenger = scenario.history.length > 0 && gateOpen && !simulateFailure
-  const fallbackReason =
-    scenario.history.length === 0
-      ? 'No prior items: use the popularity baseline.'
-      : simulateFailure
-        ? 'Challenger unavailable: return the baseline.'
-        : gateOpen
-          ? 'Validation gate approved: use the challenger.'
-          : 'Validation gate closed: keep the baseline active.'
+  const decision = resolveRoute(profile, gateOpen, simulateFailure)
 
   return (
     <div className='space-y-5'>
@@ -102,17 +94,17 @@ export const RouteSimulator: React.FunctionComponent = () => {
       </div>
       <div aria-live='polite' className='border-border bg-card rounded-xl border px-4 py-3'>
         <p className='text-card-foreground m-0 text-sm font-semibold'>
-          {canUseChallenger ? 'Personalized route active' : 'Popularity route active'}
+          {decision.useChallenger ? 'Personalized route active' : 'Popularity route active'}
         </p>
-        <p className='text-muted-foreground mt-1 mb-0 text-sm'>{fallbackReason}</p>
+        <p className='text-muted-foreground mt-1 mb-0 text-sm'>{decision.reason}</p>
       </div>
       <div className='grid gap-3 md:grid-cols-2'>
-        <Ranking label='Baseline' caption='popularity' items={scenario.baseline} selected={!canUseChallenger} />
+        <Ranking label='Baseline' caption='popularity' items={scenario.baseline} selected={!decision.useChallenger} />
         <Ranking
           label='Shadow challenger'
           caption='personalized'
           items={simulateFailure ? [] : scenario.challenger}
-          selected={canUseChallenger}
+          selected={decision.useChallenger}
         />
       </div>
       <p className='text-muted-foreground m-0 text-xs leading-5'>

@@ -36,3 +36,21 @@ export const PROFILES: Record<Profile, SyntheticProfile> = {
     challenger: []
   }
 }
+
+export type RouteDecision = {
+  useChallenger: boolean
+  reason: string
+}
+
+export function resolveRoute(profile: Profile, gateOpen: boolean, challengerUnavailable: boolean): RouteDecision {
+  if (PROFILES[profile].history.length === 0) {
+    return { useChallenger: false, reason: 'No prior items: use the popularity baseline.' }
+  }
+  if (challengerUnavailable) {
+    return { useChallenger: false, reason: 'Challenger unavailable: return the baseline.' }
+  }
+  if (!gateOpen) {
+    return { useChallenger: false, reason: 'Validation gate closed: keep the baseline active.' }
+  }
+  return { useChallenger: true, reason: 'Validation gate approved: use the challenger.' }
+}
