@@ -16,6 +16,25 @@ export const EVIDENCE = {
   interval: [0.00004, 0.001338] as const
 }
 
+export const NEURAL_EVIDENCE = {
+  validation: {
+    label: 'Validation',
+    requests: 33_993,
+    popularity: 0.010715,
+    hybrid: 0.011969,
+    neural: 0.011774,
+    intervalAgainstHybrid: [-0.000985, 0.000611] as const
+  },
+  test: {
+    label: 'Previously studied test period',
+    requests: 35_905,
+    popularity: 0.008007,
+    hybrid: 0.008681,
+    neural: 0.008357,
+    intervalAgainstHybrid: [-0.001014, 0.000304] as const
+  }
+} as const
+
 export const PROFILES: Record<Profile, SyntheticProfile> = {
   signals: {
     label: 'Signals',

@@ -84,7 +84,7 @@
 # Research
 
 - [Recommendation Decision Lab: When Does Personalization Earn a Route?](https://www.ahnafnafee.dev/research/recommendation-decision-lab) — published 2026-09-22
-  Summary: Full-catalog temporal evaluation and a guarded recommendation service. A personalized hybrid makes a small held-out gain in a second product category.
+  Summary: Full-catalog temporal evaluation and a guarded recommendation service. A small hybrid gain holds in a second category, while a neural challenger remains in shadow.
   Topics: Recommender Systems, Ranking, ML Evaluation, Research Engineering
 
 - [Performance Analysis of 3D Mesh Simplification Algorithms: QEM vs. Vertex Clustering on CAD and Organic Models](https://www.ahnafnafee.dev/research/mesh-decimation-benchmark) — published 2025-12-08

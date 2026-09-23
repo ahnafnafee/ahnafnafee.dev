@@ -1939,7 +1939,7 @@ Live at [bookworm.ahnafnafee.dev](https://bookworm.ahnafnafee.dev/). Source at [
 
 URL: https://www.ahnafnafee.dev/research/recommendation-decision-lab
 Published: 2026-09-22
-Summary: Full-catalog temporal evaluation and a guarded recommendation service. A personalized hybrid makes a small held-out gain in a second product category.
+Summary: Full-catalog temporal evaluation and a guarded recommendation service. A small hybrid gain holds in a second category, while a neural challenger remains in shadow.
 Topics: Recommender Systems, Ranking, ML Evaluation, Research Engineering
 
 A recommender that predicts ratings well may still fail at the task users actually see: finding relevant items among thousands they have never reviewed. This project asks a narrower, testable question. Can a small personalized layer beat a strong, transparent popularity control when both must rank the entire train-known catalog, and can the system decline personalization when the evidence or runtime conditions do not support it?
@@ -1958,13 +1958,19 @@ The selected method was tested on the previously unopened Musical Instruments ca
 
 The Musical Instruments gain is positive but small, and both absolute scores are low. Of its 35,905 eligible test requests, 12,305 targeted items absent from the training catalog. Reordering known items cannot recover those targets. The experiment therefore exposes a coverage problem as well as a ranking result.
 
+## Neural challenger
+
+An exploratory extension trains a two-tower retriever on 313,522 chronological training pairs. One tower encodes up to 20 prior positive items; the other embeds products. Training uses in-batch negatives while masking duplicate targets and known positives. The fitted model scores the full train-known catalog, then validation selects a blend with recent popularity and compares it with the already active co-review hybrid.
+
+The standalone neural model scored 0.001411 NDCG@10 on validation. A 40% neural blend reached 0.011774, ahead of recent popularity at 0.010715 but behind the hybrid at 0.011969. Its paired interval against the hybrid crossed zero, so the gate kept the hybrid active. On the previously studied test period, the neural blend scored 0.008357 versus 0.008681 for the hybrid. This is a development comparison, not a second independent confirmation: the category's test result was already known before the neural model was designed. The interactive neural view above separates validation from that exploratory test result.
+
 ## From measurement to a usable system
 
-A local HTTP service serves the same ranking function through a hash-checked model bundle. For each request it can report the active route alongside baseline and shadow rankings, while invalid histories or challenger failures return the baseline with a reason. The interactive walkthrough above uses invented users, item names, and precomputed rankings to illustrate that behavior without distributing review records or fitted weights. The underlying repository and full local demo remain private.
+A local HTTP service serves the same ranking function through a hash-checked model bundle. It can also load the neural weights after source and integrity checks, returning that ranking as a shadow while the validation gate stays closed. For each request it reports the active route alongside baseline and shadow rankings; empty or unsupported histories and challenger failures return the baseline with a reason. The interactive walkthrough above uses invented users, item names, and precomputed rankings to illustrate routing without distributing review records or fitted weights. The underlying repository and full local demo remain private.
 
 ## Limits and next test
 
-This is a category transfer within one platform and one fixed time split, not evidence of online impact. The 5-core subset uses support measured over the full corpus, and a review is neither an impression nor an unbiased engagement label. The paired interval resamples users in that split; it does not capture refitting, shared-item dependence, or future traffic shifts. The hybrid also has not been compared with stronger modern retrieval baselines. A useful next test would use exposure-logged or less-filtered activity, independent time periods, and a predeclared comparison against those baselines.
+This is a category transfer within one platform and one fixed time split, not evidence of online impact. The 5-core subset uses support measured over the full corpus, and a review is neither an impression nor an unbiased engagement label. The paired interval resamples users in that split; it does not capture refitting, shared-item dependence, or future traffic shifts. One compact neural retriever is a useful comparison, but it does not exhaust modern retrieval methods. A useful next test would use exposure-logged or less-filtered activity, independent time periods, and a predeclared comparison against stronger baselines.
 
 ---
 

@@ -3,6 +3,7 @@
 import { InteractivePanel } from '@/components/content/interactive'
 
 import { EvidenceView } from './recommendation-decision-lab/EvidenceView'
+import { NeuralEvidence } from './recommendation-decision-lab/NeuralEvidence'
 import { RouteSimulator } from './recommendation-decision-lab/RouteSimulator'
 
 export const RecommendationDecisionLab: React.FunctionComponent = () => (
@@ -10,10 +11,11 @@ export const RecommendationDecisionLab: React.FunctionComponent = () => (
     ariaLabel='Interactive recommendation evidence and routing demonstration'
     eyebrow='Explore the decision'
     title='Evidence first, then routing'
-    description='Inspect the held-out scores or trace a request through a synthetic fallback scenario. The two views are separate: demo controls do not change the measured results.'
+    description='Inspect the held-out scores, compare an exploratory neural challenger, or trace a request through a synthetic fallback scenario. Demo controls do not change measured results.'
     preserveInactiveViews
     views={[
       { id: 'evidence', label: 'Measured evidence', content: <EvidenceView /> },
+      { id: 'neural', label: 'Neural challenger', content: <NeuralEvidence /> },
       { id: 'routing', label: 'Route simulator', content: <RouteSimulator /> }
     ]}
   />
