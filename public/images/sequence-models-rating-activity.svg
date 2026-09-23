@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Basket-level sequence evaluation</title>
+  <desc id="desc">Two rows of timestamp baskets show original and permuted order leading to the same hidden future target.</desc>
+  <rect width="1200" height="675" fill="#151923"/>
+  <rect x="54" y="54" width="1092" height="567" rx="26" fill="#1d2230" stroke="#41465a" stroke-width="2"/>
+  <text x="108" y="123" fill="#c4b5fd" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="3">RATING ACTIVITY / STUDY B</text>
+  <text x="108" y="187" fill="#f5f3ff" font-family="Arial, sans-serif" font-size="46" font-weight="700">Does the order help?</text>
+  <text x="108" y="225" fill="#b5bdce" font-family="Arial, sans-serif" font-size="22">Timestamp baskets are units. The future target stays hidden.</text>
+  <text x="108" y="310" fill="#d7dce8" font-family="Arial, sans-serif" font-size="18" font-weight="700">ORIGINAL</text>
+  <text x="108" y="456" fill="#d7dce8" font-family="Arial, sans-serif" font-size="18" font-weight="700">PERMUTED</text>
+  <path d="M281 350H962 M281 496H962" stroke="#697084" stroke-width="3" stroke-dasharray="8 10"/>
+  <rect x="279" y="326" width="116" height="49" rx="10" fill="#3b82f6"/>
+  <rect x="421" y="326" width="116" height="49" rx="10" fill="#8b5cf6"/>
+  <rect x="563" y="326" width="116" height="49" rx="10" fill="#f59e0b"/>
+  <rect x="279" y="472" width="116" height="49" rx="10" fill="#f59e0b"/>
+  <rect x="421" y="472" width="116" height="49" rx="10" fill="#3b82f6"/>
+  <rect x="563" y="472" width="116" height="49" rx="10" fill="#8b5cf6"/>
+  <text x="337" y="357" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="20" font-weight="700">t1</text>
+  <text x="479" y="357" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="20" font-weight="700">t2</text>
+  <text x="621" y="357" text-anchor="middle" fill="#18181b" font-family="Arial, sans-serif" font-size="20" font-weight="700">t3</text>
+  <text x="337" y="503" text-anchor="middle" fill="#18181b" font-family="Arial, sans-serif" font-size="20" font-weight="700">t3</text>
+  <text x="479" y="503" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="20" font-weight="700">t1</text>
+  <text x="621" y="503" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-size="20" font-weight="700">t2</text>
+  <rect x="806" y="326" width="184" height="49" rx="10" fill="#303748" stroke="#9299a8" stroke-width="2" stroke-dasharray="6 6"/>
+  <rect x="806" y="472" width="184" height="49" rx="10" fill="#303748" stroke="#9299a8" stroke-width="2" stroke-dasharray="6 6"/>
+  <text x="898" y="356" text-anchor="middle" fill="#d7dce8" font-family="Arial, sans-serif" font-size="18" font-weight="700">FUTURE TARGET</text>
+  <text x="898" y="502" text-anchor="middle" fill="#d7dce8" font-family="Arial, sans-serif" font-size="18" font-weight="700">FUTURE TARGET</text>
+  <text x="108" y="582" fill="#b5bdce" font-family="Arial, sans-serif" font-size="19">Single-seed intervention. The original order did not improve held-out NDCG.</text>
+</svg>

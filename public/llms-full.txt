@@ -1935,6 +1935,39 @@ Live at [bookworm.ahnafnafee.dev](https://bookworm.ahnafnafee.dev/). Source at [
 
 ---
 
+# When Sequence Models Earn Their Complexity: A Basket-Level Evaluation of Rating Activity
+
+URL: https://www.ahnafnafee.dev/research/sequence-models-rating-activity
+Published: 2026-09-23
+Summary: A Transformer beat a GRU on later positive-rating baskets, but barely exceeded recent popularity. An order intervention further limits the case for sequence modeling.
+Topics: Recommender Systems, Sequential Models, ML Evaluation, Research Engineering
+
+The Transformer beat the GRU on the study's declared outcome. That result has a useful qualification: its average score was 0.050921 NDCG@10, while validation-selected recent popularity reached 0.049606. The difference between the two is only 0.001315. The paper asks what the sequence model earns once a simple control, model-selection boundaries, and local forward cost are visible together.
+
+<SequenceModelStudy />
+
+## A rating history is not an exposure log
+
+[MovieLens 1M](https://grouplens.org/datasets/movielens/1m/) provides explicit ratings and their timestamps. A timestamp says when someone rated an item; it does not say when the item was shown or watched. The experiment predicts the first later timestamp basket containing a previously unrated item scored at least four. Ratings tied at one timestamp form an unordered basket. A user's earlier positive baskets supply the model input, and the future target basket cannot enter it.
+
+All methods rank the same catalog of items known by the end of training. They exclude items the user rated before the forecast origin. Three held-out target items were absent from that training catalog; they remain metric misses because none of these rankers could retrieve them. When no train-known positive basket remains in a user's history, the sequence models take the same recent-popularity fallback.
+
+## A comparison frozen before test
+
+The [protocol](https://github.com/ahnafnafee/temporal-recommendation-research/blob/main/protocol/sequence.json) specifies an 80/10/10 chronological split, a mean encoder, a GRU, a causal Transformer, popularity, and item-neighborhood controls. It also specifies the validation grid, three selected-model seeds, order interventions, a paired user bootstrap, and a 12-hour GPU-training cap. All 27 planned validation cells completed. Model settings and source hashes were sealed before the final test was opened once.
+
+Across 961 eligible users, the Transformer minus GRU difference was +0.014002 macro-user NDCG@10. The paired 95% interval was [+0.008097, +0.020201]. This interval compares those fitted architectures on this split. It does not cover retraining variability, future traffic, or the small descriptive gap between Transformer and popularity. The [paper](https://github.com/ahnafnafee/temporal-recommendation-research/blob/main/paper/sequence.pdf) and [aggregate technical report](https://github.com/ahnafnafee/temporal-recommendation-research/blob/main/reports/sequence.md) show the full results and failure accounting.
+
+## What the order check changes
+
+The seed-11 GRU scored 0.039760 with original basket order and 0.039823 after whole-basket permutation. The corresponding Transformer scores were 0.046206 and 0.052260. A no-position Transformer reached 0.050369, although it still retained a causal mask. These retrained interventions are diagnostic. They weaken the argument that the original chronological order caused the Transformer's result, but they do not prove order is irrelevant.
+
+Five fresh local processes measured the selected models' batch-one encoder and full-item-logit forward path. Median CPU p50 was 1.736 ms for the Transformer and 2.799 ms for the GRU; CUDA p50 was 3.679 ms and 4.968 ms. These timings omit candidate filtering, sorting, and service overhead. The Transformer had more parameters yet a faster measured forward path on this hardware, so parameter count alone would have been a poor cost proxy.
+
+The study is an offline recovery test on one rating dataset and one chronological split. It does not estimate what people saw, what they would click, or whether either model would improve a live system. The [source repository](https://github.com/ahnafnafee/temporal-recommendation-research) includes the separate paper, synthetic walkthrough, tests, aggregate outputs, and verification record. Raw rating rows, user-level predictions, and fitted weights stay local under the dataset owner's terms. This MovieLens study has a separate data and evidence boundary from the Amazon Reviews [Recommendation Decision Lab](/research/recommendation-decision-lab).
+
+---
+
 # Recommendation Decision Lab: When Does Personalization Earn a Route?
 
 URL: https://www.ahnafnafee.dev/research/recommendation-decision-lab
