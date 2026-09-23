@@ -86,7 +86,7 @@
 - [When Sequence Models Earn Their Complexity: A Basket-Level Evaluation of Rating Activity](https://www.ahnafnafee.dev/research/sequence-models-rating-activity) — published 2026-09-23
   Summary: A Transformer beat a GRU on later positive-rating baskets, but barely exceeded recent popularity. An order intervention further limits the case for sequence modeling.
   Topics: Recommender Systems, Sequential Models, ML Evaluation, Research Engineering
-  Paper: https://github.com/ahnafnafee/temporal-recommendation-research/blob/main/paper/sequence.pdf
+  Paper: https://www.researchgate.net/publication/414679652_When_Sequence_Models_Earn_Their_Complexity_A_Basket-Level_Evaluation_of_Rating_Activity
   Code: https://github.com/ahnafnafee/temporal-recommendation-research
 
 - [Recommendation Decision Lab: When Does Personalization Earn a Route?](https://www.ahnafnafee.dev/research/recommendation-decision-lab) — published 2026-09-22, updated 2026-09-23

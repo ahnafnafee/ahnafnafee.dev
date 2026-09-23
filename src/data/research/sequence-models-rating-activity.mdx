@@ -24,7 +24,7 @@ keywords:
   - rating activity
 thumbnail: '/images/sequence-models-rating-activity-v2.svg'
 links:
-  paper: 'https://github.com/ahnafnafee/temporal-recommendation-research/blob/main/paper/sequence.pdf'
+  paper: 'https://www.researchgate.net/publication/414679652_When_Sequence_Models_Earn_Their_Complexity_A_Basket-Level_Evaluation_of_Rating_Activity'
   code: 'https://github.com/ahnafnafee/temporal-recommendation-research'
   dataset: 'https://grouplens.org/datasets/movielens/1m/'
 related: ['recommendation-decision-lab']
@@ -44,7 +44,7 @@ All methods rank the same catalog of items known by the end of training. They ex
 
 The locally retained protocol specifies an 80/10/10 chronological split, a mean encoder, a GRU, a causal Transformer, popularity, and item-neighborhood controls. It also specifies the validation grid, three selected-model seeds, order interventions, a paired user bootstrap, and a 12-hour GPU-training cap. All 27 planned validation cells completed. Model settings and source hashes were sealed before the final test was opened once. The protocol files are not part of the public source repository.
 
-Across 961 eligible users, the Transformer minus GRU difference was +0.014002 macro-user NDCG@10. The paired 95% interval was [+0.008097, +0.020201]. This interval compares those fitted architectures on this split. It does not cover retraining variability, future traffic, or the small descriptive gap between Transformer and popularity. The [paper](https://github.com/ahnafnafee/temporal-recommendation-research/blob/main/paper/sequence.pdf) and [aggregate technical report](https://github.com/ahnafnafee/temporal-recommendation-research/blob/main/reports/sequence.md) show the full results and failure accounting.
+Across 961 eligible users, the Transformer minus GRU difference was +0.014002 macro-user NDCG@10. The paired 95% interval was [+0.008097, +0.020201]. This interval compares those fitted architectures on this split. It does not cover retraining variability, future traffic, or the small descriptive gap between Transformer and popularity. The [paper](https://www.researchgate.net/publication/414679652_When_Sequence_Models_Earn_Their_Complexity_A_Basket-Level_Evaluation_of_Rating_Activity) and [aggregate technical report](https://github.com/ahnafnafee/temporal-recommendation-research/blob/main/reports/sequence.md) show the full results and failure accounting.
 
 ## What the order check changes
 
