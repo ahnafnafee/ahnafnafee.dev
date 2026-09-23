@@ -1,5 +1,3 @@
-import { RecommendationDecisionLab } from '@/components/content/research/RecommendationDecisionLab'
-
 import { AppDownloadCTA } from './AppDownloadCTA'
 import { Blockquote } from './Blockquote'
 import { Code } from './Code'
@@ -8,6 +6,7 @@ import { ContentImageZoom } from './ContentImageZoom'
 import { FAQ } from './FAQ'
 import { HeadingFour, HeadingThree, HeadingTwo } from './Headings'
 import { HowTo } from './HowTo'
+import { interactiveMDXComponents } from './interactive'
 import { KeyPoints } from './KeyPoints'
 import { MDXLink } from './MDXLink'
 import { MermaidLazy } from './MermaidLazy'
@@ -35,7 +34,7 @@ const MDXComponents = {
   KeyPoints,
   ProjectLinks,
   AppDownloadCTA,
-  RecommendationDecisionLab,
+  ...interactiveMDXComponents,
   h2: HeadingTwo,
   h3: HeadingThree,
   h4: HeadingFour
