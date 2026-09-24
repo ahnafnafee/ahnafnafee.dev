@@ -8,7 +8,7 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'https://www
 export const SITE_NAME = 'Ahnaf An Nafee'
 
 export const SITE_DESCRIPTION =
-  'PhD student at GMU exploring how machine learning transforms 3D content creation and immersive experiences. Research at the intersection of AI and computer graphics.'
+  'Computer Science PhD student at George Mason University working on HCI studies, interactive research systems, and recommendation evaluation. Seeking a Summer 2027 research internship.'
 
 export const SITE_AUTHOR = {
   name: 'Ahnaf An Nafee',

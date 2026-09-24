@@ -9,77 +9,35 @@ import type { Metadata } from 'next'
 const RESUME_URL = `${SITE_URL}/resume`
 const RESUME_OG_IMAGE = generateOgImage({
   title: 'Resume',
-  subTitle: 'PhD student in AI & 3D Graphics @ GMU · Ex-CTO',
+  subTitle: 'HCI · ML systems · Research engineering',
   type: 'resume'
 })
-const RESUME_OG_ALT = `Resume - ${SITE_NAME} - PhD Student in AI & 3D Graphics @ George Mason University | Ex-CTO`
+const RESUME_OG_ALT = `Resume - ${SITE_NAME} - Computer Science PhD student at George Mason University`
 
 export const metadata: Metadata = {
-  title: `Resume - ${SITE_NAME} | PhD AI & 3D Graphics Researcher`,
+  title: `Resume - ${SITE_NAME} | HCI and ML Systems`,
   description:
-    'PhD student researching AI-driven 3D content generation and graphics pipelines at GMU. DCXR Lab, advised by Dr. Craig Yu. Ex-CTO with experience building production systems. Download PDF resume.',
+    'Computer Science PhD student at George Mason University working across HCI, ML systems, research software, and production engineering. View experience and download the current résumé.',
   keywords: [
     'Ahnaf An Nafee resume',
-    'ahnafnafee resume',
-    'curriculum vitae',
-    'cv download',
-    'PhD AI 3D Graphics resume',
-    'Computer Science PhD resume',
-    'AI researcher resume',
-    '3D Computer Graphics researcher',
-    'Machine Learning researcher',
-    'Computer Vision expert',
-    'Generative AI specialist',
-    'Rendering Pipeline expert',
-    'DevOps Engineer resume',
-    'Kubernetes expert resume',
-    'OpenShift engineer resume',
-    'Cloud Infrastructure specialist',
-    'AWS certified professional',
-    'Docker containerization expert',
-    'CI/CD pipeline specialist',
-    'Infrastructure automation expert',
-    'George Mason University PhD',
-    'GMU computer science PhD',
-    'Drexel University alumni',
-    'Game Development experience',
-    'Unity 3D developer resume',
-    'Unreal Engine developer',
-    '3D modeling expert',
-    'Software Engineer resume',
-    'Full stack developer',
-    'Python developer resume',
-    'Go programming expert',
-    'Java developer',
-    'Kotlin developer',
-    'React Native developer',
-    'Tech startup CTO resume',
-    'Technical leadership resume',
-    'Startup founder experience',
-    'Team building experience',
-    'Agile development expert',
-    'Product leadership',
-    'Research publications',
-    'Academic research experience',
-    'Human computer interaction',
-    'Immersive technology expert',
-    'Interactive technology',
-    'Digital worlds development',
-    'Computer graphics research',
-    'AI graphics intersection',
-    'Theory to practice bridge',
-    'Production ready systems',
-    'Scalable infrastructure',
-    'Modern DevOps principles',
-    'ahnafnafee.dev resume'
+    'Computer Science PhD student',
+    'George Mason University',
+    'human-computer interaction',
+    'research engineering',
+    'ML systems',
+    'recommendation evaluation',
+    'Unity C# research software',
+    'Kubernetes OpenShift',
+    'Player 2',
+    'Summer 2027 research internship'
   ],
   alternates: {
     canonical: RESUME_URL
   },
   openGraph: {
-    title: `Resume - ${SITE_NAME} | PhD AI & 3D Graphics Researcher`,
+    title: `Resume - ${SITE_NAME} | HCI and ML Systems`,
     description:
-      'PhD student researching AI-driven 3D content generation and graphics pipelines at GMU. DCXR Lab, advised by Dr. Craig Yu.',
+      'Computer Science PhD student at George Mason University working across HCI, ML systems, and research software.',
     url: RESUME_URL,
     siteName: SITE_NAME,
     images: [
@@ -99,9 +57,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `Resume - ${SITE_NAME} | PhD AI & 3D Graphics Researcher`,
+    title: `Resume - ${SITE_NAME} | HCI and ML Systems`,
     description:
-      'PhD student researching AI-driven 3D content generation and graphics pipelines at GMU. DCXR Lab, advised by Dr. Craig Yu.',
+      'Computer Science PhD student at George Mason University working across HCI, ML systems, and research software.',
     site: TWITTER_HANDLE,
     creator: TWITTER_HANDLE,
     images: [{ url: RESUME_OG_IMAGE, alt: RESUME_OG_ALT }]
@@ -120,7 +78,7 @@ export default function ResumePage() {
     url: RESUME_URL,
     name: `Resume — ${SITE_NAME}`,
     description:
-      'PhD student researching AI-driven 3D content generation and graphics pipelines at George Mason University.',
+      'Computer Science PhD student at George Mason University with research and engineering experience in HCI, ML systems, and interactive software.',
     inLanguage: 'en-US',
     primaryImageOfPage: {
       '@type': 'ImageObject',
