@@ -29,12 +29,12 @@ import readingTime from 'reading-time'
 const HOME_OG_IMAGE = generateOgImage({
   title: 'Ahnaf An Nafee',
   type: 'home',
-  topics: ['HCI', 'ML Systems', 'Immersive Research']
+  topics: ['Generative AI', '3D Graphics', 'Immersive XR']
 })
-const HOME_OG_ALT = `${SITE_NAME} - Computer Science PhD student and DCXR Lab researcher at George Mason University`
-const HOME_TITLE = `${SITE_NAME} - HCI and ML Systems Research | George Mason University`
+const HOME_OG_ALT = `${SITE_NAME} - PhD student in AI and 3D graphics at George Mason University | DCXR Lab`
+const HOME_TITLE = `${SITE_NAME} - PhD Student in AI & 3D Graphics | DCXR Lab @ GMU`
 const HOME_DESCRIPTION =
-  'Computer Science PhD student at George Mason University. I design and pilot-test HCI studies at the DCXR Lab and study recommendation models and ML systems. Seeking a Summer 2027 research internship.'
+  'Computer Science PhD student at George Mason University, working in the DCXR Lab under Dr. Craig Yu. Research interests include HCI, AI, immersive systems, and 3D graphics. Seeking a Summer 2027 research internship.'
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -106,13 +106,56 @@ export const metadata: Metadata = {
   keywords: [
     'Ahnaf An Nafee',
     'ahnafnafee',
+    'PhD AI 3D Graphics',
+    'AI 3D Graphics Research',
+    'Machine Learning Graphics',
     'Computer Science PhD student',
     'George Mason University',
     'DCXR Lab',
+    'Dr. Craig Yu',
+    'AI-driven 3D content generation',
+    'Machine learning for graphics pipelines',
+    'UV mapping automation',
+    'NPR techniques',
+    'AI researcher',
+    'Computer graphics researcher',
+    '3D Computer Graphics',
+    'Generative AI',
+    'Deep Learning',
+    'Computer Vision',
+    'Neural Networks',
+    'PyTorch',
+    'TensorFlow',
+    'Rendering Pipelines',
+    'Real-time Rendering',
+    'Parameterized Shaders',
+    'GLSL',
+    'WebGL',
     'HCI research',
     'user experience research',
     'human-centered AI',
     'immersive systems',
+    'Extended Reality',
+    'XR Research',
+    'Game Development',
+    'Unity 3D',
+    'Unreal Engine',
+    'Game Engine Development',
+    'Technical Artist',
+    'Graphics Programming',
+    'Shader Programming',
+    'AI Graphics Intersection',
+    'Creative AI',
+    'Procedural Generation',
+    'Academic Research',
+    'PhD Researcher',
+    'Research Portfolio',
+    'Ex-CTO',
+    'Tech Startup',
+    'Software Engineering',
+    'Python Developer',
+    'C++ Developer',
+    'Full Stack Developer',
     'recommendation evaluation',
     'ML systems',
     'Summer 2027 research internship'
@@ -216,7 +259,7 @@ export default async function HomePage() {
                 <span aria-hidden='true' className='text-gray-300 dark:text-gray-600'>
                   ·
                 </span>
-                <span>HCI &amp; ML Systems</span>
+                <span>AI &amp; 3D Graphics</span>
                 <span aria-hidden='true' className='h-1.5 w-1.5 rounded-full bg-purple-500' />
               </div>
               <h1
@@ -242,7 +285,7 @@ export default async function HomePage() {
             <div className='mb-8 flex-shrink-0 sm:mb-0 sm:ml-8'>
               <ContentImage
                 src='https://ik.imagekit.io/8ieg70pvks/profile?tr=w-400,h-400'
-                alt='Ahnaf An Nafee, Computer Science PhD student at George Mason University'
+                alt='Ahnaf An Nafee, PhD student in AI and 3D graphics at George Mason University'
                 width={176}
                 height={176}
                 className='border-theme-100 dark:border-theme-800 h-[100px] w-[100px] cursor-pointer rounded-full border-4 object-cover sm:h-[176px] sm:w-[176px]'
@@ -258,7 +301,7 @@ export default async function HomePage() {
           </div>
 
           <p className='mt-2 max-w-2xl text-base leading-7 text-gray-700 md:text-lg md:leading-8 dark:text-gray-300'>
-            At George Mason University&apos;s{' '}
+            I work on HCI, AI, and 3D computer graphics in the{' '}
             <a
               href='https://craigyuyu.github.io/home/group.html'
               target='_blank'
@@ -266,30 +309,25 @@ export default async function HomePage() {
               className='text-link font-semibold'
             >
               DCXR Lab
-            </a>
-            , I formulate hypotheses, design experiments, and pilot-test interactive study systems. I also test
-            recommendation models against simple baselines, with attention to cold-start behavior and compute cost.
-            Before graduate school, I led engineering as a startup CTO.
+            </a>{' '}
+            at George Mason University, advised by Dr. Craig Yu. I design experiments, pilot-test interactive systems,
+            and build tools for research. Before graduate school, I led engineering as CTO of a tech startup.
           </p>
 
-          <div className='border-theme-200 bg-theme-100/60 dark:border-theme-700 dark:bg-theme-800/50 mt-5 max-w-2xl rounded-lg border px-4 py-3 text-sm md:text-base'>
-            <p className='font-semibold text-gray-900 dark:text-gray-100'>Seeking a Summer 2027 research internship</p>
-            <p className='mt-1 text-gray-700 dark:text-gray-300'>
-              I&apos;m interested in UX research, HCI, and human-centered AI roles where I can help design studies and
-              build the systems used to run them.
-            </p>
-            <div className='mt-2 flex flex-wrap gap-x-4 gap-y-1'>
-              <Link href='/research' className='text-link'>
-                Research projects
-              </Link>
-              <Link href='/resume' className='text-link'>
-                Résumé
-              </Link>
-              <Link href='/contact' className='text-link'>
-                Contact me
-              </Link>
-            </div>
-          </div>
+          <p className='mt-4 max-w-2xl text-sm leading-6 text-gray-700 md:text-base dark:text-gray-300'>
+            I&apos;m seeking a Summer 2027 research internship in HCI, UX research, 3D graphics, or human-centered AI.{' '}
+            <Link href='/research' className='text-link'>
+              Research projects
+            </Link>{' '}
+            ·{' '}
+            <Link href='/resume' className='text-link'>
+              Résumé
+            </Link>{' '}
+            ·{' '}
+            <Link href='/contact' className='text-link'>
+              Contact
+            </Link>
+          </p>
 
           <SocialHome className='mt-6 mb-8 flex-shrink flex-wrap gap-3 self-start' />
         </section>
