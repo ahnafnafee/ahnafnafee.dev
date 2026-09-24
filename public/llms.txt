@@ -89,7 +89,7 @@
   Paper: https://www.researchgate.net/publication/414679652_When_Sequence_Models_Earn_Their_Complexity_A_Basket-Level_Evaluation_of_Rating_Activity
   Code: https://github.com/ahnafnafee/temporal-recommendation-research
 
-- [Recommendation Decision Lab: When Does Personalization Earn a Route?](https://www.ahnafnafee.dev/research/recommendation-decision-lab) — published 2026-09-22, updated 2026-09-23
+- [Recommendation Decision Lab: When Does Personalization Earn a Route?](https://www.ahnafnafee.dev/research/recommendation-decision-lab) — published 2026-09-22, updated 2026-09-24
   Summary: Full-catalog temporal evaluation and a guarded recommendation service. A small hybrid gain transfers; later neural and wording challengers do not earn promotion.
   Topics: Recommender Systems, Ranking, ML Evaluation, Research Engineering
   Paper: https://www.researchgate.net/publication/414634917_When_Does_Personalization_Earn_the_Route_A_Full-Catalog_Temporal_Study_of_Guarded_Recommendation
