@@ -314,20 +314,46 @@ export default async function HomePage() {
             and build tools for research. Before graduate school, I led engineering as CTO of a tech startup.
           </p>
 
-          <p className='mt-4 max-w-2xl text-sm leading-6 text-gray-700 md:text-base dark:text-gray-300'>
-            I&apos;m seeking a Summer 2027 research internship in HCI, UX research, 3D graphics, or human-centered AI.{' '}
-            <Link href='/research' className='text-link'>
-              Research projects
-            </Link>{' '}
-            ·{' '}
-            <Link href='/resume' className='text-link'>
-              Résumé
-            </Link>{' '}
-            ·{' '}
-            <Link href='/contact' className='text-link'>
-              Contact
-            </Link>
-          </p>
+          <aside
+            aria-labelledby='summer-2027-heading'
+            className='relative mt-6 max-w-2xl overflow-hidden rounded-xl border border-blue-200 bg-blue-50/80 px-5 py-5 dark:border-purple-500/40 dark:bg-purple-950/25'
+          >
+            <div
+              aria-hidden='true'
+              className='absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500'
+            />
+            <p className='font-mono text-xs font-semibold tracking-widest text-purple-700 uppercase dark:text-purple-300'>
+              Summer 2027
+            </p>
+            <h3 id='summer-2027-heading' className='mt-2 text-xl font-bold text-gray-900 dark:text-white'>
+              Seeking a research internship
+            </h3>
+            <p className='mt-2 text-sm leading-6 text-gray-700 md:text-base dark:text-gray-200'>
+              I&apos;m interested in HCI, UX research, 3D graphics, and human-centered AI roles where I can design
+              studies, build interactive systems, and evaluate what works. I&apos;m open to opportunities across the
+              U.S.; Northern Virginia is ideal.
+            </p>
+            <div className='mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold'>
+              <Link
+                href='/research'
+                className='text-link rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2'
+              >
+                View research
+              </Link>
+              <Link
+                href='/resume'
+                className='text-link rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2'
+              >
+                Résumé
+              </Link>
+              <Link
+                href='/contact'
+                className='text-link rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2'
+              >
+                Get in touch
+              </Link>
+            </div>
+          </aside>
 
           <SocialHome className='mt-6 mb-8 flex-shrink flex-wrap gap-3 self-start' />
         </section>
