@@ -166,7 +166,6 @@ lines.push('')
 lines.push('# Contact')
 lines.push('- GitHub: https://github.com/ahnafnafee')
 lines.push('- LinkedIn: https://www.linkedin.com/in/ahnafnafee')
-lines.push('- Twitter: https://twitter.com/ahnaf_nafee')
 lines.push('')
 
 fs.writeFileSync(OUTPUT, lines.join('\n'), 'utf8')

@@ -1,4 +1,4 @@
-import { Clarity, Header } from '@/components/site/common'
+import { Clarity, Footer, Header } from '@/components/site/common'
 import { Toaster } from '@/components/ui/sonner'
 
 import { PERSON_ID, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/libs/constants/site'
@@ -87,8 +87,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
         <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(navigationJsonLd) }} />
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
-          <Header />
-          {children}
+          {/* Full-height column: content takes the leftover space so the footer sits at the bottom of short pages. */}
+          <div className='flex min-h-dvh flex-col'>
+            <Header />
+            <div className='flex-1'>{children}</div>
+            <Footer />
+          </div>
           <Toaster position='bottom-center' richColors />
           <Analytics />
           <SpeedInsights />

@@ -5,7 +5,7 @@ import { Hero } from '@/components/site/templates/Hero'
 
 import { getContents } from '@/services'
 
-import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
 
 import type { Blog } from 'me'
@@ -43,8 +43,6 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `Topics — Blog | ${SITE_NAME}`,
     description: 'Browse blog posts by topic.',
-    site: TWITTER_HANDLE,
-    creator: TWITTER_HANDLE,
     images: [{ url: topicsOgImage, alt: TOPICS_OG_ALT }]
   }
 }

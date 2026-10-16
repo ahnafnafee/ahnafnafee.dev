@@ -2,11 +2,10 @@ import { BlogPostClient } from '@/components/blog/BlogPostClient'
 import { AdjacentPosts } from '@/components/content/blog/AdjacentPosts'
 import { RelatedPosts } from '@/components/content/blog/RelatedPosts'
 import { MDXComponents } from '@/components/content/mdx'
-import { Footer } from '@/components/site/common'
 
 import { getContentBySlug, getContentHeaders } from '@/services/content'
 
-import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { commonMDXOptions } from '@/libs/mdxConfig'
 import { generateOgImage } from '@/libs/metapage'
 import { PERSON_ID } from '@/libs/seo/personSchema'
@@ -101,8 +100,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         card: 'summary_large_image',
         title: header.title,
         description: header.summary,
-        site: TWITTER_HANDLE,
-        creator: TWITTER_HANDLE,
         images: [{ url: ogImage, alt: header.title }]
       },
       ...(seeAlso.length > 0 && {
@@ -194,7 +191,6 @@ export default async function BlogPost({ params }: Props) {
           <AdjacentPosts {...adjacent} />
           {header.related && header.related.length > 0 && <RelatedPosts slugs={header.related} />}
         </main>
-        <Footer />
       </>
     )
   } catch (error) {

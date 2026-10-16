@@ -258,10 +258,8 @@ export const SITE_DESCRIPTION = '…'
 export const SITE_AUTHOR = {
   name: 'Your Name',
   email: 'you@example.com',
-  twitterHandle: '@your_handle',
   githubUsername: 'your-github'
 }
-export const TWITTER_HANDLE = SITE_AUTHOR.twitterHandle
 export const PROFILE_IMAGE = 'https://…/your-avatar.png'
 export const PERSON_ID = `${SITE_URL}/#person`
 ```
