@@ -10,14 +10,13 @@ import { usePathname } from 'next/navigation'
 
 export const Footer: React.FunctionComponent = () => {
   const pathname = usePathname()
-  const isError = pathname === '/_error' || pathname === '/_offline' || pathname === '/404'
-
-  if (isError) {
+  // The resume is a standalone document page; startsWith also matches the static export's trailing slash.
+  if (pathname.startsWith('/resume')) {
     return null
   }
 
   return (
-    <footer className={twclsx('layout', 'mt-5 py-4')}>
+    <footer className={twclsx('layout', 'mt-5 py-4 print:hidden')}>
       <hr className='mb-8 w-full border-1 border-gray-200 dark:border-gray-800' />
       <div className='grid w-full max-w-2xl grid-cols-3 gap-4 pb-16'>
         <div className='flex flex-col space-y-4'>

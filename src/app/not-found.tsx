@@ -1,4 +1,3 @@
-import { Footer } from '@/components/site/common'
 import { WrappedImage } from '@/components/site/images'
 import { UnderlineLink } from '@/components/site/links'
 
@@ -38,7 +37,6 @@ export default function NotFound() {
           </section>
         </div>
       </main>
-      <Footer />
     </>
   )
 }

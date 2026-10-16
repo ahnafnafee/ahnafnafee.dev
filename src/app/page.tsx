@@ -4,7 +4,7 @@ import { NewsTimeline } from '@/components/content/news'
 import { PortfolioList } from '@/components/content/portfolio/PortfolioList'
 import { ResearchItem } from '@/components/content/research/ResearchItem'
 import { TeachingSection } from '@/components/content/teaching'
-import { Footer, SocialHome } from '@/components/site/common'
+import { SocialHome } from '@/components/site/common'
 import { StarfieldBackground } from '@/components/site/StarfieldBackground'
 
 import { getContents } from '@/services'
@@ -409,8 +409,6 @@ export default async function HomePage() {
           portfolios={portfoliosWithViews}
         />
       </main>
-
-      <Footer />
     </>
   )
 }

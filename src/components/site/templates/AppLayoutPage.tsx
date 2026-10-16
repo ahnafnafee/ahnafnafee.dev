@@ -1,5 +1,3 @@
-import { Footer } from '@/components/site/common'
-
 import { twclsx } from '@/libs/twclsx'
 
 export type AppLayoutPageProps = {
@@ -8,10 +6,5 @@ export type AppLayoutPageProps = {
 }
 
 export const AppLayoutPage: React.FC<AppLayoutPageProps> = ({ children, className }) => {
-  return (
-    <>
-      <main className={twclsx('layout', className)}>{children}</main>
-      <Footer />
-    </>
-  )
+  return <main className={twclsx('layout', className)}>{children}</main>
 }
