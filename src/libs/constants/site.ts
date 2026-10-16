@@ -13,11 +13,8 @@ export const SITE_DESCRIPTION =
 export const SITE_AUTHOR = {
   name: 'Ahnaf An Nafee',
   email: 'ahnafnafee@gmail.com',
-  twitterHandle: '@ahnaf_nafee',
   githubUsername: 'ahnafnafee'
 } as const
-
-export const TWITTER_HANDLE = SITE_AUTHOR.twitterHandle
 
 // 800×800 square headshot. Google's name-search thumbnail (and Knowledge Panel
 // when it eventually fires) prefers ≥600 px on the short edge; the original

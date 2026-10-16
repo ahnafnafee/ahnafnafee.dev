@@ -11,7 +11,7 @@ import { getContents } from '@/services'
 import { getContentHeaders } from '@/services/content'
 import { getViewsBatch } from '@/services/pageviews'
 
-import { SITE_AUTHOR, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { SITE_AUTHOR, SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
 import { getPersonNode } from '@/libs/seo/personSchema'
 import { getNewestBlog, getNewestPortfolio, getNewestResearch } from '@/libs/sorters'
@@ -177,8 +177,6 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
-    site: TWITTER_HANDLE,
-    creator: TWITTER_HANDLE,
     images: [{ url: HOME_OG_IMAGE, alt: HOME_OG_ALT }]
   }
 }

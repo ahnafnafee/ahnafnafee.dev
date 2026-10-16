@@ -5,7 +5,7 @@ import { Hero } from '@/components/site/templates/Hero'
 
 import { getContents } from '@/services'
 
-import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
 import { getNewestBlog } from '@/libs/sorters'
 
@@ -98,8 +98,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: `${label} — Blog Topics`,
       description,
-      site: TWITTER_HANDLE,
-      creator: TWITTER_HANDLE,
       images: [{ url: ogImage, alt: `${label} — Blog Topics` }]
     }
   }

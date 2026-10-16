@@ -1,3 +1,5 @@
+import { StarfieldBackground } from '@/components/site/StarfieldBackground'
+
 import { generateOgImage } from '@/libs/metapage'
 
 import type { Metadata } from 'next'
@@ -32,151 +34,152 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Security Policy - Ahnaf An Nafee',
     description: 'Security policy and responsible disclosure guidelines for ahnafnafee.dev',
-    site: '@ahnaf_nafee',
-    creator: '@ahnaf_nafee',
     images: [SECURITY_OG_IMAGE]
   }
 }
 
 export default function SecurityPolicyPage() {
   return (
-    <main className='layout'>
-      <div className='mx-auto max-w-4xl py-8'>
-        <h1 className='mb-8 text-3xl font-bold tracking-tight text-black md:text-4xl dark:text-white'>
-          Security Policy
-        </h1>
+    <>
+      <StarfieldBackground />
+      <main className='layout'>
+        <div className='mx-auto max-w-4xl py-8'>
+          <h1 className='mb-8 text-3xl font-bold tracking-tight text-black md:text-4xl dark:text-white'>
+            Security Policy
+          </h1>
 
-        <div className='prose prose-gray dark:prose-invert max-w-none'>
-          <section className='mb-8'>
-            <h2 className='mb-4 text-2xl font-semibold'>Reporting Security Vulnerabilities</h2>
-            <p className='mb-4'>
-              I take the security of my website and services seriously. If you discover a security vulnerability, I
-              appreciate your help in disclosing it to me in a responsible manner.
-            </p>
-
-            <h3 className='mb-3 text-xl font-semibold'>How to Report</h3>
-            <ul className='mb-4 list-disc pl-6'>
-              <li>
-                Email:{' '}
-                <a href='mailto:ahnafnafee@gmail.com' className='text-primary-600 hover:text-primary-700'>
-                  ahnafnafee@gmail.com
-                </a>
-              </li>
-              <li>
-                LinkedIn:{' '}
-                <a href='https://www.linkedin.com/in/ahnafnafee' className='text-primary-600 hover:text-primary-700'>
-                  linkedin.com/in/ahnafnafee
-                </a>
-              </li>
-            </ul>
-          </section>
-
-          <section className='mb-8'>
-            <h2 className='mb-4 text-2xl font-semibold'>What to Include</h2>
-            <p className='mb-4'>Please include the following information in your report:</p>
-            <ul className='mb-4 list-disc pl-6'>
-              <li>Description of the vulnerability</li>
-              <li>Steps to reproduce the issue</li>
-              <li>Potential impact of the vulnerability</li>
-              <li>Any suggested fixes or mitigations</li>
-              <li>Your contact information for follow-up</li>
-            </ul>
-          </section>
-
-          <section className='mb-8'>
-            <h2 className='mb-4 text-2xl font-semibold'>Response Timeline</h2>
-            <ul className='mb-4 list-disc pl-6'>
-              <li>
-                <strong>Initial Response:</strong> Within 48 hours of receiving your report
-              </li>
-              <li>
-                <strong>Assessment:</strong> Within 7 days, I will assess the vulnerability and provide an initial
-                response
-              </li>
-              <li>
-                <strong>Resolution:</strong> Critical vulnerabilities will be addressed within 30 days
-              </li>
-              <li>
-                <strong>Disclosure:</strong> After the vulnerability is fixed, we can discuss public disclosure
-              </li>
-            </ul>
-          </section>
-
-          <section className='mb-8'>
-            <h2 className='mb-4 text-2xl font-semibold'>Scope</h2>
-            <p className='mb-4'>This security policy applies to:</p>
-            <ul className='mb-4 list-disc pl-6'>
-              <li>
-                The main website: <code>ahnafnafee.dev</code>
-              </li>
-              <li>
-                All subdomains of <code>ahnafnafee.dev</code>
-              </li>
-              <li>Associated services and APIs</li>
-            </ul>
-          </section>
-
-          <section className='mb-8'>
-            <h2 className='mb-4 text-2xl font-semibold'>Out of Scope</h2>
-            <p className='mb-4'>The following are considered out of scope:</p>
-            <ul className='mb-4 list-disc pl-6'>
-              <li>Social engineering attacks</li>
-              <li>Physical attacks</li>
-              <li>Denial of Service (DoS) attacks</li>
-              <li>Issues in third-party services not directly controlled by me</li>
-              <li>Vulnerabilities requiring physical access to devices</li>
-            </ul>
-          </section>
-
-          <section className='mb-8'>
-            <h2 className='mb-4 text-2xl font-semibold'>Recognition</h2>
-            <p className='mb-4'>
-              I believe in recognizing security researchers who help improve the security of my services. With your
-              permission, I may acknowledge your contribution in:
-            </p>
-            <ul className='mb-4 list-disc pl-6'>
-              <li>A security acknowledgments page</li>
-              <li>Social media recognition</li>
-              <li>Professional recommendations on LinkedIn</li>
-            </ul>
-          </section>
-
-          <section className='mb-8'>
-            <h2 className='mb-4 text-2xl font-semibold'>Legal</h2>
-            <p className='mb-4'>I will not pursue legal action against security researchers who:</p>
-            <ul className='mb-4 list-disc pl-6'>
-              <li>Follow responsible disclosure practices</li>
-              <li>Do not access or modify user data</li>
-              <li>Do not disrupt services</li>
-              <li>Report vulnerabilities in good faith</li>
-            </ul>
-          </section>
-
-          <section className='mb-8'>
-            <h2 className='mb-4 text-2xl font-semibold'>Contact Information</h2>
-            <div className='rounded-lg bg-gray-50 p-4 dark:bg-gray-800'>
-              <p>
-                <strong>Primary Contact:</strong>{' '}
-                <a href='mailto:ahnafnafee@gmail.com' className='text-primary-600 hover:text-primary-700'>
-                  ahnafnafee@gmail.com
-                </a>
+          <div className='prose prose-gray dark:prose-invert max-w-none'>
+            <section className='mb-8'>
+              <h2 className='mb-4 text-2xl font-semibold'>Reporting Security Vulnerabilities</h2>
+              <p className='mb-4'>
+                I take the security of my website and services seriously. If you discover a security vulnerability, I
+                appreciate your help in disclosing it to me in a responsible manner.
               </p>
-              <p>
-                <strong>LinkedIn:</strong>{' '}
-                <a href='https://www.linkedin.com/in/ahnafnafee' className='text-primary-600 hover:text-primary-700'>
-                  linkedin.com/in/ahnafnafee
-                </a>
+
+              <h3 className='mb-3 text-xl font-semibold'>How to Report</h3>
+              <ul className='mb-4 list-disc pl-6'>
+                <li>
+                  Email:{' '}
+                  <a href='mailto:ahnafnafee@gmail.com' className='text-link'>
+                    ahnafnafee@gmail.com
+                  </a>
+                </li>
+                <li>
+                  LinkedIn:{' '}
+                  <a href='https://www.linkedin.com/in/ahnafnafee' className='text-link'>
+                    linkedin.com/in/ahnafnafee
+                  </a>
+                </li>
+              </ul>
+            </section>
+
+            <section className='mb-8'>
+              <h2 className='mb-4 text-2xl font-semibold'>What to Include</h2>
+              <p className='mb-4'>Please include the following information in your report:</p>
+              <ul className='mb-4 list-disc pl-6'>
+                <li>Description of the vulnerability</li>
+                <li>Steps to reproduce the issue</li>
+                <li>Potential impact of the vulnerability</li>
+                <li>Any suggested fixes or mitigations</li>
+                <li>Your contact information for follow-up</li>
+              </ul>
+            </section>
+
+            <section className='mb-8'>
+              <h2 className='mb-4 text-2xl font-semibold'>Response Timeline</h2>
+              <ul className='mb-4 list-disc pl-6'>
+                <li>
+                  <strong>Initial Response:</strong> Within 48 hours of receiving your report
+                </li>
+                <li>
+                  <strong>Assessment:</strong> Within 7 days, I will assess the vulnerability and provide an initial
+                  response
+                </li>
+                <li>
+                  <strong>Resolution:</strong> Critical vulnerabilities will be addressed within 30 days
+                </li>
+                <li>
+                  <strong>Disclosure:</strong> After the vulnerability is fixed, we can discuss public disclosure
+                </li>
+              </ul>
+            </section>
+
+            <section className='mb-8'>
+              <h2 className='mb-4 text-2xl font-semibold'>Scope</h2>
+              <p className='mb-4'>This security policy applies to:</p>
+              <ul className='mb-4 list-disc pl-6'>
+                <li>
+                  The main website: <code>ahnafnafee.dev</code>
+                </li>
+                <li>
+                  All subdomains of <code>ahnafnafee.dev</code>
+                </li>
+                <li>Associated services and APIs</li>
+              </ul>
+            </section>
+
+            <section className='mb-8'>
+              <h2 className='mb-4 text-2xl font-semibold'>Out of Scope</h2>
+              <p className='mb-4'>The following are considered out of scope:</p>
+              <ul className='mb-4 list-disc pl-6'>
+                <li>Social engineering attacks</li>
+                <li>Physical attacks</li>
+                <li>Denial of Service (DoS) attacks</li>
+                <li>Issues in third-party services not directly controlled by me</li>
+                <li>Vulnerabilities requiring physical access to devices</li>
+              </ul>
+            </section>
+
+            <section className='mb-8'>
+              <h2 className='mb-4 text-2xl font-semibold'>Recognition</h2>
+              <p className='mb-4'>
+                I believe in recognizing security researchers who help improve the security of my services. With your
+                permission, I may acknowledge your contribution in:
               </p>
-              <p>
-                <strong>Preferred Languages:</strong> English
-              </p>
-              <p>
-                <strong>Last Updated:</strong> December 2024
-              </p>
-            </div>
-          </section>
+              <ul className='mb-4 list-disc pl-6'>
+                <li>A security acknowledgments page</li>
+                <li>Social media recognition</li>
+                <li>Professional recommendations on LinkedIn</li>
+              </ul>
+            </section>
+
+            <section className='mb-8'>
+              <h2 className='mb-4 text-2xl font-semibold'>Legal</h2>
+              <p className='mb-4'>I will not pursue legal action against security researchers who:</p>
+              <ul className='mb-4 list-disc pl-6'>
+                <li>Follow responsible disclosure practices</li>
+                <li>Do not access or modify user data</li>
+                <li>Do not disrupt services</li>
+                <li>Report vulnerabilities in good faith</li>
+              </ul>
+            </section>
+
+            <section className='mb-8'>
+              <h2 className='mb-4 text-2xl font-semibold'>Contact Information</h2>
+              <div className='rounded-lg bg-gray-50 p-4 dark:bg-gray-800'>
+                <p>
+                  <strong>Primary Contact:</strong>{' '}
+                  <a href='mailto:ahnafnafee@gmail.com' className='text-link'>
+                    ahnafnafee@gmail.com
+                  </a>
+                </p>
+                <p>
+                  <strong>LinkedIn:</strong>{' '}
+                  <a href='https://www.linkedin.com/in/ahnafnafee' className='text-link'>
+                    linkedin.com/in/ahnafnafee
+                  </a>
+                </p>
+                <p>
+                  <strong>Preferred Languages:</strong> English
+                </p>
+                <p>
+                  <strong>Last Updated:</strong> December 2024
+                </p>
+              </div>
+            </section>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   )
 }

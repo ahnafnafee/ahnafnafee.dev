@@ -5,7 +5,7 @@ import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 import { getContents } from '@/services'
 import { getViewsBatch } from '@/services/pageviews'
 
-import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
 import { getNewestPortfolio } from '@/libs/sorters'
 
@@ -89,8 +89,6 @@ export const metadata: Metadata = {
     title: `Portfolio - ${SITE_NAME}`,
     description:
       "Here is a selection of my personal works. I'm always open to feedback and opportunities to collaborate!",
-    site: TWITTER_HANDLE,
-    creator: TWITTER_HANDLE,
     images: [{ url: PORTFOLIO_OG_IMAGE, alt: PORTFOLIO_OG_ALT }]
   }
 }

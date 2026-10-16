@@ -5,7 +5,7 @@ import { AppLayoutPage } from '@/components/site/templates/AppLayoutPage'
 import { getContents } from '@/services'
 import { getViewsBatch } from '@/services/pageviews'
 
-import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
 import { getNewestBlog } from '@/libs/sorters'
 
@@ -50,8 +50,6 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `Blog - ${SITE_NAME}`,
     description: "You'll find a collection of my thoughts and musings on a variety of topics.",
-    site: TWITTER_HANDLE,
-    creator: TWITTER_HANDLE,
     images: [{ url: BLOG_OG_IMAGE, alt: BLOG_OG_ALT }]
   }
 }

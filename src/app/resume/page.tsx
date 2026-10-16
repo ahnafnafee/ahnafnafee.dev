@@ -1,6 +1,6 @@
 import { ResumePageClient } from '@/components/resume/ResumePageClient'
 
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
 import { PERSON_REFERENCE } from '@/libs/seo/personSchema'
 
@@ -60,8 +60,6 @@ export const metadata: Metadata = {
     title: `Resume - ${SITE_NAME} | HCI and ML Systems`,
     description:
       'Computer Science PhD student at George Mason University working across HCI, ML systems, and research software.',
-    site: TWITTER_HANDLE,
-    creator: TWITTER_HANDLE,
     images: [{ url: RESUME_OG_IMAGE, alt: RESUME_OG_ALT }]
   }
 }

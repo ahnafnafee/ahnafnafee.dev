@@ -50,8 +50,6 @@ function generateMetaHtml(project: {
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@ahnaf_nafee">
-  <meta name="twitter:creator" content="@ahnaf_nafee">
   <meta name="twitter:title" content="${safeTitle}">
   <meta name="twitter:description" content="${safeSummary}">
   <meta name="twitter:image" content="${ogImage}">

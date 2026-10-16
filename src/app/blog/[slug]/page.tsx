@@ -6,7 +6,7 @@ import { Footer } from '@/components/site/common'
 
 import { getContentBySlug, getContentHeaders } from '@/services/content'
 
-import { SITE_NAME, SITE_URL, TWITTER_HANDLE } from '@/libs/constants/site'
+import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { commonMDXOptions } from '@/libs/mdxConfig'
 import { generateOgImage } from '@/libs/metapage'
 import { PERSON_ID } from '@/libs/seo/personSchema'
@@ -101,8 +101,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         card: 'summary_large_image',
         title: header.title,
         description: header.summary,
-        site: TWITTER_HANDLE,
-        creator: TWITTER_HANDLE,
         images: [{ url: ogImage, alt: header.title }]
       },
       ...(seeAlso.length > 0 && {
