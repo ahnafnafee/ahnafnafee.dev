@@ -11,23 +11,23 @@ stack: [python, typescript, react, docker, tailwindcss, rest-api]
 link: { github: 'https://github.com/ahnafnafee/songmirror' }
 ---
 
-SongMirror is the self-hosted music app I built to keep libraries connected across services. It combines scheduled playlist and favorites syncs with multi-source merges, one-off transfers, track-list imports, and metadata backups. A FastAPI backend and React interface share the same Python engine as the headless CLI, so the browser and scheduled jobs apply the same matching and removal rules.
+SongMirror is the self-hosted music app I built to keep libraries connected across services. Run the official Docker image to use its browser interface and scheduler, with playlist and favorites syncs, multi-source merges, one-off transfers, track-list imports, and metadata backups. A FastAPI backend and React interface share the same Python engine as the headless CLI, so the browser and scheduled jobs apply the same matching and removal rules.
 
 <AppDownloadCTA
-  heading='Install and Run SongMirror'
-  subtext='Requires Git and Docker with Compose v2.24 or newer. Configure your accounts in the browser.'
+  heading='Run the Official Docker Image'
+  subtext='Recommended setup: Docker with Compose v2.24 or newer. Configure your accounts in the browser.'
   github='https://github.com/ahnafnafee/songmirror'
   container='https://github.com/ahnafnafee/songmirror/pkgs/container/songmirror'
   documentation='https://github.com/ahnafnafee/songmirror/blob/main/docs/docker-image.md'
 >
 
+Use `ghcr.io/ahnafnafee/songmirror:latest`. Save the [official Compose file](https://raw.githubusercontent.com/ahnafnafee/songmirror/main/docker-compose.yml) as `compose.yaml` in a new folder, open a terminal in that folder, and run:
+
 ```bash
-git clone https://github.com/ahnafnafee/songmirror.git
-cd songmirror
-docker compose up -d
+docker compose up -d --pull always --no-build
 ```
 
-Open [localhost:8888](http://localhost:8888), connect services under **Accounts**, then choose **Transfers** for a copy or **Sync** for a scheduled job. Use **Preview** before applying a sync. No environment file is required; configuration and history persist in `./data`, with downloads in `./downloads` by default. Keep the interface on a trusted network because it has no login.
+Open [localhost:8888](http://localhost:8888), connect services under **Accounts**, then choose **Transfers** for a copy or **Sync** for a scheduled job. Use **Preview** before applying a sync. The image is prebuilt for AMD64 and ARM64, with no Git checkout or environment file required. Configuration and history persist in `./data`, with downloads in `./downloads` by default. Keep the interface on a trusted network because it has no login.
 
 </AppDownloadCTA>
 

@@ -46,27 +46,27 @@ thumbnail: '/images/songmirror-og.png'
 related: ['gofile-upload-github-action', 'doi-paper-scraper', 'bookworm-privacy-first-library']
 ---
 
-I curate playlists on Spotify but listen on Apple Music, YouTube Music, and a Jellyfin server at home. I built [SongMirror](https://github.com/ahnafnafee/songmirror) to keep those libraries connected without copying every change by hand. It has grown into a self-hosted browser app for scheduled playlist and favorites syncs, multi-source merges, account-to-account transfers, and metadata backups. Seven streaming services sit alongside Last.fm, ListenBrainz, and Navidrome/Subsonic integrations, with a separate local audio mirror for Jellyfin. Docker runs the app and scheduler together; a headless Python CLI uses the same engine. You choose which services define the library and which follow it.
+I curate playlists on Spotify but listen on Apple Music, YouTube Music, and a Jellyfin server at home. I built [SongMirror](https://github.com/ahnafnafee/songmirror) to keep those libraries connected without copying every change by hand. It has grown into a self-hosted browser app for scheduled playlist and favorites syncs, multi-source merges, account-to-account transfers, and metadata backups. Seven streaming services sit alongside Last.fm, ListenBrainz, and Navidrome/Subsonic integrations, with a separate local audio mirror for Jellyfin. The published Docker image runs the app and scheduler together; a headless Python CLI uses the same engine. You choose which services define the library and which follow it.
 
 <AppDownloadCTA
-  heading='Install and Run SongMirror'
-  subtext='Requires Git and Docker with Compose v2.24 or newer. No environment file is needed to start.'
+  heading='Run the Official Docker Image'
+  subtext='Recommended setup: Docker with Compose v2.24 or newer. Configure your accounts in the browser.'
   github='https://github.com/ahnafnafee/songmirror'
   container='https://github.com/ahnafnafee/songmirror/pkgs/container/songmirror'
   documentation='https://github.com/ahnafnafee/songmirror/blob/main/docs/docker-image.md'
 >
 
+Use the ready-to-run image `ghcr.io/ahnafnafee/songmirror:latest`. Save the [official Compose file](https://raw.githubusercontent.com/ahnafnafee/songmirror/main/docker-compose.yml) as `compose.yaml` in a new folder, open a terminal in that folder, and run:
+
 ```bash
-git clone https://github.com/ahnafnafee/songmirror.git
-cd songmirror
-docker compose up -d
+docker compose up -d --pull always --no-build
 ```
 
 1. Open [localhost:8888](http://localhost:8888) and connect your services under **Accounts**.
 2. Use **Transfers** for a one-time copy, or **Sync** to create a scheduled job. Preview a sync before applying it.
 3. Keep `./data` backed up: it holds your configuration, credentials, caches, and history. Compose also preserves downloads under `./downloads` by default.
 
-Compose pulls the published AMD64/ARM64 image. The interface has no login, so keep it on a trusted local network.
+Compose pulls the published AMD64/ARM64 image and keeps it running across host restarts. Setup needs no Git checkout, local build, or environment file. The interface has no login, so keep it on a trusted local network.
 
 </AppDownloadCTA>
 
@@ -159,4 +159,4 @@ The optional local mirror copies matching files from an existing music library i
 
 Credentials and state stay in the self-hosted data directory and are used to contact the services you connect. Renewable sessions are refreshed where supported; some providers still require a fresh pasted token. The [connection guide](https://github.com/ahnafnafee/songmirror#connecting-each-service) documents those differences.
 
-For upgrades, run `docker compose up -d --pull always` from the checkout. Source, setup, and issue tracking live in the [SongMirror repository](https://github.com/ahnafnafee/songmirror), released under the MIT license. The [portfolio page](/portfolio/songmirror) gives a shorter overview of the app and its implementation.
+For upgrades, run `docker compose up -d --pull always --no-build` from the folder containing `compose.yaml`. Source, setup, and issue tracking live in the [SongMirror repository](https://github.com/ahnafnafee/songmirror), released under the MIT license. The [portfolio page](/portfolio/songmirror) gives a shorter overview of the app and its implementation.
