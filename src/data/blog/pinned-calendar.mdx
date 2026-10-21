@@ -1,220 +1,167 @@
 ---
-title: 'Pinned Calendar: A Self-Healing, Offline Agenda for Android'
-summary: "How I built a privacy-first Android app that pins your week's Google Calendar events and to-dos to a persistent, self-healing notification — no foreground service, no sign-in, and no INTERNET permission — using Kotlin, Jetpack Compose, custom RemoteViews, WorkManager, and a delete-intent that re-posts the pin the instant you swipe it away."
+title: 'Pinned Calendar: An Offline Agenda With Recurring Tasks for Android'
+summary: 'Your calendar and recurring tasks, visible in one persistent Android notification. How I built Pinned Calendar with actionable reminders, an adjustable agenda layout, and on-device storage, now available on Google Play.'
 featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
 published: '06/06/2026'
+updated: '10/21/2026'
 topics: ['Android', 'Kotlin', 'Jetpack Compose', 'Privacy', 'Mobile']
 keywords:
   [
     'pinned calendar',
+    'pinned calendar google play',
     'android calendar notification',
-    'persistent notification android',
-    'self healing notification',
-    'ongoing notification android',
-    'calendar agenda notification',
-    'notification shade agenda',
+    'persistent agenda notification',
+    'calendar agenda android',
+    'offline task manager',
+    'recurring tasks android',
+    'custom task recurrence',
+    'task reminder notification',
+    'snooze task reminder',
+    'notification done action',
+    'local todos',
+    'calendar provider android',
+    'calendarcontract',
+    'read_calendar permission',
+    'no internet permission',
+    'privacy first android',
+    'foss calendar app',
     'kotlin android app',
     'jetpack compose',
     'material you',
     'material 3',
-    'materialkolor dynamic color',
-    'workmanager periodic',
-    'contentobserver android',
-    'calendarcontract',
-    'calendar provider android',
-    'read_calendar permission',
-    'no internet permission',
-    'privacy first android',
-    'offline android app',
-    'foss android',
-    'deleteintent pendingintent',
-    'broadcastreceiver self heal',
-    'custom remoteviews notification',
-    'decoratedcustomviewstyle',
-    'notification channel importance',
-    'notification priority android',
+    'remoteviews notification',
+    'deleteintent',
+    'workmanager refresh',
+    'alarmmanager reminders',
     'datastore preferences',
-    'boot completed receiver',
-    'battery optimization android',
     'no foreground service',
-    'java time clock injection',
-    'testable android core',
-    'agenda widget alternative',
-    'week at a glance',
-    'local todos',
     'amoled theme android',
+    'live notification preview',
+    'android rtl support',
     'open source calendar app'
   ]
 thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/pinned-calendar.png'
 related: ['bookworm-privacy-first-library', 'local-llm-pdf-ocr']
 ---
 
-Calendar reminders are too easy to swipe away by accident — and then you forget what's next. So I built **[Pinned Calendar](https://github.com/ahnafnafee/pinned-calendar)**, a privacy-first Android app that keeps this week's Google Calendar events _and_ your to-dos in a single, always-present notification that **re-posts itself the instant you swipe it off**. It reads the calendars already on your phone — no sign-in, no OAuth, and no `INTERNET` permission, so your schedule never leaves the device. Built with Kotlin and Jetpack Compose, it pulls off a self-healing pin with **no foreground service**: a delete-intent broadcast, a `WorkManager` refresh, and a calendar `ContentObserver` do all the work.
+A calendar reminder disappears when I swipe it away, even though the appointment still matters. I built [Pinned Calendar](https://pinnedcalendar.ahnafnafee.dev) to keep upcoming events and local tasks visible in one persistent Android notification. The app now includes recurring tasks, due-time reminders with Done and Snooze actions, and a live layout preview, and it is [available on Google Play](https://play.google.com/store/apps/details?id=dev.ahnafnafee.pinnedcalendar). It reads calendars already synced to the phone and stores tasks on-device, with no sign-in or internet permission. Kotlin and Jetpack Compose handle the app; a self-healing notification keeps the agenda within a swipe of whatever I am doing.
 
-## The Problem: Reminders You Can Swipe Into Oblivion
+<AppDownloadCTA
+  heading='Install Pinned Calendar'
+  subtext='Free and open source. Available on Google Play for Android 8.0 and newer, with signed APKs on GitHub.'
+  playStore='https://play.google.com/store/apps/details?id=dev.ahnafnafee.pinnedcalendar'
+  github='https://github.com/ahnafnafee/pinned-calendar'
+  releases='https://github.com/ahnafnafee/pinned-calendar/releases/latest'
+  web='https://pinnedcalendar.ahnafnafee.dev'
+>
 
-Every reminder system shares one failure mode: it interrupts you at the wrong moment, you flick it away on reflex, and the information goes with it. Heads-up notifications are _designed_ to be dismissed. Widgets solve persistence but lose the home-screen real-estate war — they sit one swipe behind whatever launcher page you aren't looking at.
+1. Install the app, then grant **Calendar** access and allow notifications when Android asks.
+2. Turn on **Pin to notifications** in Settings. Choose the calendars and look-ahead window you want to see.
+3. Add a to-do, set a date or repeat rule, and use the notification preview to adjust the agenda's density.
 
-Pinned Calendar takes a different seat in the house: the notification shade. It posts one ongoing notification — your whole week, grouped by day, color-coded per calendar — and parks it at the top of the drawer where you already look a hundred times a day. Events and tasks share the same surface, and there's nothing to open.
+Task reminders are enabled by default. If your phone delays background updates, the app's **Reliability** setting offers a battery-optimization exemption.
 
-<div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
+</AppDownloadCTA>
+
+## Keep the Plan Where You Already Look
+
+The notification shade is useful because it follows me between apps. Pinned Calendar puts events and tasks on that surface, grouped by day and marked with calendar or task-priority colors. An event row opens its calendar entry; the rest of the pin opens the app.
+
+That changes what a reminder has to do. The agenda can stay visible without sounding an alarm every time it refreshes, while a task that is actually due can produce a separate alert. Keeping those roles separate became more important as the app grew beyond a read-only week view.
+
+<div className='not-prose my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
   <img
     src='/images/pinned-calendar-notification-light.png'
-    alt='Pinned Calendar persistent notification in light mode, showing the week agenda grouped into TODAY, TOMORROW, and FRI sections with color-coded bars for each event'
-    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+    alt='Pinned Calendar agenda notification in light mode, with event times and calendar colors grouped by day'
+    className='w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
     src='/images/pinned-calendar-notification-dark.png'
-    alt='The same pinned agenda notification in dark mode, with the week of events and times on a dark notification shade'
-    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+    alt='Pinned Calendar agenda notification in dark mode with the same day-grouped layout'
+    className='w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
   />
 </div>
 
-## A Notification That Refuses to Die
+## Tasks That Follow Your Schedule
 
-`setOngoing(true)` keeps the pin out of an ordinary swipe, but Android still lets a determined user — or a _Clear all_ — dismiss it. Rather than fight the platform, I let the dismissal happen and immediately undo it.
+Local to-dos now carry due dates, times, notes, and priorities. Quick date choices cover today, tomorrow, and next week, with a picker for a specific time. The list groups unfinished work into Overdue, Today, and Upcoming, with completed items kept separately. An unfinished task carries forward instead of disappearing when its original date passes.
 
-Every notification can carry a **delete-intent**: a `PendingIntent` the system fires when the notification is removed. Point it at a `BroadcastReceiver` and a swipe stops being a deletion and becomes a trigger to rebuild.
+Recurrence supports daily, weekly, monthly, and yearly presets, plus custom intervals and selected weekdays. A series can end on a date or after a chosen number of occurrences. Completing a recurring task advances it to the first upcoming occurrence, skipping missed dates while preserving its scheduling intent.
 
-```mermaid
-flowchart LR
-    A["Pinned notification"] -->|swipe / Clear all| B["Android fires deleteIntent"]
-    B --> C["SelfHealReceiver.onReceive"]
-    C --> D["AgendaNotifier.refresh()"]
-    D -->|re-post| A
-```
+That last detail is easy to overlook. A monthly task near the end of a month should not drift because February is shorter, and a local morning reminder should retain its meaning across time-zone offset changes. The recurrence logic handles month-end and leap-year cases in the task model, where those rules can be tested independently of the interface.
 
-The builder wires the delete-intent to a receiver and marks the notification ongoing and alert-once, so re-posting it never makes a sound:
+## Act on a Reminder Without Opening the App
+
+To-do reminders use their own alerting, dismissible notifications. **Done** completes the scheduled occurrence, including advancing a recurring task. **Snooze** postpones that occurrence's reminder for 30 minutes without changing the task's original due time. Neither action removes the pinned agenda.
+
+`AlarmManager` schedules the next due task, then the receiver schedules the following one after handling it. Snoozed occurrences have separate alarm identities, so postponing one reminder does not overwrite another. On Android versions requiring exact-alarm access, the scheduler checks whether that access is available:
 
 ```kotlin
-val deleteIntent = PendingIntent.getBroadcast(
-    context, 1,
-    Intent(context, SelfHealReceiver::class.java),
-    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-)
-
-return NotificationCompat.Builder(context, channelId)
-    .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-    .setCustomContentView(renderer.collapsed(content))
-    .setCustomBigContentView(renderer.expanded(content))
-    .setOngoing(true)
-    .setOnlyAlertOnce(true)
-    .setDeleteIntent(deleteIntent)
-    .build()
-```
-
-The receiver is almost trivially small — the whole trick is the wiring above:
-
-```kotlin
-class SelfHealReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent?) {
-        val pending = goAsync()
-        try {
-            runBlocking { AgendaNotifier(context).refresh() }
-        } finally {
-            pending?.finish()
-        }
-    }
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+    !alarms.canScheduleExactAlarms()) {
+    alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, intent)
+} else {
+    alarms.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, intent)
 }
 ```
 
-`goAsync()` is what makes this safe. A `BroadcastReceiver` is normally killed the moment `onReceive` returns, which would cut off the suspend work that reads settings, queries the calendar, and rebuilds the rows. `goAsync()` buys a few extra seconds so the refresh completes before the receiver finishes. From the user's side, a swipe produces a flicker at most — the pin is already back.
+Without exact access, the fallback still schedules the reminder, although Android may deliver it later. Heads-up presentation also depends on system notification settings. These are platform controls that the app respects rather than treating every reminder as a reason to keep a process running.
 
-## No Internet Permission, No Sign-In
+## Persistent, With a Deliberate Way Out
 
-The events on the pin are the events already synced to your phone. Pinned Calendar never talks to Google's servers — it queries Android's **Calendar Provider** through `CalendarContract`, the same content provider the stock Calendar app uses. A single `contentResolver.query` against the `Instances` table, scoped to the time window, returns every event with its title, start time, all-day flag, and per-calendar color:
+The pin carries a delete-intent pointing to `SelfHealReceiver`. When Android delivers a dismissal, the receiver reads the saved settings and rebuilds the agenda. An accidental swipe therefore triggers a refresh instead of permanently losing the week view.
 
-```kotlin
-val uri = CalendarContract.Instances.CONTENT_URI.buildUpon()
-    .appendPath(startMillis.toString())
-    .appendPath(endMillis.toString())
-    .build()
+Persistence also needs an intentional dismissal. With **swipe-twice-to-remove** enabled, two dismissals within five seconds turn the saved pin setting off. It stays off until the user enables it again. The in-app switch provides the same explicit control, so the app can recover from accidents without ignoring a deliberate decision.
 
-context.contentResolver.query(uri, projection, null, null, "${Instances.BEGIN} ASC")?.use { c ->
-    // map each row → AgendaItem(title, start, allDay, calendar color, deep link)
-}
-```
-
-Because the data already lives on the device, the whole feature needs exactly one dangerous permission — `READ_CALENDAR` — and zero network access. The entire manifest is four permission lines, and `INTERNET` isn't one of them:
-
-```xml
-<uses-permission android:name="android.permission.READ_CALENDAR" />
-<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-```
-
-Omitting `INTERNET` is the strongest privacy guarantee an Android app can make: the OS itself refuses any socket the app tries to open. There's no sign-in, no OAuth token, no analytics SDK, and — by construction — nothing that _can_ leave the phone.
-
-## Two-Tier Refresh, No Foreground Service
-
-A pin is only useful if it's current. The obvious way to keep a notification fresh is a **foreground service** — but that costs a permanent wakelock and its own second notification, and modern Android actively fights long-running ones. Pinned Calendar skips it entirely and leans on two cheaper signals instead.
-
-While the app's process is alive, a `ContentObserver` registered on `CalendarContract.CONTENT_URI` fires the moment any calendar data changes — add an event in Google Calendar and the pin updates within a second:
-
-```kotlin
-private val calendarObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
-    override fun onChange(selfChange: Boolean) {
-        AgendaScheduler.refreshNow(this@App)   // process alive → refresh instantly
-    }
-}
-
-override fun onCreate() {
-    super.onCreate()
-    AgendaScheduler.schedulePeriodic(this)     // 15-min WorkManager baseline
-    AgendaScheduler.refreshNow(this)
-    contentResolver.registerContentObserver(CalendarContract.CONTENT_URI, true, calendarObserver)
-}
-```
-
-For everything that happens when the process _isn't_ alive — time marching forward, an event starting while your phone sits on the nightstand — a `WorkManager` periodic job rebuilds the agenda every 15 minutes. `WorkManager` is the part that survives Doze, app-standby, and reboots; a `BootReceiver` re-arms both the periodic job and an immediate refresh after the device restarts. No foreground service means the pin is nearly free on the battery, and it still comes back after a reboot.
-
-## A Pure-Kotlin Core You Can Actually Test
-
-The trickiest logic in an app like this isn't the Android plumbing — it's the date math. "This week" has to respect the device's first-day-of-week. "Today" and "Tomorrow" headers have to flip at local midnight. All-day events cross time zones in surprising ways. None of that should require an emulator to verify.
-
-So the core is plain Kotlin with no Android imports. `WindowCalculator` turns a window mode into a `[now, end)` epoch-millis range. `DayBucketer` groups events by local date and labels them `TODAY · WED 3`, `TOMORROW · THU 4`, or a bare weekday. `NotificationContentBuilder` assembles the rows the notification renders. Every one of them takes a `java.time.Clock` in its constructor:
-
-```kotlin
-class DayBucketer(
-    private val clock: Clock,
-    private val zone: ZoneId = ZoneId.systemDefault(),
-) {
-    fun bucket(items: List<AgendaItem>): List<DaySection> { /* … */ }
-}
-```
-
-Injecting the `Clock` means a test can pin "now" to a fixed instant and assert that an event at 23:59 lands under TODAY while one a minute later rolls to TOMORROW — deterministically, on the JVM, in milliseconds. The repo's unit tests cover the windowing, bucketing, content-building, self-heal, and boot paths; the Android-specific layer (custom `RemoteViews`, the receivers, `WorkManager`) is a thin shell over that tested core. The whole thing is one clean dependency flow:
+Calendar changes take a separate route. A `ContentObserver` requests a refresh while the process is alive, and a periodic WorkManager job supplies a background baseline. Boot and app-update receivers re-arm the schedule. Android can defer background work, particularly on devices with aggressive battery management, but the design needs no foreground service or second service notification.
 
 ```mermaid
 flowchart TD
-    CP["Calendar Provider<br/>(CalendarContract)"] --> AR["AgendaRepository"]
-    TD["Local to-dos<br/>(DataStore)"] --> AR
-    AR --> NCB["NotificationContentBuilder<br/>(pure-Kotlin core)"]
-    NCB --> NP["NotificationPoster → RemoteViews"]
-    NP --> N["Ongoing notification"]
-    OBS["ContentObserver"] -->|calendar changed| AR
-    WM["WorkManager · 15 min"] -->|periodic| AR
-    N -->|deleteIntent on swipe| SH["SelfHealReceiver"]
-    SH --> AR
+    C["Device calendars"] --> A["Agenda repository"]
+    T["Local tasks and recurrence"] --> A
+    A --> B["Notification content builder"]
+    B --> P["Persistent agenda pin"]
+    P -->|"Dismissal"| S["Self-heal or deliberate double-swipe removal"]
+    S --> A
+    O["Calendar observer and periodic work"] --> A
+    T --> R["Next due-time alarm"]
+    R --> N["Separate reminder: Done or Snooze"]
+    N --> T
 ```
 
-## Material You, Down to the Notification Rows
+## Preview the Notification You Are Building
 
-The agenda inside the pin isn't a stock notification template — it's custom `RemoteViews` wrapped in `DecoratedCustomViewStyle`, so each row gets its calendar's color as a vertical accent bar, tasks render distinctly from events, and tapping a row deep-links straight into Google Calendar at that event. The settings screen is full Material 3: wallpaper-based dynamic color via [MaterialKolor](https://github.com/jordond/MaterialKolor), hand-picked seed colors, an AMOLED-black option, selectable fonts, and a theme- and accent-adaptive launcher icon.
+Settings now renders the actual notification layout as a live preview, with collapsed and expanded views. Compact, Cozy, and Comfortable presets provide starting points; Custom sliders expose finer control. The number of rows before expansion, day grouping, and heading visibility can all be adjusted without repeatedly leaving the app to inspect the shade.
 
-<img
-  src='/images/pinned-calendar-settings.png'
-  alt='Pinned Calendar Material You settings screen: a week-overview card with a bar chart and "5 events / 0 to-dos" pill chips, then Notifications, a Time window selector (3 days, this week, 7 days, 14 days), and per-calendar toggles'
-  className='mx-auto my-6 w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
-/>
+The time window remains selectable: three days, this week, seven days, or fourteen days. Per-calendar switches and an item cap help keep a busy work calendar from overwhelming the view. Material You colors, seed palettes, AMOLED black, fonts, and light or dark themes extend that control to appearance.
 
-Notification priority is its own small puzzle. Android won't let you raise a channel's importance once it exists, so each level — Top, Normal, Silent — owns a separate channel with a fixed importance. Switching levels posts on the new channel and retires the others, leaving a single "Pinned agenda" entry in system settings at whatever priority you chose, never a pile of stale channels. Every level stays silent (no sound, no vibration); Top simply uses `IMPORTANCE_HIGH` so the pin ranks above the everyday notification stream.
+<div className='not-prose my-6 grid grid-cols-1 gap-4 sm:grid-cols-2'>
+  <img
+    src='/images/pinned-calendar-todos.png'
+    alt='Pinned Calendar To-dos tab with a week overview and local task list'
+    loading='lazy'
+    className='mx-auto w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/pinned-calendar-settings.png'
+    alt='Pinned Calendar settings for the notification, time window, calendars, and appearance'
+    loading='lazy'
+    className='mx-auto w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
 
-## Try It
+## Keep the Data on the Phone
 
-Pinned Calendar is open source under the MIT license. Grab the signed APK from the [latest release](https://github.com/ahnafnafee/pinned-calendar/releases/latest) — no Play Store account needed — grant Calendar and Notification access, flip **Pin to notifications** on, and your week moves into the shade. It runs on Android 8.0 (API 26) and up.
+Calendar reads go through Android's `CalendarContract` provider. Pinned Calendar does not authenticate with Google or run its own calendar synchronization; whichever calendar apps already sync the phone supply the events it sees. Tasks and preferences live in DataStore.
 
-Source, issues, and PRs live at [github.com/ahnafnafee/pinned-calendar](https://github.com/ahnafnafee/pinned-calendar). If a pinned week keeps you on schedule, a ⭐ on the repo genuinely helps.
+The [manifest](https://github.com/ahnafnafee/pinned-calendar/blob/main/app/src/main/AndroidManifest.xml) declares calendar, notification, boot, exact-alarm, and optional battery-exemption permissions, and omits `INTERNET`. Cloud backup is disabled for application data. The [privacy policy](https://pinnedcalendar.ahnafnafee.dev/privacy/) describes that local storage model, which also means task data is not a cross-device sync service.
+
+The complete app and reminder experience supports 15 languages, including right-to-left Arabic. Android 13 and newer also expose the choices in the system app-language picker. Notification labels and reminder actions follow the selected language rather than leaving the background experience in English.
+
+## Keep the Date Rules Testable
+
+Window calculation, day grouping, and notification content construction live in a pure-Kotlin core. Injected clocks let tests fix the instant around midnight instead of waiting for real time to pass. Recurrence and reminder tests exercise the rules that make a task advance, stay overdue, or become eligible for an alert, while platform tests cover receivers and scheduling.
+
+The [source repository](https://github.com/ahnafnafee/pinned-calendar) includes build instructions and signed [releases](https://github.com/ahnafnafee/pinned-calendar/releases/latest). For everyday use, [Google Play](https://play.google.com/store/apps/details?id=dev.ahnafnafee.pinnedcalendar) is the direct install route. The [portfolio entry](/portfolio/pinned-calendar) gives a shorter account of the app and the implementation choices behind it.

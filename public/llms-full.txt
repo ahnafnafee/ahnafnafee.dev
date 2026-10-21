@@ -249,202 +249,127 @@ Player 2 is live on the App Store and Play Store today, in far better shape than
 
 ---
 
-# A Self-Hosted Playlist Mirror for Seven Music Services
+# SongMirror: Self-Hosted Playlist Sync, Transfers, and Backups
 
 URL: https://www.ahnafnafee.dev/blog/songmirror-playlist-sync
-Published: 2026-07-13 (updated 2026-08-17)
-Summary: How I built SongMirror, an always-on playlist mirror for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music, plus a Jellyfin-ready local archive. It supports one-way sync, authoritative provider groups, and bidirectional N-way reconciliation behind ISRC-first matching, durable caches, and guarded removals.
-Topics: Music Sync, Self-Hosted, Spotify, Python, Automation, APIs
+Published: 2026-07-13 (updated 2026-10-21)
+Summary: Keep playlists and favorites connected across streaming services and your own music library. How I built SongMirror with scheduled merge syncs, account-to-account transfers, editable matches, and playlist backups.
+Topics: Music Sync, Self-Hosted, Python, Automation, APIs
 
-I curate playlists on Spotify but listen elsewhere: Apple Music in the car, YouTube Music for indie uploads, and a Jellyfin server at home when I want the files to be mine. Keeping those playlists identical by hand is work I do once and then stop doing, so I built [SongMirror](https://github.com/ahnafnafee/songmirror). It is a self-hosted web app for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music, with an optional Jellyfin-ready download mirror. I can create named syncs or run one-off transfers. A sync can use one source of truth, an authoritative group that jointly defines the playlist, or a full N-way set of peers. It uses ISRC-first matching and runs in Docker or as a headless Python CLI.
+I curate playlists on Spotify but listen on Apple Music, YouTube Music, and a Jellyfin server at home. I built [SongMirror](https://github.com/ahnafnafee/songmirror) to keep those libraries connected without copying every change by hand. It has grown into a self-hosted browser app for scheduled playlist and favorites syncs, multi-source merges, account-to-account transfers, and metadata backups. Seven streaming services sit alongside Last.fm, ListenBrainz, and Navidrome/Subsonic integrations, with a separate local audio mirror for Jellyfin. Docker runs the app and scheduler together; a headless Python CLI uses the same engine. You choose which services define the library and which follow it.
 
-<div className='not-prose mt-8 mb-6 flex justify-center'>
-  <img
-    src='/images/songmirror-lockup-light.png'
-    alt='SongMirror logo and wordmark'
-    className='h-11 w-auto sm:h-14 dark:hidden'
-  />
-  <img
-    src='/images/songmirror-lockup-dark.png'
-    alt='SongMirror logo and wordmark'
-    className='hidden h-11 w-auto sm:h-14 dark:block'
-  />
-</div>
+<AppDownloadCTA
+  heading='Install and Run SongMirror'
+  subtext='Requires Git and Docker with Compose v2.24 or newer. No environment file is needed to start.'
+  github='https://github.com/ahnafnafee/songmirror'
+  container='https://github.com/ahnafnafee/songmirror/pkgs/container/songmirror'
+  documentation='https://github.com/ahnafnafee/songmirror/blob/main/docs/docker-image.md'
+>
 
-<figure className='not-prose my-6'>
-  <img
-    src='/images/songmirror-demo.gif'
-    alt='Animated demo of SongMirror connecting music services, setting up one-way, authoritative-group, and bidirectional syncs, and running a live playlist transfer'
-    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
-  />
-  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    SongMirror end to end: connect a service, build a sync, and transfer a playlist, with every match streaming live.
-  </figcaption>
-</figure>
+```bash
+git clone https://github.com/ahnafnafee/songmirror.git
+cd songmirror
+docker compose up -d
+```
 
-## From a script to a browser app
+1. Open [localhost:8888](http://localhost:8888) and connect your services under **Accounts**.
+2. Use **Transfers** for a one-time copy, or **Sync** to create a scheduled job. Preview a sync before applying it.
+3. Keep `./data` backed up: it holds your configuration, credentials, caches, and history. Compose also preserves downloads under `./downloads` by default.
 
-The first version was a Python script for the terminal. The headless CLI still works, but I did not want to connect accounts through environment variables and parse log lines every time I set it up. The browser app uses the same engine. `docker compose up -d` serves it on port 8888 with no `.env` file to edit. Connect each service, create syncs, start transfers, and watch matches, additions, and removals as they stream in.
+Compose pulls the published AMD64/ARM64 image. The interface has no login, so keep it on a trusted local network.
 
-<figure className='not-prose my-6'>
-  <img
-    src='/images/songmirror-accounts.png'
-    alt='The SongMirror Accounts page for connecting Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, YouTube Music, and Jellyfin'
-    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
-  />
-  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    Connecting services from the browser: each provider gets its own guided, local-only connection flow.
-  </figcaption>
-</figure>
-
-Connections stay local. The Accounts page guides each service's flow, including a Spotify web-session default and a configurable OAuth callback for remote or reverse-proxy deployments. SongMirror does not proxy credentials through a third party. It writes them to an owner-only local data folder, so listening history stays on the machine.
-
-## Syncs and transfers
-
-A **sync** is an ongoing job. Choose the services, the reconciliation mode, the playlists, and a schedule; SongMirror applies the same rules on every pass. You can create several named syncs, each with its own safety caps, and any supported service can be the source. A **transfer** is a one-off copy from one service to another. It has a live progress bar, pause, resume, and stop controls, plus a panel for tracks that need a manual match.
-
-<figure className='not-prose my-6'>
-  <img
-    src='/images/songmirror-wizard.png'
-    alt='The SongMirror sync setup wizard choosing one-way, authoritative-group, or bidirectional N-way reconciliation'
-    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
-  />
-  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    Setting up a sync: pick the direction, the services, the playlists, and a schedule.
-  </figcaption>
-</figure>
+</AppDownloadCTA>
 
 <figure className='not-prose my-6'>
   <img
     src='/images/songmirror-dashboard.png'
-    alt='The SongMirror dashboard showing sync status, configured jobs, a live activity feed, and connected Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, YouTube Music, and Jellyfin services'
+    alt='SongMirror dashboard with connected accounts, scheduled syncs, and recent activity'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    One place to manage connected accounts and see what the scheduler is doing.
+  </figcaption>
+</figure>
+
+## Decide Who Controls the Playlist
+
+A playlist shared across several services needs a rule for whose edits count. SongMirror offers four modes because editing on one app and curating across several apps are different workflows.
+
+| Mode                  | Membership rule                                                          | Useful when                                                          |
+| --------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| One-way               | One source defines the playlist                                          | You curate in one app and listen elsewhere                           |
+| Merge sources         | Several playlists contribute a deduplicated union to one destination     | You want a combined playlist from library selections or public links |
+| Authoritative group   | Selected authorities contribute changes; destination-only mirrors follow | You curate on a few services and want the rest to reflect them       |
+| Bidirectional (N-way) | Every selected service contributes changes                               | You actively edit on every participating service                     |
+
+A merge reads all its sources before considering removals. Shared ISRCs identify the same recording; conservative metadata matching handles overlaps without them. Source priority determines ordering, and the first occurrence supplies the display metadata. If any source is incomplete, safe additions can continue while removals stay blocked.
+
+Authoritative groups establish a baseline, then require two consecutive complete reads to confirm an absence. N-way jobs retain per-provider snapshots so a copied addition does not return as a new edit. Both use add-wins conflict resolution. Those distinctions matter when an apparently missing song is a catalog or API problem rather than something I deleted.
+
+## Favorites Beyond Playlists
+
+The same reconciliation engine now handles the seven streaming providers' built-in liked or favorite collections. A Spotify Liked Songs collection can become another service's native favorites or a named playlist. Regular playlists remain separately selectable, so a favorites-only job does not unexpectedly copy the whole library.
+
+Last.fm adds Loved Tracks, Top Tracks across six periods, and Recent Scrobbles as sources. Authorizing it also allows incoming favorites to become Last.fm loves. [ListenBrainz](https://github.com/ahnafnafee/songmirror/blob/main/docs/listenbrainz-subsonic.md) similarly reads public Loved Recordings and accepts incoming favorites with a verified user token. Neither is a general playlist destination.
+
+Navidrome and Subsonic-compatible servers support playlists and starred songs in both directions. Matches resolve against audio already indexed by the server; SongMirror does not upload missing music. Jellyfin remains a browsing and local-mirror integration. I keep those capabilities explicit because connecting an account should not imply that every operation is available.
+
+## Transfers You Can Come Back To
+
+Transfers now work between different services or separate accounts on the same service. A public playlist link can be opened directly without following it first. For [YouTube account migrations](https://github.com/ahnafnafee/songmirror/blob/main/docs/youtube-account-transfers.md), the shared video IDs preserve the original videos, including non-music playlists, instead of searching for substitutes.
+
+A running copy has pause, resume, stop, and unmatched-track review. [Transfer history](https://github.com/ahnafnafee/songmirror/blob/main/docs/transfer-history.md) persists confirmed counts, failures, and status changes in SQLite, with filters for account, service, playlist, and date. A restart marks unfinished attempts interrupted; starting another copy into the same destination skips entries already there.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/songmirror-transfer-history.png'
+    alt='SongMirror transfer history with status filters and records of playlist copy attempts'
     loading='lazy'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The dashboard pulls it together: active syncs, service health, and the live activity feed.
+    Transfer records survive container replacement when the application data volume is preserved.
   </figcaption>
 </figure>
 
-SongMirror can also sync playlists I follow but do not own. A web-player fallback reads them past the dev-mode restriction, so a shared playlist mirrors and transfers like one of my own. The browser app and CLI use the same core. The web layer talks to a small services layer, which owns the event bus and a single-writer queue, so a scheduled sync and a manual transfer do not collide.
+## Bring a Track List, Keep a Backup
 
-## Three ways to decide what belongs
+Creating a playlist no longer requires an existing provider playlist. Paste a track list or import TXT, CSV, TSV, M3U, or M3U8, review the proposed matches, and create or append to a destination playlist. The review step gives ambiguous recordings a place to be resolved before writing.
 
-Many existing tools, including Soundiiz and TuneMyMusic, focus on one-shot transfers or append-only sync. They add tracks and rarely remove them. Over time, mirrors drift. A song deleted from Spotify can linger on Apple Music with no clear way to reconcile the two.
+Backups address a different need. Under **Settings → Playlist backups**, an account's playlist metadata can be archived on an independent schedule, with JSON/XML output, retention settings, and visible run history. Manual exports cover a whole service or one playlist; the Soundiiz JSON option provides an import-ready track list for that service.
 
-In **one-way mode**, one provider is canonical. Spotify is the default, but any connected service can take that role. Every other selected service reflects it. Removals then count as much as additions, so the mirror matches the playlist when tracks disappear too.
+These snapshots preserve ordered track metadata and unavailable-entry markers, while excluding credentials and streaming-file URLs. They are metadata archives, not audio downloads. A backup also needs no second provider or sync job, which makes it useful before a migration.
 
-The project originally synced Apple Music to Spotify. I flipped it because Spotify's playlist snapshot model lets SongMirror detect a change cheaply and gives the rest of the system a stable reference.
+## Match the Recording, Then Remember the Decision
 
-One-way mode is the default, but it is not the only useful model. An **authoritative group** lets two or more services jointly define membership while every other selected service stays destination-only. It is for people who curate the same playlist on Spotify and Apple Music. Additions from either authority propagate, mirrors never get a vote, and removals need two consecutive complete reads before they can delete anything. The group establishes a clean baseline before it removes a track and stops when it cannot read any authority.
+Cross-catalog matching still follows the original hierarchy: reuse a cached match, try an ISRC, then score title, artist, and duration. RapidFuzz and anyascii romanization help with credit differences and transliterated titles. Duration and recording-version checks constrain those looser comparisons.
 
-There is also an opt-in **N-way** mode that makes every selected service a read-write peer. That is useful when every app is a place you actively edit, rather than simply a place you listen.
+A cached mistake should be repairable. The **Mappings** page exposes saved matches and misses, lets me paste a corrected track reference, and can clear failed lookups for another attempt. Native favorites sync membership only. Playlist destinations can repair relative Recently Added order when a previously missing match becomes available, subject to provider capabilities and write caps.
 
-## What one pass does
+## Keep the Dangerous Writes Visible
 
-Every one-way pass follows the same shape, whatever the chosen source is:
+The browser and CLI share the reconciliation core through a services layer and a single-writer queue. Scheduled jobs, transfers, and backup reads take turns using provider clients, while progress reaches the browser through server-sent events.
 
 ```mermaid
-graph TD
-    S["Chosen source playlist"] --> SNAP["Snapshot:<br/>tracks + ISRCs + added-at"]
-    SNAP --> T["Reconcile each selected<br/>music service"]
-    T --> DIFF["Diff each target<br/>against the source"]
-    DIFF --> ADD["Resolve + append missing<br/>oldest-first"]
-    DIFF --> REM["Remove gone-from-source<br/>behind safety rails"]
-    ADD --> DL["Optional: spotDL local mirror"]
-    REM --> DL
+flowchart TD
+    UI["Browser: syncs, transfers, backups"] --> Q["Services and single-writer queue"]
+    CLI["Headless CLI"] --> E["Shared reconciliation engine"]
+    Q --> E
+    E --> R["Read complete source snapshots"]
+    R --> M["Resolve recordings and compare membership"]
+    M --> G["Preview, write caps, removal guards"]
+    G --> P["Provider writes and persisted state"]
 ```
 
-SongMirror pairs playlists by name and creates a missing target with the source name and description. The browser can also browse and pair playlists that use different names. Services reconcile **concurrently**, but writes within one service stay sequential and rate-limit-friendly, with jittered pacing and exponential backoff on `403` and `429`.
+The CLI is a dry run unless `--execute` is supplied; the browser offers **Preview** before a real sync. Removals are separately opt-in and capped. Empty or incomplete reads, expired credentials, and unresolved replacements can hold deletions back. Transfers append by default, with an optional order-preservation mode where the destination supports it.
 
-Additions go in **oldest-first** on purpose. Appending one track at a time in added-at order keeps every mirrored playlist sorted by date added, newest last, exactly like the Spotify original.
+## Keep Your Own Audio Library in the Loop
 
-Everything uses one `MirrorTarget` interface and a shared reconciliation core. Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music implement the same contract. The diffing, ordering, and safety checks live in one place.
+The optional local mirror copies matching files from an existing music library in their original format, so a FLAC stays a FLAC. spotDL can fill missing tracks, and SongMirror writes playlist folders, covers, and `.m3u8` files for Jellyfin. Converting a lossy download to FLAC does not improve its source quality.
 
-## Matching is the hard part
+Credentials and state stay in the self-hosted data directory and are used to contact the services you connect. Renewable sessions are refreshed where supported; some providers still require a fresh pasted token. The [connection guide](https://github.com/ahnafnafee/songmirror#connecting-each-service) documents those differences.
 
-The hard problem is deciding when two entries are the same song across catalogs that mostly don't share a key. The pipeline uses the same hierarchy the cross-service tools ([TuneLink](https://tommcfarlin.com/case-study-tunelink-matching-music-ai/), MusicBrainz) settled on: **hard identifier, then search, then fuzzy score**.
-
-1. **Cached link.** Once a source track resolves to a target catalog ID or video ID, that link is stored and reused. It survives later title drift and makes steady-state passes nearly free.
-2. **ISRC.** Exact recording identity wherever both services expose it.
-3. **Scored search.** [RapidFuzz](https://rapidfuzz.com/) `token_set_ratio` (order-, subset-, and decoration-tolerant) plus Jaro-Winkler, run over both the raw _and_ romanized ([anyascii](https://github.com/anyascii/anyascii)) title and artist, anchored by duration.
-
-That last stage handles the messy cases without hardcoded exceptions:
-
-| Drift                | Example                                                         | Handled by                                  |
-| -------------------- | --------------------------------------------------------------- | ------------------------------------------- |
-| Multi-artist credits | `Arijit Singh, Ved Sharma, …` ↔ `Arijit Singh`                  | subset-tolerant `token_set_ratio`           |
-| Title decoration     | `Tri` ↔ `Popeye (Bangladesh) - Tri (ত্রি) Official Music Video` | decoration-tolerant score + duration anchor |
-| Transliteration      | `Камин` ↔ `Kamin`, `নেশার বোঝা` ↔ `Neshar Bojha`                | anyascii romanization                       |
-| Video-only track     | Bangla/indie/OST upload with no catalog song                    | YouTube `videos` filter fallback            |
-
-The **duration anchor** makes the looser title match safe. It accepts subset and decoration differences without over-accepting. A `Runaway - Piano Version` or a wrong-artist cover is rejected when its length disagrees, even if the title looks close. Without that check, a loose title match can silently mirror the wrong recording.
-
-There's a known limit. CJK romanizes to a _Chinese_ reading, so kanji/kana titles that a service only stores in native script can still miss. When nothing clears the bar the track is reported (`x Not on …`) and skipped, never guessed.
-
-## Removals deserve caution
-
-A wrong _add_ is easy to undo; you just delete the track. A wrong _remove_ silently drops a song you wanted, and you might not notice for weeks. So the entire removal path is guarded, and it's the part of the code I'm most careful about:
-
-| Guard                    | What it prevents                                                                        |
-| ------------------------ | --------------------------------------------------------------------------------------- |
-| Dry run by default       | Any write at all without an explicit `--execute`                                        |
-| Empty-snapshot guard     | A transient provider response from emptying a live target                               |
-| `MAX_REMOVALS` cap       | A runaway pass mass-deleting; over the cap, removals skip and log                       |
-| `MAX_ADDS` cap           | One-burst backfills tripping bot detection; overflow just continues next pass           |
-| Fuzzy removal protection | Deleting a target track that plausibly _is_ a source track (feat-credit drift)          |
-| Net-loss protection      | Dropping a song that has no match on that service to replace it (`~ held` in the log)   |
-| Fail-closed tokens       | Partial deletes when a provider token expires mid-pass; any `401`/`403` aborts the pass |
-
-None of this is clever, which is the point. A delete path that runs unattended against a library I care about should be boring and cautious.
-
-## The local mirror: files you own
-
-Point `DOWNLOAD_DIR` at a music root and SongMirror runs [spotDL](https://github.com/spotDL/spotify-downloader) to keep a local copy of every synced playlist. New tracks download and removed tracks are deleted locally. The layout is Jellyfin-ready:
-
-```text
-<DOWNLOAD_DIR>/
-  <Playlist>/
-    <Playlist>.m3u8         # tool-generated, newest-first
-    cover.jpg               # source playlist cover, highest resolution
-    <AlbumArtist>/
-      <Album>/
-        Artist - Title.mp3  # tagged + cover art embedded
-```
-
-The `.m3u8` is written by the tool, not spotDL, in date-added order with newest at the top, so Jellyfin shows the latest additions first. Each file's modified time is also stamped to its added-at date, so a Date Modified sort matches.
-
-spotDL can spend _minutes_ re-fetching and re-matching a whole playlist before it reports a single skip, even when nothing changed. SongMirror records a clean pass and skips an unchanged source snapshot entirely, without running spotDL. Only a first-time or changed playlist pays that cost.
-
-One caveat: downloading audio this way sits outside Spotify's ToS. It's for personal use of content you already have access to, so it's your call.
-
-## Cheap re-runs
-
-An always-on mirror needs the common case, nothing changed, to be cheap. SongMirror caches service resolutions, including ISRC and search misses, renders persisted browser data before revalidation, and records every track it sees in a local SQLite archive. Source snapshots make an unchanged playlist cheap to detect without treating a time-based cache expiry as proof that it changed.
-
-The archive also holds hard-identifier links and sync state. After a fully clean pass, an unchanged playlist can be skipped outright. Dry runs never skip or write state, so a plain `uv run main.py` always shows the full picture before you commit to anything.
-
-## N-way sync
-
-One-way is the safe default: the source directs the set, and nothing a mirror does can surprise it. But sometimes I add a track straight from an app and want it to flow back. N-way mode turns the selected services into peers. A track added or removed on any provider propagates to the others.
-
-The hard part of two-way sync is echoes: provider A gets a track, provider B copies it, and next pass B's copy looks like a fresh addition that should flow back to A, forever. The fix is a per-provider canonical snapshot. Each service remembers what it has actually seen, so a track that's merely unmatchable on one service is never mistaken for a deletion there, and a copy that originated elsewhere is never re-announced as new. Additions win ties, a read that collapses to zero tracks is refused, and every removal still clears the same caps and guards as the one-way path.
-
-N-way grants selected services a write role. Leaving it off keeps the source-of-truth model hands-off.
-
-## Keeping it running
-
-The Docker container serves the web UI, runs each sync on its schedule, and restarts with the host. The headless CLI runs a one-shot pass that cron or Windows Task Scheduler can trigger every 15 minutes. I do not run both against the same playlists because two mirrors racing each other can briefly duplicate additions.
-
-Authentication is provider-specific. The browser guides each connection and stores the resulting session locally. Spotify defaults to a saved web session and still supports developer-app OAuth. A remote host or reverse proxy can set its browser-visible base URL so SongMirror advertises the correct callback. When a provider rejects a credential, the pass stops and shows the connection that needs attention instead of continuing into a partial delete.
-
-## Adding a service
-
-Adding a service stays contained. A `MirrorTarget` implementation lists and inspects playlists, resolves tracks, makes the appropriate writes, and reports what it cannot do. The shared core owns the diff, oldest-first ordering, safety rails, logs, summaries, and skip logic. That boundary let SongMirror grow from three catalog integrations to seven without reimplementing the dangerous part each time.
-
-## Try it yourself
-
-The source is on [GitHub](https://github.com/ahnafnafee/songmirror), MIT-licensed. The default is a dry run: it prints every add and remove it _would_ make and writes nothing, so you can point it at your own library and read the whole plan before it touches a single playlist. Stars, issues, and PRs all welcome.
+For upgrades, run `docker compose up -d --pull always` from the checkout. Source, setup, and issue tracking live in the [SongMirror repository](https://github.com/ahnafnafee/songmirror), released under the MIT license. The [portfolio page](/portfolio/songmirror) gives a shorter overview of the app and its implementation.
 
 ---
 
@@ -636,180 +561,132 @@ The map was the easy part. The real work was letting strangers edit it without w
 
 ---
 
-# Pinned Calendar: A Self-Healing, Offline Agenda for Android
+# Pinned Calendar: An Offline Agenda With Recurring Tasks for Android
 
 URL: https://www.ahnafnafee.dev/blog/pinned-calendar
-Published: 2026-06-06
-Summary: How I built a privacy-first Android app that pins your week's Google Calendar events and to-dos to a persistent, self-healing notification — no foreground service, no sign-in, and no INTERNET permission — using Kotlin, Jetpack Compose, custom RemoteViews, WorkManager, and a delete-intent that re-posts the pin the instant you swipe it away.
+Published: 2026-06-06 (updated 2026-10-21)
+Summary: Your calendar and recurring tasks, visible in one persistent Android notification. How I built Pinned Calendar with actionable reminders, an adjustable agenda layout, and on-device storage, now available on Google Play.
 Topics: Android, Kotlin, Jetpack Compose, Privacy, Mobile
 
-Calendar reminders are too easy to swipe away by accident — and then you forget what's next. So I built **[Pinned Calendar](https://github.com/ahnafnafee/pinned-calendar)**, a privacy-first Android app that keeps this week's Google Calendar events _and_ your to-dos in a single, always-present notification that **re-posts itself the instant you swipe it off**. It reads the calendars already on your phone — no sign-in, no OAuth, and no `INTERNET` permission, so your schedule never leaves the device. Built with Kotlin and Jetpack Compose, it pulls off a self-healing pin with **no foreground service**: a delete-intent broadcast, a `WorkManager` refresh, and a calendar `ContentObserver` do all the work.
+A calendar reminder disappears when I swipe it away, even though the appointment still matters. I built [Pinned Calendar](https://pinnedcalendar.ahnafnafee.dev) to keep upcoming events and local tasks visible in one persistent Android notification. The app now includes recurring tasks, due-time reminders with Done and Snooze actions, and a live layout preview, and it is [available on Google Play](https://play.google.com/store/apps/details?id=dev.ahnafnafee.pinnedcalendar). It reads calendars already synced to the phone and stores tasks on-device, with no sign-in or internet permission. Kotlin and Jetpack Compose handle the app; a self-healing notification keeps the agenda within a swipe of whatever I am doing.
 
-## The Problem: Reminders You Can Swipe Into Oblivion
+<AppDownloadCTA
+  heading='Install Pinned Calendar'
+  subtext='Free and open source. Available on Google Play for Android 8.0 and newer, with signed APKs on GitHub.'
+  playStore='https://play.google.com/store/apps/details?id=dev.ahnafnafee.pinnedcalendar'
+  github='https://github.com/ahnafnafee/pinned-calendar'
+  releases='https://github.com/ahnafnafee/pinned-calendar/releases/latest'
+  web='https://pinnedcalendar.ahnafnafee.dev'
+>
 
-Every reminder system shares one failure mode: it interrupts you at the wrong moment, you flick it away on reflex, and the information goes with it. Heads-up notifications are _designed_ to be dismissed. Widgets solve persistence but lose the home-screen real-estate war — they sit one swipe behind whatever launcher page you aren't looking at.
+1. Install the app, then grant **Calendar** access and allow notifications when Android asks.
+2. Turn on **Pin to notifications** in Settings. Choose the calendars and look-ahead window you want to see.
+3. Add a to-do, set a date or repeat rule, and use the notification preview to adjust the agenda's density.
 
-Pinned Calendar takes a different seat in the house: the notification shade. It posts one ongoing notification — your whole week, grouped by day, color-coded per calendar — and parks it at the top of the drawer where you already look a hundred times a day. Events and tasks share the same surface, and there's nothing to open.
+Task reminders are enabled by default. If your phone delays background updates, the app's **Reliability** setting offers a battery-optimization exemption.
 
-<div className='my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
+</AppDownloadCTA>
+
+## Keep the Plan Where You Already Look
+
+The notification shade is useful because it follows me between apps. Pinned Calendar puts events and tasks on that surface, grouped by day and marked with calendar or task-priority colors. An event row opens its calendar entry; the rest of the pin opens the app.
+
+That changes what a reminder has to do. The agenda can stay visible without sounding an alarm every time it refreshes, while a task that is actually due can produce a separate alert. Keeping those roles separate became more important as the app grew beyond a read-only week view.
+
+<div className='not-prose my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
   <img
     src='/images/pinned-calendar-notification-light.png'
-    alt='Pinned Calendar persistent notification in light mode, showing the week agenda grouped into TODAY, TOMORROW, and FRI sections with color-coded bars for each event'
-    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+    alt='Pinned Calendar agenda notification in light mode, with event times and calendar colors grouped by day'
+    className='w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
     src='/images/pinned-calendar-notification-dark.png'
-    alt='The same pinned agenda notification in dark mode, with the week of events and times on a dark notification shade'
-    className='w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
+    alt='Pinned Calendar agenda notification in dark mode with the same day-grouped layout'
+    className='w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
   />
 </div>
 
-## A Notification That Refuses to Die
+## Tasks That Follow Your Schedule
 
-`setOngoing(true)` keeps the pin out of an ordinary swipe, but Android still lets a determined user — or a _Clear all_ — dismiss it. Rather than fight the platform, I let the dismissal happen and immediately undo it.
+Local to-dos now carry due dates, times, notes, and priorities. Quick date choices cover today, tomorrow, and next week, with a picker for a specific time. The list groups unfinished work into Overdue, Today, and Upcoming, with completed items kept separately. An unfinished task carries forward instead of disappearing when its original date passes.
 
-Every notification can carry a **delete-intent**: a `PendingIntent` the system fires when the notification is removed. Point it at a `BroadcastReceiver` and a swipe stops being a deletion and becomes a trigger to rebuild.
+Recurrence supports daily, weekly, monthly, and yearly presets, plus custom intervals and selected weekdays. A series can end on a date or after a chosen number of occurrences. Completing a recurring task advances it to the first upcoming occurrence, skipping missed dates while preserving its scheduling intent.
 
-```mermaid
-flowchart LR
-    A["Pinned notification"] -->|swipe / Clear all| B["Android fires deleteIntent"]
-    B --> C["SelfHealReceiver.onReceive"]
-    C --> D["AgendaNotifier.refresh()"]
-    D -->|re-post| A
-```
+That last detail is easy to overlook. A monthly task near the end of a month should not drift because February is shorter, and a local morning reminder should retain its meaning across time-zone offset changes. The recurrence logic handles month-end and leap-year cases in the task model, where those rules can be tested independently of the interface.
 
-The builder wires the delete-intent to a receiver and marks the notification ongoing and alert-once, so re-posting it never makes a sound:
+## Act on a Reminder Without Opening the App
+
+To-do reminders use their own alerting, dismissible notifications. **Done** completes the scheduled occurrence, including advancing a recurring task. **Snooze** postpones that occurrence's reminder for 30 minutes without changing the task's original due time. Neither action removes the pinned agenda.
+
+`AlarmManager` schedules the next due task, then the receiver schedules the following one after handling it. Snoozed occurrences have separate alarm identities, so postponing one reminder does not overwrite another. On Android versions requiring exact-alarm access, the scheduler checks whether that access is available:
 
 ```kotlin
-val deleteIntent = PendingIntent.getBroadcast(
-    context, 1,
-    Intent(context, SelfHealReceiver::class.java),
-    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-)
-
-return NotificationCompat.Builder(context, channelId)
-    .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-    .setCustomContentView(renderer.collapsed(content))
-    .setCustomBigContentView(renderer.expanded(content))
-    .setOngoing(true)
-    .setOnlyAlertOnce(true)
-    .setDeleteIntent(deleteIntent)
-    .build()
-```
-
-The receiver is almost trivially small — the whole trick is the wiring above:
-
-```kotlin
-class SelfHealReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent?) {
-        val pending = goAsync()
-        try {
-            runBlocking { AgendaNotifier(context).refresh() }
-        } finally {
-            pending?.finish()
-        }
-    }
+if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+    !alarms.canScheduleExactAlarms()) {
+    alarms.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, intent)
+} else {
+    alarms.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAtMillis, intent)
 }
 ```
 
-`goAsync()` is what makes this safe. A `BroadcastReceiver` is normally killed the moment `onReceive` returns, which would cut off the suspend work that reads settings, queries the calendar, and rebuilds the rows. `goAsync()` buys a few extra seconds so the refresh completes before the receiver finishes. From the user's side, a swipe produces a flicker at most — the pin is already back.
+Without exact access, the fallback still schedules the reminder, although Android may deliver it later. Heads-up presentation also depends on system notification settings. These are platform controls that the app respects rather than treating every reminder as a reason to keep a process running.
 
-## No Internet Permission, No Sign-In
+## Persistent, With a Deliberate Way Out
 
-The events on the pin are the events already synced to your phone. Pinned Calendar never talks to Google's servers — it queries Android's **Calendar Provider** through `CalendarContract`, the same content provider the stock Calendar app uses. A single `contentResolver.query` against the `Instances` table, scoped to the time window, returns every event with its title, start time, all-day flag, and per-calendar color:
+The pin carries a delete-intent pointing to `SelfHealReceiver`. When Android delivers a dismissal, the receiver reads the saved settings and rebuilds the agenda. An accidental swipe therefore triggers a refresh instead of permanently losing the week view.
 
-```kotlin
-val uri = CalendarContract.Instances.CONTENT_URI.buildUpon()
-    .appendPath(startMillis.toString())
-    .appendPath(endMillis.toString())
-    .build()
+Persistence also needs an intentional dismissal. With **swipe-twice-to-remove** enabled, two dismissals within five seconds turn the saved pin setting off. It stays off until the user enables it again. The in-app switch provides the same explicit control, so the app can recover from accidents without ignoring a deliberate decision.
 
-context.contentResolver.query(uri, projection, null, null, "${Instances.BEGIN} ASC")?.use { c ->
-    // map each row → AgendaItem(title, start, allDay, calendar color, deep link)
-}
-```
-
-Because the data already lives on the device, the whole feature needs exactly one dangerous permission — `READ_CALENDAR` — and zero network access. The entire manifest is four permission lines, and `INTERNET` isn't one of them:
-
-```xml
-<uses-permission android:name="android.permission.READ_CALENDAR" />
-<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-```
-
-Omitting `INTERNET` is the strongest privacy guarantee an Android app can make: the OS itself refuses any socket the app tries to open. There's no sign-in, no OAuth token, no analytics SDK, and — by construction — nothing that _can_ leave the phone.
-
-## Two-Tier Refresh, No Foreground Service
-
-A pin is only useful if it's current. The obvious way to keep a notification fresh is a **foreground service** — but that costs a permanent wakelock and its own second notification, and modern Android actively fights long-running ones. Pinned Calendar skips it entirely and leans on two cheaper signals instead.
-
-While the app's process is alive, a `ContentObserver` registered on `CalendarContract.CONTENT_URI` fires the moment any calendar data changes — add an event in Google Calendar and the pin updates within a second:
-
-```kotlin
-private val calendarObserver = object : ContentObserver(Handler(Looper.getMainLooper())) {
-    override fun onChange(selfChange: Boolean) {
-        AgendaScheduler.refreshNow(this@App)   // process alive → refresh instantly
-    }
-}
-
-override fun onCreate() {
-    super.onCreate()
-    AgendaScheduler.schedulePeriodic(this)     // 15-min WorkManager baseline
-    AgendaScheduler.refreshNow(this)
-    contentResolver.registerContentObserver(CalendarContract.CONTENT_URI, true, calendarObserver)
-}
-```
-
-For everything that happens when the process _isn't_ alive — time marching forward, an event starting while your phone sits on the nightstand — a `WorkManager` periodic job rebuilds the agenda every 15 minutes. `WorkManager` is the part that survives Doze, app-standby, and reboots; a `BootReceiver` re-arms both the periodic job and an immediate refresh after the device restarts. No foreground service means the pin is nearly free on the battery, and it still comes back after a reboot.
-
-## A Pure-Kotlin Core You Can Actually Test
-
-The trickiest logic in an app like this isn't the Android plumbing — it's the date math. "This week" has to respect the device's first-day-of-week. "Today" and "Tomorrow" headers have to flip at local midnight. All-day events cross time zones in surprising ways. None of that should require an emulator to verify.
-
-So the core is plain Kotlin with no Android imports. `WindowCalculator` turns a window mode into a `[now, end)` epoch-millis range. `DayBucketer` groups events by local date and labels them `TODAY · WED 3`, `TOMORROW · THU 4`, or a bare weekday. `NotificationContentBuilder` assembles the rows the notification renders. Every one of them takes a `java.time.Clock` in its constructor:
-
-```kotlin
-class DayBucketer(
-    private val clock: Clock,
-    private val zone: ZoneId = ZoneId.systemDefault(),
-) {
-    fun bucket(items: List<AgendaItem>): List<DaySection> { /* … */ }
-}
-```
-
-Injecting the `Clock` means a test can pin "now" to a fixed instant and assert that an event at 23:59 lands under TODAY while one a minute later rolls to TOMORROW — deterministically, on the JVM, in milliseconds. The repo's unit tests cover the windowing, bucketing, content-building, self-heal, and boot paths; the Android-specific layer (custom `RemoteViews`, the receivers, `WorkManager`) is a thin shell over that tested core. The whole thing is one clean dependency flow:
+Calendar changes take a separate route. A `ContentObserver` requests a refresh while the process is alive, and a periodic WorkManager job supplies a background baseline. Boot and app-update receivers re-arm the schedule. Android can defer background work, particularly on devices with aggressive battery management, but the design needs no foreground service or second service notification.
 
 ```mermaid
 flowchart TD
-    CP["Calendar Provider<br/>(CalendarContract)"] --> AR["AgendaRepository"]
-    TD["Local to-dos<br/>(DataStore)"] --> AR
-    AR --> NCB["NotificationContentBuilder<br/>(pure-Kotlin core)"]
-    NCB --> NP["NotificationPoster → RemoteViews"]
-    NP --> N["Ongoing notification"]
-    OBS["ContentObserver"] -->|calendar changed| AR
-    WM["WorkManager · 15 min"] -->|periodic| AR
-    N -->|deleteIntent on swipe| SH["SelfHealReceiver"]
-    SH --> AR
+    C["Device calendars"] --> A["Agenda repository"]
+    T["Local tasks and recurrence"] --> A
+    A --> B["Notification content builder"]
+    B --> P["Persistent agenda pin"]
+    P -->|"Dismissal"| S["Self-heal or deliberate double-swipe removal"]
+    S --> A
+    O["Calendar observer and periodic work"] --> A
+    T --> R["Next due-time alarm"]
+    R --> N["Separate reminder: Done or Snooze"]
+    N --> T
 ```
 
-## Material You, Down to the Notification Rows
+## Preview the Notification You Are Building
 
-The agenda inside the pin isn't a stock notification template — it's custom `RemoteViews` wrapped in `DecoratedCustomViewStyle`, so each row gets its calendar's color as a vertical accent bar, tasks render distinctly from events, and tapping a row deep-links straight into Google Calendar at that event. The settings screen is full Material 3: wallpaper-based dynamic color via [MaterialKolor](https://github.com/jordond/MaterialKolor), hand-picked seed colors, an AMOLED-black option, selectable fonts, and a theme- and accent-adaptive launcher icon.
+Settings now renders the actual notification layout as a live preview, with collapsed and expanded views. Compact, Cozy, and Comfortable presets provide starting points; Custom sliders expose finer control. The number of rows before expansion, day grouping, and heading visibility can all be adjusted without repeatedly leaving the app to inspect the shade.
 
-<img
-  src='/images/pinned-calendar-settings.png'
-  alt='Pinned Calendar Material You settings screen: a week-overview card with a bar chart and "5 events / 0 to-dos" pill chips, then Notifications, a Time window selector (3 days, this week, 7 days, 14 days), and per-calendar toggles'
-  className='mx-auto my-6 w-full max-w-xs rounded-xl border border-gray-200 shadow-sm dark:border-gray-700'
-/>
+The time window remains selectable: three days, this week, seven days, or fourteen days. Per-calendar switches and an item cap help keep a busy work calendar from overwhelming the view. Material You colors, seed palettes, AMOLED black, fonts, and light or dark themes extend that control to appearance.
 
-Notification priority is its own small puzzle. Android won't let you raise a channel's importance once it exists, so each level — Top, Normal, Silent — owns a separate channel with a fixed importance. Switching levels posts on the new channel and retires the others, leaving a single "Pinned agenda" entry in system settings at whatever priority you chose, never a pile of stale channels. Every level stays silent (no sound, no vibration); Top simply uses `IMPORTANCE_HIGH` so the pin ranks above the everyday notification stream.
+<div className='not-prose my-6 grid grid-cols-1 gap-4 sm:grid-cols-2'>
+  <img
+    src='/images/pinned-calendar-todos.png'
+    alt='Pinned Calendar To-dos tab with a week overview and local task list'
+    loading='lazy'
+    className='mx-auto w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/pinned-calendar-settings.png'
+    alt='Pinned Calendar settings for the notification, time window, calendars, and appearance'
+    loading='lazy'
+    className='mx-auto w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
 
-## Try It
+## Keep the Data on the Phone
 
-Pinned Calendar is open source under the MIT license. Grab the signed APK from the [latest release](https://github.com/ahnafnafee/pinned-calendar/releases/latest) — no Play Store account needed — grant Calendar and Notification access, flip **Pin to notifications** on, and your week moves into the shade. It runs on Android 8.0 (API 26) and up.
+Calendar reads go through Android's `CalendarContract` provider. Pinned Calendar does not authenticate with Google or run its own calendar synchronization; whichever calendar apps already sync the phone supply the events it sees. Tasks and preferences live in DataStore.
 
-Source, issues, and PRs live at [github.com/ahnafnafee/pinned-calendar](https://github.com/ahnafnafee/pinned-calendar). If a pinned week keeps you on schedule, a ⭐ on the repo genuinely helps.
+The [manifest](https://github.com/ahnafnafee/pinned-calendar/blob/main/app/src/main/AndroidManifest.xml) declares calendar, notification, boot, exact-alarm, and optional battery-exemption permissions, and omits `INTERNET`. Cloud backup is disabled for application data. The [privacy policy](https://pinnedcalendar.ahnafnafee.dev/privacy/) describes that local storage model, which also means task data is not a cross-device sync service.
+
+The complete app and reminder experience supports 15 languages, including right-to-left Arabic. Android 13 and newer also expose the choices in the system app-language picker. Notification labels and reminder actions follow the selected language rather than leaving the background experience in English.
+
+## Keep the Date Rules Testable
+
+Window calculation, day grouping, and notification content construction live in a pure-Kotlin core. Injected clocks let tests fix the instant around midnight instead of waiting for real time to pass. Recurrence and reminder tests exercise the rules that make a task advance, stay overdue, or become eligible for an alert, while platform tests cover receivers and scheduling.
+
+The [source repository](https://github.com/ahnafnafee/pinned-calendar) includes build instructions and signed [releases](https://github.com/ahnafnafee/pinned-calendar/releases/latest). For everyday use, [Google Play](https://play.google.com/store/apps/details?id=dev.ahnafnafee.pinnedcalendar) is the direct install route. The [portfolio entry](/portfolio/pinned-calendar) gives a shorter account of the app and the implementation choices behind it.
 
 ---
 
@@ -954,287 +831,185 @@ If you write Modelfiles, this saves you a debugging session. If you write a lot 
 # Building a Local LLM-Powered Hybrid OCR Engine
 
 URL: https://www.ahnafnafee.dev/blog/local-llm-pdf-ocr
-Published: 2026-04-26 (updated 2026-07-15)
-Summary: How I built a privacy-first, fully offline OCR pipeline that pairs Surya's layout detection with local Vision Language Models (OlmOCR, GLM-OCR, Qwen3-VL) and a Needleman-Wunsch aligner — turning handwriting, forms, and scanned PDFs into pixel-perfect searchable documents on your own laptop.
+Published: 2026-04-26 (updated 2026-10-21)
+Summary: Turn scans, handwriting, and page photos into searchable, selectable documents on your own machine. Meet the local OCR engine I built with a browser interface, flexible vision-model support, and PDF, HTML, Markdown, and text export.
 Topics: OCR, LLM, Vision Language Models, AI Engineering, Python, PDF
 
-<figure className='not-prose my-6'>
-  <img
-    src='/images/local-llm-ocr-demo.gif'
-    alt='Animated end-to-end demo: a scanned PDF is dropped into the local-llm-pdf-ocr web UI, layout detection and a local vision model transcribe each page, and an invisible text layer is embedded to produce a searchable PDF, all running locally'
-    loading='lazy'
-    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
-  />
-  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The whole pipeline end to end: drop a scan, watch layout detection and a local VLM read it, and get back a
-    searchable PDF, all on your own machine.
-  </figcaption>
-</figure>
+Your scans should be as useful as the documents you type: searchable, selectable, and ready to work with. I built [local-llm-pdf-ocr](https://github.com/ahnafnafee/local-llm-pdf-ocr) to bring that experience to scanned PDFs, handwritten notes, and page photos using vision models on your own machine. Drop a document into the browser, choose a local model, and download a searchable PDF that keeps the original page visible. The app also exports HTML, Markdown, and plain text, with dedicated processing for dense handwriting and models that return coordinates. Surya detection and a dynamic-programming aligner handle page geometry behind the interface, and a CLI supports scripted workflows.
 
-We live in a digital world, yet the most valuable data is still trapped in the analog prison of scanned PDFs. Invoices, handwritten notes, contracts, medical forms, decades-old research archives — pixels without meaning to a machine.
+<AppDownloadCTA
+  heading='Run Local LLM PDF OCR'
+  subtext='Requires Git, Python 3.10 or newer, uv, and a running vision-capable model endpoint. After setup, use the browser interface.'
+  github='https://github.com/ahnafnafee/local-llm-pdf-ocr'
+  documentation='https://github.com/ahnafnafee/local-llm-pdf-ocr/blob/main/README.md#-getting-started'
+>
 
-Cloud OCR APIs solve this, but at a cost: your privacy, a per-page bill, and an internet round-trip on every document you process. I wanted none of that.
+In [LM Studio](https://lmstudio.ai/docs/developer/core/server), load a vision model such as `allenai/olmocr-2-7b` and start its local server at `http://localhost:1234/v1`. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) if needed, then run:
 
-This is how I engineered a **fully local, privacy-first, hybrid OCR engine** that pairs the surgical layout precision of **Surya** with the semantic understanding of **local Vision Language Models** (OlmOCR, GLM-OCR, Qwen2.5/3-VL) — bound together by a **Needleman-Wunsch dynamic-programming aligner** — to produce searchable PDFs from anything you can rasterize. No cloud. No API keys. No documents leaving your machine.
+```bash
+git clone https://github.com/ahnafnafee/local-llm-pdf-ocr.git
+cd local-llm-pdf-ocr
+uv sync --extra web
+uv run local-llm-pdf-ocr-server --port 8000
+```
+
+Open [localhost:8000](http://localhost:8000). Drop a document, select **Hybrid** and the loaded model, then choose **Run OCR**. Download the searchable PDF when it finishes. Change the model endpoint under **Advanced** if you use a different server.
+
+Download the model weights before working offline. Keep the configured model endpoint local so document processing stays on your own machine.
+
+</AppDownloadCTA>
 
 <figure className='not-prose my-6'>
   <img
     src='/images/local-llm-ocr-web-light.png'
-    alt='The local-llm-pdf-ocr web UI in light mode: a drag-and-drop drop zone, a Hybrid / Grounded / Text-only engine toggle, a local model selector showing allenai/olmocr-2-7b with 14 models loaded on localhost, and a searchable-PDF output format'
+    alt='Local LLM PDF OCR browser interface in light mode, with document upload, engine selection, a local model picker, and output formats'
     className='w-full rounded-lg border border-gray-200 dark:hidden'
   />
   <img
     src='/images/local-llm-ocr-web-dark.png'
-    alt='The local-llm-pdf-ocr web UI in dark mode: a drag-and-drop drop zone, a Hybrid / Grounded / Text-only engine toggle, a local model selector showing allenai/olmocr-2-7b with 14 models loaded on localhost, and a searchable-PDF output format'
+    alt='Local LLM PDF OCR browser interface in dark mode with document upload and the same processing controls'
     className='hidden w-full rounded-lg border border-gray-800 dark:block'
   />
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The FastAPI web UI: drop a file, pick the engine and a local model, and get a searchable PDF back. Everything runs
-    on localhost, nothing is uploaded.
+    The main workflow stays in the browser: upload, choose a model, run OCR, and download the result.
   </figcaption>
 </figure>
 
-## The OCR Triangle
+Jump to [the browser workflow](#from-a-scan-to-a-searchable-document), [engine choices](#choose-the-engine-in-the-browser), [the architecture](#how-the-hybrid-engine-connects-text-to-the-page), or [troubleshooting](#get-a-difficult-page-working).
 
-When you build OCR today, the literature lets you pick two of three:
+## From a Scan to a Searchable Document
 
-1. **Layout accuracy** — knowing _where_ the text lives.
-2. **Semantic accuracy** — knowing _what_ the text says.
-3. **Speed and privacy** — running it on your laptop, offline.
+A scan preserves a document's appearance, but the words remain pixels. That becomes frustrating when I need a name in a stack of forms or a passage from handwritten notes. A transcript helps, but I also want to search and select text where it appears on the original page.
 
-| Tool                                                      | Layout            | Semantics                  | Speed / Privacy        |
-| :-------------------------------------------------------- | :---------------- | :------------------------- | :--------------------- |
-| **Tesseract / EasyOCR**                                   | ✅ Good           | ❌ Fails on handwriting    | ⚡ Fast, local         |
-| **Surya Recognition**                                     | ✅ Excellent      | ⚠️ Moderate on cursive     | 🐢 ~20s/page, local    |
-| **Surya Detection-Only**                                  | ✅ Excellent      | ❌ No text output          | ⚡ ~1s/page, local     |
-| **Local VLM (OlmOCR-2, Qwen3-VL, GLM-OCR, DeepSeek-OCR)** | ❌ No coordinates | ✅ Reads cursive perfectly | 🐢 GPU-bound, local    |
-| **Cloud Vision APIs**                                     | ✅ Good           | ✅ Good                    | ☁️ Not local, not free |
+The browser app makes that the default deliverable. Drag in a PDF or image, choose **Searchable PDF**, and start processing. Per-page progress shows the work advancing, and **View text** exposes the raw extraction for inspection. Multiple-file selection handles a collection of scans in the same session, with a merged Markdown download to bring their extracted text together.
 
-The bet: a vision-language model has the _semantic brain_ to read messy handwriting, but no idea where pixels live on a page. A detection-only Surya pass has _structural eyes_ but nothing to say. **Compose them, and the triangle collapses into a quadrilateral.**
-
-## The Architecture: Two Paths Behind One Seam
-
-The pipeline lives behind a single `OCRPipeline` orchestration seam, with **two execution paths**:
-
-- **Hybrid path** (default) — works with _any_ OCR-capable VLM, including text-only models.
-- **Grounded path** (opt-in via `--grounded`) — for the new generation of bbox-native VLMs that emit text and coordinates in a single call.
-
-```mermaid
-graph TD
-    A["Input: PDF / JPEG / PNG / TIFF / BMP / WebP"] --> B["Rasterize to images"]
-
-    B -->|"--grounded"| Z["Grounded VLM<br/>text + bbox in one call"]
-    Z --> EMB["Sandwich PDF Writer"]
-
-    B -->|"default: hybrid"| C["Surya DetectionPredictor<br/>batch, detection-only"]
-    B --> D["Local VLM full-page OCR<br/>OlmOCR / GLM-OCR / etc."]
-    C --> E["Layout boxes in reading order"]
-    D --> F["Plain text with line breaks"]
-    E --> G["Needleman-Wunsch DP aligner<br/>line ↔ box monotonic match"]
-    F --> G
-    G --> H{"Boxes the DP<br/>left empty?"}
-    H -->|"yes"| R["Per-box crop re-OCR<br/>refine stage"]
-    H -->|"no"| EMB
-    R --> EMB
-    EMB --> L["Searchable PDF Output"]
-```
-
-The core insight on both paths is the same: **decouple "where" from "what."** Detection is fast, deterministic, and well-solved. Recognition is slow, semantic, and where modern VLMs shine. Wiring them together cleanly is the entire game.
-
-## Path 1: The Hybrid Pipeline (Surya + LLM + DP Alignment)
-
-The hybrid path is the safe default. It works with _any_ OCR-capable VLM — even ones that can only return plain text — because it never relies on the model knowing geometry.
-
-### Step 1: Batch Layout Detection with Surya
-
-Surya's `DetectionPredictor` runs on every page in **a single batched call**, returning bounding boxes sorted into reading order. We never pay for Surya's recognition step, which is the expensive part of full Surya — running detection-only is roughly **10–21× faster** than full recognition.
-
-```python
-# Process ALL pages in one batched detection call
-all_image_bytes = [decode(img) for img in images_dict.values()]
-all_boxes = hybrid_aligner.get_detected_boxes_batch(all_image_bytes)
-```
-
-That single call is amortized across the whole document. On a warm pipeline it finishes in about half a second total — regardless of how many pages you threw at it.
-
-### Step 2: Full-Page Transcription with a Local VLM
-
-Each page image gets handed to a local **OpenAI-compatible** endpoint — LM Studio with `allenai/olmocr-2-7b`, Ollama with `glm-ocr:latest`, vLLM, SGLang, or anything else that speaks the same wire format — with a prompt asking the model to transcribe the entire page.
-
-The VLM doesn't care about coordinates. It just reads the page like a human and returns text. That's its superpower, and the rest of the pipeline is built around exploiting it.
-
-### Step 3: Needleman-Wunsch Alignment — The Heart of the System
-
-This is where it gets interesting. A naive "distribute tokens proportionally to box width" trick works for clean prose but falls apart on tables, multi-column papers, and forms. The fix is to model the problem properly.
-
-You have **N detected boxes** in reading order on the left, and **M LLM lines** in reading order on the right. You need a **monotonic alignment** — every box keeps its position, every line keeps its position, you just decide which line(s) belong to which box (and which boxes are non-text decorations to be skipped entirely).
-
-That is exactly the shape of [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) — the same dynamic-programming algorithm that aligns DNA sequences in bioinformatics. The score function:
-
-- **Rewards** a line whose character count fits a box's width.
-- **Mildly penalizes** skipping a box (many detected boxes are rules, decorations, or page furniture).
-- **Heavily penalizes** skipping a line (LLM text is precious).
-
-Unmatched LLM lines aren't dropped on the floor — they're attached to the nearest matched box, so no semantic content disappears. The DP runs in `O(N × M)` time, which is nothing on a per-page basis.
-
-### Step 4: Per-Box Refine Fallback
-
-Even a good aligner leaves some boxes empty when layouts get pathological — multi-column research papers, dense tables, figure captions floating in whitespace. Rather than tank accuracy, the pipeline crops each empty box and runs **per-box re-OCR** on just that crop.
-
-It catches the hard cases without paying N× latency on clean pages. Disable with `--no-refine` when you're optimizing for throughput on documents you know are clean.
-
-## Path 2: The Grounded Path (One-Shot VLM)
-
-The newest generation of open-weight vision models — **Qwen3-VL** (including the 2026-01-22 Flash snapshot), **GLM-4.6V**, **GLM-OCR** (Z.ai's March 2026 release that tops OmniDocBench V1.5), **DeepSeek-OCR** with its Contexts Optical Compression trick, **InternVL3**, **Chandra-OCR**, **MinerU 2.5**, and **PaddleOCR-VL** — can return **text and bounding boxes in a single JSON response**. When you point the tool at one of these with `--grounded`, the entire hybrid stack collapses into one call:
-
-```bash
-uv run main.py scan.pdf --grounded \
-    --api-base http://localhost:1234/v1 \
-    --model qwen/qwen3-vl-8b
-```
-
-No Surya. No DP. No refine. The model returns `{"bbox_2d": [...], "content": "..."}` tuples and the sandwich-PDF writer takes it from there. It's faster, has fewer moving parts, and eliminates the entire DP-alignment class of bugs.
-
-It also requires a model that emits coordinates reliably — which is why the hybrid path remains the default. Hybrid works with _any_ OCR-capable VLM, including the long tail of text-only models. Grounded is the cleaner path when your model can support it.
-
-| Path                        | Detection | Text            | Alignment        | Refine       | When to use                                      |
-| :-------------------------- | :-------- | :-------------- | :--------------- | :----------- | :----------------------------------------------- |
-| **Hybrid** (default)        | Surya     | LLM full-page   | Needleman-Wunsch | Per-box crop | Any OCR-capable VLM; max coverage                |
-| **Grounded** (`--grounded`) | —         | Bbox-native VLM | —                | —            | Qwen2.5/3-VL, MinerU; simplest path, fewest bugs |
-
-## The "Sandwich" PDF — Invisible Text Over Real Pixels
-
-Once we have aligned text and boxes, we embed everything as a **sandwich PDF** with PyMuPDF:
-
-1.  **Rasterize the page as an image** — strips any existing (often broken) text layer, giving us a clean slate.
-2.  **Insert the image as the visible background** — what the user sees.
-3.  **Overlay invisible text** with `render_mode=3`, geometrically scaled with horizontal-scale matrices so each glyph's bounding box spans the full width of its source region.
-
-That horizontal-scale matrix is the trick that makes selection actually work. Without it, a PDF reader's selection caret jumps in weird places and you get selection runs that look right visually but produce garbage when you copy. With it, dragging your cursor across `INVOICE #4521` highlights _exactly_ that region, character-aligned to the underlying pixels.
-
-The user sees the original document — every font, every annotation, every coffee stain. Their cursor interacts with a perfectly searchable hidden layer they never see.
+The output keeps the page image visible and adds an invisible text layer. In the form below, blue selection reveals the recognized printed labels and handwriting. The same page can be searched or copied in a PDF reader without replacing its layout with a recreated document.
 
 <figure className='not-prose my-6'>
   <img
     src='/images/local-llm-ocr-selection.png'
-    alt='A scanned health-intake form with mixed printed and handwritten fields, rendered as a searchable PDF, with the invisible text layer highlighted in blue to show selectable text aligned over the original pixels'
+    alt='A sample form containing printed labels and handwritten entries, with the searchable PDF text layer selected in blue'
     loading='lazy'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The sandwich PDF in action: selecting text on a scanned form highlights the invisible layer, character-aligned to
-    the printed and handwritten pixels underneath.
+    Printed text and handwritten entries become searchable over the original scan. The blue highlight reveals the
+    normally invisible OCR layer.
   </figcaption>
 </figure>
 
-## Multi-Format Input — Beyond Just PDFs
+## Choose the Engine in the Browser
 
-The pipeline accepts whatever you throw at it:
+The interface offers **Hybrid**, **Grounded**, and **Text only**, with options that adapt to the selected engine. Hybrid is the starting point for searchable documents because it combines a text detector with a vision model that only needs to transcribe what it sees.
 
-- `.pdf` — multi-page handled natively.
-- `.jpg`, `.jpeg`, `.png`, `.bmp`, `.webp` — single-page images skip the PDF round-trip and feed straight into rasterization.
-- `.tif`, `.tiff` — multi-frame TIFFs **expand to one output page per frame**. No manual PDF-wrapping step. This is the format archives, hospitals, and law firms still ship in.
+| Engine    | What happens behind the interface                                                       | Choose it for                                                   |
+| --------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Hybrid    | Surya locates text; the local model transcribes it; alignment connects words to regions | Scans, forms, handwriting, and models that return ordinary text |
+| Grounded  | A compatible model returns text and coordinates together                                | Models with reliable structured coordinate output               |
+| Text only | The model transcribes each page without detection or alignment                          | Text extraction for notes, search indexing, or RAG              |
 
-```bash
-# Raw image — no PDF required
-uv run main.py scan.png scan_ocr.pdf
+Dense-page processing is part of Hybrid rather than another engine to install. It switches from full-page transcription to individual text crops when the page needs it. Grounded skips separate detection and alignment, while Text only skips geometry entirely.
 
-# Multi-frame TIFF → multi-page searchable PDF
-uv run main.py archive.tiff archive_ocr.pdf
-```
+Model choice remains flexible. LM Studio is the default endpoint, and Ollama, vLLM, SGLang, or another OpenAI-compatible server can be configured under **Advanced**. The model picker discovers available models, and preflight verification checks the requested model before processing. Use a vision-capable model: returning plain text is compatible with Hybrid, but the model still has to understand the page image.
 
-Output is always a PDF, even when the input isn't.
+## Give Handwriting and Page Photos the Attention They Need
 
-## Performance: Where the Time Actually Goes
+Dense handwriting makes full-page recognition harder because many similar lines compete within one image. The pipeline can instead send each detected region through its own recognition call, keeping the model's attention on a smaller part of the page. Automatic mode uses a default threshold of 60 detected boxes and can also retry per-box when full-page alignment matches fewer than half the regions.
 
-Here's the punchline: **detection is no longer the bottleneck — full-page LLM OCR is.** Once you've offloaded recognition to a VLM, Surya's contribution is rounding error. Warm-run breakdown on an LM Studio + OlmOCR-2-7B + single GPU setup:
+For a page with repeated or missing lines, open **Advanced**, set **Dense mode** to **Always**, and try that page again. It makes more model requests, but it gives tightly packed notes a processing route built around their structure. Dense machine-print crops receive neighbor masking to reduce adjacent-line leakage; handwriting keeps its surrounding strokes because they can cross detection boundaries.
 
-| Phase                   | Per-page cost          | Notes                                                 |
-| ----------------------- | ---------------------- | ----------------------------------------------------- |
-| Rasterize PDF → image   | ~0.3 s                 | Linear in pages                                       |
-| Surya batch detection   | ~0.5 s                 | Amortized across all pages in one batched call        |
-| **LLM full-page OCR**   | **~2–4 s**             | **Dominant cost.** Parallelize with `--concurrency 3` |
-| Per-box refine (if any) | ~0.5–1 s × empty boxes | Typically 0–2 s; disable with `--no-refine`           |
-| PDF assembly            | ~0.2 s                 | Linear in pages                                       |
-| Cold-start Surya load   | +5–10 s (paid once)    | Paid even on grounded runs                            |
-
-End-to-end on the example PDFs (hybrid path, OlmOCR-2-7B, warm cache): digital ≈ 14 s, hybrid form ≈ 5 s, handwritten ≈ 4 s. The handwritten case being the cheapest is genuinely funny — fewer detected boxes means a shorter DP, fewer LLM tokens to align, less refine work. Messy is sometimes faster than clean.
-
-`--concurrency` is the lever that matters most. The LLM is the bottleneck and there's nothing stopping you from streaming three pages at once on a beefy GPU.
-
-## CLI & Real-time Web UI
-
-A tool is only as good as its developer experience. The pipeline ships **two interfaces, each rendering the same progress events** so you don't have to learn two mental models.
-
-<img
-  src='https://ik.imagekit.io/8ieg70pvks/blog/local-llm-ocr-cli.png'
-  alt='Local LLM PDF OCR CLI'
-  className='w-full rounded-lg'
-/>
-
-- **CLI** — Powered by `rich`, with live progress bars for detection, LLM OCR, refinement, and embedding. Full flag surface for batch automation: `--pages`, `--concurrency`, `--dpi`, `--no-refine`, `--api-base`, `--model`, `--grounded`.
-- **Web UI** — FastAPI + WebSockets, drag-and-drop, dark mode, real-time per-page progress, and an in-browser preview of the raw VLM output _before_ it gets aligned. Same WebSocket events drive both surfaces.
+Photographed documents have a separate preparation step. Automatic preprocessing detects a tilted page outline and can correct perspective and illumination for recognition. Coordinates then map back onto the original photograph, so the output preserves the image you supplied. Compare automatic preprocessing with **Never** if the detected outline does not describe the page correctly.
 
 <figure className='not-prose my-6'>
   <img
     src='/images/local-llm-ocr-web-advanced.png'
-    alt='The web UI with Advanced Options expanded, exposing DPI, page range, concurrency, max image dimension, a model-loaded verification toggle, the OpenAI-compatible API base URL, and hybrid-tuning controls for crop-refine, dense mode, dense threshold, and minimum box confidence'
+    alt='Advanced browser options for the OCR endpoint, page range, image size, concurrency, dense mode, preprocessing, and refinement'
     loading='lazy'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The same flag surface the CLI exposes, in the browser: DPI, concurrency, the OpenAI-compatible endpoint, and the
-    hybrid-tuning knobs for crop-refine and dense pages.
+    Start with the defaults, then tune a difficult page through the same browser interface.
   </figcaption>
 </figure>
 
-```python
-with progress:
-    # Phase 1: Batch layout detection (one Surya call for all pages)
-    task_layout = progress.add_task("[cyan]Detecting layouts (batch)...", total=1)
-    all_boxes = hybrid_aligner.get_detected_boxes_batch(all_image_bytes)
+## Export for the Work You Want to Do Next
 
-    # Phase 2: LLM OCR per page, with optional concurrency
-    task_ocr = progress.add_task(f"[cyan]LLM OCR Processing...", total=total_pages)
-    for page_num in page_nums:
-        llm_text = ocr_processor.perform_ocr(image_base64)
-        aligned_data = hybrid_aligner.align_text(boxes, llm_text)
-        progress.advance(task_ocr)
+The **Output format** control makes the tool useful beyond PDF conversion. Choose a searchable PDF for an archive, an HTML overlay for browser-based inspection, or Markdown and text for content that will move into other tools.
+
+| Output         | What you receive                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------------------- |
+| Searchable PDF | The visible page image with an invisible, selectable text layer                                   |
+| HTML overlay   | Page images with a selectable text overlay, optional hover inspection, and optional inline images |
+| Markdown       | Extracted text in a format suited to editing and downstream processing                            |
+| Plain text     | Transcription without document-format markup                                                      |
+
+HTML can be packaged as one self-contained file with inline images. Its hover-text option exposes the recognized content over a region, which is useful when checking the overlay. Text-only mode is a direct route for retrieval preparation because it avoids geometry work when a selectable page is not part of the deliverable.
+
+Inputs include PDF, JPEG, PNG, BMP, WebP, AVIF, and TIFF. A multi-frame TIFF becomes multiple output pages, so archives do not need a separate image-to-PDF conversion before OCR.
+
+## How the Hybrid Engine Connects Text to the Page
+
+The architecture separates locating text from recognizing it. Surya's detection predictor supplies text regions without running its recognition model, and the configured vision model supplies transcription. A shared `OCRPipeline` orchestrates those stages for both the browser and CLI.
+
+The remaining problem is assigning the model's lines to the right regions. A proportional split can move a caption into a neighboring column or combine unrelated form fields. I use a Needleman-Wunsch-style dynamic program to find a monotonic alignment between ordered boxes and text lines, with costs that favor plausible text-to-width fit while allowing skipped boxes and unmatched lines.
+
+The [aligner](https://github.com/ahnafnafee/local-llm-pdf-ocr/blob/main/src/pdf_ocr/core/aligner.py) tries row-major and column-major box orderings and chooses the lower-cost result. Different models can therefore read a two-column page in different orders without requiring a separate model-specific alignment implementation. Unmatched model lines attach to nearby matched regions, and sizeable empty regions can receive a crop-recognition pass.
+
+```mermaid
+flowchart TD
+    B["Browser upload and options"] --> P["Shared OCR pipeline"]
+    C["CLI for automation"] --> P
+    P --> R["Render PDF or image pages"]
+    R --> H["Hybrid: detect text regions"]
+    R --> G["Grounded: text and coordinates"]
+    R --> T["Text-only transcription"]
+    H --> F["Full-page transcription and alignment"]
+    H --> D["Dense pages: recognize crops"]
+    F --> A["Aligned text regions and optional refinement"]
+    D --> A
+    G --> A
+    A --> O["PDF, HTML, Markdown, or text"]
+    T --> O
 ```
 
-## Validating the Whole Thing
+PyMuPDF writes a sandwich PDF with the rasterized page as the visible layer. Invisible text is scaled to its assigned region, giving selection a geometric connection to the underlying scan. A detected region and a recognized line remain estimates, so exact selection placement depends on both stages.
 
-Hybrid systems break in subtle ways: a DP edge case, a glyph-scale matrix off by 1.02×, a TIFF frame that gets dropped silently. The repo ships a **145-test suite** covering DP invariants, embedding geometry, grounded JSON parsing, and end-to-end runs against the example PDFs.
+## Grounded OCR Without Silent Empty Output
 
-There's also a **confidence evaluator** that scores either path against ground-truth fixtures — block recall at IoU ≥ 0.3, average IoU of matched pairs, and average text similarity. Run it against both paths to see which one wins on _your_ document set:
+Grounded mode lets a compatible model return coordinates alongside the text. The project documents working Qwen2.5-VL and Qwen3-VL configurations; select **Grounded** and the appropriate loaded model in the interface. Models that return only prose or Markdown belong on Hybrid.
+
+If a page returns no usable grounded blocks, processing stops before writing output and identifies the affected pages. This also applies to blank pages. That behavior prevents a completed-looking run from quietly producing an image-only PDF when the requested text layer is missing.
+
+The distinction matters because a model's general ability to read an image does not establish its coordinate format. Keeping both engines available lets the user choose a suitable model without committing the rest of the workflow to that model's response structure.
+
+## Get a Difficult Page Working
+
+The browser's **Advanced** controls expose page range, rendering DPI, image dimensions, concurrency, refinement, and preprocessing. Use a representative page while tuning, then apply the settings to the full document.
+
+| What you see                                | What to try in the interface                                               |
+| ------------------------------------------- | -------------------------------------------------------------------------- |
+| The requested model is unavailable          | Select its exact loaded ID and check the endpoint                          |
+| Repeated or missing lines                   | Hybrid with Dense mode set to Always                                       |
+| Grounded reports no usable blocks           | Select Hybrid, or load a model that returns structured coordinates         |
+| GLM-OCR exceeds image capacity in Ollama    | Use the documented maximum image dimension of 640                          |
+| A page photo is distorted after preparation | Compare automatic preprocessing with Never                                 |
+| Higher concurrency slows progress           | Lower concurrent requests and check the model server's memory and queueing |
+
+Concurrency limits in-flight model requests; it does not start extra copies of the model. Full-page and crop-heavy workloads have different costs, so increase it when the server has room rather than assuming a larger number always wins.
+
+For a quick quality check, search a visible phrase, copy across a paragraph or column boundary, and compare handwritten identifiers with the scan. The [confidence evaluator](https://github.com/ahnafnafee/local-llm-pdf-ocr/blob/main/scripts/confidence_eval.py) goes further by measuring geometry, character errors, word-level similarity, and structural coverage against project fixtures. Saved per-document baselines make changes traceable to the part of the pipeline they improve.
+
+## CLI Support for Automation
+
+Everything above can be done in the browser. The CLI is also available when the same configuration needs to run from a script or batch workflow:
 
 ```bash
-uv run scripts/confidence_eval.py --path both \
-    --grounded-model qwen/qwen3-vl-8b \
-    --hybrid-model allenai/olmocr-2-7b
+uv run local-llm-pdf-ocr scan.pdf scan_ocr.pdf
 ```
 
-That's the honest way to choose between hybrid and grounded — measure it on the documents you actually care about.
+Its options cover the same engine, model, endpoint, page selection, and tuning controls. The [repository README](https://github.com/ahnafnafee/local-llm-pdf-ocr/blob/main/README.md) documents the full command surface, example documents, and evaluation tools.
 
-## Why This Matters Beyond OCR
-
-This project is, at its heart, a case study in **hybrid AI systems** — the architectural pattern of decomposing a problem into a fast deterministic stage and a slow semantic stage, then binding them together with a classical algorithm.
-
-- **Surya detection** — fast, deterministic, well-defined contract.
-- **Local VLM** — slow, semantic, the part that actually reads.
-- **Needleman-Wunsch DP** — a 1970 algorithm, still the cleanest tool for monotonic alignment.
-
-Each piece is replaceable. Swap Surya for a different layout model. Swap OlmOCR for Qwen3-VL and flip the `--grounded` switch. Swap the embedder for one that emits HTML or Markdown instead of PDF. The seams are clean because each stage has a crisp contract: "boxes in reading order," "text in reading order," "aligned `(box, text)` pairs."
-
-It also matters for **RAG and document-AI pipelines**. Searchable PDFs are the input format every downstream tool expects — vector-database ingestors, LangChain loaders, enterprise search, Notion imports, knowledge-graph builders. A good local OCR layer is the unglamorous bedrock under all of it. Get the OCR wrong and every downstream embedding inherits the noise; get it right and your retrieval just works.
-
-## Try It Yourself
-
-100% local. No API keys. No subscription fees. Your documents never leave your machine.
-
-The full source is on [GitHub](https://github.com/ahnafnafee/local-llm-pdf-ocr). Stars, issues, and PRs all welcome.
-
-[![zread](https://img.shields.io/badge/Ask_Zread-_.svg?style=for-the-badge&color=00b0aa&labelColor=000000&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuOTYxNTYgMS42MDAxSDIuMjQxNTZDMS44ODgxIDEuNjAwMSAxLjYwMTU2IDEuODg2NjQgMS42MDE1NiAyLjI0MDFWNC45NjAxQzEuNjAxNTYgNS4zMTM1NiAxLjg4ODEgNS42MDAxIDIuMjQxNTYgNS42MDAxSDQuOTYxNTZDNS4zMTUwMiA1LjYwMDEgNS42MDE1NiA1LjMxMzU2IDUuNjAxNTYgNC45NjAxVjIuMjQwMUM1LjYwMTU2IDEuODg2NjQgNS4zMTUwMiAxLjYwMDEgNC45NjE1NiAxLjYwMDFaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00Ljk2MTU2IDEwLjM5OTlIMi4yNDE1NkMxLjg4ODEgMTAuMzk5OSAxLjYwMTU2IDEwLjY4NjQgMS42MDE1NiAxMS4wMzk5VjEzLjc1OTlDMS42MDE1NiAxNC4xMTM0IDEuODg4MSAxNC4zOTk5IDIuMjQxNTYgMTQuMzk5OUg0Ljk2MTU2QzUuMzE1MDIgMTQuMzk5OSA1LjYwMTU2IDE0LjExMzQgNS42MDE1NiAxMy43NTk5VjExLjAzOTlDNS42MDE1NiAxMC42ODY0IDUuMzE1MDIgMTAuMzk5OSA0Ljk2MTU2IDEwLjM5OTlaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik0xMy43NTg0IDEuNjAwMUgxMS4wMzg0QzEwLjY4NSAxLjYwMDEgMTAuMzk4NCAxLjg4NjY0IDEwLjM5ODQgMi4yNDAxVjQuOTYwMUMxMC4zOTg0IDUuMzEzNTYgMTAuNjg1IDUuNjAwMSAxMS4wMzg0IDUuNjAwMUgxMy43NTg0QzE0LjExMTkgNS42MDAxIDE0LjM5ODQgNS4zMTM1NiAxNC4zOTg0IDQuOTYwMVYyLjI0MDFDMTQuMzk4NCAxLjg4NjY0IDE0LjExMTkgMS42MDAxIDEzLjc1ODQgMS42MDAxWiIgZmlsbD0iI2ZmZiIvPgo8cGF0aCBkPSJNNCAxMkwxMiA0TDQgMTJaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00IDEyTDEyIDQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K&logoColor=ffffff)](https://zread.ai/ahnafnafee/local-llm-pdf-ocr)
+For a first run, use the web interface and a document you already know well. Search it, select a passage, and download the format your next task needs. The [source](https://github.com/ahnafnafee/local-llm-pdf-ocr) is MIT-licensed and available to adapt to your own document workflow.
 
 ---
 
@@ -2175,62 +1950,94 @@ The "one-size-fits-all" approach is suboptimal. Future pipelines should incorpor
 # SongMirror
 
 URL: https://www.ahnafnafee.dev/portfolio/songmirror
-Published: 2026-07-11 (updated 2026-08-17)
-Summary: A self-hosted, always-on playlist mirror for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music, with a browser app, one-off transfers, and a Jellyfin-ready local archive. A free, open-source Soundiiz alternative you run yourself.
+Published: 2026-07-11 (updated 2026-10-21)
+Summary: Self-hosted playlist and favorites sync, multi-source merges, account-to-account transfers, and scheduled backups across streaming services and your own music library.
 Stack: python, typescript, react, docker, tailwindcss, rest-api
 
-## Overview
+SongMirror is the self-hosted music app I built to keep libraries connected across services. It combines scheduled playlist and favorites syncs with multi-source merges, one-off transfers, track-list imports, and metadata backups. A FastAPI backend and React interface share the same Python engine as the headless CLI, so the browser and scheduled jobs apply the same matching and removal rules.
 
-SongMirror keeps the playlists you curate on one service mirrored across all the others. Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, YouTube Music, and a local, Jellyfin-ready download folder stay identical without manual re-adding, one-by-one copying, or a paid cloud service holding your library. It can run one-way with a chosen source of truth, use an authoritative group where two or more services jointly define the playlist, or reconcile every selected service in bidirectional (N-way) mode. I built it as a free, open-source alternative to Soundiiz and TuneMyMusic that you own and host yourself.
+<AppDownloadCTA
+  heading='Install and Run SongMirror'
+  subtext='Requires Git and Docker with Compose v2.24 or newer. Configure your accounts in the browser.'
+  github='https://github.com/ahnafnafee/songmirror'
+  container='https://github.com/ahnafnafee/songmirror/pkgs/container/songmirror'
+  documentation='https://github.com/ahnafnafee/songmirror/blob/main/docs/docker-image.md'
+>
 
-I wrote up the engineering behind it in a dedicated post: [A Self-Hosted Playlist Mirror for Seven Music Services](/blog/songmirror-playlist-sync).
+```bash
+git clone https://github.com/ahnafnafee/songmirror.git
+cd songmirror
+docker compose up -d
+```
 
-## What I Built
+Open [localhost:8888](http://localhost:8888), connect services under **Accounts**, then choose **Transfers** for a copy or **Sync** for a scheduled job. Use **Preview** before applying a sync. No environment file is required; configuration and history persist in `./data`, with downloads in `./downloads` by default. Keep the interface on a trusted network because it has no login.
 
-It started as a headless Python engine and grew into a browser app on the same core:
+</AppDownloadCTA>
 
-- **Sync engine** in Python: ISRC-first matching with Unicode-aware fuzzy fallbacks (RapidFuzz plus anyascii romanization, anchored by track duration), oldest-first date-added ordering, and a paranoid removal path guarded by a dry-run default, per-pass caps, and net-loss and empty-snapshot protection.
-- **Web app** with a FastAPI backend and a React single-page UI: connect each service, build any number of named syncs, choose one-way, authoritative-group, or N-way reconciliation, run one-off transfers, and watch every match, add, and removal stream live over server-sent events. A `services` layer drives the engine so the web layer never touches it directly.
-- **Seven music-service connectors** behind one `MirrorTarget` interface: Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music. A separate Jellyfin integration keeps a local download mirror organized and playlist-ready.
-- **Docker deployment**: one `docker compose up -d` serves the UI and runs your syncs on schedule. Everything is configured in the browser and saved to a local data folder, so no credentials ever leave the machine.
+## Choose How Your Library Stays Connected
 
-## Highlights
+Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music support playlist and native favorites workflows. Jobs can use one source of truth, merge several source playlists into one destination, let a selected authoritative group contribute edits, or reconcile all selected services as N-way peers. Each named job has its own schedule and safety caps.
 
-- Cross-catalog matching that survives multi-artist credit drift, remaster and "Official Music Video" suffixes, and non-Latin scripts, never guessing when nothing clears the bar.
-- Authoritative groups for playlists curated across two or more services, plus bidirectional N-way sync with echo suppression via a per-provider canonical snapshot, add-wins conflict resolution, and a read-collapse guard against transient API hiccups.
-- One-off transfers with pause, resume, and stop, plus manual resolution of tracks that could not be matched automatically.
-- A Jellyfin-ready local audio mirror through spotDL, with per-playlist folders, real playlist covers, and an auto-updated `.m3u8`.
+The provider set now extends beyond streaming catalogs. Last.fm contributes listening collections and supports incoming loves; ListenBrainz Loved Recordings can also be a source or, with authorization, a favorites destination. Navidrome/Subsonic supports playlist and starred-song sync against music already on the server. Jellyfin provides playlist browsing alongside a separate local audio mirror. The [provider setup guide](https://github.com/ahnafnafee/songmirror/blob/main/docs/listenbrainz-subsonic.md) explains the newer connections and their capabilities.
 
-## Screenshots
+## Migrations, Imports, and Backups
+
+A transfer can copy between services or two accounts on the same service, using a library selection or public playlist URL. YouTube transfers retain video IDs, including regular video playlists. Pause, resume, stop, and manual match review accompany a persistent audit history with confirmed counts and failure details. Restarted copies skip items already in their destination.
+
+Track-list imports accept pasted text and TXT, CSV, TSV, M3U, or M3U8 files, with a review stage before creating or extending a playlist. Scheduled JSON/XML backups preserve an account's playlist metadata independently of sync jobs, with retention controls and run history. Manual exports include a Soundiiz-compatible JSON option.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/songmirror-transfers.png'
+    alt='SongMirror transfer setup selecting source and destination accounts for a playlist copy'
+    loading='lazy'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    Transfers work across services and between separate accounts on the same service.
+  </figcaption>
+</figure>
+
+## Engineering the Shared Core
+
+ISRC-first resolution falls back to title, artist, duration, and recording-version comparisons. Saved resolutions make repeat passes cheaper, while the **Mappings** page lets users correct a bad match or retry cached misses. Per-provider snapshots suppress sync echoes, and complete-read checks keep temporary catalog failures from becoming deletions.
+
+The removal path is opt-in and capped. The CLI previews by default, and the browser exposes a separate Preview action. A services layer serializes engine access for syncs, transfers, and backups; server-sent events report progress without moving reconciliation logic into the web layer.
+
+The Docker image supports AMD64 and ARM64 and runs the browser app and scheduler together. Configuration, credentials, caches, playlist snapshots, and transfer history live in persistent storage. The interface supports 15 languages, including right-to-left Arabic, and offers feature tours for setup.
+
+## Local Audio and Screenshots
+
+The optional audio mirror first copies matches from an existing music library in their original format, preserving real FLAC files. spotDL fills remaining gaps, and playlist folders, covers, and `.m3u8` files make the results usable in Jellyfin.
 
 <div className='not-prose my-6 grid grid-cols-1 gap-3 sm:grid-cols-2'>
   <img
-    src='/images/songmirror-dashboard.png'
-    alt='SongMirror dashboard showing sync status, configured jobs, a live activity feed, and health for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, YouTube Music, and Jellyfin'
-    loading='lazy'
-    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
-  />
-  <img
     src='/images/songmirror-wizard.png'
-    alt='The SongMirror setup wizard choosing services and a one-way, authoritative-group, or bidirectional direction for a sync job'
+    alt='SongMirror sync wizard for choosing participating accounts and a reconciliation mode'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
     src='/images/songmirror-accounts.png'
-    alt='The Accounts page for connecting Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, YouTube Music, and Jellyfin in the browser'
+    alt='SongMirror Accounts page for connecting streaming services and personal music servers'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
     src='/images/songmirror-playlists.png'
-    alt='Browsing playlists across connected services with cover art and track counts, and pairing playlists that do not share a name'
+    alt='SongMirror playlist browser showing libraries across connected accounts'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/songmirror-transfer-history.png'
+    alt='Persistent SongMirror transfer history with filters and recorded copy attempts'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
 </div>
 
-The source is on [GitHub](https://github.com/ahnafnafee/songmirror), MIT-licensed, and the default run is a dry run that prints every add and removal it would make before touching a single playlist.
+The [full engineering write-up](/blog/songmirror-playlist-sync) explains reconciliation modes, matching, and the safeguards around unattended writes. SongMirror is MIT-licensed, with source and issue tracking on [GitHub](https://github.com/ahnafnafee/songmirror).
 
 ---
 
@@ -2318,65 +2125,73 @@ See it at [rally.ahnafnafee.dev](https://rally.ahnafnafee.dev).
 # Pinned Calendar
 
 URL: https://www.ahnafnafee.dev/portfolio/pinned-calendar
-Published: 2026-06-03 (updated 2026-07-14)
-Summary: An Android app that pins this week's Google Calendar events and to-dos to your notification shade, self-healing and fully on-device. Kotlin, Jetpack Compose, and Material You.
+Published: 2026-06-03 (updated 2026-10-21)
+Summary: An offline Android agenda and recurring-task app, now on Google Play. Keep events and to-dos in one persistent notification, with actionable reminders and an adjustable layout.
 Stack: kotlin, android, android-studio
 
-## Overview
-
-Pinned Calendar keeps this week's Google Calendar events and your to-dos in a single ongoing notification at the top of the Android shade. It reads the calendars already synced on your device, so there is no Google sign-in, no OAuth, and no internet permission, and your schedule never leaves the phone. The pin is self-healing: swipe it away by accident and it re-posts itself, and when you do want it gone you switch it off in the app or turn on swipe-twice-to-remove.
+Pinned Calendar keeps upcoming calendar events and local tasks visible in a persistent Android notification. I built it so a plan could remain in view between apps, then extended it with recurring tasks and separate due-time reminders. It is now available on Google Play, with no sign-in, ads, analytics, or internet permission.
 
 <AppDownloadCTA
-  heading='Get Pinned Calendar'
-  subtext='Coming soon to Google Play. The latest signed APK is on GitHub Releases.'
+  heading='Install Pinned Calendar'
+  subtext='Free and open source for Android 8.0 and newer. Install from Google Play or use a signed APK.'
+  playStore='https://play.google.com/store/apps/details?id=dev.ahnafnafee.pinnedcalendar'
+  github='https://github.com/ahnafnafee/pinned-calendar'
+  releases='https://github.com/ahnafnafee/pinned-calendar/releases/latest'
   web='https://pinnedcalendar.ahnafnafee.dev'
-/>
+>
 
-## What I Built
+Grant **Calendar** access and allow notifications, then enable **Pin to notifications** in Settings. Select the calendars and time window to show, add your tasks, and adjust the live notification preview. To-do reminders are enabled by default. The optional battery-optimization exemption under **Reliability** helps on devices that delay background refreshes.
 
-A privacy-first productivity app with a testable, platform-decoupled core:
+</AppDownloadCTA>
 
-- **Pure-Kotlin core** for windowing, day-bucketing, and content building, unit-tested and independent of Android, consumed by a thin platform layer of `RemoteViews`, WorkManager, and receivers.
-- **Persistent, self-healing notification** with no foreground service, a delete-intent receiver that re-posts on swipe, and Top, Normal, or Silent priority.
-- **Local to-dos** stored in DataStore that merge into the same agenda and carry forward day to day until done.
-- **Material 3 and Material You** throughout: wallpaper-based dynamic color, seed colors, AMOLED black, selectable fonts, and a theme- and accent-adaptive launcher icon.
+## An Agenda That Stays Within Reach
 
-## Highlights
+The pin combines calendar entries and to-dos in day groups with per-calendar colors and task-priority accents. Choose a three-day, current-week, seven-day, or fourteen-day window, then filter calendars and cap the item count. Compact, Cozy, Comfortable, and Custom density settings work with a live collapsed/expanded preview, row limits, and heading controls.
 
-- Reads device calendars through Android's Calendar Provider with per-calendar colors, no account or network required.
-- Day-grouped agenda (Today, Tomorrow, and weekday sections) with tasks shown as their own rows.
-- A configurable window of the next 3 days, this week, 7 days, or 14 days, with per-calendar filtering and an item cap.
-- Background refresh with WorkManager and a `ContentObserver` for instant updates, and the pin restores itself after reboots and app updates.
-- Offline by design: no `INTERNET` permission, no analytics, no accounts, and minimal permissions.
+An accidental dismissal triggers a delete-intent receiver that rebuilds the notification. The app switch turns it off explicitly; optional swipe-twice-to-remove does the same after two quick dismissals. Boot and app-update receivers restore the schedule, while WorkManager and a calendar observer refresh the contents without a foreground service.
 
-## Full Write-Up
+## Recurring Tasks and Actionable Reminders
 
-I broke down the self-healing notification, the on-device calendar reads, and the testable date math in a dedicated post: [Pinned Calendar: A Self-Healing, Offline Agenda for Android](/blog/pinned-calendar).
+Tasks have due dates and times, notes, and priorities, with Overdue, Today, Upcoming, and Completed groups. Unfinished work carries forward. Daily, weekly, monthly, and yearly recurrence can be customized with intervals, weekdays, an end date, or an occurrence limit. Completing a recurring task advances it to the first upcoming occurrence while preserving month-end and local-time scheduling intent.
 
-## Screenshots
+Due-time reminders remain separate from the agenda pin. **Done** completes the occurrence directly from the notification, and **Snooze** delays its reminder for 30 minutes without changing the original due time. AlarmManager uses exact alarms when access permits and falls back to inexact delivery when it does not.
 
-<div className='not-prose my-6 grid grid-cols-2 gap-3 sm:grid-cols-3'>
+## Local Storage and a Testable Core
+
+Calendar events come from Android's Calendar Provider, so the app works with calendars already synced to the device. DataStore stores tasks and preferences locally. The manifest omits `INTERNET`, and application cloud backup is disabled. The [privacy policy](https://pinnedcalendar.ahnafnafee.dev/privacy/) documents what stays on the phone.
+
+Pure-Kotlin windowing, day grouping, and content construction keep date logic independent of Android. Injected clocks and recurrence tests cover boundary cases, while receiver and scheduling tests exercise the platform layer. The UI uses Jetpack Compose, Material 3, and custom RemoteViews, with Material You colors, AMOLED black, selectable fonts, and 15 languages including right-to-left Arabic.
+
+## Screenshots and Engineering Write-Up
+
+<div className='not-prose my-6 grid grid-cols-2 gap-3'>
   <img
     src='/images/pinned-calendar-notification-light.png'
-    alt="Pinned Calendar's persistent notification showing the week's agenda in light mode"
+    alt='Pinned Calendar notification in light mode, with a day-grouped agenda'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
     src='/images/pinned-calendar-notification-dark.png'
-    alt="Pinned Calendar's persistent notification showing the week's agenda in dark mode"
+    alt='Pinned Calendar notification in dark mode with event times and calendar colors'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/pinned-calendar-todos.png'
+    alt='Pinned Calendar To-dos tab showing a week overview and local tasks'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
     src='/images/pinned-calendar-settings.png'
-    alt='The Pinned Calendar settings tab with Material You cards for notifications, time window, and calendars'
+    alt='Pinned Calendar Settings tab for notifications, calendars, and appearance'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
 </div>
 
-It is open source and MIT-licensed on [GitHub](https://github.com/ahnafnafee/pinned-calendar), with more at [pinnedcalendar.ahnafnafee.dev](https://pinnedcalendar.ahnafnafee.dev).
+The [full write-up](/blog/pinned-calendar) covers recurring-task behavior, reminder actions, and the notification lifecycle. Pinned Calendar is MIT-licensed, with [source on GitHub](https://github.com/ahnafnafee/pinned-calendar), a [project website](https://pinnedcalendar.ahnafnafee.dev), and a public [Google Play listing](https://play.google.com/store/apps/details?id=dev.ahnafnafee.pinnedcalendar).
 
 ---
 
