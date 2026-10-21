@@ -98,6 +98,15 @@ export const AppDownloadCTA: React.FC<AppDownloadCTAProps> = ({
           </Button>
         ) : null}
 
+        {container ? (
+          <Button asChild size='sm'>
+            <a href={container} target='_blank' rel='noopener noreferrer'>
+              <Package data-icon='inline-start' />
+              Docker image
+            </a>
+          </Button>
+        ) : null}
+
         {github ? (
           <Button asChild size='sm' variant='outline'>
             <a href={github} target='_blank' rel='noopener noreferrer'>
@@ -112,15 +121,6 @@ export const AppDownloadCTA: React.FC<AppDownloadCTAProps> = ({
             <a href={releases} target='_blank' rel='noopener noreferrer'>
               <Download data-icon='inline-start' />
               Releases / APK
-            </a>
-          </Button>
-        ) : null}
-
-        {container ? (
-          <Button asChild size='sm' variant='outline'>
-            <a href={container} target='_blank' rel='noopener noreferrer'>
-              <Package data-icon='inline-start' />
-              Container image
             </a>
           </Button>
         ) : null}

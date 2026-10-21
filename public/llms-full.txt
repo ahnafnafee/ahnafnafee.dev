@@ -256,27 +256,27 @@ Published: 2026-07-13 (updated 2026-10-21)
 Summary: Keep playlists and favorites connected across streaming services and your own music library. How I built SongMirror with scheduled merge syncs, account-to-account transfers, editable matches, and playlist backups.
 Topics: Music Sync, Self-Hosted, Python, Automation, APIs
 
-I curate playlists on Spotify but listen on Apple Music, YouTube Music, and a Jellyfin server at home. I built [SongMirror](https://github.com/ahnafnafee/songmirror) to keep those libraries connected without copying every change by hand. It has grown into a self-hosted browser app for scheduled playlist and favorites syncs, multi-source merges, account-to-account transfers, and metadata backups. Seven streaming services sit alongside Last.fm, ListenBrainz, and Navidrome/Subsonic integrations, with a separate local audio mirror for Jellyfin. Docker runs the app and scheduler together; a headless Python CLI uses the same engine. You choose which services define the library and which follow it.
+I curate playlists on Spotify but listen on Apple Music, YouTube Music, and a Jellyfin server at home. I built [SongMirror](https://github.com/ahnafnafee/songmirror) to keep those libraries connected without copying every change by hand. It has grown into a self-hosted browser app for scheduled playlist and favorites syncs, multi-source merges, account-to-account transfers, and metadata backups. Seven streaming services sit alongside Last.fm, ListenBrainz, and Navidrome/Subsonic integrations, with a separate local audio mirror for Jellyfin. The published Docker image runs the app and scheduler together; a headless Python CLI uses the same engine. You choose which services define the library and which follow it.
 
 <AppDownloadCTA
-  heading='Install and Run SongMirror'
-  subtext='Requires Git and Docker with Compose v2.24 or newer. No environment file is needed to start.'
+  heading='Run the Official Docker Image'
+  subtext='Recommended setup: Docker with Compose v2.24 or newer. Configure your accounts in the browser.'
   github='https://github.com/ahnafnafee/songmirror'
   container='https://github.com/ahnafnafee/songmirror/pkgs/container/songmirror'
   documentation='https://github.com/ahnafnafee/songmirror/blob/main/docs/docker-image.md'
 >
 
+Use the ready-to-run image `ghcr.io/ahnafnafee/songmirror:latest`. Save the [official Compose file](https://raw.githubusercontent.com/ahnafnafee/songmirror/main/docker-compose.yml) as `compose.yaml` in a new folder, open a terminal in that folder, and run:
+
 ```bash
-git clone https://github.com/ahnafnafee/songmirror.git
-cd songmirror
-docker compose up -d
+docker compose up -d --pull always --no-build
 ```
 
 1. Open [localhost:8888](http://localhost:8888) and connect your services under **Accounts**.
 2. Use **Transfers** for a one-time copy, or **Sync** to create a scheduled job. Preview a sync before applying it.
 3. Keep `./data` backed up: it holds your configuration, credentials, caches, and history. Compose also preserves downloads under `./downloads` by default.
 
-Compose pulls the published AMD64/ARM64 image. The interface has no login, so keep it on a trusted local network.
+Compose pulls the published AMD64/ARM64 image and keeps it running across host restarts. Setup needs no Git checkout, local build, or environment file. The interface has no login, so keep it on a trusted local network.
 
 </AppDownloadCTA>
 
@@ -369,7 +369,7 @@ The optional local mirror copies matching files from an existing music library i
 
 Credentials and state stay in the self-hosted data directory and are used to contact the services you connect. Renewable sessions are refreshed where supported; some providers still require a fresh pasted token. The [connection guide](https://github.com/ahnafnafee/songmirror#connecting-each-service) documents those differences.
 
-For upgrades, run `docker compose up -d --pull always` from the checkout. Source, setup, and issue tracking live in the [SongMirror repository](https://github.com/ahnafnafee/songmirror), released under the MIT license. The [portfolio page](/portfolio/songmirror) gives a shorter overview of the app and its implementation.
+For upgrades, run `docker compose up -d --pull always --no-build` from the folder containing `compose.yaml`. Source, setup, and issue tracking live in the [SongMirror repository](https://github.com/ahnafnafee/songmirror), released under the MIT license. The [portfolio page](/portfolio/songmirror) gives a shorter overview of the app and its implementation.
 
 ---
 
@@ -595,13 +595,13 @@ That changes what a reminder has to do. The agenda can stay visible without soun
 
 <div className='not-prose my-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:items-start'>
   <img
-    src='/images/pinned-calendar-notification-light.png'
-    alt='Pinned Calendar agenda notification in light mode, with event times and calendar colors grouped by day'
+    src='/images/pinned-calendar-store-agenda.png'
+    alt='Pinned Calendar Play Store screenshot showing the always-on agenda in the Android notification shade'
     className='w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
-    src='/images/pinned-calendar-notification-dark.png'
-    alt='Pinned Calendar agenda notification in dark mode with the same day-grouped layout'
+    src='/images/pinned-calendar-store-week.png'
+    alt='Pinned Calendar Play Store screenshot showing the week overview and to-dos grouped by due date with priority colors'
     className='w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
   />
 </div>
@@ -661,14 +661,14 @@ The time window remains selectable: three days, this week, seven days, or fourte
 
 <div className='not-prose my-6 grid grid-cols-1 gap-4 sm:grid-cols-2'>
   <img
-    src='/images/pinned-calendar-todos.png'
-    alt='Pinned Calendar To-dos tab with a week overview and local task list'
+    src='/images/pinned-calendar-store-controls.png'
+    alt='Pinned Calendar Play Store screenshot showing live notification preview, density presets, row count, and heading controls'
     loading='lazy'
     className='mx-auto w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
-    src='/images/pinned-calendar-settings.png'
-    alt='Pinned Calendar settings for the notification, time window, calendars, and appearance'
+    src='/images/pinned-calendar-store-appearance.png'
+    alt='Pinned Calendar Play Store screenshot showing Material You, AMOLED black, accent colors, palettes, and font settings'
     loading='lazy'
     className='mx-auto w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
   />
@@ -1954,23 +1954,23 @@ Published: 2026-07-11 (updated 2026-10-21)
 Summary: Self-hosted playlist and favorites sync, multi-source merges, account-to-account transfers, and scheduled backups across streaming services and your own music library.
 Stack: python, typescript, react, docker, tailwindcss, rest-api
 
-SongMirror is the self-hosted music app I built to keep libraries connected across services. It combines scheduled playlist and favorites syncs with multi-source merges, one-off transfers, track-list imports, and metadata backups. A FastAPI backend and React interface share the same Python engine as the headless CLI, so the browser and scheduled jobs apply the same matching and removal rules.
+SongMirror is the self-hosted music app I built to keep libraries connected across services. Run the official Docker image to use its browser interface and scheduler, with playlist and favorites syncs, multi-source merges, one-off transfers, track-list imports, and metadata backups. A FastAPI backend and React interface share the same Python engine as the headless CLI, so the browser and scheduled jobs apply the same matching and removal rules.
 
 <AppDownloadCTA
-  heading='Install and Run SongMirror'
-  subtext='Requires Git and Docker with Compose v2.24 or newer. Configure your accounts in the browser.'
+  heading='Run the Official Docker Image'
+  subtext='Recommended setup: Docker with Compose v2.24 or newer. Configure your accounts in the browser.'
   github='https://github.com/ahnafnafee/songmirror'
   container='https://github.com/ahnafnafee/songmirror/pkgs/container/songmirror'
   documentation='https://github.com/ahnafnafee/songmirror/blob/main/docs/docker-image.md'
 >
 
+Use `ghcr.io/ahnafnafee/songmirror:latest`. Save the [official Compose file](https://raw.githubusercontent.com/ahnafnafee/songmirror/main/docker-compose.yml) as `compose.yaml` in a new folder, open a terminal in that folder, and run:
+
 ```bash
-git clone https://github.com/ahnafnafee/songmirror.git
-cd songmirror
-docker compose up -d
+docker compose up -d --pull always --no-build
 ```
 
-Open [localhost:8888](http://localhost:8888), connect services under **Accounts**, then choose **Transfers** for a copy or **Sync** for a scheduled job. Use **Preview** before applying a sync. No environment file is required; configuration and history persist in `./data`, with downloads in `./downloads` by default. Keep the interface on a trusted network because it has no login.
+Open [localhost:8888](http://localhost:8888), connect services under **Accounts**, then choose **Transfers** for a copy or **Sync** for a scheduled job. Use **Preview** before applying a sync. The image is prebuilt for AMD64 and ARM64, with no Git checkout or environment file required. Configuration and history persist in `./data`, with downloads in `./downloads` by default. Keep the interface on a trusted network because it has no login.
 
 </AppDownloadCTA>
 
@@ -2166,28 +2166,34 @@ Pure-Kotlin windowing, day grouping, and content construction keep date logic in
 
 <div className='not-prose my-6 grid grid-cols-2 gap-3'>
   <img
-    src='/images/pinned-calendar-notification-light.png'
-    alt='Pinned Calendar notification in light mode, with a day-grouped agenda'
+    src='/images/pinned-calendar-store-agenda.png'
+    alt='Pinned Calendar Play Store screenshot showing the persistent agenda in the Android notification shade'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
-    src='/images/pinned-calendar-notification-dark.png'
-    alt='Pinned Calendar notification in dark mode with event times and calendar colors'
+    src='/images/pinned-calendar-store-week.png'
+    alt='Pinned Calendar Play Store screenshot showing a week overview and task groups with due dates and priorities'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
-    src='/images/pinned-calendar-todos.png'
-    alt='Pinned Calendar To-dos tab showing a week overview and local tasks'
+    src='/images/pinned-calendar-store-controls.png'
+    alt='Pinned Calendar Play Store screenshot showing live notification preview and layout controls'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
   <img
-    src='/images/pinned-calendar-settings.png'
-    alt='Pinned Calendar Settings tab for notifications, calendars, and appearance'
+    src='/images/pinned-calendar-store-appearance.png'
+    alt='Pinned Calendar Play Store screenshot showing theme, AMOLED, accent, palette, and font controls'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <img
+    src='/images/pinned-calendar-store-privacy.png'
+    alt='Pinned Calendar Play Store graphic explaining on-device storage, no sign-in, and the free open-source app'
+    loading='lazy'
+    className='col-span-2 mx-auto w-full max-w-xs rounded-xl border border-gray-200 dark:border-gray-800'
   />
 </div>
 
