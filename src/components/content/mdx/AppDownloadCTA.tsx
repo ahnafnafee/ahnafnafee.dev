@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 
+import { BookOpen, Download, Package } from 'lucide-react'
 import { HiGlobeAlt } from 'react-icons/hi'
 import { SiApple, SiGithub, SiGoogleplay } from 'react-icons/si'
 import { VscExtensions, VscVscode } from 'react-icons/vsc'
@@ -13,8 +14,12 @@ type AppDownloadCTAProps = {
   openVsx?: string
   github?: string
   web?: string
+  documentation?: string
+  releases?: string
+  container?: string
   heading?: string
   subtext?: string
+  children?: React.ReactNode
 }
 
 export const AppDownloadCTA: React.FC<AppDownloadCTAProps> = ({
@@ -24,10 +29,25 @@ export const AppDownloadCTA: React.FC<AppDownloadCTAProps> = ({
   openVsx,
   github,
   web,
+  documentation,
+  releases,
+  container,
   heading = 'Download the app',
-  subtext
+  subtext,
+  children
 }) => {
-  if (!appStore && !playStore && !marketplace && !openVsx && !github && !web) return null
+  if (
+    !appStore &&
+    !playStore &&
+    !marketplace &&
+    !openVsx &&
+    !github &&
+    !web &&
+    !documentation &&
+    !releases &&
+    !container
+  )
+    return null
 
   // Stacked rather than side-by-side: the article column is capped at max-w-2xl,
   // too narrow to hold a copy block and more than two buttons on one line
@@ -87,6 +107,33 @@ export const AppDownloadCTA: React.FC<AppDownloadCTAProps> = ({
           </Button>
         ) : null}
 
+        {releases ? (
+          <Button asChild size='sm' variant='outline'>
+            <a href={releases} target='_blank' rel='noopener noreferrer'>
+              <Download data-icon='inline-start' />
+              Releases / APK
+            </a>
+          </Button>
+        ) : null}
+
+        {container ? (
+          <Button asChild size='sm' variant='outline'>
+            <a href={container} target='_blank' rel='noopener noreferrer'>
+              <Package data-icon='inline-start' />
+              Container image
+            </a>
+          </Button>
+        ) : null}
+
+        {documentation ? (
+          <Button asChild size='sm' variant='outline'>
+            <a href={documentation} target='_blank' rel='noopener noreferrer'>
+              <BookOpen data-icon='inline-start' />
+              Setup guide
+            </a>
+          </Button>
+        ) : null}
+
         {web ? (
           <Button asChild size='sm' variant='outline'>
             <a href={web} target='_blank' rel='noopener noreferrer'>
@@ -96,6 +143,11 @@ export const AppDownloadCTA: React.FC<AppDownloadCTAProps> = ({
           </Button>
         ) : null}
       </div>
+      {children ? (
+        <div className='text-foreground min-w-0 space-y-4 [&_li]:text-sm [&_li]:leading-relaxed [&_ol]:list-decimal [&_ol]:space-y-2 [&_ol]:pl-5 [&_p]:text-sm [&_p]:leading-relaxed'>
+          {children}
+        </div>
+      ) : null}
     </aside>
   )
 }

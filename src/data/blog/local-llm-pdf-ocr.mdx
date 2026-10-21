@@ -1,14 +1,15 @@
 ---
 title: 'Building a Local LLM-Powered Hybrid OCR Engine'
-summary: "How I built a privacy-first, fully offline OCR pipeline that pairs Surya's layout detection with local Vision Language Models (OlmOCR, GLM-OCR, Qwen3-VL) and a Needleman-Wunsch aligner — turning handwriting, forms, and scanned PDFs into pixel-perfect searchable documents on your own laptop."
+summary: 'Turn scans, handwriting, and page photos into searchable, selectable documents on your own machine. Meet the local OCR engine I built with a browser interface, flexible vision-model support, and PDF, HTML, Markdown, and text export.'
 featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
 published: '04/26/2026'
-updated: '07/15/2026'
+updated: '10/21/2026'
 topics: ['OCR', 'LLM', 'Vision Language Models', 'AI Engineering', 'Python', 'PDF']
 keywords:
   [
+    'local llm pdf ocr',
     'pdf ocr',
     'local llm ocr',
     'vision language models',
@@ -18,317 +19,207 @@ keywords:
     'olmocr 2',
     'qwen2.5 vl',
     'qwen3 vl',
-    'qwen3 vl flash',
-    'qwen3 vl ocr',
     'glm ocr',
-    'glm 4.6v',
-    'deepseek ocr',
-    'deepseek ocr2',
-    'internvl3',
-    'chandra ocr',
-    'minerU 2.5',
-    'paddleocr vl',
-    'nanonets ocr2',
-    'dots.ocr',
-    'lightonocr',
-    'exaone 4.5',
     'needleman wunsch alignment',
     'dynamic programming ocr',
-    'document ai',
     'handwriting recognition',
     'searchable pdf',
+    'selectable scanned pdf',
     'sandwich pdf',
-    'lm studio',
-    'ollama',
-    'vllm',
+    'lm studio ocr',
+    'ollama ocr',
+    'openai compatible endpoint',
     'rag preprocessing',
-    'document intelligence',
-    'omnidocbench',
-    'olmocr bench',
+    'document extraction',
     'python ocr',
     'private ocr',
     'offline ocr',
     'pymupdf',
-    'fastapi ocr'
+    'fastapi ocr',
+    'grounded ocr',
+    'dense handwriting ocr',
+    'photo document rectification',
+    'ocr html overlay',
+    'ocr markdown export',
+    'multi-page tiff ocr',
+    'avif ocr'
   ]
 thumbnail: 'https://ik.imagekit.io/8ieg70pvks/blog/local-llm-pdf-ocr.png?updatedAt=1778868186537'
 related: ['doi-paper-scraper', 'modelfile-syntax-extension', 'autograder-architecture']
 ---
 
-<figure className='not-prose my-6'>
-  <img
-    src='/images/local-llm-ocr-demo.gif'
-    alt='Animated end-to-end demo: a scanned PDF is dropped into the local-llm-pdf-ocr web UI, layout detection and a local vision model transcribe each page, and an invisible text layer is embedded to produce a searchable PDF, all running locally'
-    loading='lazy'
-    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
-  />
-  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The whole pipeline end to end: drop a scan, watch layout detection and a local VLM read it, and get back a
-    searchable PDF, all on your own machine.
-  </figcaption>
-</figure>
+Your scans should be as useful as the documents you type: searchable, selectable, and ready to work with. I built [local-llm-pdf-ocr](https://github.com/ahnafnafee/local-llm-pdf-ocr) to bring that experience to scanned PDFs, handwritten notes, and page photos using vision models on your own machine. Drop a document into the browser, choose a local model, and download a searchable PDF that keeps the original page visible. The app also exports HTML, Markdown, and plain text, with dedicated processing for dense handwriting and models that return coordinates. Surya detection and a dynamic-programming aligner handle page geometry behind the interface, and a CLI supports scripted workflows.
 
-We live in a digital world, yet the most valuable data is still trapped in the analog prison of scanned PDFs. Invoices, handwritten notes, contracts, medical forms, decades-old research archives — pixels without meaning to a machine.
+<AppDownloadCTA
+  heading='Run Local LLM PDF OCR'
+  subtext='Requires Git, Python 3.10 or newer, uv, and a running vision-capable model endpoint. After setup, use the browser interface.'
+  github='https://github.com/ahnafnafee/local-llm-pdf-ocr'
+  documentation='https://github.com/ahnafnafee/local-llm-pdf-ocr/blob/main/README.md#-getting-started'
+>
 
-Cloud OCR APIs solve this, but at a cost: your privacy, a per-page bill, and an internet round-trip on every document you process. I wanted none of that.
+In [LM Studio](https://lmstudio.ai/docs/developer/core/server), load a vision model such as `allenai/olmocr-2-7b` and start its local server at `http://localhost:1234/v1`. Install [uv](https://docs.astral.sh/uv/getting-started/installation/) if needed, then run:
 
-This is how I engineered a **fully local, privacy-first, hybrid OCR engine** that pairs the surgical layout precision of **Surya** with the semantic understanding of **local Vision Language Models** (OlmOCR, GLM-OCR, Qwen2.5/3-VL) — bound together by a **Needleman-Wunsch dynamic-programming aligner** — to produce searchable PDFs from anything you can rasterize. No cloud. No API keys. No documents leaving your machine.
+```bash
+git clone https://github.com/ahnafnafee/local-llm-pdf-ocr.git
+cd local-llm-pdf-ocr
+uv sync --extra web
+uv run local-llm-pdf-ocr-server --port 8000
+```
+
+Open [localhost:8000](http://localhost:8000). Drop a document, select **Hybrid** and the loaded model, then choose **Run OCR**. Download the searchable PDF when it finishes. Change the model endpoint under **Advanced** if you use a different server.
+
+Download the model weights before working offline. Keep the configured model endpoint local so document processing stays on your own machine.
+
+</AppDownloadCTA>
 
 <figure className='not-prose my-6'>
   <img
     src='/images/local-llm-ocr-web-light.png'
-    alt='The local-llm-pdf-ocr web UI in light mode: a drag-and-drop drop zone, a Hybrid / Grounded / Text-only engine toggle, a local model selector showing allenai/olmocr-2-7b with 14 models loaded on localhost, and a searchable-PDF output format'
+    alt='Local LLM PDF OCR browser interface in light mode, with document upload, engine selection, a local model picker, and output formats'
     className='w-full rounded-lg border border-gray-200 dark:hidden'
   />
   <img
     src='/images/local-llm-ocr-web-dark.png'
-    alt='The local-llm-pdf-ocr web UI in dark mode: a drag-and-drop drop zone, a Hybrid / Grounded / Text-only engine toggle, a local model selector showing allenai/olmocr-2-7b with 14 models loaded on localhost, and a searchable-PDF output format'
+    alt='Local LLM PDF OCR browser interface in dark mode with document upload and the same processing controls'
     className='hidden w-full rounded-lg border border-gray-800 dark:block'
   />
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The FastAPI web UI: drop a file, pick the engine and a local model, and get a searchable PDF back. Everything runs
-    on localhost, nothing is uploaded.
+    The main workflow stays in the browser: upload, choose a model, run OCR, and download the result.
   </figcaption>
 </figure>
 
-## The OCR Triangle
+Jump to [the browser workflow](#from-a-scan-to-a-searchable-document), [engine choices](#choose-the-engine-in-the-browser), [the architecture](#how-the-hybrid-engine-connects-text-to-the-page), or [troubleshooting](#get-a-difficult-page-working).
 
-When you build OCR today, the literature lets you pick two of three:
+## From a Scan to a Searchable Document
 
-1. **Layout accuracy** — knowing _where_ the text lives.
-2. **Semantic accuracy** — knowing _what_ the text says.
-3. **Speed and privacy** — running it on your laptop, offline.
+A scan preserves a document's appearance, but the words remain pixels. That becomes frustrating when I need a name in a stack of forms or a passage from handwritten notes. A transcript helps, but I also want to search and select text where it appears on the original page.
 
-| Tool                                                      | Layout            | Semantics                  | Speed / Privacy        |
-| :-------------------------------------------------------- | :---------------- | :------------------------- | :--------------------- |
-| **Tesseract / EasyOCR**                                   | ✅ Good           | ❌ Fails on handwriting    | ⚡ Fast, local         |
-| **Surya Recognition**                                     | ✅ Excellent      | ⚠️ Moderate on cursive     | 🐢 ~20s/page, local    |
-| **Surya Detection-Only**                                  | ✅ Excellent      | ❌ No text output          | ⚡ ~1s/page, local     |
-| **Local VLM (OlmOCR-2, Qwen3-VL, GLM-OCR, DeepSeek-OCR)** | ❌ No coordinates | ✅ Reads cursive perfectly | 🐢 GPU-bound, local    |
-| **Cloud Vision APIs**                                     | ✅ Good           | ✅ Good                    | ☁️ Not local, not free |
+The browser app makes that the default deliverable. Drag in a PDF or image, choose **Searchable PDF**, and start processing. Per-page progress shows the work advancing, and **View text** exposes the raw extraction for inspection. Multiple-file selection handles a collection of scans in the same session, with a merged Markdown download to bring their extracted text together.
 
-The bet: a vision-language model has the _semantic brain_ to read messy handwriting, but no idea where pixels live on a page. A detection-only Surya pass has _structural eyes_ but nothing to say. **Compose them, and the triangle collapses into a quadrilateral.**
-
-## The Architecture: Two Paths Behind One Seam
-
-The pipeline lives behind a single `OCRPipeline` orchestration seam, with **two execution paths**:
-
-- **Hybrid path** (default) — works with _any_ OCR-capable VLM, including text-only models.
-- **Grounded path** (opt-in via `--grounded`) — for the new generation of bbox-native VLMs that emit text and coordinates in a single call.
-
-```mermaid
-graph TD
-    A["Input: PDF / JPEG / PNG / TIFF / BMP / WebP"] --> B["Rasterize to images"]
-
-    B -->|"--grounded"| Z["Grounded VLM<br/>text + bbox in one call"]
-    Z --> EMB["Sandwich PDF Writer"]
-
-    B -->|"default: hybrid"| C["Surya DetectionPredictor<br/>batch, detection-only"]
-    B --> D["Local VLM full-page OCR<br/>OlmOCR / GLM-OCR / etc."]
-    C --> E["Layout boxes in reading order"]
-    D --> F["Plain text with line breaks"]
-    E --> G["Needleman-Wunsch DP aligner<br/>line ↔ box monotonic match"]
-    F --> G
-    G --> H{"Boxes the DP<br/>left empty?"}
-    H -->|"yes"| R["Per-box crop re-OCR<br/>refine stage"]
-    H -->|"no"| EMB
-    R --> EMB
-    EMB --> L["Searchable PDF Output"]
-```
-
-The core insight on both paths is the same: **decouple "where" from "what."** Detection is fast, deterministic, and well-solved. Recognition is slow, semantic, and where modern VLMs shine. Wiring them together cleanly is the entire game.
-
-## Path 1: The Hybrid Pipeline (Surya + LLM + DP Alignment)
-
-The hybrid path is the safe default. It works with _any_ OCR-capable VLM — even ones that can only return plain text — because it never relies on the model knowing geometry.
-
-### Step 1: Batch Layout Detection with Surya
-
-Surya's `DetectionPredictor` runs on every page in **a single batched call**, returning bounding boxes sorted into reading order. We never pay for Surya's recognition step, which is the expensive part of full Surya — running detection-only is roughly **10–21× faster** than full recognition.
-
-```python
-# Process ALL pages in one batched detection call
-all_image_bytes = [decode(img) for img in images_dict.values()]
-all_boxes = hybrid_aligner.get_detected_boxes_batch(all_image_bytes)
-```
-
-That single call is amortized across the whole document. On a warm pipeline it finishes in about half a second total — regardless of how many pages you threw at it.
-
-### Step 2: Full-Page Transcription with a Local VLM
-
-Each page image gets handed to a local **OpenAI-compatible** endpoint — LM Studio with `allenai/olmocr-2-7b`, Ollama with `glm-ocr:latest`, vLLM, SGLang, or anything else that speaks the same wire format — with a prompt asking the model to transcribe the entire page.
-
-The VLM doesn't care about coordinates. It just reads the page like a human and returns text. That's its superpower, and the rest of the pipeline is built around exploiting it.
-
-### Step 3: Needleman-Wunsch Alignment — The Heart of the System
-
-This is where it gets interesting. A naive "distribute tokens proportionally to box width" trick works for clean prose but falls apart on tables, multi-column papers, and forms. The fix is to model the problem properly.
-
-You have **N detected boxes** in reading order on the left, and **M LLM lines** in reading order on the right. You need a **monotonic alignment** — every box keeps its position, every line keeps its position, you just decide which line(s) belong to which box (and which boxes are non-text decorations to be skipped entirely).
-
-That is exactly the shape of [Needleman-Wunsch](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) — the same dynamic-programming algorithm that aligns DNA sequences in bioinformatics. The score function:
-
-- **Rewards** a line whose character count fits a box's width.
-- **Mildly penalizes** skipping a box (many detected boxes are rules, decorations, or page furniture).
-- **Heavily penalizes** skipping a line (LLM text is precious).
-
-Unmatched LLM lines aren't dropped on the floor — they're attached to the nearest matched box, so no semantic content disappears. The DP runs in `O(N × M)` time, which is nothing on a per-page basis.
-
-### Step 4: Per-Box Refine Fallback
-
-Even a good aligner leaves some boxes empty when layouts get pathological — multi-column research papers, dense tables, figure captions floating in whitespace. Rather than tank accuracy, the pipeline crops each empty box and runs **per-box re-OCR** on just that crop.
-
-It catches the hard cases without paying N× latency on clean pages. Disable with `--no-refine` when you're optimizing for throughput on documents you know are clean.
-
-## Path 2: The Grounded Path (One-Shot VLM)
-
-The newest generation of open-weight vision models — **Qwen3-VL** (including the 2026-01-22 Flash snapshot), **GLM-4.6V**, **GLM-OCR** (Z.ai's March 2026 release that tops OmniDocBench V1.5), **DeepSeek-OCR** with its Contexts Optical Compression trick, **InternVL3**, **Chandra-OCR**, **MinerU 2.5**, and **PaddleOCR-VL** — can return **text and bounding boxes in a single JSON response**. When you point the tool at one of these with `--grounded`, the entire hybrid stack collapses into one call:
-
-```bash
-uv run main.py scan.pdf --grounded \
-    --api-base http://localhost:1234/v1 \
-    --model qwen/qwen3-vl-8b
-```
-
-No Surya. No DP. No refine. The model returns `{"bbox_2d": [...], "content": "..."}` tuples and the sandwich-PDF writer takes it from there. It's faster, has fewer moving parts, and eliminates the entire DP-alignment class of bugs.
-
-It also requires a model that emits coordinates reliably — which is why the hybrid path remains the default. Hybrid works with _any_ OCR-capable VLM, including the long tail of text-only models. Grounded is the cleaner path when your model can support it.
-
-| Path                        | Detection | Text            | Alignment        | Refine       | When to use                                      |
-| :-------------------------- | :-------- | :-------------- | :--------------- | :----------- | :----------------------------------------------- |
-| **Hybrid** (default)        | Surya     | LLM full-page   | Needleman-Wunsch | Per-box crop | Any OCR-capable VLM; max coverage                |
-| **Grounded** (`--grounded`) | —         | Bbox-native VLM | —                | —            | Qwen2.5/3-VL, MinerU; simplest path, fewest bugs |
-
-## The "Sandwich" PDF — Invisible Text Over Real Pixels
-
-Once we have aligned text and boxes, we embed everything as a **sandwich PDF** with PyMuPDF:
-
-1.  **Rasterize the page as an image** — strips any existing (often broken) text layer, giving us a clean slate.
-2.  **Insert the image as the visible background** — what the user sees.
-3.  **Overlay invisible text** with `render_mode=3`, geometrically scaled with horizontal-scale matrices so each glyph's bounding box spans the full width of its source region.
-
-That horizontal-scale matrix is the trick that makes selection actually work. Without it, a PDF reader's selection caret jumps in weird places and you get selection runs that look right visually but produce garbage when you copy. With it, dragging your cursor across `INVOICE #4521` highlights _exactly_ that region, character-aligned to the underlying pixels.
-
-The user sees the original document — every font, every annotation, every coffee stain. Their cursor interacts with a perfectly searchable hidden layer they never see.
+The output keeps the page image visible and adds an invisible text layer. In the form below, blue selection reveals the recognized printed labels and handwriting. The same page can be searched or copied in a PDF reader without replacing its layout with a recreated document.
 
 <figure className='not-prose my-6'>
   <img
     src='/images/local-llm-ocr-selection.png'
-    alt='A scanned health-intake form with mixed printed and handwritten fields, rendered as a searchable PDF, with the invisible text layer highlighted in blue to show selectable text aligned over the original pixels'
+    alt='A sample form containing printed labels and handwritten entries, with the searchable PDF text layer selected in blue'
     loading='lazy'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The sandwich PDF in action: selecting text on a scanned form highlights the invisible layer, character-aligned to
-    the printed and handwritten pixels underneath.
+    Printed text and handwritten entries become searchable over the original scan. The blue highlight reveals the
+    normally invisible OCR layer.
   </figcaption>
 </figure>
 
-## Multi-Format Input — Beyond Just PDFs
+## Choose the Engine in the Browser
 
-The pipeline accepts whatever you throw at it:
+The interface offers **Hybrid**, **Grounded**, and **Text only**, with options that adapt to the selected engine. Hybrid is the starting point for searchable documents because it combines a text detector with a vision model that only needs to transcribe what it sees.
 
-- `.pdf` — multi-page handled natively.
-- `.jpg`, `.jpeg`, `.png`, `.bmp`, `.webp` — single-page images skip the PDF round-trip and feed straight into rasterization.
-- `.tif`, `.tiff` — multi-frame TIFFs **expand to one output page per frame**. No manual PDF-wrapping step. This is the format archives, hospitals, and law firms still ship in.
+| Engine    | What happens behind the interface                                                       | Choose it for                                                   |
+| --------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Hybrid    | Surya locates text; the local model transcribes it; alignment connects words to regions | Scans, forms, handwriting, and models that return ordinary text |
+| Grounded  | A compatible model returns text and coordinates together                                | Models with reliable structured coordinate output               |
+| Text only | The model transcribes each page without detection or alignment                          | Text extraction for notes, search indexing, or RAG              |
 
-```bash
-# Raw image — no PDF required
-uv run main.py scan.png scan_ocr.pdf
+Dense-page processing is part of Hybrid rather than another engine to install. It switches from full-page transcription to individual text crops when the page needs it. Grounded skips separate detection and alignment, while Text only skips geometry entirely.
 
-# Multi-frame TIFF → multi-page searchable PDF
-uv run main.py archive.tiff archive_ocr.pdf
-```
+Model choice remains flexible. LM Studio is the default endpoint, and Ollama, vLLM, SGLang, or another OpenAI-compatible server can be configured under **Advanced**. The model picker discovers available models, and preflight verification checks the requested model before processing. Use a vision-capable model: returning plain text is compatible with Hybrid, but the model still has to understand the page image.
 
-Output is always a PDF, even when the input isn't.
+## Give Handwriting and Page Photos the Attention They Need
 
-## Performance: Where the Time Actually Goes
+Dense handwriting makes full-page recognition harder because many similar lines compete within one image. The pipeline can instead send each detected region through its own recognition call, keeping the model's attention on a smaller part of the page. Automatic mode uses a default threshold of 60 detected boxes and can also retry per-box when full-page alignment matches fewer than half the regions.
 
-Here's the punchline: **detection is no longer the bottleneck — full-page LLM OCR is.** Once you've offloaded recognition to a VLM, Surya's contribution is rounding error. Warm-run breakdown on an LM Studio + OlmOCR-2-7B + single GPU setup:
+For a page with repeated or missing lines, open **Advanced**, set **Dense mode** to **Always**, and try that page again. It makes more model requests, but it gives tightly packed notes a processing route built around their structure. Dense machine-print crops receive neighbor masking to reduce adjacent-line leakage; handwriting keeps its surrounding strokes because they can cross detection boundaries.
 
-| Phase                   | Per-page cost          | Notes                                                 |
-| ----------------------- | ---------------------- | ----------------------------------------------------- |
-| Rasterize PDF → image   | ~0.3 s                 | Linear in pages                                       |
-| Surya batch detection   | ~0.5 s                 | Amortized across all pages in one batched call        |
-| **LLM full-page OCR**   | **~2–4 s**             | **Dominant cost.** Parallelize with `--concurrency 3` |
-| Per-box refine (if any) | ~0.5–1 s × empty boxes | Typically 0–2 s; disable with `--no-refine`           |
-| PDF assembly            | ~0.2 s                 | Linear in pages                                       |
-| Cold-start Surya load   | +5–10 s (paid once)    | Paid even on grounded runs                            |
-
-End-to-end on the example PDFs (hybrid path, OlmOCR-2-7B, warm cache): digital ≈ 14 s, hybrid form ≈ 5 s, handwritten ≈ 4 s. The handwritten case being the cheapest is genuinely funny — fewer detected boxes means a shorter DP, fewer LLM tokens to align, less refine work. Messy is sometimes faster than clean.
-
-`--concurrency` is the lever that matters most. The LLM is the bottleneck and there's nothing stopping you from streaming three pages at once on a beefy GPU.
-
-## CLI & Real-time Web UI
-
-A tool is only as good as its developer experience. The pipeline ships **two interfaces, each rendering the same progress events** so you don't have to learn two mental models.
-
-<img
-  src='https://ik.imagekit.io/8ieg70pvks/blog/local-llm-ocr-cli.png'
-  alt='Local LLM PDF OCR CLI'
-  className='w-full rounded-lg'
-/>
-
-- **CLI** — Powered by `rich`, with live progress bars for detection, LLM OCR, refinement, and embedding. Full flag surface for batch automation: `--pages`, `--concurrency`, `--dpi`, `--no-refine`, `--api-base`, `--model`, `--grounded`.
-- **Web UI** — FastAPI + WebSockets, drag-and-drop, dark mode, real-time per-page progress, and an in-browser preview of the raw VLM output _before_ it gets aligned. Same WebSocket events drive both surfaces.
+Photographed documents have a separate preparation step. Automatic preprocessing detects a tilted page outline and can correct perspective and illumination for recognition. Coordinates then map back onto the original photograph, so the output preserves the image you supplied. Compare automatic preprocessing with **Never** if the detected outline does not describe the page correctly.
 
 <figure className='not-prose my-6'>
   <img
     src='/images/local-llm-ocr-web-advanced.png'
-    alt='The web UI with Advanced Options expanded, exposing DPI, page range, concurrency, max image dimension, a model-loaded verification toggle, the OpenAI-compatible API base URL, and hybrid-tuning controls for crop-refine, dense mode, dense threshold, and minimum box confidence'
+    alt='Advanced browser options for the OCR endpoint, page range, image size, concurrency, dense mode, preprocessing, and refinement'
     loading='lazy'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The same flag surface the CLI exposes, in the browser: DPI, concurrency, the OpenAI-compatible endpoint, and the
-    hybrid-tuning knobs for crop-refine and dense pages.
+    Start with the defaults, then tune a difficult page through the same browser interface.
   </figcaption>
 </figure>
 
-```python
-with progress:
-    # Phase 1: Batch layout detection (one Surya call for all pages)
-    task_layout = progress.add_task("[cyan]Detecting layouts (batch)...", total=1)
-    all_boxes = hybrid_aligner.get_detected_boxes_batch(all_image_bytes)
+## Export for the Work You Want to Do Next
 
-    # Phase 2: LLM OCR per page, with optional concurrency
-    task_ocr = progress.add_task(f"[cyan]LLM OCR Processing...", total=total_pages)
-    for page_num in page_nums:
-        llm_text = ocr_processor.perform_ocr(image_base64)
-        aligned_data = hybrid_aligner.align_text(boxes, llm_text)
-        progress.advance(task_ocr)
+The **Output format** control makes the tool useful beyond PDF conversion. Choose a searchable PDF for an archive, an HTML overlay for browser-based inspection, or Markdown and text for content that will move into other tools.
+
+| Output         | What you receive                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------------------- |
+| Searchable PDF | The visible page image with an invisible, selectable text layer                                   |
+| HTML overlay   | Page images with a selectable text overlay, optional hover inspection, and optional inline images |
+| Markdown       | Extracted text in a format suited to editing and downstream processing                            |
+| Plain text     | Transcription without document-format markup                                                      |
+
+HTML can be packaged as one self-contained file with inline images. Its hover-text option exposes the recognized content over a region, which is useful when checking the overlay. Text-only mode is a direct route for retrieval preparation because it avoids geometry work when a selectable page is not part of the deliverable.
+
+Inputs include PDF, JPEG, PNG, BMP, WebP, AVIF, and TIFF. A multi-frame TIFF becomes multiple output pages, so archives do not need a separate image-to-PDF conversion before OCR.
+
+## How the Hybrid Engine Connects Text to the Page
+
+The architecture separates locating text from recognizing it. Surya's detection predictor supplies text regions without running its recognition model, and the configured vision model supplies transcription. A shared `OCRPipeline` orchestrates those stages for both the browser and CLI.
+
+The remaining problem is assigning the model's lines to the right regions. A proportional split can move a caption into a neighboring column or combine unrelated form fields. I use a Needleman-Wunsch-style dynamic program to find a monotonic alignment between ordered boxes and text lines, with costs that favor plausible text-to-width fit while allowing skipped boxes and unmatched lines.
+
+The [aligner](https://github.com/ahnafnafee/local-llm-pdf-ocr/blob/main/src/pdf_ocr/core/aligner.py) tries row-major and column-major box orderings and chooses the lower-cost result. Different models can therefore read a two-column page in different orders without requiring a separate model-specific alignment implementation. Unmatched model lines attach to nearby matched regions, and sizeable empty regions can receive a crop-recognition pass.
+
+```mermaid
+flowchart TD
+    B["Browser upload and options"] --> P["Shared OCR pipeline"]
+    C["CLI for automation"] --> P
+    P --> R["Render PDF or image pages"]
+    R --> H["Hybrid: detect text regions"]
+    R --> G["Grounded: text and coordinates"]
+    R --> T["Text-only transcription"]
+    H --> F["Full-page transcription and alignment"]
+    H --> D["Dense pages: recognize crops"]
+    F --> A["Aligned text regions and optional refinement"]
+    D --> A
+    G --> A
+    A --> O["PDF, HTML, Markdown, or text"]
+    T --> O
 ```
 
-## Validating the Whole Thing
+PyMuPDF writes a sandwich PDF with the rasterized page as the visible layer. Invisible text is scaled to its assigned region, giving selection a geometric connection to the underlying scan. A detected region and a recognized line remain estimates, so exact selection placement depends on both stages.
 
-Hybrid systems break in subtle ways: a DP edge case, a glyph-scale matrix off by 1.02×, a TIFF frame that gets dropped silently. The repo ships a **145-test suite** covering DP invariants, embedding geometry, grounded JSON parsing, and end-to-end runs against the example PDFs.
+## Grounded OCR Without Silent Empty Output
 
-There's also a **confidence evaluator** that scores either path against ground-truth fixtures — block recall at IoU ≥ 0.3, average IoU of matched pairs, and average text similarity. Run it against both paths to see which one wins on _your_ document set:
+Grounded mode lets a compatible model return coordinates alongside the text. The project documents working Qwen2.5-VL and Qwen3-VL configurations; select **Grounded** and the appropriate loaded model in the interface. Models that return only prose or Markdown belong on Hybrid.
+
+If a page returns no usable grounded blocks, processing stops before writing output and identifies the affected pages. This also applies to blank pages. That behavior prevents a completed-looking run from quietly producing an image-only PDF when the requested text layer is missing.
+
+The distinction matters because a model's general ability to read an image does not establish its coordinate format. Keeping both engines available lets the user choose a suitable model without committing the rest of the workflow to that model's response structure.
+
+## Get a Difficult Page Working
+
+The browser's **Advanced** controls expose page range, rendering DPI, image dimensions, concurrency, refinement, and preprocessing. Use a representative page while tuning, then apply the settings to the full document.
+
+| What you see                                | What to try in the interface                                               |
+| ------------------------------------------- | -------------------------------------------------------------------------- |
+| The requested model is unavailable          | Select its exact loaded ID and check the endpoint                          |
+| Repeated or missing lines                   | Hybrid with Dense mode set to Always                                       |
+| Grounded reports no usable blocks           | Select Hybrid, or load a model that returns structured coordinates         |
+| GLM-OCR exceeds image capacity in Ollama    | Use the documented maximum image dimension of 640                          |
+| A page photo is distorted after preparation | Compare automatic preprocessing with Never                                 |
+| Higher concurrency slows progress           | Lower concurrent requests and check the model server's memory and queueing |
+
+Concurrency limits in-flight model requests; it does not start extra copies of the model. Full-page and crop-heavy workloads have different costs, so increase it when the server has room rather than assuming a larger number always wins.
+
+For a quick quality check, search a visible phrase, copy across a paragraph or column boundary, and compare handwritten identifiers with the scan. The [confidence evaluator](https://github.com/ahnafnafee/local-llm-pdf-ocr/blob/main/scripts/confidence_eval.py) goes further by measuring geometry, character errors, word-level similarity, and structural coverage against project fixtures. Saved per-document baselines make changes traceable to the part of the pipeline they improve.
+
+## CLI Support for Automation
+
+Everything above can be done in the browser. The CLI is also available when the same configuration needs to run from a script or batch workflow:
 
 ```bash
-uv run scripts/confidence_eval.py --path both \
-    --grounded-model qwen/qwen3-vl-8b \
-    --hybrid-model allenai/olmocr-2-7b
+uv run local-llm-pdf-ocr scan.pdf scan_ocr.pdf
 ```
 
-That's the honest way to choose between hybrid and grounded — measure it on the documents you actually care about.
+Its options cover the same engine, model, endpoint, page selection, and tuning controls. The [repository README](https://github.com/ahnafnafee/local-llm-pdf-ocr/blob/main/README.md) documents the full command surface, example documents, and evaluation tools.
 
-## Why This Matters Beyond OCR
-
-This project is, at its heart, a case study in **hybrid AI systems** — the architectural pattern of decomposing a problem into a fast deterministic stage and a slow semantic stage, then binding them together with a classical algorithm.
-
-- **Surya detection** — fast, deterministic, well-defined contract.
-- **Local VLM** — slow, semantic, the part that actually reads.
-- **Needleman-Wunsch DP** — a 1970 algorithm, still the cleanest tool for monotonic alignment.
-
-Each piece is replaceable. Swap Surya for a different layout model. Swap OlmOCR for Qwen3-VL and flip the `--grounded` switch. Swap the embedder for one that emits HTML or Markdown instead of PDF. The seams are clean because each stage has a crisp contract: "boxes in reading order," "text in reading order," "aligned `(box, text)` pairs."
-
-It also matters for **RAG and document-AI pipelines**. Searchable PDFs are the input format every downstream tool expects — vector-database ingestors, LangChain loaders, enterprise search, Notion imports, knowledge-graph builders. A good local OCR layer is the unglamorous bedrock under all of it. Get the OCR wrong and every downstream embedding inherits the noise; get it right and your retrieval just works.
-
-## Try It Yourself
-
-100% local. No API keys. No subscription fees. Your documents never leave your machine.
-
-The full source is on [GitHub](https://github.com/ahnafnafee/local-llm-pdf-ocr). Stars, issues, and PRs all welcome.
-
-[![zread](https://img.shields.io/badge/Ask_Zread-_.svg?style=for-the-badge&color=00b0aa&labelColor=000000&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuOTYxNTYgMS42MDAxSDIuMjQxNTZDMS44ODgxIDEuNjAwMSAxLjYwMTU2IDEuODg2NjQgMS42MDE1NiAyLjI0MDFWNC45NjAxQzEuNjAxNTYgNS4zMTM1NiAxLjg4ODEgNS42MDAxIDIuMjQxNTYgNS42MDAxSDQuOTYxNTZDNS4zMTUwMiA1LjYwMDEgNS42MDE1NiA1LjMxMzU2IDUuNjAxNTYgNC45NjAxVjIuMjQwMUM1LjYwMTU2IDEuODg2NjQgNS4zMTUwMiAxLjYwMDEgNC45NjE1NiAxLjYwMDFaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00Ljk2MTU2IDEwLjM5OTlIMi4yNDE1NkMxLjg4ODEgMTAuMzk5OSAxLjYwMTU2IDEwLjY4NjQgMS42MDE1NiAxMS4wMzk5VjEzLjc1OTlDMS42MDE1NiAxNC4xMTM0IDEuODg4MSAxNC4zOTk5IDIuMjQxNTYgMTQuMzk5OUg0Ljk2MTU2QzUuMzE1MDIgMTQuMzk5OSA1LjYwMTU2IDE0LjExMzQgNS42MDE1NiAxMy43NTk5VjExLjAzOTlDNS42MDE1NiAxMC42ODY0IDUuMzE1MDIgMTAuMzk5OSA0Ljk2MTU2IDEwLjM5OTlaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik0xMy43NTg0IDEuNjAwMUgxMS4wMzg0QzEwLjY4NSAxLjYwMDEgMTAuMzk4NCAxLjg4NjY0IDEwLjM5ODQgMi4yNDAxVjQuOTYwMUMxMC4zOTg0IDUuMzEzNTYgMTAuNjg1IDUuNjAwMSAxMS4wMzg0IDUuNjAwMUgxMy43NTg0QzE0LjExMTkgNS42MDAxIDE0LjM5ODQgNS4zMTM1NiAxNC4zOTg0IDQuOTYwMVYyLjI0MDFDMTQuMzk4NCAxLjg4NjY0IDE0LjExMTkgMS42MDAxIDEzLjc1ODQgMS42MDAxWiIgZmlsbD0iI2ZmZiIvPgo8cGF0aCBkPSJNNCAxMkwxMiA0TDQgMTJaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00IDEyTDEyIDQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K&logoColor=ffffff)](https://zread.ai/ahnafnafee/local-llm-pdf-ocr)
+For a first run, use the web interface and a document you already know well. Search it, select a passage, and download the format your next task needs. The [source](https://github.com/ahnafnafee/local-llm-pdf-ocr) is MIT-licensed and available to adapt to your own document workflow.

@@ -1,261 +1,162 @@
 ---
-title: 'A Self-Hosted Playlist Mirror for Seven Music Services'
-summary: 'How I built SongMirror, an always-on playlist mirror for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music, plus a Jellyfin-ready local archive. It supports one-way sync, authoritative provider groups, and bidirectional N-way reconciliation behind ISRC-first matching, durable caches, and guarded removals.'
+title: 'SongMirror: Self-Hosted Playlist Sync, Transfers, and Backups'
+summary: 'Keep playlists and favorites connected across streaming services and your own music library. How I built SongMirror with scheduled merge syncs, account-to-account transfers, editable matches, and playlist backups.'
 featured: true
 author_name: 'Ahnaf An Nafee'
 github_username: 'ahnafnafee'
 published: '07/13/2026'
-updated: '08/17/2026'
-topics: ['Music Sync', 'Self-Hosted', 'Spotify', 'Python', 'Automation', 'APIs']
+updated: '10/21/2026'
+topics: ['Music Sync', 'Self-Hosted', 'Python', 'Automation', 'APIs']
 keywords:
   [
+    'songmirror',
+    'self-hosted playlist sync',
     'spotify playlist sync',
-    'spotify to apple music',
-    'spotify to youtube music',
-    'spotify to tidal',
-    'spotify to qobuz',
-    'spotify to deezer',
-    'spotify to amazon music',
-    'playlist mirror',
-    'music sync',
-    'one-way playlist sync',
+    'apple music playlist sync',
+    'youtube music playlist transfer',
+    'tidal playlist sync',
+    'qobuz playlist sync',
+    'deezer playlist sync',
+    'amazon music playlist sync',
+    'liked songs sync',
+    'music favorites sync',
+    'multi-source playlist merge',
     'bidirectional playlist sync',
     'n-way music sync',
-    'songmirror',
+    'authoritative group sync',
+    'last.fm loved tracks',
+    'listenbrainz loved recordings',
+    'navidrome playlist sync',
+    'subsonic playlist sync',
+    'jellyfin music library',
+    'playlist metadata backup',
+    'scheduled playlist backups',
+    'playlist export',
+    'playlist import',
+    'transfer audit history',
     'isrc matching',
-    'isrc music sync',
-    'cross-platform playlist',
-    'apple music api',
-    'amp-api',
-    'youtube data api v3',
-    'youtube music api',
-    'spotdl',
-    'jellyfin music',
-    'self-hosted music',
-    'playlist automation',
-    'rapidfuzz',
     'fuzzy music matching',
-    'anyascii romanization',
-    'transliteration matching',
-    'date-added ordering',
-    'm3u8 playlist',
+    'music library automation',
     'docker music sync',
-    'spotipy',
-    'spotify oauth',
-    'playlist reconciliation',
-    'snapshot id cache',
-    'sqlite song archive',
-    'media server music',
-    'spotify source of truth',
-    'music library sync',
-    'offline music mirror',
-    'spotify api python',
-    'playlist deduplication',
-    'token set ratio',
-    'jaro winkler',
-    'apple music token',
-    'mirror removals',
-    'windows task scheduler',
-    'self-hosted playlist sync',
     'soundiiz alternative',
     'tunemymusic alternative',
-    'freeyourmusic alternative',
-    'self-hosted music app',
-    'playlist transfer',
-    'playlist sync web app',
-    'jellyfin playlist sync',
-    'fastapi react app'
+    'local music mirror'
   ]
 thumbnail: '/images/songmirror-og.png'
 related: ['gofile-upload-github-action', 'doi-paper-scraper', 'bookworm-privacy-first-library']
 ---
 
-I curate playlists on Spotify but listen elsewhere: Apple Music in the car, YouTube Music for indie uploads, and a Jellyfin server at home when I want the files to be mine. Keeping those playlists identical by hand is work I do once and then stop doing, so I built [SongMirror](https://github.com/ahnafnafee/songmirror). It is a self-hosted web app for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music, with an optional Jellyfin-ready download mirror. I can create named syncs or run one-off transfers. A sync can use one source of truth, an authoritative group that jointly defines the playlist, or a full N-way set of peers. It uses ISRC-first matching and runs in Docker or as a headless Python CLI.
+I curate playlists on Spotify but listen on Apple Music, YouTube Music, and a Jellyfin server at home. I built [SongMirror](https://github.com/ahnafnafee/songmirror) to keep those libraries connected without copying every change by hand. It has grown into a self-hosted browser app for scheduled playlist and favorites syncs, multi-source merges, account-to-account transfers, and metadata backups. Seven streaming services sit alongside Last.fm, ListenBrainz, and Navidrome/Subsonic integrations, with a separate local audio mirror for Jellyfin. Docker runs the app and scheduler together; a headless Python CLI uses the same engine. You choose which services define the library and which follow it.
 
-<div className='not-prose mt-8 mb-6 flex justify-center'>
-  <img
-    src='/images/songmirror-lockup-light.png'
-    alt='SongMirror logo and wordmark'
-    className='h-11 w-auto sm:h-14 dark:hidden'
-  />
-  <img
-    src='/images/songmirror-lockup-dark.png'
-    alt='SongMirror logo and wordmark'
-    className='hidden h-11 w-auto sm:h-14 dark:block'
-  />
-</div>
+<AppDownloadCTA
+  heading='Install and Run SongMirror'
+  subtext='Requires Git and Docker with Compose v2.24 or newer. No environment file is needed to start.'
+  github='https://github.com/ahnafnafee/songmirror'
+  container='https://github.com/ahnafnafee/songmirror/pkgs/container/songmirror'
+  documentation='https://github.com/ahnafnafee/songmirror/blob/main/docs/docker-image.md'
+>
 
-<figure className='not-prose my-6'>
-  <img
-    src='/images/songmirror-demo.gif'
-    alt='Animated demo of SongMirror connecting music services, setting up one-way, authoritative-group, and bidirectional syncs, and running a live playlist transfer'
-    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
-  />
-  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    SongMirror end to end: connect a service, build a sync, and transfer a playlist, with every match streaming live.
-  </figcaption>
-</figure>
+```bash
+git clone https://github.com/ahnafnafee/songmirror.git
+cd songmirror
+docker compose up -d
+```
 
-## From a script to a browser app
+1. Open [localhost:8888](http://localhost:8888) and connect your services under **Accounts**.
+2. Use **Transfers** for a one-time copy, or **Sync** to create a scheduled job. Preview a sync before applying it.
+3. Keep `./data` backed up: it holds your configuration, credentials, caches, and history. Compose also preserves downloads under `./downloads` by default.
 
-The first version was a Python script for the terminal. The headless CLI still works, but I did not want to connect accounts through environment variables and parse log lines every time I set it up. The browser app uses the same engine. `docker compose up -d` serves it on port 8888 with no `.env` file to edit. Connect each service, create syncs, start transfers, and watch matches, additions, and removals as they stream in.
+Compose pulls the published AMD64/ARM64 image. The interface has no login, so keep it on a trusted local network.
 
-<figure className='not-prose my-6'>
-  <img
-    src='/images/songmirror-accounts.png'
-    alt='The SongMirror Accounts page for connecting Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, YouTube Music, and Jellyfin'
-    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
-  />
-  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    Connecting services from the browser: each provider gets its own guided, local-only connection flow.
-  </figcaption>
-</figure>
-
-Connections stay local. The Accounts page guides each service's flow, including a Spotify web-session default and a configurable OAuth callback for remote or reverse-proxy deployments. SongMirror does not proxy credentials through a third party. It writes them to an owner-only local data folder, so listening history stays on the machine.
-
-## Syncs and transfers
-
-A **sync** is an ongoing job. Choose the services, the reconciliation mode, the playlists, and a schedule; SongMirror applies the same rules on every pass. You can create several named syncs, each with its own safety caps, and any supported service can be the source. A **transfer** is a one-off copy from one service to another. It has a live progress bar, pause, resume, and stop controls, plus a panel for tracks that need a manual match.
-
-<figure className='not-prose my-6'>
-  <img
-    src='/images/songmirror-wizard.png'
-    alt='The SongMirror sync setup wizard choosing one-way, authoritative-group, or bidirectional N-way reconciliation'
-    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
-  />
-  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    Setting up a sync: pick the direction, the services, the playlists, and a schedule.
-  </figcaption>
-</figure>
+</AppDownloadCTA>
 
 <figure className='not-prose my-6'>
   <img
     src='/images/songmirror-dashboard.png'
-    alt='The SongMirror dashboard showing sync status, configured jobs, a live activity feed, and connected Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, YouTube Music, and Jellyfin services'
+    alt='SongMirror dashboard with connected accounts, scheduled syncs, and recent activity'
+    className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
+    One place to manage connected accounts and see what the scheduler is doing.
+  </figcaption>
+</figure>
+
+## Decide Who Controls the Playlist
+
+A playlist shared across several services needs a rule for whose edits count. SongMirror offers four modes because editing on one app and curating across several apps are different workflows.
+
+| Mode                  | Membership rule                                                          | Useful when                                                          |
+| --------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| One-way               | One source defines the playlist                                          | You curate in one app and listen elsewhere                           |
+| Merge sources         | Several playlists contribute a deduplicated union to one destination     | You want a combined playlist from library selections or public links |
+| Authoritative group   | Selected authorities contribute changes; destination-only mirrors follow | You curate on a few services and want the rest to reflect them       |
+| Bidirectional (N-way) | Every selected service contributes changes                               | You actively edit on every participating service                     |
+
+A merge reads all its sources before considering removals. Shared ISRCs identify the same recording; conservative metadata matching handles overlaps without them. Source priority determines ordering, and the first occurrence supplies the display metadata. If any source is incomplete, safe additions can continue while removals stay blocked.
+
+Authoritative groups establish a baseline, then require two consecutive complete reads to confirm an absence. N-way jobs retain per-provider snapshots so a copied addition does not return as a new edit. Both use add-wins conflict resolution. Those distinctions matter when an apparently missing song is a catalog or API problem rather than something I deleted.
+
+## Favorites Beyond Playlists
+
+The same reconciliation engine now handles the seven streaming providers' built-in liked or favorite collections. A Spotify Liked Songs collection can become another service's native favorites or a named playlist. Regular playlists remain separately selectable, so a favorites-only job does not unexpectedly copy the whole library.
+
+Last.fm adds Loved Tracks, Top Tracks across six periods, and Recent Scrobbles as sources. Authorizing it also allows incoming favorites to become Last.fm loves. [ListenBrainz](https://github.com/ahnafnafee/songmirror/blob/main/docs/listenbrainz-subsonic.md) similarly reads public Loved Recordings and accepts incoming favorites with a verified user token. Neither is a general playlist destination.
+
+Navidrome and Subsonic-compatible servers support playlists and starred songs in both directions. Matches resolve against audio already indexed by the server; SongMirror does not upload missing music. Jellyfin remains a browsing and local-mirror integration. I keep those capabilities explicit because connecting an account should not imply that every operation is available.
+
+## Transfers You Can Come Back To
+
+Transfers now work between different services or separate accounts on the same service. A public playlist link can be opened directly without following it first. For [YouTube account migrations](https://github.com/ahnafnafee/songmirror/blob/main/docs/youtube-account-transfers.md), the shared video IDs preserve the original videos, including non-music playlists, instead of searching for substitutes.
+
+A running copy has pause, resume, stop, and unmatched-track review. [Transfer history](https://github.com/ahnafnafee/songmirror/blob/main/docs/transfer-history.md) persists confirmed counts, failures, and status changes in SQLite, with filters for account, service, playlist, and date. A restart marks unfinished attempts interrupted; starting another copy into the same destination skips entries already there.
+
+<figure className='not-prose my-6'>
+  <img
+    src='/images/songmirror-transfer-history.png'
+    alt='SongMirror transfer history with status filters and records of playlist copy attempts'
     loading='lazy'
     className='w-full rounded-lg border border-gray-200 dark:border-gray-800'
   />
   <figcaption className='mt-2 text-center text-sm text-gray-500 dark:text-gray-400'>
-    The dashboard pulls it together: active syncs, service health, and the live activity feed.
+    Transfer records survive container replacement when the application data volume is preserved.
   </figcaption>
 </figure>
 
-SongMirror can also sync playlists I follow but do not own. A web-player fallback reads them past the dev-mode restriction, so a shared playlist mirrors and transfers like one of my own. The browser app and CLI use the same core. The web layer talks to a small services layer, which owns the event bus and a single-writer queue, so a scheduled sync and a manual transfer do not collide.
+## Bring a Track List, Keep a Backup
 
-## Three ways to decide what belongs
+Creating a playlist no longer requires an existing provider playlist. Paste a track list or import TXT, CSV, TSV, M3U, or M3U8, review the proposed matches, and create or append to a destination playlist. The review step gives ambiguous recordings a place to be resolved before writing.
 
-Many existing tools, including Soundiiz and TuneMyMusic, focus on one-shot transfers or append-only sync. They add tracks and rarely remove them. Over time, mirrors drift. A song deleted from Spotify can linger on Apple Music with no clear way to reconcile the two.
+Backups address a different need. Under **Settings → Playlist backups**, an account's playlist metadata can be archived on an independent schedule, with JSON/XML output, retention settings, and visible run history. Manual exports cover a whole service or one playlist; the Soundiiz JSON option provides an import-ready track list for that service.
 
-In **one-way mode**, one provider is canonical. Spotify is the default, but any connected service can take that role. Every other selected service reflects it. Removals then count as much as additions, so the mirror matches the playlist when tracks disappear too.
+These snapshots preserve ordered track metadata and unavailable-entry markers, while excluding credentials and streaming-file URLs. They are metadata archives, not audio downloads. A backup also needs no second provider or sync job, which makes it useful before a migration.
 
-The project originally synced Apple Music to Spotify. I flipped it because Spotify's playlist snapshot model lets SongMirror detect a change cheaply and gives the rest of the system a stable reference.
+## Match the Recording, Then Remember the Decision
 
-One-way mode is the default, but it is not the only useful model. An **authoritative group** lets two or more services jointly define membership while every other selected service stays destination-only. It is for people who curate the same playlist on Spotify and Apple Music. Additions from either authority propagate, mirrors never get a vote, and removals need two consecutive complete reads before they can delete anything. The group establishes a clean baseline before it removes a track and stops when it cannot read any authority.
+Cross-catalog matching still follows the original hierarchy: reuse a cached match, try an ISRC, then score title, artist, and duration. RapidFuzz and anyascii romanization help with credit differences and transliterated titles. Duration and recording-version checks constrain those looser comparisons.
 
-There is also an opt-in **N-way** mode that makes every selected service a read-write peer. That is useful when every app is a place you actively edit, rather than simply a place you listen.
+A cached mistake should be repairable. The **Mappings** page exposes saved matches and misses, lets me paste a corrected track reference, and can clear failed lookups for another attempt. Native favorites sync membership only. Playlist destinations can repair relative Recently Added order when a previously missing match becomes available, subject to provider capabilities and write caps.
 
-## What one pass does
+## Keep the Dangerous Writes Visible
 
-Every one-way pass follows the same shape, whatever the chosen source is:
+The browser and CLI share the reconciliation core through a services layer and a single-writer queue. Scheduled jobs, transfers, and backup reads take turns using provider clients, while progress reaches the browser through server-sent events.
 
 ```mermaid
-graph TD
-    S["Chosen source playlist"] --> SNAP["Snapshot:<br/>tracks + ISRCs + added-at"]
-    SNAP --> T["Reconcile each selected<br/>music service"]
-    T --> DIFF["Diff each target<br/>against the source"]
-    DIFF --> ADD["Resolve + append missing<br/>oldest-first"]
-    DIFF --> REM["Remove gone-from-source<br/>behind safety rails"]
-    ADD --> DL["Optional: spotDL local mirror"]
-    REM --> DL
+flowchart TD
+    UI["Browser: syncs, transfers, backups"] --> Q["Services and single-writer queue"]
+    CLI["Headless CLI"] --> E["Shared reconciliation engine"]
+    Q --> E
+    E --> R["Read complete source snapshots"]
+    R --> M["Resolve recordings and compare membership"]
+    M --> G["Preview, write caps, removal guards"]
+    G --> P["Provider writes and persisted state"]
 ```
 
-SongMirror pairs playlists by name and creates a missing target with the source name and description. The browser can also browse and pair playlists that use different names. Services reconcile **concurrently**, but writes within one service stay sequential and rate-limit-friendly, with jittered pacing and exponential backoff on `403` and `429`.
+The CLI is a dry run unless `--execute` is supplied; the browser offers **Preview** before a real sync. Removals are separately opt-in and capped. Empty or incomplete reads, expired credentials, and unresolved replacements can hold deletions back. Transfers append by default, with an optional order-preservation mode where the destination supports it.
 
-Additions go in **oldest-first** on purpose. Appending one track at a time in added-at order keeps every mirrored playlist sorted by date added, newest last, exactly like the Spotify original.
+## Keep Your Own Audio Library in the Loop
 
-Everything uses one `MirrorTarget` interface and a shared reconciliation core. Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music implement the same contract. The diffing, ordering, and safety checks live in one place.
+The optional local mirror copies matching files from an existing music library in their original format, so a FLAC stays a FLAC. spotDL can fill missing tracks, and SongMirror writes playlist folders, covers, and `.m3u8` files for Jellyfin. Converting a lossy download to FLAC does not improve its source quality.
 
-## Matching is the hard part
+Credentials and state stay in the self-hosted data directory and are used to contact the services you connect. Renewable sessions are refreshed where supported; some providers still require a fresh pasted token. The [connection guide](https://github.com/ahnafnafee/songmirror#connecting-each-service) documents those differences.
 
-The hard problem is deciding when two entries are the same song across catalogs that mostly don't share a key. The pipeline uses the same hierarchy the cross-service tools ([TuneLink](https://tommcfarlin.com/case-study-tunelink-matching-music-ai/), MusicBrainz) settled on: **hard identifier, then search, then fuzzy score**.
-
-1. **Cached link.** Once a source track resolves to a target catalog ID or video ID, that link is stored and reused. It survives later title drift and makes steady-state passes nearly free.
-2. **ISRC.** Exact recording identity wherever both services expose it.
-3. **Scored search.** [RapidFuzz](https://rapidfuzz.com/) `token_set_ratio` (order-, subset-, and decoration-tolerant) plus Jaro-Winkler, run over both the raw _and_ romanized ([anyascii](https://github.com/anyascii/anyascii)) title and artist, anchored by duration.
-
-That last stage handles the messy cases without hardcoded exceptions:
-
-| Drift                | Example                                                         | Handled by                                  |
-| -------------------- | --------------------------------------------------------------- | ------------------------------------------- |
-| Multi-artist credits | `Arijit Singh, Ved Sharma, …` ↔ `Arijit Singh`                  | subset-tolerant `token_set_ratio`           |
-| Title decoration     | `Tri` ↔ `Popeye (Bangladesh) - Tri (ত্রি) Official Music Video` | decoration-tolerant score + duration anchor |
-| Transliteration      | `Камин` ↔ `Kamin`, `নেশার বোঝা` ↔ `Neshar Bojha`                | anyascii romanization                       |
-| Video-only track     | Bangla/indie/OST upload with no catalog song                    | YouTube `videos` filter fallback            |
-
-The **duration anchor** makes the looser title match safe. It accepts subset and decoration differences without over-accepting. A `Runaway - Piano Version` or a wrong-artist cover is rejected when its length disagrees, even if the title looks close. Without that check, a loose title match can silently mirror the wrong recording.
-
-There's a known limit. CJK romanizes to a _Chinese_ reading, so kanji/kana titles that a service only stores in native script can still miss. When nothing clears the bar the track is reported (`x Not on …`) and skipped, never guessed.
-
-## Removals deserve caution
-
-A wrong _add_ is easy to undo; you just delete the track. A wrong _remove_ silently drops a song you wanted, and you might not notice for weeks. So the entire removal path is guarded, and it's the part of the code I'm most careful about:
-
-| Guard                    | What it prevents                                                                        |
-| ------------------------ | --------------------------------------------------------------------------------------- |
-| Dry run by default       | Any write at all without an explicit `--execute`                                        |
-| Empty-snapshot guard     | A transient provider response from emptying a live target                               |
-| `MAX_REMOVALS` cap       | A runaway pass mass-deleting; over the cap, removals skip and log                       |
-| `MAX_ADDS` cap           | One-burst backfills tripping bot detection; overflow just continues next pass           |
-| Fuzzy removal protection | Deleting a target track that plausibly _is_ a source track (feat-credit drift)          |
-| Net-loss protection      | Dropping a song that has no match on that service to replace it (`~ held` in the log)   |
-| Fail-closed tokens       | Partial deletes when a provider token expires mid-pass; any `401`/`403` aborts the pass |
-
-None of this is clever, which is the point. A delete path that runs unattended against a library I care about should be boring and cautious.
-
-## The local mirror: files you own
-
-Point `DOWNLOAD_DIR` at a music root and SongMirror runs [spotDL](https://github.com/spotDL/spotify-downloader) to keep a local copy of every synced playlist. New tracks download and removed tracks are deleted locally. The layout is Jellyfin-ready:
-
-```text
-<DOWNLOAD_DIR>/
-  <Playlist>/
-    <Playlist>.m3u8         # tool-generated, newest-first
-    cover.jpg               # source playlist cover, highest resolution
-    <AlbumArtist>/
-      <Album>/
-        Artist - Title.mp3  # tagged + cover art embedded
-```
-
-The `.m3u8` is written by the tool, not spotDL, in date-added order with newest at the top, so Jellyfin shows the latest additions first. Each file's modified time is also stamped to its added-at date, so a Date Modified sort matches.
-
-spotDL can spend _minutes_ re-fetching and re-matching a whole playlist before it reports a single skip, even when nothing changed. SongMirror records a clean pass and skips an unchanged source snapshot entirely, without running spotDL. Only a first-time or changed playlist pays that cost.
-
-One caveat: downloading audio this way sits outside Spotify's ToS. It's for personal use of content you already have access to, so it's your call.
-
-## Cheap re-runs
-
-An always-on mirror needs the common case, nothing changed, to be cheap. SongMirror caches service resolutions, including ISRC and search misses, renders persisted browser data before revalidation, and records every track it sees in a local SQLite archive. Source snapshots make an unchanged playlist cheap to detect without treating a time-based cache expiry as proof that it changed.
-
-The archive also holds hard-identifier links and sync state. After a fully clean pass, an unchanged playlist can be skipped outright. Dry runs never skip or write state, so a plain `uv run main.py` always shows the full picture before you commit to anything.
-
-## N-way sync
-
-One-way is the safe default: the source directs the set, and nothing a mirror does can surprise it. But sometimes I add a track straight from an app and want it to flow back. N-way mode turns the selected services into peers. A track added or removed on any provider propagates to the others.
-
-The hard part of two-way sync is echoes: provider A gets a track, provider B copies it, and next pass B's copy looks like a fresh addition that should flow back to A, forever. The fix is a per-provider canonical snapshot. Each service remembers what it has actually seen, so a track that's merely unmatchable on one service is never mistaken for a deletion there, and a copy that originated elsewhere is never re-announced as new. Additions win ties, a read that collapses to zero tracks is refused, and every removal still clears the same caps and guards as the one-way path.
-
-N-way grants selected services a write role. Leaving it off keeps the source-of-truth model hands-off.
-
-## Keeping it running
-
-The Docker container serves the web UI, runs each sync on its schedule, and restarts with the host. The headless CLI runs a one-shot pass that cron or Windows Task Scheduler can trigger every 15 minutes. I do not run both against the same playlists because two mirrors racing each other can briefly duplicate additions.
-
-Authentication is provider-specific. The browser guides each connection and stores the resulting session locally. Spotify defaults to a saved web session and still supports developer-app OAuth. A remote host or reverse proxy can set its browser-visible base URL so SongMirror advertises the correct callback. When a provider rejects a credential, the pass stops and shows the connection that needs attention instead of continuing into a partial delete.
-
-## Adding a service
-
-Adding a service stays contained. A `MirrorTarget` implementation lists and inspects playlists, resolves tracks, makes the appropriate writes, and reports what it cannot do. The shared core owns the diff, oldest-first ordering, safety rails, logs, summaries, and skip logic. That boundary let SongMirror grow from three catalog integrations to seven without reimplementing the dangerous part each time.
-
-## Try it yourself
-
-The source is on [GitHub](https://github.com/ahnafnafee/songmirror), MIT-licensed. The default is a dry run: it prints every add and remove it _would_ make and writes nothing, so you can point it at your own library and read the whole plan before it touches a single playlist. Stars, issues, and PRs all welcome.
+For upgrades, run `docker compose up -d --pull always` from the checkout. Source, setup, and issue tracking live in the [SongMirror repository](https://github.com/ahnafnafee/songmirror), released under the MIT license. The [portfolio page](/portfolio/songmirror) gives a shorter overview of the app and its implementation.

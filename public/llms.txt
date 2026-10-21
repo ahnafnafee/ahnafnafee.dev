@@ -45,24 +45,24 @@
   Summary: How I revamped an established gaming social app end to end, shipped it across the App Store and Play Store, and operationalized and scaled it: self-hosted infrastructure on Hetzner and Coolify, a modular Spring Boot backend, an Expo mobile app and a TanStack web client, app store optimization in nine languages, and an analytics-driven feedback loop.
   Topics: Full-Stack Engineering, Infrastructure, Mobile Development, Marketing, App Store Optimization
 
-- [A Self-Hosted Playlist Mirror for Seven Music Services](https://www.ahnafnafee.dev/blog/songmirror-playlist-sync) — published 2026-07-13, updated 2026-08-17
-  Summary: How I built SongMirror, an always-on playlist mirror for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music, plus a Jellyfin-ready local archive. It supports one-way sync, authoritative provider groups, and bidirectional N-way reconciliation behind ISRC-first matching, durable caches, and guarded removals.
-  Topics: Music Sync, Self-Hosted, Spotify, Python, Automation, APIs
+- [SongMirror: Self-Hosted Playlist Sync, Transfers, and Backups](https://www.ahnafnafee.dev/blog/songmirror-playlist-sync) — published 2026-07-13, updated 2026-10-21
+  Summary: Keep playlists and favorites connected across streaming services and your own music library. How I built SongMirror with scheduled merge syncs, account-to-account transfers, editable matches, and playlist backups.
+  Topics: Music Sync, Self-Hosted, Python, Automation, APIs
 
 - [Building Rally: A Live, Crowdsourced Court Map That Stays Honest](https://www.ahnafnafee.dev/blog/rally-crowdsourced-court-map) — published 2026-07-11, updated 2026-07-23
   Summary: How I built Rally, a gamified, crowdsourced map of 1,450,000+ courts and fields across nine sports worldwide, using an Expo and React Native app on Supabase Postgres with PostGIS, a Cloudflare D1 edge replica for court reads, GPS proof-of-presence check-ins, and server-side-only scoring so the crowdsourced map stays trustworthy.
   Topics: React Native, Supabase, PostGIS, Maps, Mobile, Crowdsourcing
 
-- [Pinned Calendar: A Self-Healing, Offline Agenda for Android](https://www.ahnafnafee.dev/blog/pinned-calendar) — published 2026-06-06
-  Summary: How I built a privacy-first Android app that pins your week's Google Calendar events and to-dos to a persistent, self-healing notification — no foreground service, no sign-in, and no INTERNET permission — using Kotlin, Jetpack Compose, custom RemoteViews, WorkManager, and a delete-intent that re-posts the pin the instant you swipe it away.
+- [Pinned Calendar: An Offline Agenda With Recurring Tasks for Android](https://www.ahnafnafee.dev/blog/pinned-calendar) — published 2026-06-06, updated 2026-10-21
+  Summary: Your calendar and recurring tasks, visible in one persistent Android notification. How I built Pinned Calendar with actionable reminders, an adjustable agenda layout, and on-device storage, now available on Google Play.
   Topics: Android, Kotlin, Jetpack Compose, Privacy, Mobile
 
 - [Bringing Real Tooling to Ollama Modelfiles](https://www.ahnafnafee.dev/blog/modelfile-syntax-extension) — published 2026-05-15, updated 2026-07-22
   Summary: How I built a VSCode-family extension that brings syntax highlighting, an 18-rule linter, hover documentation, autocomplete, and 26+ snippets to Ollama Modelfiles — so the next time you scaffold a custom GGUF runtime, your editor catches the foot-guns before `ollama create` does.
   Topics: Developer Tools, VSCode Extension, Ollama, Local LLM, TypeScript, TextMate Grammar
 
-- [Building a Local LLM-Powered Hybrid OCR Engine](https://www.ahnafnafee.dev/blog/local-llm-pdf-ocr) — published 2026-04-26, updated 2026-07-15
-  Summary: How I built a privacy-first, fully offline OCR pipeline that pairs Surya's layout detection with local Vision Language Models (OlmOCR, GLM-OCR, Qwen3-VL) and a Needleman-Wunsch aligner — turning handwriting, forms, and scanned PDFs into pixel-perfect searchable documents on your own laptop.
+- [Building a Local LLM-Powered Hybrid OCR Engine](https://www.ahnafnafee.dev/blog/local-llm-pdf-ocr) — published 2026-04-26, updated 2026-10-21
+  Summary: Turn scans, handwriting, and page photos into searchable, selectable documents on your own machine. Meet the local OCR engine I built with a browser interface, flexible vision-model support, and PDF, HTML, Markdown, and text export.
   Topics: OCR, LLM, Vision Language Models, AI Engineering, Python, PDF
 
 - [From DOI to Markdown: A Two-Repo Pipeline for Faster Research](https://www.ahnafnafee.dev/blog/doi-paper-scraper) — published 2026-02-25
@@ -104,16 +104,16 @@
 
 # Portfolio
 
-- [SongMirror](https://www.ahnafnafee.dev/portfolio/songmirror) — 2026-07-11, updated 2026-08-17
-  Summary: A self-hosted, always-on playlist mirror for Spotify, TIDAL, Qobuz, Deezer, Amazon Music, Apple Music, and YouTube Music, with a browser app, one-off transfers, and a Jellyfin-ready local archive. A free, open-source Soundiiz alternative you run yourself.
+- [SongMirror](https://www.ahnafnafee.dev/portfolio/songmirror) — 2026-07-11, updated 2026-10-21
+  Summary: Self-hosted playlist and favorites sync, multi-source merges, account-to-account transfers, and scheduled backups across streaming services and your own music library.
   Stack: python, typescript, react, docker, tailwindcss, rest-api
 
 - [Rally](https://www.ahnafnafee.dev/portfolio/rally) — 2026-06-20, updated 2026-07-23
   Summary: A mobile, gamified, crowdsourced map of 1,450,000+ courts and fields across nine sports worldwide, with live free, busy, or full status verified by the players who actually show up. Built on Expo, Supabase, and Cloudflare.
   Stack: react-native, expo, typescript, supabase, postgresql, serverless, python
 
-- [Pinned Calendar](https://www.ahnafnafee.dev/portfolio/pinned-calendar) — 2026-06-03, updated 2026-07-14
-  Summary: An Android app that pins this week's Google Calendar events and to-dos to your notification shade, self-healing and fully on-device. Kotlin, Jetpack Compose, and Material You.
+- [Pinned Calendar](https://www.ahnafnafee.dev/portfolio/pinned-calendar) — 2026-06-03, updated 2026-10-21
+  Summary: An offline Android agenda and recurring-task app, now on Google Play. Keep events and to-dos in one persistent notification, with actionable reminders and an adjustable layout.
   Stack: kotlin, android, android-studio
 
 - [Player 2](https://www.ahnafnafee.dev/portfolio/player2) — 2022-12-01, updated 2026-07-14
