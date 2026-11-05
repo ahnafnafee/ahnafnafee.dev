@@ -1,6 +1,7 @@
 import { Clarity, Footer, Header } from '@/components/site/common'
 import { Toaster } from '@/components/ui/sonner'
 
+import { googleAnalyticsScript } from '@/libs/analytics/googleAnalytics'
 import { PERSON_ID, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/libs/constants/site'
 
 import { Analytics } from '@vercel/analytics/react'
@@ -97,33 +98,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Analytics />
           <SpeedInsights />
           <Clarity />
-          <Script src='https://www.googletagmanager.com/gtag/js?id=G-7S76865HNX' strategy='afterInteractive' />
           <Script id='google-analytics' strategy='afterInteractive'>
-            {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-
-            // Consent Mode v2 — storage defaults to denied in regions whose law
-            // requires opt-in consent (EEA + UK + CH). Google's certified CMP
-            // (AdSense Privacy & messaging, served via the adsbygoogle script)
-            // shows the consent banner in those regions and updates these
-            // signals on the visitor's choice; wait_for_update holds tags
-            // briefly so a stored choice applies before anything fires.
-            // Visitors elsewhere keep the regular defaults.
-            gtag('consent', 'default', {
-              ad_storage: 'denied',
-              ad_user_data: 'denied',
-              ad_personalization: 'denied',
-              analytics_storage: 'denied',
-              wait_for_update: 500,
-              region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IS','IE','IT','LV','LI','LT','LU','MT','NL','NO','PL','PT','RO','SK','SI','ES','SE','GB','CH']
-            });
-            gtag('set', 'ads_data_redaction', true);
-
-            gtag('js', new Date());
-
-            gtag('config', 'G-7S76865HNX');
-          `}
+            {googleAnalyticsScript}
           </Script>
           <Script
             id='google-adsense'
