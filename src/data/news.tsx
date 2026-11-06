@@ -15,6 +15,22 @@ export type NewsItem = {
 // so reordering or appending out-of-order is safe.
 export const NEWS: NewsItem[] = [
   {
+    date: 'Nov 2026',
+    iso: '2026-11-06',
+    emoji: '🎤',
+    body: (
+      <>
+        Attended the{' '}
+        <UnstyledLink href='/documents/soc-symposium-2026-program.pdf' prefetch={false} className='text-link'>
+          1st School of Computing PhD Research Symposium
+        </UnstyledLink>{' '}
+        at George Mason University and presented <em>FlowGate: Can a Cycling Game Learn How Absorbed You Feel?</em>{' '}
+        Selected as one of 15 lightning-talk presenters from 107 submitted abstracts and received a Certificate of
+        Presentation for outstanding research.
+      </>
+    )
+  },
+  {
     date: 'Jun 2026',
     iso: '2026-06-14',
     emoji: '📊',
