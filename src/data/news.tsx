@@ -20,13 +20,12 @@ export const NEWS: NewsItem[] = [
     emoji: '🎤',
     body: (
       <>
-        Attended the{' '}
+        Presented at GMU’s{' '}
         <UnstyledLink href='/documents/soc-symposium-2026-program.pdf' prefetch={false} className='text-link'>
           1st School of Computing PhD Research Symposium
         </UnstyledLink>{' '}
-        at George Mason University and presented <em>FlowGate: Can a Cycling Game Learn How Absorbed You Feel?</em>{' '}
-        Selected as one of 15 lightning-talk presenters from 107 submitted abstracts and received a Certificate of
-        Presentation for outstanding research.
+        with <em>FlowGate</em>, one of 15 lightning talks selected from 107 abstracts. Received a Certificate of
+        Presentation.
       </>
     )
   },
