@@ -1,4 +1,12 @@
+import { isPublishedContentSlug } from '@/services/content/slugs'
 import { getSql } from '@/services/db/neon'
+
+export const PAGEVIEW_WRITE_LIMIT = 120
+export const PAGEVIEW_WINDOW_SECONDS = 60
+
+export class InvalidPageviewSlugError extends Error {}
+export class PageviewRateLimitError extends Error {}
+export class PageviewUnavailableError extends Error {}
 
 // All three functions degrade gracefully when DATABASE_URL is unset:
 //   - getView / getViewsBatch return 0 / {}
@@ -38,19 +46,33 @@ export async function getViewsBatch(slugs: string[]): Promise<Record<string, num
 }
 
 export async function incrementView(slug: string): Promise<number> {
+  if (!(await isPublishedContentSlug(slug))) throw new InvalidPageviewSlugError('Unknown content slug')
   const sql = getSql()
   if (!sql) return 0
+  let rows: Array<{ count: number | string }>
   try {
-    const rows = (await sql`
-      INSERT INTO pageviews (slug, count, last_seen_at)
-      VALUES (${slug}, 1, now())
+    // A single row lock protects the shared budget across server instances.
+    // No per-visitor rows or process-local counters can grow without bound.
+    rows = (await sql`
+      INSERT INTO pageviews (slug, count, last_seen_at, write_window_started_at, write_window_count)
+      VALUES (${slug}, 1, now(), now(), 1)
       ON CONFLICT (slug) DO UPDATE
-      SET count = pageviews.count + 1, last_seen_at = now()
+      SET count = pageviews.count + 1,
+          last_seen_at = now(),
+          write_window_started_at = CASE
+            WHEN pageviews.write_window_started_at <= now() - ${PAGEVIEW_WINDOW_SECONDS} * interval '1 second'
+            THEN now() ELSE pageviews.write_window_started_at END,
+          write_window_count = CASE
+            WHEN pageviews.write_window_started_at <= now() - ${PAGEVIEW_WINDOW_SECONDS} * interval '1 second'
+            THEN 1 ELSE pageviews.write_window_count + 1 END
+      WHERE pageviews.write_window_started_at <= now() - ${PAGEVIEW_WINDOW_SECONDS} * interval '1 second'
+         OR pageviews.write_window_count < ${PAGEVIEW_WRITE_LIMIT}
       RETURNING count
     `) as Array<{ count: number | string }>
-    return rows[0] ? Number(rows[0].count) : 0
   } catch (err) {
     console.error('[pageviews.incrementView]', err)
-    return 0
+    throw new PageviewUnavailableError('Pageview storage unavailable')
   }
+  if (!rows[0]) throw new PageviewRateLimitError('Pageview write limit reached')
+  return Number(rows[0].count)
 }

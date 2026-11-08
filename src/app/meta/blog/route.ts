@@ -1,6 +1,7 @@
 import { getContentBySlug } from '@/services/content'
 
 import { generateOgImage } from '@/libs/metapage'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 
 import type { Blog } from 'me'
 import { NextRequest, NextResponse } from 'next/server'
@@ -26,7 +27,7 @@ function generateMetaHtml(post: {
   thumbnail?: string
   topics?: string[]
 }): string {
-  const canonicalUrl = `${SITE_URL}/blog/${post.slug}`
+  const canonicalUrl = `${SITE_URL}/blog/${encodeURIComponent(post.slug)}`
   const ogImage = generateOgImage({
     title: post.title,
     subTitle: post.summary,
@@ -38,6 +39,9 @@ function generateMetaHtml(post: {
   const safeTitle = escapeHtml(post.title)
   const safeSummary = escapeHtml(post.summary)
   const safeAuthor = escapeHtml(post.author_name)
+  const safeCanonicalUrl = escapeHtml(canonicalUrl)
+  const safeOgImage = escapeHtml(ogImage)
+  const safePublished = escapeHtml(post.published)
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -49,35 +53,35 @@ function generateMetaHtml(post: {
   <title>${safeTitle} | ${SITE_NAME}</title>
   <meta name="description" content="${safeSummary}">
   <meta name="author" content="${safeAuthor}">
-  <link rel="canonical" href="${canonicalUrl}">
+  <link rel="canonical" href="${safeCanonicalUrl}">
   
   <!-- Open Graph -->
   <meta property="og:title" content="${safeTitle}">
   <meta property="og:description" content="${safeSummary}">
-  <meta property="og:image" content="${ogImage}">
-  <meta property="og:url" content="${canonicalUrl}">
+  <meta property="og:image" content="${safeOgImage}">
+  <meta property="og:url" content="${safeCanonicalUrl}">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="${SITE_NAME}">
-  <meta property="article:published_time" content="${post.published}">
+  <meta property="article:published_time" content="${safePublished}">
   <meta property="article:author" content="${safeAuthor}">
   
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${safeTitle}">
   <meta name="twitter:description" content="${safeSummary}">
-  <meta name="twitter:image" content="${ogImage}">
+  <meta name="twitter:image" content="${safeOgImage}">
   
   <!-- Redirect to actual page after crawlers have indexed -->
   <script>
     setTimeout(() => {
-      window.location.href = "${canonicalUrl}";
+      window.location.href = ${serializeJsonForHtml(canonicalUrl)};
     }, 100);
   </script>
 </head>
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 680px; margin: 50px auto; padding: 20px; color: #111;">
   <h1 style="font-size: 32px; margin-bottom: 16px;">${safeTitle}</h1>
   <p style="color: #666; margin-bottom: 24px;">${safeSummary}</p>
-  <p style="font-size: 14px; color: #999;">By ${safeAuthor} · ${post.published}</p>
+  <p style="font-size: 14px; color: #999;">By ${safeAuthor} · ${safePublished}</p>
   <p style="margin-top: 24px;"><small>Redirecting to full article...</small></p>
 </body>
 </html>`

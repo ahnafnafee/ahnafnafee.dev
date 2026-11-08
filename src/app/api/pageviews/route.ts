@@ -1,4 +1,10 @@
-import { getView, incrementView } from '@/services/pageviews'
+import {
+  getView,
+  incrementView,
+  InvalidPageviewSlugError,
+  PAGEVIEW_WINDOW_SECONDS,
+  PageviewRateLimitError
+} from '@/services/pageviews'
 
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -27,6 +33,22 @@ export async function POST(req: NextRequest) {
   if (!slug) {
     return NextResponse.json({ message: 'slug query parameter is required', view: null }, { status: 400 })
   }
-  const view = await incrementView(slug)
-  return NextResponse.json({ message: 'Incremented', view })
+  try {
+    const view = await incrementView(slug)
+    return NextResponse.json({ message: 'Incremented', view }, { headers: { 'Cache-Control': 'no-store' } })
+  } catch (err) {
+    if (err instanceof InvalidPageviewSlugError) {
+      return NextResponse.json({ message: 'Unknown content slug', view: null }, { status: 404 })
+    }
+    if (err instanceof PageviewRateLimitError) {
+      return NextResponse.json(
+        { message: 'Too many pageview updates', view: null },
+        { status: 429, headers: { 'Retry-After': String(PAGEVIEW_WINDOW_SECONDS), 'Cache-Control': 'no-store' } }
+      )
+    }
+    return NextResponse.json(
+      { message: 'Pageview storage unavailable', view: null },
+      { status: 503, headers: { 'Cache-Control': 'no-store' } }
+    )
+  }
 }

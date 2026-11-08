@@ -3,6 +3,7 @@ import { ResumePageClient } from '@/components/resume/ResumePageClient'
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
 import { PERSON_REFERENCE } from '@/libs/seo/personSchema'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 
 import type { Metadata } from 'next'
 
@@ -107,8 +108,8 @@ export default function ResumePage() {
 
   return (
     <>
-      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }} />
-      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(profileJsonLd) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(breadcrumbJsonLd) }} />
       <ResumePageClient />
     </>
   )

@@ -9,6 +9,7 @@ import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { commonMDXOptions } from '@/libs/mdxConfig'
 import { generateOgImage } from '@/libs/metapage'
 import { PERSON_ID } from '@/libs/seo/personSchema'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 import { twclsx } from '@/libs/twclsx'
 
 import type { Portfolio } from 'me'
@@ -156,7 +157,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
 
   return (
     <AppLayoutPage>
-      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(graphJsonLd) }} />
       <BackToTop />
 
       <article className={twclsx('flex flex-col', 'gap-8')}>

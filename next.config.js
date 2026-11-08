@@ -122,7 +122,8 @@ const config = {
       },
       {
         protocol: 'https',
-        hostname: 'raw.githubusercontent.com'
+        hostname: 'raw.githubusercontent.com',
+        pathname: '/ahnafnafee/**'
       },
       {
         protocol: 'https',

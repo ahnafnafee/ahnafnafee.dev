@@ -1,6 +1,7 @@
 'use client'
 
 import { SITE_URL } from '@/libs/constants/site'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 
 import Link from 'next/link'
 
@@ -34,7 +35,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
 
   return (
     <>
-      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(jsonLd) }} />
       <nav aria-label='Breadcrumb' className='mb-4 text-sm'>
         <ol className='flex flex-wrap items-center gap-1.5 text-gray-500 dark:text-gray-400'>
           {allItems.map((item, index) => {

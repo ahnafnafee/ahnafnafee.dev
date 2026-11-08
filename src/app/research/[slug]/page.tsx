@@ -10,6 +10,7 @@ import { SITE_AUTHOR, SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { commonMDXOptions } from '@/libs/mdxConfig'
 import { generateOgImage } from '@/libs/metapage'
 import { PERSON_ID } from '@/libs/seo/personSchema'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 import { twclsx } from '@/libs/twclsx'
 
 import type { Affiliation, Author, Research } from 'me'
@@ -162,7 +163,7 @@ const buildIdentifierNodes = (header: Research) => {
   return nodes
 }
 
-export default async function ResearchEntryPage({ params }: Props) {
+async function loadResearchEntry(params: Props['params']) {
   try {
     const { slug } = await params
     const res = await getContentBySlug<Research>('/research', slug)
@@ -241,49 +242,54 @@ export default async function ResearchEntryPage({ params }: Props) {
       ]
     }
 
-    return (
-      <AppLayoutPage className='pt-6 md:pt-10'>
-        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
-        <BackToTop />
-
-        <article className={twclsx('flex flex-col', 'gap-8')}>
-          <HeadingResearch
-            title={header.title}
-            topics={header.topics}
-            authors={header.authors}
-            affiliations={header.affiliations}
-            venue={header.venue}
-            links={header.links}
-            bibtex={header.bibtex}
-          />
-
-          {header.teaser && (
-            <ResearchTeaser
-              src={header.teaser}
-              alt={header.teaserCaption ?? header.title}
-              caption={header.teaserCaption}
-              priority
-            />
-          )}
-
-          <ResearchAbstract abstract={header.abstract} />
-
-          <section className={twclsx('prose', 'dark:prose-invert', 'md:prose-lg')}>
-            <MDXRemote source={res.content} components={MDXComponents} options={commonMDXOptions} />
-          </section>
-
-          <ContentImageZoom />
-
-          {header.bibtex && <ResearchBibTeX bibtex={header.bibtex} />}
-
-          <div className='mt-5 mb-2'>
-            <PRButton path={`/research/${header.slug}.mdx`} />
-          </div>
-        </article>
-      </AppLayoutPage>
-    )
+    return { header, graphJsonLd, content: res.content }
   } catch (error) {
     console.error('Failed to load research entry:', error)
     return notFound()
   }
+}
+
+export default async function ResearchEntryPage({ params }: Props) {
+  const { header, graphJsonLd, content } = await loadResearchEntry(params)
+  return (
+    <AppLayoutPage className='pt-6 md:pt-10'>
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(graphJsonLd) }} />
+      <BackToTop />
+
+      <article className={twclsx('flex flex-col', 'gap-8')}>
+        <HeadingResearch
+          title={header.title}
+          topics={header.topics}
+          authors={header.authors}
+          affiliations={header.affiliations}
+          venue={header.venue}
+          links={header.links}
+          bibtex={header.bibtex}
+        />
+
+        {header.teaser && (
+          <ResearchTeaser
+            src={header.teaser}
+            alt={header.teaserCaption ?? header.title}
+            caption={header.teaserCaption}
+            priority
+          />
+        )}
+
+        <ResearchAbstract abstract={header.abstract} />
+
+        <section className={twclsx('prose', 'dark:prose-invert', 'md:prose-lg')}>
+          <MDXRemote source={content} components={MDXComponents} options={commonMDXOptions} />
+        </section>
+
+        <ContentImageZoom />
+
+        {header.bibtex && <ResearchBibTeX bibtex={header.bibtex} />}
+
+        <div className='mt-5 mb-2'>
+          <PRButton path={`/research/${header.slug}.mdx`} />
+        </div>
+      </article>
+    </AppLayoutPage>
+  )
 }

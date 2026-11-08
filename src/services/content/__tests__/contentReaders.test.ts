@@ -60,6 +60,26 @@ describe('getContentBySlug', () => {
     await expect(getContentBySlug<Blog>('/blog', 'this-post-does-not-exist-and-never-will')).rejects.toThrow()
   })
 
+  it.each([
+    '../portfolio/bookworm',
+    'nested/../autograder-architecture',
+    'nested\\\\..\\\\autograder-architecture',
+    '\"><script>alert(1)</script>/../../autograder-architecture',
+    'a\";alert(1);a=\"/../autograder-architecture',
+    '%2e%2e%2fautograder-architecture',
+    '%252e%252e%252fautograder-architecture',
+    'autograder-architecture\u0000',
+    'autograder-architecture\n',
+    'Autograder-Architecture',
+    'a'.repeat(129)
+  ])('rejects noncanonical content slug %j', async (slug) => {
+    await expect(getContentBySlug('/blog', slug)).rejects.toThrow('Invalid content slug')
+  })
+
+  it('rejects sections outside the content allowlist', async () => {
+    await expect(getContentBySlug('/blog/../portfolio', 'bookworm')).rejects.toThrow('Invalid content slug or section')
+  })
+
   it('content is just the markdown body — frontmatter is stripped', async () => {
     const post = await getContentBySlug<Blog>('/blog', 'autograder-architecture')
     // The body should not start with the YAML fence

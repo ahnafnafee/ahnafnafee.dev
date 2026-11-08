@@ -7,6 +7,7 @@ import { getViewsBatch } from '@/services/pageviews'
 
 import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 import { getNewestResearch } from '@/libs/sorters'
 
 import type { Research } from 'me'
@@ -124,7 +125,7 @@ export default async function ResearchPage() {
     <>
       <StarfieldBackground />
       <AppLayoutPage className='pt-6 md:pt-10'>
-        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(graphJsonLd) }} />
         {/* h1 kept for accessibility / SEO; visual title removed per design — sections below carry the page */}
         <h1 className='sr-only'>Research</h1>
         <ResearchOverview />

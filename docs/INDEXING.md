@@ -71,6 +71,13 @@ verification — the API call is opportunistic.
 Skip this section unless you specifically want Chinese-market traffic.
 The script skips silently when `BAIDU_PUSH_TOKEN` is unset.
 
+Publishing requires a certificate-valid HTTPS connection to
+`https://data.zz.baidu.com/urls`. Redirects and insecure HTTP fallback are
+disabled. If the provider's TLS endpoint is unavailable or its certificate does
+not match, leave this optional integration disabled until secure transport is
+available. The unified notifier continues with the other engines. Rotate any
+token previously sent over HTTP.
+
 1. Register at https://ziyuan.baidu.com/ (requires a Chinese phone number).
 2. Add and verify your site.
 3. Copy the Push API token from the link-submit page.

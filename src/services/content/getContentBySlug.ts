@@ -1,7 +1,9 @@
 import { readFile } from 'fs/promises'
-import { join } from 'path'
+import { relative, resolve } from 'path'
 
-import { LOCATION_DIR } from '@/services'
+import { LOCATION_DIR, readDirectory } from '@/services/directory'
+
+import { CONTENT_SECTIONS, isContentSlug } from './slugs'
 
 import matter from 'gray-matter'
 
@@ -17,9 +19,17 @@ export const getContentBySlug = async <T>(
    */
   slug: string
 ): Promise<GetContentBySlug<T>> => {
-  // read path to file src/data/{path}/[{slug}].mdx
-  const dir = join(`${LOCATION_DIR}/${path}`, `${slug}.mdx`)
-  // read file with promise based
+  if (!CONTENT_SECTIONS.some((section) => section === path) || !isContentSlug(slug)) {
+    throw new Error('Invalid content slug or section')
+  }
+
+  const filename = `${slug}.mdx`
+  const root = resolve(LOCATION_DIR, path.slice(1))
+  const dir = resolve(root, filename)
+  if (relative(root, dir) !== filename || !(await readDirectory(path)).includes(filename)) {
+    throw new Error('Content not found')
+  }
+
   const file = await readFile(dir, 'utf8')
 
   // parse file content with gray matter, extract it's header and content

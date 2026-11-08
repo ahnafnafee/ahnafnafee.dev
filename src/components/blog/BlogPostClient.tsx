@@ -28,13 +28,15 @@ export function BlogPostClient({ header, children }: BlogPostClientProps) {
     const shouldIncrement = typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(sessionKey)
     ;(async () => {
       try {
-        const res = await fetch(
-          `/api/pageviews?slug=${encodeURIComponent(header.slug)}`,
-          shouldIncrement ? { method: 'POST' } : undefined
-        )
+        const url = `/api/pageviews?slug=${encodeURIComponent(header.slug)}`
+        let res = await fetch(url, shouldIncrement ? { method: 'POST' } : undefined)
+        const incremented = shouldIncrement && res.ok
+        // A rejected write must not hide the count or mark this visit as counted.
+        if (!res.ok && shouldIncrement) res = await fetch(url)
+        if (!res.ok) throw new Error('Could not retrieve page views')
         const data: PageViewResponse = await res.json()
         setPostViews(data.view ?? 0)
-        if (shouldIncrement) sessionStorage.setItem(sessionKey, '1')
+        if (incremented) sessionStorage.setItem(sessionKey, '1')
       } catch {
         console.info('Could not retrieve page views')
       }

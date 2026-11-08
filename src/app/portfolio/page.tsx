@@ -7,6 +7,7 @@ import { getViewsBatch } from '@/services/pageviews'
 
 import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 import { getNewestPortfolio } from '@/libs/sorters'
 
 import type { Portfolio } from 'me'
@@ -165,7 +166,7 @@ export default async function PortfolioPage() {
     <>
       <StarfieldBackground />
       <AppLayoutPage>
-        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(graphJsonLd) }} />
         <PortfolioPageClient
           portfolios={portfolios}
           softwarePortfolios={softwarePortfolios}

@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/sonner'
 
 import { googleAnalyticsScript } from '@/libs/analytics/googleAnalytics'
 import { PERSON_ID, SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/libs/constants/site'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -85,8 +86,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name='google-adsense-account' content='ca-pub-1038888374692513' />
       </head>
       <body suppressHydrationWarning>
-        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
-        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(navigationJsonLd) }} />
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(websiteJsonLd) }} />
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(navigationJsonLd) }}
+        />
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           {/* Full-height column: content takes the leftover space so the footer sits at the bottom of short pages. */}
           <div className='flex min-h-dvh flex-col'>

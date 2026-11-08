@@ -494,6 +494,12 @@ yarn export
 
 The export pipeline (`scripts/export-prepare.js`) temporarily moves API routes aside because Next.js cannot static-export a tree with handlers. `scripts/export-cleanup.js` restores them.
 
+### Pageview database
+
+Apply the pageview migrations before deploying changes to the counter service.
+See [pageview storage and limits](docs/PAGEVIEWS.md) for the migration commands,
+shared write budget, failure responses and isolated PostgreSQL tests.
+
 ### ISR
 
 `/api/revalidate?secret=<SECRET>&slug=/blog/<slug>` — call this from a CMS webhook or `gh actions` to bust ISR for a single page. The secret is `NEXT_PUBLIC_SECRET` or `SECRET_KEY`.

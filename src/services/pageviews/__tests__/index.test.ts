@@ -1,18 +1,26 @@
+import {
+  getView,
+  getViewsBatch,
+  incrementView,
+  InvalidPageviewSlugError,
+  PageviewRateLimitError,
+  PageviewUnavailableError
+} from '../index'
+
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the Neon client BEFORE importing the module under test so the singleton
 // in src/services/db/neon.ts picks up the stub. The mock returns whatever the
 // per-test `sqlSpy` was configured to resolve with.
-const sqlSpy = vi.fn()
+const { sqlSpy, getSqlSpy } = vi.hoisted(() => ({ sqlSpy: vi.fn(), getSqlSpy: vi.fn() }))
 vi.mock('@/services/db/neon', () => ({
-  getSql: () => sqlSpy
+  getSql: getSqlSpy
 }))
-
-import { getView, getViewsBatch, incrementView } from '../index'
 
 describe('pageviews service', () => {
   beforeEach(() => {
     sqlSpy.mockReset()
+    getSqlSpy.mockReset().mockReturnValue(sqlSpy)
   })
 
   afterEach(() => {
@@ -57,7 +65,35 @@ describe('pageviews service', () => {
   describe('incrementView', () => {
     it('returns the new count from the RETURNING clause', async () => {
       sqlSpy.mockResolvedValueOnce([{ count: 7 }])
-      expect(await incrementView('cool-post')).toBe(7)
+      expect(await incrementView('autograder-architecture')).toBe(7)
+    })
+
+    it.each(['not-a-published-post', '../blog/autograder-architecture', 'a'.repeat(129)])(
+      'rejects unknown or invalid slug %j before obtaining the database client',
+      async (slug) => {
+        await expect(incrementView(slug)).rejects.toBeInstanceOf(InvalidPageviewSlugError)
+        expect(getSqlSpy).not.toHaveBeenCalled()
+        expect(sqlSpy).not.toHaveBeenCalled()
+      }
+    )
+
+    it('preserves the zero-count mode without database configuration', async () => {
+      getSqlSpy.mockReturnValue(null)
+      expect(await incrementView('autograder-architecture')).toBe(0)
+      expect(sqlSpy).not.toHaveBeenCalled()
+    })
+
+    it('reports an exhausted database write budget', async () => {
+      sqlSpy.mockResolvedValueOnce([])
+      await expect(incrementView('autograder-architecture')).rejects.toBeInstanceOf(PageviewRateLimitError)
+      expect(sqlSpy).toHaveBeenCalledTimes(1)
+    })
+
+    it('fails closed on a configured database error without retrying an unrestricted write', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {})
+      sqlSpy.mockRejectedValueOnce(new Error('missing window columns'))
+      await expect(incrementView('autograder-architecture')).rejects.toBeInstanceOf(PageviewUnavailableError)
+      expect(sqlSpy).toHaveBeenCalledTimes(1)
     })
   })
 })
