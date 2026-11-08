@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 
 /**
  *
@@ -9,31 +9,15 @@ import { useCallback, useEffect, useState } from 'react'
  * @returns `true` or `false`
  */
 export const useMediaQuery = (query: string) => {
-  const [matches, setMatches] = useState(false)
-
-  // check if the query is match with the given parameter
-  const isMatch = useCallback((query: string) => {
-    if (typeof window !== 'undefined') {
-      // this will return true
-      return window.matchMedia(query).matches
-    }
-    return false
-  }, [])
-
-  // calllback for media query's event listener
-  const handleChange = useCallback(() => setMatches(isMatch(query)), [isMatch, query])
-
-  // we run side effect whenever media query has change
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
       const mediaQuery = window.matchMedia(query)
-      handleChange()
-      mediaQuery.addEventListener('change', handleChange)
+      mediaQuery.addEventListener('change', onChange)
+      return () => mediaQuery.removeEventListener('change', onChange)
+    },
+    [query]
+  )
+  const getSnapshot = useCallback(() => window.matchMedia(query).matches, [query])
 
-      return () => mediaQuery.removeEventListener('change', handleChange)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query])
-
-  return matches
+  return useSyncExternalStore(subscribe, getSnapshot, () => false)
 }

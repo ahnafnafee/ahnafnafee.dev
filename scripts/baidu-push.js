@@ -30,9 +30,11 @@ async function push(urls, { token, host } = {}) {
     console.log('[baidu] no URLs to submit')
     return { ok: true, submitted: 0 }
   }
-  const endpoint = `http://data.zz.baidu.com/urls?site=${encodeURIComponent(h)}&token=${encodeURIComponent(t)}`
+  const endpoint = `https://data.zz.baidu.com/urls?site=${encodeURIComponent(h)}&token=${encodeURIComponent(t)}`
   const res = await fetch(endpoint, {
     method: 'POST',
+    redirect: 'error',
+    signal: AbortSignal.timeout(10000),
     headers: { 'Content-Type': 'text/plain' },
     body: urls.join('\n')
   })

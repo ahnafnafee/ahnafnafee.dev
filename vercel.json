@@ -2,7 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": false,
   "alias": "ahnafnafee.dev",
-  "installCommand": "corepack enable && corepack prepare yarn@4.14.1 --activate && yarn install --immutable",
+  "installCommand": "corepack enable && corepack prepare yarn@4.14.1 --activate && corepack yarn install --immutable",
+  "buildCommand": "corepack yarn build:vercel",
   "redirects": [
     {
       "source": "/resume.pdf",

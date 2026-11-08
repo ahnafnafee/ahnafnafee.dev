@@ -5,7 +5,7 @@
 -- by detail pages.  No history, no per-day rollup — keep cost flat for a free
 -- Neon tier.
 --
--- Apply via the Neon SQL editor (or psql) once per environment:
+-- Applied automatically before Vercel production builds. For other environments:
 --   psql "$DATABASE_URL" -f db/migrations/0001_pageviews.sql
 
 CREATE TABLE IF NOT EXISTS pageviews (
@@ -16,4 +16,5 @@ CREATE TABLE IF NOT EXISTS pageviews (
 
 -- Index on last_seen_at lets a future cleanup job evict slugs that no longer
 -- correspond to live routes (e.g. renamed posts).
+-- statement-breakpoint
 CREATE INDEX IF NOT EXISTS pageviews_last_seen_idx ON pageviews(last_seen_at);

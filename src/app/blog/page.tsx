@@ -7,6 +7,7 @@ import { getViewsBatch } from '@/services/pageviews'
 
 import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 import { getNewestBlog } from '@/libs/sorters'
 
 import type { Blog } from 'me'
@@ -129,7 +130,7 @@ export default async function BlogPage() {
     <>
       <StarfieldBackground />
       <AppLayoutPage>
-        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
+        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(graphJsonLd) }} />
         <BlogPageClient allBlogs={allBlogs} />
       </AppLayoutPage>
     </>

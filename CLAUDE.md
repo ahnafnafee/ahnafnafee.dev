@@ -13,7 +13,8 @@ Yarn is the package manager — `yarn.lock` is committed. Don't use `npm install
 ```bash
 yarn dev                # dev server (Turbopack, env from .env.development.local)
 yarn dev:webpack        # dev server forced to webpack (use if Turbopack misbehaves with mermaid/MDX)
-yarn build              # production build (Vercel)
+yarn build              # production application build (no database migrations)
+yarn build:vercel       # Vercel: guarded production migrations, then application build
 yarn export             # static export — runs export:prepare → next build → export:cleanup
 yarn export:university  # static export with .env.development.static.local (BASE_PATH-aware)
 yarn lint               # eslint . (flat config in eslint.config.mjs)
@@ -97,7 +98,9 @@ Fonts: `--font-sans` resolves to `'Google Sans', system-ui, -apple-system, Blink
 
 ## Two Build Modes
 
-`yarn build` is the standard Vercel build. `yarn export` produces a static site — but Next.js can't static-export a tree with API routes, so the export pipeline temporarily moves `src/app/api/` out:
+Vercel runs `corepack yarn build:vercel`, which applies the explicitly listed, idempotent pageview migrations in one transaction before `yarn build` on production deployments. Preview and custom environments skip migrations. Missing deployment metadata, a missing production `DATABASE_URL`, or migration failures stop the build. Ordinary `yarn build` builds the application without migrating. See `docs/PAGEVIEWS.md` for the guards and manual setup on other hosts.
+
+`yarn export` produces a static site — but Next.js can't static-export a tree with API routes, so the export pipeline temporarily moves `src/app/api/` out:
 
 - `scripts/export-prepare.js` copies `src/app/api/` → `temp_api_backup/` and deletes the original.
 - `next build` runs with `STATIC_EXPORT=true` (read in `next.config.js` to flip `output: 'export'`, `images.unoptimized: true`, and apply `BASE_PATH` if set).

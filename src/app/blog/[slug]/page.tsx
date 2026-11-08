@@ -9,6 +9,7 @@ import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { commonMDXOptions } from '@/libs/mdxConfig'
 import { generateOgImage } from '@/libs/metapage'
 import { PERSON_ID } from '@/libs/seo/personSchema'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 import { getAdjacentPosts } from '@/libs/sorters/getAdjacentPosts'
 
 import type { Blog } from 'me'
@@ -113,7 +114,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export default async function BlogPost({ params }: Props) {
+async function loadBlogPost(params: Props['params']) {
   try {
     const { slug } = await params
     // Adjacent-post nav only needs frontmatter (slug, title, published) — use
@@ -181,20 +182,25 @@ export default async function BlogPost({ params }: Props) {
       ]
     }
 
-    return (
-      <>
-        <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(graphJsonLd) }} />
-        <main className='layout pb-4'>
-          <BlogPostClient header={header}>
-            <MDXRemote source={res.content} components={MDXComponents} options={commonMDXOptions} />
-          </BlogPostClient>
-          <AdjacentPosts {...adjacent} />
-          {header.related && header.related.length > 0 && <RelatedPosts slugs={header.related} />}
-        </main>
-      </>
-    )
+    return { header, graphJsonLd, adjacent, content: res.content }
   } catch (error) {
     console.error('Failed to load blog post:', error)
     return notFound()
   }
+}
+
+export default async function BlogPost({ params }: Props) {
+  const { header, graphJsonLd, adjacent, content } = await loadBlogPost(params)
+  return (
+    <>
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(graphJsonLd) }} />
+      <main className='layout pb-4'>
+        <BlogPostClient header={header}>
+          <MDXRemote source={content} components={MDXComponents} options={commonMDXOptions} />
+        </BlogPostClient>
+        <AdjacentPosts {...adjacent} />
+        {header.related && header.related.length > 0 && <RelatedPosts slugs={header.related} />}
+      </main>
+    </>
+  )
 }

@@ -7,6 +7,7 @@ import { getContents } from '@/services'
 
 import { SITE_NAME, SITE_URL } from '@/libs/constants/site'
 import { generateOgImage } from '@/libs/metapage'
+import { serializeJsonForHtml } from '@/libs/seo/serializeJson'
 import { getNewestBlog } from '@/libs/sorters'
 
 import type { Blog } from 'me'
@@ -137,7 +138,7 @@ export default async function TopicPage({ params }: Props) {
 
   return (
     <AppLayoutPage>
-      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }} />
+      <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: serializeJsonForHtml(collectionJsonLd) }} />
       <Breadcrumbs
         items={[
           { name: 'Blog', href: `${SITE_URL}/blog` },
