@@ -103,7 +103,7 @@ Use it as your portfolio. Fork it as a template. Read the source as a reference 
 - **JSON-LD validator** (`yarn validate:json-ld`) walks the build output and verifies every `<script type="application/ld+json">` block.
 - **Alt-text auditor** (`yarn audit:alt-text`) flags weak `alt` attributes in MDX.
 - **GitHub Actions CI**: type-check + lint + test + build + JSON-LD validation on every push/PR.
-- **Yarn 4** via Corepack, with a `vercel.json` `installCommand` (`corepack enable && corepack prepare yarn@4.14.1 --activate && yarn install --immutable`) so deploy hosts actually run Yarn 4 and honour the lockfile.
+- **Yarn 4** via Corepack, with a `vercel.json` `installCommand` (`corepack enable && corepack prepare yarn@4.14.1 --activate && corepack yarn install --immutable`) so deploy hosts actually run Yarn 4 and honour the lockfile.
 
 ---
 
@@ -483,7 +483,7 @@ y = \sigma(Wx + b)
 
 ### Vercel (recommended)
 
-Zero-config — Vercel detects Next.js and uses the `installCommand` from `vercel.json` (`corepack enable && corepack prepare yarn@4.14.1 --activate && yarn install --immutable`) so Yarn 4 actually runs (the explicit `corepack prepare` step is required because `corepack enable` alone doesn't reliably switch the active yarn binary on Vercel's image — without it, Vercel falls back to Yarn 1.22 and silently rewrites the lockfile). Set `NEXT_PUBLIC_SITE_URL` to your production domain in the Vercel project settings.
+Vercel detects Next.js and uses the `installCommand` from `vercel.json` (`corepack enable && corepack prepare yarn@4.14.1 --activate && corepack yarn install --immutable`). Both installation and the build invoke Yarn through Corepack explicitly, because Vercel's PATH can otherwise select Yarn 1.22 and rewrite the lockfile even after Corepack activation. Set `NEXT_PUBLIC_SITE_URL` to your production domain in the Vercel project settings.
 
 ### Static export
 

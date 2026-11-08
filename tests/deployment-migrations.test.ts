@@ -81,10 +81,13 @@ describe('production deployment migrations', () => {
   })
 
   it('exits unsuccessfully and redacts provider errors from build logs', () => {
-    const preload = `globalThis.fetch = async () => { throw new Error(${JSON.stringify(production.DATABASE_URL)}) }`
     const result = spawnSync(
       process.execPath,
-      ['--import', `data:text/javascript,${encodeURIComponent(preload)}`, 'scripts/migrate-production.mjs'],
+      [
+        '--import',
+        new URL('./fixtures/migration-fetch-failure.mjs', import.meta.url).href,
+        'scripts/migrate-production.mjs'
+      ],
       { encoding: 'utf8', env: { ...process.env, ...production } }
     )
     expect(result.status).toBe(1)
