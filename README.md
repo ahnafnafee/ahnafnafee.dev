@@ -496,9 +496,12 @@ The export pipeline (`scripts/export-prepare.js`) temporarily moves API routes a
 
 ### Pageview database
 
-Apply the pageview migrations before deploying changes to the counter service.
-See [pageview storage and limits](docs/PAGEVIEWS.md) for the migration commands,
-shared write budget, failure responses and isolated PostgreSQL tests.
+Vercel's `build:vercel` command applies the pageview migrations transactionally
+before production builds. Set the production `DATABASE_URL` and keep Vercel's
+system environment variables enabled; migration failures stop deployment.
+Previews skip migrations, and ordinary `yarn build` does not migrate.
+See [pageview storage and limits](docs/PAGEVIEWS.md) for manual setup on other
+hosts, the shared write budget, failure responses and isolated PostgreSQL tests.
 
 ### ISR
 

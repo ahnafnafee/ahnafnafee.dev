@@ -9,6 +9,7 @@
     "generate:llms": "node scripts/generate-llms-txt.js",
     "generate:sitemap": "next-sitemap --config=custom-next-sitemap.js",
     "build": "yarn generate:llms && next build && yarn generate:sitemap",
+    "build:vercel": "node scripts/migrate-production.mjs && yarn build",
     "export": "node scripts/generate-llms-txt.js && yarn export:prepare && cross-env STATIC_EXPORT=true next build && yarn export:cleanup",
     "export:university": "node scripts/generate-llms-txt.js && yarn export:prepare && env-cmd -f .env.development.static.local next build && yarn export:cleanup",
     "export:prepare": "node scripts/export-prepare.js",
