@@ -7,7 +7,7 @@ type ComingSoonImageProps = {
 /**
  * Pastel-gradient placeholder used in place of a real thumbnail/OG image when a
  * research entry is pre-publication (`comingSoon: true` in the MDX frontmatter).
- * Sized to fill its parent — drop into the same `relative aspect-[5/4]` slot the
+ * Sized to fill its parent. Drop it into the same `relative aspect-video` slot the
  * NextImage normally occupies.
  */
 export const ComingSoonImage: React.FunctionComponent<ComingSoonImageProps> = ({ className }) => {
