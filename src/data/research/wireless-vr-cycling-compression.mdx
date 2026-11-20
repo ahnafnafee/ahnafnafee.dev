@@ -1,0 +1,103 @@
+---
+title: 'Keeping Up with the Ride: Motion-Aware Compression for Wireless VR Cycling'
+summary: 'A cycling game told the video encoder where the road, cockpit and hazards were. On a matched replay that cut task-region error by about 15%, but five riders did not see a clear difference.'
+abstract: >-
+  A wireless VR cycling game must stream a changing view within a limited video budget as the rider pedals and turns
+  their head. We tested whether Pedaltopia could use the positions of the road, cockpit and hazards to guide regional
+  quantization. Both encodings used fixed foveation and a 16 Mbps video target. On 288 matched frames from the replay
+  used for tuning, adding regional quantization reduced mean squared color error by 15.20 to 16.25% in those regions
+  across both eyes. Structural similarity rose by 0.0108 to 0.0133 in those regions and fell by 0.0098 across the full
+  eye images. Five riders tried both conditions on a stationary trainer under a 21 Mbps Wi-Fi traffic cap. Regional
+  rides used default settings. Median encoded rates ranged from 14.76 to 15.54 Mbps across ten rides. With regional
+  encoding, 95th-percentile software delay ranged from 4.25 ms lower to 4.81 ms higher. Two riders rated the moving
+  scene one point clearer after the regional ride. None chose it as clearer in direct comparison, and one preferred it
+  for another session. On the matched replay, the encoder used the game's region map to preserve more detail in the
+  road, cockpit and hazards with 1.51% fewer encoded bits than fixed foveation alone.
+authors:
+  - name: 'Ahnaf An Nafee'
+    url: 'https://www.ahnafnafee.dev'
+    affiliations: [1]
+affiliations:
+  - name: 'George Mason University'
+    location: 'Fairfax, Virginia, USA'
+    url: 'https://www.gmu.edu'
+published: '11/20/2026'
+featured: true
+new: true
+section: 'others'
+category: 'systems'
+topics: ['Virtual Reality', 'Video Streaming', 'Wireless Networking', 'User Study']
+keywords:
+  - wireless vr streaming
+  - regional quantization
+  - qp offset map
+  - fixed foveation
+  - alvr
+  - nvenc
+  - hevc
+  - vr cycling
+  - exergame
+  - meta quest 3
+  - game-informed encoding
+  - head pose prediction
+  - video compression
+  - ssim
+  - motion-to-photon latency
+thumbnail: '/images/research/wireless-vr-cycling-compression.svg'
+teaser: '/images/research/wireless-vr-cycling-compression-map.webp'
+teaserCaption: 'Regional quantization for frame 180 of a recorded race. Left, recorded road, cockpit and hazard regions. Center, the reconstructed 84×43 stereo QP offset map, where a traced cockpit block requests −3. Right, an illustration of fine and coarse quantization steps.'
+links:
+  paper: 'https://www.researchgate.net/publication/418141231_Keeping_up_with_the_ride_Motion-aware_compression_for_wireless_VR_cycling_VR_cycling_Pilot_illustration_Scene_region_Where_precision_goes_Quantization_steps_Road_Area_overlap_Finer_Racer_Distance_focu'
+  code: 'https://github.com/ahnafnafee/ALVR-regional-quantization'
+  researchGate: 'https://www.researchgate.net/publication/418141231_Keeping_up_with_the_ride_Motion-aware_compression_for_wireless_VR_cycling_VR_cycling_Pilot_illustration_Scene_region_Where_precision_goes_Quantization_steps_Road_Area_overlap_Finer_Racer_Distance_focu'
+identifiers:
+  researchGateId: '418141231'
+bibtex: |
+  @misc{annafee2026wirelessvrcycling,
+    author      = {Ahnaf {An Nafee}},
+    title       = {Keeping up with the ride: Motion-aware compression
+                   for wireless {VR} cycling},
+    year        = {2026},
+    institution = {George Mason University},
+    url         = {https://www.researchgate.net/publication/418141231}
+  }
+related: []
+---
+
+Wireless VR sends every frame through a video encoder with a fixed bit budget. Fixed foveation already keeps the most detail at the center of each eye, but a cyclist who turns toward an opponent moves the road and the cockpit away from that center. The game knows where those things are. This project asks whether passing that knowledge to the encoder keeps them sharper at the same video rate, and whether riders notice. The [paper](https://www.researchgate.net/publication/418141231) gives the full method, figures and timing appendix.
+
+<RegionalQuantizationStudy />
+
+## From Game Objects to Encoder Blocks
+
+The study runs in Pedaltopia, a cycling game from George Mason University where pedaling a stationary trainer moves the rider along a course with computer-controlled opponents. The game streams from a PC to a Meta Quest 3 over Wi-Fi through a patched build of [ALVR](https://github.com/alvr-org/ALVR) 20.14.1.
+
+Each frame, Unity projects the road, the cockpit readouts, tagged hazards and nearby racers into each eye and wraps each one in a rectangle. A 60 ms forecast of head direction widens the region it considers during a turn. The encoder side then maps every 32×32-pixel block back through the fixed-foveation transform and measures how much of the block those rectangles cover. That coverage sets a block weight, and the weight becomes a QP offset:
+
+$$
+d_i = \operatorname{clip}_{[-12,12]}\left(\operatorname{round}\left[-6\log_2\frac{w_i}{\bar w}\right]\right)
+$$
+
+A common shift keeps the whole map inside a rate budget, and NVENC applies the result relative to the QP its own rate controller picks. A block with twice the mean weight starts at −6 and one with half the mean starts at +6. The **Block map** view above shows a real map from the replay, with the cockpit block the paper traces into the encoder.
+
+## A Replay That Isolates the Encoder
+
+Two live rides never show the same images, so I recorded a scripted race with the headset unworn and replayed the identical 360 stereo frames through both encoders at 72 FPS and a 16 Mbps target. After warm-up, 288 frames were scored.
+
+Adding the map cut mean squared color error by 15.20% to 16.25% in the road, cockpit and hazard regions of both eyes, and structural similarity rose in every region. The regional stream also used 1.51% fewer bits. The cost appeared elsewhere: whole-eye similarity fell from 0.9525 to 0.9427, because the encoder moved precision out of the background. The regional settings were tuned on this same replay, so the numbers describe one operating point, not a general gain.
+
+## Five Riders, Two Rides Each
+
+Five participants rode the course twice on a Wahoo KICKR Pro, once with fixed foveation alone and once with the regional map, in alternating order. All ten rides used the same 16 Mbps target under a 21 Mbps traffic cap. The encoder applied the map on 97.53% to 99.90% of frames in every regional ride.
+
+The riders did not see a clear difference. Two rated the moving scene one point clearer after the regional ride and three rated both rides equally. Asked directly which ride was clearer, one chose fixed foveation, three reported no difference and one could not compare. One rider chose the regional ride for another session, citing smoother speed changes. Three riders already gave the top clarity score with fixed foveation, which leaves no room to show an improvement.
+
+Delay moved in both directions. The 95th-percentile software delay rose by 4.81 and 3.93 ms for two riders and fell for the other three. For the two increases, slow events spent longer in the queue after video decoding. Removing that queue time from every event shrank the gaps to 0.39 and 1.22 ms.
+
+## What This Does and Does Not Show
+
+The replay shows that game geometry can steer encoder precision toward the parts of the view a cyclist uses, without spending more bits. The rider study is small: five people, one ride per condition, free head movement and their own pace. It describes these sessions and does not establish that regional encoding is perceptibly clearer or that it preserves latency.
+
+The useful next test is a task, not a rating: ask riders to read a cockpit value or spot an approaching opponent during a head turn, repeat each condition, and vary the link capacity. A forecast-on versus forecast-off rerun on the same head trajectory would isolate what the 60 ms prediction contributes.
+
+The [regional quantization changes to ALVR](https://github.com/ahnafnafee/ALVR-regional-quantization) are public, with a region-publishing hook that can be tested with synthetic geometry. Pedaltopia's game source and assets remain proprietary. Thanks to Dr. Craig Yu, Dr. Bo Han and Habib Alam for their guidance and the bike setup.
