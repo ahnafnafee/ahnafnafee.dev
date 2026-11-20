@@ -136,45 +136,67 @@ export const SlideDeck: React.FunctionComponent<SlideDeckProps> = ({
           )}
         </div>
 
-        <div className='flex flex-wrap items-center gap-2'>
-          <button
-            type='button'
-            onClick={() => step(-1)}
-            disabled={index === 0}
-            aria-label='Previous slide'
-            className={buttonClass}
+        {/* Phones: navigation on one row, extra actions below. Wider screens: one row. */}
+        <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
+          <div
+            className='grid min-w-0 items-center gap-2 sm:flex-1'
+            style={{ gridTemplateColumns: 'auto minmax(0, 1fr) auto' }}
           >
-            ← Prev
-          </button>
-          <button
-            type='button'
-            onClick={() => step(1)}
-            disabled={index === slides.length - 1}
-            aria-label='Next slide'
-            className={buttonClass}
-          >
-            Next →
-          </button>
-          <p aria-live='polite' className='text-card-foreground m-0 min-w-0 flex-1 px-1 text-sm'>
-            <span className='font-mono tabular-nums'>
-              {index + 1} / {slides.length}
-            </span>{' '}
-            <span className='text-muted-foreground'>· {slide.title}</span>
-          </p>
-          {hasNotes && (
             <button
               type='button'
-              aria-pressed={showNotes}
-              onClick={() => setShowNotes((value) => !value)}
-              className={`${buttonClass} ${showNotes ? 'border-purple-600 bg-purple-600 text-white hover:text-white dark:hover:text-white' : ''}`}
+              onClick={() => step(-1)}
+              disabled={index === 0}
+              aria-label='Previous slide'
+              className={buttonClass}
             >
-              {notesLabel}
+              ← Prev
             </button>
-          )}
-          {canFullscreen && (
-            <button type='button' onClick={toggleFullscreen} className={buttonClass}>
-              Full screen
+            <p
+              aria-live='polite'
+              title={slide.title}
+              className='text-card-foreground m-0 truncate text-center text-sm whitespace-nowrap'
+            >
+              <span className='font-mono tabular-nums'>
+                {index + 1} / {slides.length}
+              </span>{' '}
+              <span className='text-muted-foreground'>· {slide.title}</span>
+            </p>
+            <button
+              type='button'
+              onClick={() => step(1)}
+              disabled={index === slides.length - 1}
+              aria-label='Next slide'
+              className={buttonClass}
+            >
+              Next →
             </button>
+          </div>
+          {(hasNotes || canFullscreen) && (
+            <div className='flex gap-2'>
+              {hasNotes && (
+                <button
+                  type='button'
+                  aria-pressed={showNotes}
+                  onClick={() => setShowNotes((value) => !value)}
+                  className={`${buttonClass} flex-1 whitespace-nowrap sm:flex-none`}
+                  // Inline so the pressed colors win over the base button colors, as InteractivePanel does.
+                  style={
+                    showNotes ? { backgroundColor: '#7C3AED', borderColor: '#7C3AED', color: '#FFFFFF' } : undefined
+                  }
+                >
+                  {notesLabel}
+                </button>
+              )}
+              {canFullscreen && (
+                <button
+                  type='button'
+                  onClick={toggleFullscreen}
+                  className={`${buttonClass} flex-1 whitespace-nowrap sm:flex-none`}
+                >
+                  Full screen
+                </button>
+              )}
+            </div>
           )}
         </div>
 
