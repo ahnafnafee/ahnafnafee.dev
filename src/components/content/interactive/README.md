@@ -4,6 +4,8 @@ Interactive research and portfolio content uses `InteractivePanel` for a themed 
 
 `InteractivePanel` accepts one or more views with stable, unique, URL-safe `id` values, labels, and React content. It mounts only the selected view's content by default. Set `preserveInactiveViews` when controls should retain their state while readers switch views. Its tab strip supports arrow keys, Home, and End; one-view panels omit the strip. `ChoiceGroup` works with any string-valued choice set.
 
+`SlideDeck` presents a slide sequence in the same card frame, with previous and next buttons, arrow keys, Home and End, a thumbnail strip, an optional narration panel per slide, and full screen where the browser supports it. Keep a deck's slide data, including image paths, alt text and notes, in the feature folder that uses it. `FlowGateTalkDeck` is the working example.
+
 To add an interactive feature:
 
 1. Add a folder under the relevant content area, such as `research/my-study/`. Put static data and pure decision rules in a separate file from stateful views.
