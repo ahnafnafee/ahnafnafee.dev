@@ -263,6 +263,7 @@ export default async function ResearchEntryPage({ params }: Props) {
           authors={header.authors}
           affiliations={header.affiliations}
           venue={header.venue}
+          published={header.published}
           links={header.links}
           bibtex={header.bibtex}
         />

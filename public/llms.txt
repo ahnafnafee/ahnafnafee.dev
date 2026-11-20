@@ -108,7 +108,6 @@
 - [Performance Analysis of 3D Mesh Simplification Algorithms: QEM vs. Vertex Clustering on CAD and Organic Models](https://www.ahnafnafee.dev/research/mesh-decimation-benchmark) — published 2025-12-08
   Summary: A 2×2×2 factorial study comparing Quadric Error Metrics and Vertex Clustering across CAD and organic meshes — Clustering is 60–80× faster, while QEM trades speed for fidelity that collapses on sparse CAD geometry at 90% reduction.
   Topics: 3D Graphics, Computer Graphics, Mesh Simplification, Computer Geometry, Statistical Analysis
-  Venue: GMU CS700 (2025)
   Paper: https://www.researchgate.net/publication/400103838_Performance_Analysis_of_3D_Mesh_Simplification_Algorithms_QEM_vs_Vertex_Clustering_on_CAD_and_Organic_Models
   Code: https://github.com/ahnafnafee/mesh-decimation-benchmark
 

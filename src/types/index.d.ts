@@ -169,7 +169,7 @@ declare module 'me' {
     category?: string
     /** Research listing section (`top-tier` / `conferences` / etc.). */
     section?: string
-    /** Pre-formatted venue line for research posts (e.g. `'GMU CS700 · 2025'`). */
+    /** Pre-formatted venue line for research posts (e.g. `'NeurIPS · December 2025'`). */
     venue?: string
   }
 

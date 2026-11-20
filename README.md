@@ -370,8 +370,8 @@ affiliations:
     location: 'Fairfax, Virginia, USA'
     url: 'https://www.gmu.edu'
 venue:
-  name: 'CS700 — Research Methodology in Computer Science, Course Project'
-  short: 'GMU CS700'
+  name: 'Conference on Example Research'
+  short: 'CER'
   year: 2025
   status: 'tech-report' # preprint | under-review | accepted | published | workshop | tech-report
 published: '12/08/2025'

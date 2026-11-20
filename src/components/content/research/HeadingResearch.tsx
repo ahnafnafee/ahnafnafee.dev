@@ -1,6 +1,7 @@
 import { UnstyledLink } from '@/components/site/links'
 
 import { SITE_AUTHOR } from '@/libs/constants/site'
+import { dateFormat } from '@/libs/intl'
 import { twclsx } from '@/libs/twclsx'
 
 import { Affiliation, Author, ResearchLinks, Venue } from 'me'
@@ -22,6 +23,7 @@ type HeadingResearchProps = {
   authors: Author[]
   affiliations?: Affiliation[]
   venue?: Venue
+  published?: string
   links?: ResearchLinks
   bibtex?: string
 }
@@ -66,9 +68,12 @@ const ActionButton: React.FunctionComponent<ActionButtonProps> = ({ href, icon, 
 const ICON_CLASS = twclsx('text-base md:text-lg', 'text-theme-700 dark:text-theme-200')
 
 export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (props) => {
-  const venueParts: string[] = []
-  if (props.venue?.short ?? props.venue?.name) venueParts.push((props.venue?.short ?? props.venue?.name) as string)
-  if (props.venue?.year) venueParts.push(String(props.venue.year))
+  const venueName = props.venue?.name ?? props.venue?.short
+  const date = props.published
+    ? dateFormat(props.published, 'en-US', { month: 'long', year: 'numeric' })
+    : props.venue?.year
+      ? String(props.venue.year)
+      : null
 
   return (
     <section className={twclsx('pb-2')}>
@@ -224,9 +229,17 @@ export const HeadingResearch: React.FunctionComponent<HeadingResearchProps> = (p
         )
       })()}
 
-      {venueParts.length > 0 && (
-        <p className={twclsx('mt-2 text-center text-sm italic', 'text-gray-500 dark:text-gray-400')}>
-          {venueParts.join(' \u00B7 ')}
+      {(venueName || date) && (
+        <p className={twclsx('mt-2 text-center text-sm')}>
+          {venueName && (
+            <span className={twclsx('font-semibold', 'text-indigo-700 dark:text-indigo-300')}>{venueName}</span>
+          )}
+          {venueName && date && (
+            <span className={twclsx('text-gray-400 dark:text-gray-600')} aria-hidden='true'>
+              {' · '}
+            </span>
+          )}
+          {date && <span className={twclsx('italic', 'text-gray-500 dark:text-gray-400')}>{date}</span>}
         </p>
       )}
 
