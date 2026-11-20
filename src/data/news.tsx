@@ -25,7 +25,11 @@ export const NEWS: NewsItem[] = [
           1st School of Computing PhD Research Symposium
         </UnstyledLink>{' '}
         with <em>FlowGate</em>, one of 15 lightning talks selected from 107 abstracts. Received a Certificate of
-        Presentation.
+        Presentation.{' '}
+        <UnstyledLink href='/blog/flowgate-lightning-talk' className='text-link'>
+          Read the talk write-up
+        </UnstyledLink>
+        .
       </>
     )
   },

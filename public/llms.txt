@@ -37,6 +37,10 @@
 
 # Blog Posts
 
+- [FlowGate in Five Minutes: My Lightning Talk at the GMU PhD Research Symposium](https://www.ahnafnafee.dev/blog/flowgate-lightning-talk) — published 2026-11-20
+  Summary: How I turned an early-stage research idea about cycling games, brain sensing and rider absorption into a five-minute lightning talk for the first School of Computing PhD Research Symposium at George Mason University.
+  Topics: Research, Human-Computer Interaction, Exergames, Machine Learning, Public Speaking
+
 - [Airlock: Private File Transfer Across Your Own Devices](https://www.ahnafnafee.dev/blog/airlock-private-tailscale-file-transfer) — published 2026-08-17
   Summary: How I built Airlock, a self-hosted PWA for moving files between your own devices over Tailscale. Files are chunked and encrypted in the browser before upload, then resume, deduplicate, and expire after collection without the server ever receiving the key.
   Topics: Privacy, Tailscale, Go, PWA, Encryption, Self-Hosted
