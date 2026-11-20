@@ -13,19 +13,19 @@ Published: 2026-11-20
 Summary: How I turned an early-stage research idea about cycling games, brain sensing and rider absorption into a five-minute lightning talk for the first School of Computing PhD Research Symposium at George Mason University.
 Topics: Research, Human-Computer Interaction, Exergames, Machine Learning, Public Speaking
 
-On November 6, 2026, I gave a five-minute lightning talk on FlowGate at George Mason University's first School of Computing PhD Research Symposium. It was one of 15 talks selected from 107 submitted abstracts. FlowGate asks a simple question: when two rides on a smart trainer take the same effort, can a cycling game tell which one pulled the rider in? The idea is to use brain sensing only while training a model, so that the finished model can estimate absorption from ordinary trainer and game data. This post covers the idea, the full slide deck with what I said on each slide, and what I learned from fitting early research into five minutes.
+On November 6, 2026, I gave a five-minute lightning talk on FlowGate at George Mason University's first School of Computing PhD Research Symposium. It was one of 15 talks selected from 107 submitted abstracts. FlowGate asks a simple question: when two rides on a smart trainer take the same effort, can a cycling game tell which one pulled the rider in? The idea is to use brain sensing only while training a model, so that the finished model can estimate absorption from ordinary trainer and game data. This post covers the idea, the full slide deck with what I said on each slide, and how I presented early-stage work without overstating it.
 
-<div className='not-prose my-8'>
+<figure className='not-prose my-8'>
   <img
     src='/images/blog/flowgate-lightning-talk/presenting.webp'
     alt='Ahnaf An Nafee speaking with a microphone beside a projected title slide reading FlowGate: Can a Cycling Game Learn How Absorbed You Feel?'
     loading='lazy'
     className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
   />
-  <p className='mt-2 text-center text-sm text-gray-600 dark:text-gray-400'>
+  <figcaption className='mt-2 text-center text-sm text-gray-600 dark:text-gray-400'>
     Presenting FlowGate as the fourth lightning talk of the afternoon session.
-  </p>
-</div>
+  </figcaption>
+</figure>
 
 ## The Symposium
 
@@ -54,19 +54,6 @@ Here is the deck I presented. You can step through it, and the "What I said" but
 The hardest part of writing this talk was the findings slide. FlowGate is at the prototype and pre-pilot stage. The cycling prototype runs on the DCXR and GVL cycling platform, and rehearsals have refined how the study collects reports and calibrates workload. Human prediction accuracy and any benefit from teaching are still untested.
 
 So the findings slide shows exactly what the pre-pilot work established and nothing more. One logged interaction shows a question appearing and a response recorded about 11 seconds later, which tells me the report collection works in practice. The workload table makes a methods point: in one preliminary ride, the grade-gain setting, which scales the hill steepness the trainer simulates, fell by a third, while average pedaling power fell by only about 13%. A game setting is not a watt target, so the study measures actual power alongside the setting.
-
-An earlier version of the deck showed predictions from simulated data. I removed them before the symposium. They were clearly labeled, but in a five-minute talk a chart of predictions reads as a result, and I did not want anyone to leave thinking FlowGate already works on people. The future-work slide carries the real test instead: train the same student with and without the teacher, evaluate both on riders who were never used for training or model selection, and compare them with a simple cycling-data baseline.
-
-## Fitting Research Into Five Minutes
-
-At a typical 130 words a minute, five minutes is about 650 spoken words, but filling all of them leaves no margin for a slide change that sticks or a pause after a question. I wrote the narration to 458 words and aimed for 4:30, which left 30 seconds of buffer. Each slide got a time budget: 30 seconds for the opening, 45 for the problem, a minute each for the approach and the findings, 55 for future work and 20 for the close.
-
-A few habits made the biggest difference:
-
-- **Open with a contrast, not a definition.** The talk starts with two rides that take the same effort but feel different. The definition of absorption comes on slide 2, once the audience already wants it.
-- **Define the one technical term that matters.** "Grade gain" means nothing to most people, so the narration explains it as hill steepness right before the workload comparison.
-- **Rehearse the checkpoints, not the words.** I memorized where I should be at 2:15, 3:15 and 4:10, so a slow slide could be recovered without rushing the ending.
-- **Close by returning to the opening.** The last slide goes back to the two rides, which gives the talk a clear end without inviting questions there was no time for.
 
 ## The Poster in the Digital Gallery
 
