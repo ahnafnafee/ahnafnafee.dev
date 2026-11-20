@@ -2,6 +2,7 @@ import { ViewBadge } from '@/components/site/common/ViewBadge'
 import { UnstyledLink } from '@/components/site/links'
 
 import { SITE_AUTHOR } from '@/libs/constants/site'
+import { dateFormat } from '@/libs/intl'
 import { generateOgImage } from '@/libs/metapage'
 import { twclsx } from '@/libs/twclsx'
 
@@ -25,13 +26,8 @@ const buildActionLinks = (props: ResearchItemProps): ActionLink[] => {
   return links
 }
 
-const buildVenueLine = (props: ResearchItemProps): string | null => {
-  const v = props.venue
-  if (!v) return null
-  const name = v.name ?? v.short
-  if (!name) return null
-  return v.year ? `${name} ${v.year}` : name
-}
+const monthYear = (published?: string): string | null =>
+  published ? dateFormat(published, 'en-US', { month: 'long', year: 'numeric' }) : null
 
 // Prefer the curated thumbnail. Fall back to the teaser figure, then to a
 // generated OG image. ImageKit URLs get a width transform so we request the
@@ -63,7 +59,8 @@ const resolveListingImage = (props: ResearchItemProps): string => {
 export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) => {
   const urlPost = `/research/${props.slug}`
   const imageSrc = resolveListingImage(props)
-  const venueLine = buildVenueLine(props)
+  const venueName = props.venue?.name ?? props.venue?.short
+  const date = monthYear(props.published)
   const actions = buildActionLinks(props)
 
   return (
@@ -115,8 +112,16 @@ export const ResearchItem: React.FunctionComponent<ResearchItemProps> = (props) 
             </div>
           )}
 
-          {venueLine && (
-            <div className='mb-2.5 text-sm leading-snug text-gray-700 italic dark:text-gray-400'>{venueLine}</div>
+          {(venueName || date) && (
+            <div className='mb-2.5 text-sm leading-snug'>
+              {venueName && <span className='font-semibold text-indigo-700 dark:text-indigo-300'>{venueName}</span>}
+              {venueName && date && (
+                <span className='text-gray-400 dark:text-gray-600' aria-hidden='true'>
+                  {' · '}
+                </span>
+              )}
+              {date && <span className='text-gray-700 italic dark:text-gray-400'>{date}</span>}
+            </div>
           )}
 
           {actions.length > 0 && (
