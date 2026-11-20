@@ -1,0 +1,115 @@
+---
+title: 'FlowGate in Five Minutes: My Lightning Talk at the GMU PhD Research Symposium'
+summary: 'How I turned an early-stage research idea about cycling games, brain sensing and rider absorption into a five-minute lightning talk for the first School of Computing PhD Research Symposium at George Mason University.'
+featured: true
+author_name: 'Ahnaf An Nafee'
+github_username: 'ahnafnafee'
+published: '11/20/2026'
+topics: ['Research', 'Human-Computer Interaction', 'Exergames', 'Machine Learning', 'Public Speaking']
+keywords:
+  [
+    'flowgate',
+    'lightning talk',
+    'phd research symposium',
+    'george mason university',
+    'school of computing',
+    'gmu phd symposium 2026',
+    'cycling game',
+    'exergame',
+    'vr cycling',
+    'smart trainer',
+    'absorption',
+    'flow experience',
+    'player experience',
+    'experience sampling',
+    'fnirs',
+    'functional near-infrared spectroscopy',
+    'brain sensing',
+    'physiological computing',
+    'teacher student learning',
+    'learning using privileged information',
+    'knowledge distillation',
+    'adaptive games',
+    'workload calibration',
+    'pre-pilot study',
+    'research talk',
+    'presenting research',
+    'academic poster',
+    'research symposium',
+    'phd student',
+    'hci research'
+  ]
+thumbnail: '/images/blog/flowgate-lightning-talk/thumbnail.svg'
+related: []
+---
+
+On November 6, 2026, I gave a five-minute lightning talk on FlowGate at George Mason University's first School of Computing PhD Research Symposium. It was one of 15 talks selected from 107 submitted abstracts. FlowGate asks a simple question: when two rides on a smart trainer take the same effort, can a cycling game tell which one pulled the rider in? The idea is to use brain sensing only while training a model, so that the finished model can estimate absorption from ordinary trainer and game data. This post covers the idea, the full slide deck with what I said on each slide, and how I presented early-stage work without overstating it.
+
+<figure className='not-prose my-8'>
+  <img
+    src='/images/blog/flowgate-lightning-talk/presenting.webp'
+    alt='Ahnaf An Nafee speaking with a microphone beside a projected title slide reading FlowGate: Can a Cycling Game Learn How Absorbed You Feel?'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+  <figcaption className='mt-2 text-center text-sm text-gray-600 dark:text-gray-400'>
+    Presenting FlowGate as the fourth lightning talk of the afternoon session.
+  </figcaption>
+</figure>
+
+## The Symposium
+
+The [1st School of Computing PhD Research Symposium](/documents/soc-symposium-2026-program.pdf) ran on a Friday afternoon in the Nguyen Engineering Building. Doctoral students across the School of Computing shared their work as lightning talks or as posters in a digital research gallery on the atrium screens. My talk was T4, the fourth in the afternoon lightning session.
+
+The format was strict. Each speaker had five minutes, there were no questions between talks, and judges scored every talk on presentation, significance, innovation and approach. Attendees also voted for a People's Choice talk. FlowGate also appeared in the digital gallery as a poster, so the work had two forms that day: a talk that had to be heard once and understood, and a poster that people could read at their own pace.
+
+## The Idea Behind FlowGate
+
+Pedaling power tells a game how hard a rider is working. It does not tell the game whether the rider is absorbed in the ride or watching the clock. Absorption, the feeling of being fully caught up in an activity, is one dimension of flow, and it is the experience FlowGate tries to estimate.
+
+The difficulty is that experience is hard to measure during play. Brain sensing can help: functional near-infrared spectroscopy (fNIRS) uses a cap with near-infrared light to estimate changes in blood oxygenation. But nobody wants to wear a sensor cap to play a cycling game at home.
+
+FlowGate's proposed answer is a teacher-student setup. In the lab, a teacher model receives the fNIRS measurements together with trainer and game data and learns to predict how absorbed riders report feeling. A student model learns from the same reports, with the teacher's predictions as extra guidance, but it only ever sees trainer and game data. If the approach works, the cap stays in the lab and the student goes into the game. The idea follows the learning using privileged information framework from Vapnik and Izmailov, where extra information is available during training but not when the model is used.
+
+The prediction target is the rider's own report. During a ride, the game asks how absorbed the rider felt, and the model uses only the trainer and game data recorded before that question appeared.
+
+## The Talk, Slide by Slide
+
+Here is the deck I presented. You can step through it, and the "What I said" button shows the narration I delivered for each slide, with its place in the five-minute timeline.
+
+<FlowGateTalkDeck />
+
+## Being Honest About Where the Work Is
+
+The hardest part of writing this talk was the findings slide. FlowGate is at the prototype and pre-pilot stage. The cycling prototype runs on the DCXR and GVL cycling platform, and rehearsals have refined how the study collects reports and calibrates workload. Human prediction accuracy and any benefit from teaching are still untested.
+
+So the findings slide shows exactly what the pre-pilot work established and nothing more. One logged interaction shows a question appearing and a response recorded about 11 seconds later, which tells me the report collection works in practice. The workload table makes a methods point: in one preliminary ride, the grade-gain setting, which scales the hill steepness the trainer simulates, fell by a third, while average pedaling power fell by only about 13%. A game setting is not a watt target, so the study measures actual power alongside the setting.
+
+## The Poster in the Digital Gallery
+
+The poster tells the same story with more room. It walks through six steps, from effort versus experience to the proposed test on new riders, and shows the cycling prototype, the trainer and the sensing cap alongside the learning diagram.
+
+<ContentImage
+  src='/images/blog/flowgate-lightning-talk/poster.webp'
+  alt='FlowGate research poster with six numbered sections: effort is not experience, capture the ride, ask about the preceding ride, learn with training-only sensing, what the pre-pilot established, and test on new riders.'
+  title='FlowGate poster for the digital research gallery'
+  width={2000}
+  height={1500}
+/>
+
+## Recognition and Thanks
+
+I received a Certificate of Presentation for outstanding research presented as a lightning talk, signed by the School of Computing's divisional dean and associate dean for graduate studies.
+
+<div className='not-prose my-8'>
+  <img
+    src='/images/blog/flowgate-lightning-talk/certificate.webp'
+    alt='Certificate of Presentation from the Long Nguyen and Kimmy Duong School of Computing awarded to Ahnaf An Nafee for outstanding research presented as a lightning talk at the 1st School of Computing PhD Research Symposium, November 6, 2026.'
+    loading='lazy'
+    className='w-full rounded-xl border border-gray-200 dark:border-gray-800'
+  />
+</div>
+
+FlowGate is a team effort. My coauthors are Robert Carmel, Pedro Burset, Liam Villavicencio, Habib Alam, Joel Martin, Haikun Huang and my advisor, Lap-Fai Yu. Thanks to the School of Computing for organizing the first edition of this symposium, and to everyone who came to the lightning session.
+
+The next step is the one the talk ends on: collect rider reports with the sensing cap, train the teacher and student, and find out whether brain sensing during training makes a cycling game better at recognizing an absorbing ride.
